@@ -16,9 +16,15 @@
 
 # DUB
 .dub
+dub.selections.json
 docs.json
 __dummy.html
 docs/
 
 # Code coverage
 *.lst
+
+# Examples
+examples/UnitTest/unittest
+examples/Http2ServerDemo/server-demo
+examples/Http2ClientDemo/client-demo
