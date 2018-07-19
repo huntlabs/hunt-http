@@ -11,20 +11,19 @@ import hunt.http.codec.common.CommonDecoder;
 import hunt.http.codec.common.CommonEncoder;
 import hunt.http.codec.http.stream.HTTP2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
-import hunt.net.Client;
-// import hunt.net.tcp.aio.AsynchronousTcpClient;
 
+import hunt.util.LifeCycle;
 import hunt.util.exception;
 import hunt.util.concurrent.CompletableFuture;;
 import hunt.util.concurrent.Promise;
-// import hunt.util.lang.AbstractLifeCycle;
 
 import hunt.container.Map;
 import hunt.container.HashMap;
-// import java.util.concurrent.ConcurrentHashMap;
-// import java.util.concurrent.atomic.int;
 
-class HTTP2Client  { // : AbstractLifeCycle
+import hunt.net.Client;
+import hunt.net;
+
+class HTTP2Client  : AbstractLifeCycle { 
 
     private Client client;
     private Map!(int, HTTP2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
@@ -32,18 +31,23 @@ class HTTP2Client  { // : AbstractLifeCycle
     private HTTP2Configuration http2Configuration;
 
     this(HTTP2Configuration c) {
-        http2ClientContext = new HashMap!(int, HTTP2ClientContext)();
         if (c is null) {
             throw new IllegalArgumentException("the http2 configuration is null");
         }
+        http2ClientContext = new HashMap!(int, HTTP2ClientContext)();
 
         c.getTcpConfiguration().setDecoder(new CommonDecoder(new HTTP1ClientDecoder(new HTTP2ClientDecoder())));
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(new HTTP2ClientHandler(c, http2ClientContext));
+        
 
         // TODO: Tasks pending completion -@Administrator at 2018-7-13 15:33:24
         // 
+
+        this.client = Net.createNetClient();
         // this.client = new AsynchronousTcpClient(c.getTcpConfiguration());
+        client.setConfig(c.getTcpConfiguration());
+        
         this.http2Configuration = c;
     }
 
@@ -58,24 +62,24 @@ class HTTP2Client  { // : AbstractLifeCycle
     }
 
     void connect(string host, int port, Promise!(HTTPClientConnection) promise, ClientHTTP2SessionListener listener) {
-        // start();
+        start();
         HTTP2ClientContext context = new HTTP2ClientContext();
         context.setPromise(promise);
         context.setListener(listener);
         int id = sessionId++;
-        http2ClientContext.put(id, context);
-        client.connect(host, port, id);
+        http2ClientContext.put(0, context);
+        client.connect(host, port);
     }
 
     HTTP2Configuration getHttp2Configuration() {
         return http2Configuration;
     }
 
-    // override
+    override
     protected void init() {
     }
 
-    // override
+    override
     protected void destroy() {
         if (client !is null) {
             client.stop();

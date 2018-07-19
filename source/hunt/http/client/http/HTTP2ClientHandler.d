@@ -102,7 +102,12 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
             HTTP2ClientConnection connection = new HTTP2ClientConnection(config, session, sslSession, context.getListener());
             session.attachObject(connection);
             context.getListener().setConnection(connection);
-            connection.initialize(config, cast(Promise!(HTTP2ClientConnection))context.getPromise(), context.getListener());
+            
+import hunt.http.client.http.HTTPClientConnection; 
+            Promise!(HTTPClientConnection) pro = context.getPromise();
+            auto p = cast(Promise!(HTTP2ClientConnection)) pro;
+            // connection.initialize(config, cast(Promise!(HTTP2ClientConnection))context.getPromise(), context.getListener());
+            connection.initialize(config, context.getPromise(), context.getListener());
         } finally {
             http2ClientContext.remove(session.getSessionId());
         }

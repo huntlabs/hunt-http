@@ -22,7 +22,7 @@ void main(string[] args)
 	http2Configuration.setSecureConnectionEnabled(true);
 	http2Configuration.setFlowControlStrategy("simple");
 	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-	http2Configuration.setProtocol(HttpVersion.HTTP_1_1.asString());
+	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
 
 	Map!(int, int) settings = new HashMap!(int, int)();
 	settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());

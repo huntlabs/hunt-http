@@ -56,7 +56,7 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
     // private Promise!(WebSocketConnection) webSocketConnectionPromise;
     // private IncomingFrames incomingFrames;
     private WebSocketPolicy policy;
-    private Promise!(HTTP2ClientConnection) http2ConnectionPromise;
+    private Promise!(HTTPClientConnection) http2ConnectionPromise;
     private  HTTP2ClientConnection http2Connection;
     private ClientHTTP2SessionListener http2SessionListener;
     private bool upgradeHTTP2Complete = false; // new bool(false);
@@ -187,7 +187,7 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
     }
 
     override
-    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTP2ClientConnection) promise,
+    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTPClientConnection) promise,
                              ClientHTTPHandler upgradeHandler,
                              ClientHTTPHandler http2ResponseHandler) {
         Promise!(Stream) initStream = new HTTP2ClientResponseHandler.ClientStreamPromise(request, new class DefaultPromise!(HTTPOutputStream) {
@@ -210,7 +210,7 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
     }
 
     void upgradeHTTP2(Request request, SettingsFrame settings,
-                             Promise!(HTTP2ClientConnection) promise, Promise!(Stream) initStream,
+                             Promise!(HTTPClientConnection) promise, Promise!(Stream) initStream,
                              Stream.Listener initStreamListener, ClientHTTP2SessionListener listener,
                              ClientHTTPHandler handler) {
         if (isEncrypted()) {

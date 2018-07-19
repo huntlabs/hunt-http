@@ -36,7 +36,7 @@ import std.conv;
 alias SessionListener = StreamSession.Listener;
 
 class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
-    void initialize(HTTP2Configuration config, Promise!(HTTP2ClientConnection) promise,
+    void initialize(HTTP2Configuration config, Promise!(HTTPClientConnection) promise,
                            SessionListener listener) {
         Map!(int, int) settings = listener.onPreface(getHttp2Session());
         if (settings is null) {
@@ -207,7 +207,7 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
     }
 
     override
-    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTP2ClientConnection) promise,
+    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTPClientConnection) promise,
                              ClientHTTPHandler upgradeHandler,
                              ClientHTTPHandler http2ResponseHandler) {
         throw new CommonRuntimeException("The current connection version is http2, it does not need to upgrading.");

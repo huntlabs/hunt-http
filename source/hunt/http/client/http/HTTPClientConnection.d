@@ -34,7 +34,7 @@ interface HTTPClientConnection : HTTPConnection {
 
     HTTPOutputStream getHTTPOutputStream(Request request, ClientHTTPHandler handler);
 
-    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTP2ClientConnection) promise,
+    void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTPClientConnection) promise,
                       ClientHTTPHandler upgradeHandler, ClientHTTPHandler http2ResponseHandler);
 
     // void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,

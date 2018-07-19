@@ -15,18 +15,25 @@ import hunt.util.concurrent.FuturePromise;
 
 import hunt.container;
 import kiss.logger;
+import std.format;
 
 
 void main(string[] args) {
 
+	// enum host = "127.0.0.1";
+	enum host = "10.1.222.120";
+	enum port = 6677;
+
 	HTTP2Configuration http2Configuration = new HTTP2Configuration();
-	http2Configuration.setSecureConnectionEnabled(true);
+	http2Configuration.setSecureConnectionEnabled(false);
 	http2Configuration.setFlowControlStrategy("simple");
 	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-	HTTP2Client client = new HTTP2Client(http2Configuration);
+	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
 
 	FuturePromise!(HTTPClientConnection) promise = new FuturePromise!(HTTPClientConnection)();
-	client.connect("127.0.0.1", 6677, promise, new class ClientHTTP2SessionListener {
+	HTTP2Client client = new HTTP2Client(http2Configuration);
+
+	client.connect(host, port, promise, new class ClientHTTP2SessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {
@@ -72,18 +79,20 @@ void main(string[] args) {
 		}
 	});
 
-	HTTPConnection connection = promise.get();
+
 	HttpFields fields = new HttpFields();
 	fields.put(HttpHeader.ACCEPT, "text/html");
 	fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
 	fields.put(HttpHeader.CONTENT_LENGTH, "28");
 	MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
-			new HostPortHttpField("127.0.0.1:6677"), "/data", HttpVersion.HTTP_2, fields);
+			new HostPortHttpField(format("%s:%d", host, port)), "/data", HttpVersion.HTTP_2, fields);
 
+	HTTPConnection connection = promise.get();
 	HTTP2ClientConnection clientConnection = cast(HTTP2ClientConnection) connection;
 
 	FuturePromise!(Stream) streamPromise = new FuturePromise!(Stream)();
-	clientConnection.getHttp2Session().newStream(new HeadersFrame(metaData, null, false), streamPromise,
+	auto http2Session = clientConnection.getHttp2Session();
+	http2Session.newStream(new HeadersFrame(metaData, null, false), streamPromise,
 		new class StreamListener {
 
 			override
@@ -119,7 +128,7 @@ void main(string[] args) {
 
 			override
 			bool onIdleTimeout(Stream stream, Exception x) {
-				errorf("the client stream %s is timeout", x, stream);
+				errorf("the client stream %s is timeout", stream.toString());
 				return true;
 			}
 
@@ -132,7 +141,7 @@ void main(string[] args) {
 	);
 
 	Stream clientStream = streamPromise.get();
-	infof("client stream id is ", clientStream.getId());
+	infof("client stream id is %d", clientStream.getId());
 
 	DataFrame smallDataFrame = new DataFrame(clientStream.getId(),
 			ByteBuffer.wrap(cast(byte[])"hello world!"), false);
@@ -149,7 +158,6 @@ void main(string[] args) {
 				override
 				void succeeded() {
 					infof("client sents big data success");
-
 				}
 
 				override
