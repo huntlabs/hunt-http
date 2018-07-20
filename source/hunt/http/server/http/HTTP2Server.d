@@ -75,7 +75,11 @@ class HTTP2Server  : AbstractLifeCycle {
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( ( in ubyte[] data) {      
                     infof("data received (%d bytes): ", data.length); 
-                    infof(cast(string) data); 
+                    if(data.length<=64)
+                        infof("%(%02X %)", data[0 .. $]);
+                    else
+                        infof("%(%02X %)", data[0 .. 64]);
+                    // infof(cast(string) data); 
 
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
                     http1ServerDecoder.decode(buf, session);

@@ -101,7 +101,7 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
     
     override
     ConnectionType getConnectionType() {
-        return ConnectionType.HTTP1;
+        return super.getConnectionType();
     }
 
     override

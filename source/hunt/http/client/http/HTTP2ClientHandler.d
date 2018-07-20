@@ -40,6 +40,7 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
+            implementationMissing();
             // SecureSessionFactory factory = config.getSecureSessionFactory();
             // session.attachObject(factory.create(session, true, delegate void (SecureSession sslSession) {
 
@@ -101,11 +102,7 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
         try {
             HTTP2ClientConnection connection = new HTTP2ClientConnection(config, session, sslSession, context.getListener());
             session.attachObject(connection);
-            context.getListener().setConnection(connection);
-            
-import hunt.http.client.http.HTTPClientConnection; 
-            Promise!(HTTPClientConnection) pro = context.getPromise();
-            auto p = cast(Promise!(HTTP2ClientConnection)) pro;
+            context.getListener().setConnection(connection);            
             // connection.initialize(config, cast(Promise!(HTTP2ClientConnection))context.getPromise(), context.getListener());
             connection.initialize(config, context.getPromise(), context.getListener());
         } finally {

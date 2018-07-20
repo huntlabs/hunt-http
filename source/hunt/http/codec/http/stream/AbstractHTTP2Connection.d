@@ -4,6 +4,7 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.encode.Generator;
 import hunt.http.codec.http.model;
 
+
 import hunt.http.codec.http.stream.AbstractHTTPConnection;
 import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 import hunt.http.codec.http.stream.FlowControlStrategy;
@@ -21,7 +22,7 @@ import hunt.util.exception;
 // alias TcpSession = hunt.net.Session.Session;
 alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;
 
-abstract class AbstractHTTP2Connection :AbstractHTTPConnection {
+abstract class AbstractHTTP2Connection :AbstractHTTPConnection  {
 
     protected HTTP2Session http2Session;
     protected Parser parser;

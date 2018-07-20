@@ -34,7 +34,7 @@ class PrefaceParser {
 	 * remaining bytes, that are not parseable by a HTTP/1.1 parser.
 	 * </p>
 	 */
-	package(hunt.http.codec.http.decode) void directUpgrade() {
+	package void directUpgrade() {
 		if (cursor != 0)
 			throw new IllegalStateException("");
 		cursor = PrefaceFrame.PREFACE_PREAMBLE_BYTES.length;
@@ -43,7 +43,7 @@ class PrefaceParser {
 	bool parse(ByteBuffer buffer) {
 		while (buffer.hasRemaining()) {
 			int currByte = buffer.get();
-			if (currByte != PrefaceFrame.PREFACE_BYTES[cursor]) {
+			if (currByte != PrefaceFrame.PREFACE_BYTES[cursor]) { // SM
 				BufferUtils.clear(buffer);
 				notifyConnectionFailure(cast(int)ErrorCode.PROTOCOL_ERROR, "invalid_preface");
 				return false;

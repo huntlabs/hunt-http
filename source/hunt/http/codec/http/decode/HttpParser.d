@@ -1250,13 +1250,19 @@ class HttpParser {
             // Request/response line
             if (_state >= State.START && _state < State.HEADER) {
                 if (parseLine(buffer))
-                    return true;
+                {
+                    tracef("after parseLine =>%s", buffer.toString());
+                    // return true;
+                }
             }
 
             // parse headers
             if (_state == State.HEADER) {
                 if (parseFields(buffer))
+                {
+                    tracef("after parseFields =>%s", buffer.toString());
                     return true;
+                }
             }
 
             // parse content

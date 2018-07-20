@@ -17,11 +17,15 @@ import hunt.util.exception;
 import hunt.util.concurrent.CompletableFuture;;
 import hunt.util.concurrent.Promise;
 
+import hunt.container.ByteBuffer;
 import hunt.container.Map;
 import hunt.container.HashMap;
 
+import hunt.net.AsynchronousTcpSession;
 import hunt.net.Client;
 import hunt.net;
+
+import kiss.logger;
 
 class HTTP2Client  : AbstractLifeCycle { 
 
@@ -36,18 +40,34 @@ class HTTP2Client  : AbstractLifeCycle {
         }
         http2ClientContext = new HashMap!(int, HTTP2ClientContext)();
 
-        c.getTcpConfiguration().setDecoder(new CommonDecoder(new HTTP1ClientDecoder(new HTTP2ClientDecoder())));
+        HTTP1ClientDecoder http11ClientDecoder = new HTTP1ClientDecoder(new HTTP2ClientDecoder());
+
+        c.getTcpConfiguration().setDecoder(new CommonDecoder(http11ClientDecoder));
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(new HTTP2ClientHandler(c, http2ClientContext));
-        
 
-        // TODO: Tasks pending completion -@Administrator at 2018-7-13 15:33:24
-        // 
-
-        this.client = Net.createNetClient();
+        NetClient client = Net.createNetClient();
+        this.client = client;
         // this.client = new AsynchronousTcpClient(c.getTcpConfiguration());
         client.setConfig(c.getTcpConfiguration());
-        
+
+        client.connectHandler((NetSocket sock){
+            info("The client created a connection...");
+            AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
+            session.handler( ( in ubyte[] data) {      
+                    infof("data received (%d bytes): ", data.length); 
+                    if(data.length<=64)
+                        infof("%(%02X %)", data[0 .. $]);
+                    else
+                        infof("%(%02X %)", data[0 .. 64]);
+                    // infof(cast(string) data); 
+
+                    ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
+                    http11ClientDecoder.decode(buf, session);
+                }
+            );
+        });
+
         this.http2Configuration = c;
     }
 

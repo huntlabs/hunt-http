@@ -5,7 +5,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/client-demo",
+            "program": "${workspaceFolder}/server-demo",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

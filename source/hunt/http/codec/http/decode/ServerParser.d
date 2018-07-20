@@ -70,6 +70,8 @@ class ServerParser :Parser {
 
 	override
 	void parse(ByteBuffer buffer) {
+		version(HuntDebutMode)
+		tracef("parsing buffer: %s", buffer.toString());
 		try {
 			while (true) {
 				switch (state) {

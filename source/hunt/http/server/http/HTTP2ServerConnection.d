@@ -50,7 +50,7 @@ class HTTP2ServerConnection : AbstractHTTP2Connection , HTTPServerConnection {
 
     override
     ConnectionType getConnectionType() {
-        return ConnectionType.HTTP1;
+        return super.getConnectionType();
     }
 
     override

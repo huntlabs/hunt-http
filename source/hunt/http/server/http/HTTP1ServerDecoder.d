@@ -18,6 +18,7 @@ import hunt.container.BufferUtils;
 
 import hunt.util.exception;
 
+import kiss.logger;
 import std.conv;
 
 class HTTP1ServerDecoder : DecoderChain {
@@ -35,6 +36,10 @@ class HTTP1ServerDecoder : DecoderChain {
     override
     void decode(ByteBuffer buffer, Session session) {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
+
+        Object o = session.getAttachment();
+        infof("session type is: %s", typeid(o));
+
         AbstractConnection abstractConnection = cast(AbstractConnection) session.getAttachment();
         switch (abstractConnection.getConnectionType()) {
             case ConnectionType.HTTP1: {

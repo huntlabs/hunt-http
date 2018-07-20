@@ -38,7 +38,7 @@ void main(string[] args)
 
 		override
 		StreamListener onNewStream(Stream stream, HeadersFrame frame) {
-			infof("server created new stream: %s", stream.getId());
+			infof("server created new stream: %d", stream.getId());
 			infof("server created new stream headers: %s", frame.getMetaData().toString());
 
 			return new class StreamListener {

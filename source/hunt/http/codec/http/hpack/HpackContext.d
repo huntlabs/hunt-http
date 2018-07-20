@@ -153,8 +153,6 @@ class HpackContext {
             if (fieldValue !is null)
             {
                 // tracef("%s,  hash: %d", currentField.toString(), currentField.toHash());
-                // trace("xxxxx=>", currentField.toString());
-                // trace("xxxxx=>", currentField.toHash());
                 __staticFieldMap[currentField] = entry;
             }
             else

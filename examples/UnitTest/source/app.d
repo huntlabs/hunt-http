@@ -32,12 +32,10 @@ void main()
 {
 
 	// testHpackDecoder();
-	// implementationMissing();
 
 	// **********************
 	// bug
 	// **********************
-	testUnits!URLEncodedTest();
 
 
 	// **********************
@@ -66,7 +64,7 @@ void main()
 	// test.codec.http2.decode.*
 	// **********************
 	
-	// testUnits!HttpParserTest(); 
+	testUnits!HttpParserTest(); 
 	// testUnits!HTTP2DecoderTest();
 
 	// **********************
@@ -79,8 +77,10 @@ void main()
 	// test.codec.http2.frame.*
 	// **********************
 	// testUnits!SettingsGenerateParseTest();
+	// testUnits!URLEncodedTest();
 
 }
+
 
 void testHpackDecoder()
 {
