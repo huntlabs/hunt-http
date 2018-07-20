@@ -1,0 +1,33 @@
+{
+	"name": "h2c-demo",
+    "authors": [
+        "Hunt Labs"
+    ],
+	"description": "A demo for HTTP2 (H2C) with Hunt-http.",
+	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"hunt-http" :{"path": "../../"}
+	},
+	"versions": [
+		"HuntDebugMode"
+	],
+	"configurations": [
+		{
+			"name": "client",
+			"targetName": "h2c-client",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/server.d"
+			]
+		},
+		{
+			"name": "server",
+			"targetName": "h2c-server",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/client.d"
+			]
+		}
+	]
+}

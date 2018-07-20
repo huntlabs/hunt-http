@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "examples/Http2ServerDemo"
+		},
+		{
+			"path": "examples/H2C-Demo"
 		}
 	],
 	"settings": {}

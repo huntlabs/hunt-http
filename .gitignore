@@ -28,3 +28,5 @@ docs/
 examples/UnitTest/unittest
 examples/Http2ServerDemo/server-demo
 examples/Http2ClientDemo/client-demo
+examples/H2C-Demo/h2c-client
+examples/H2C-Demo/h2c-server

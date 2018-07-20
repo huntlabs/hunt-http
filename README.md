@@ -3,10 +3,7 @@
 
 ## TODO
 - [x] hunt.container
-- [x] hunt.util.functional
 - [ ] hunt.util.concurrent: CompletableFuture, IdleTimeout, Scheduler
-- [x] hunt.http.codec.http.model.DateParser;
-- [x] hunt.http.util.UrlEncoded
 - [ ] hunt.http.codec.websocket
 - [x] hunt.http.client.http
 - [ ] hunt.http.client.websocket
@@ -25,3 +22,4 @@
 - [x] HttpParserTest
 - [x] HTTP2DecoderTest
 - [x] HpackTest
+- [x] H2C Demo
