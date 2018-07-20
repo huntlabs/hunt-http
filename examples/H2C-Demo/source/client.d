@@ -23,7 +23,6 @@ import std.format;
 void main(string[] args) {
 
 	enum host = "127.0.0.1";
-	// enum host = "10.1.222.120";
 	enum port = 6677;
 
 	HTTP2Configuration http2Configuration = new HTTP2Configuration();

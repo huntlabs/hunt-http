@@ -30,7 +30,7 @@ class SimpleRequest {
     List!Cookie cookies;
     string stringBody;
 
-    Object[string] attributes; // = new ConcurrentHashMap<>();
+    string[string] attributes; // = new ConcurrentHashMap<>();
 
     this(Request request, Response response,
                          HTTPOutputStream output,
@@ -83,21 +83,21 @@ class SimpleRequest {
     //     return request.spliterator();
     // }
 
-    Object get(string key) {
+    string get(string key) {
         return attributes[key];
     }
 
-    Object put(string key, Object value) {
+    string put(string key, string value) {
         return attributes[key] = value;
     }
 
-    Object remove(string key) {
+    string remove(string key) {
         auto r = attributes[key];
         attributes.remove(key);
         return r;
     }
 
-    Object[string] getAttributes() {
+    string[string] getAttributes() {
         return attributes;
     }
 

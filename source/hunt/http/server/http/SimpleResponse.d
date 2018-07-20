@@ -4,22 +4,22 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.BufferedHTTPOutputStream;
 import hunt.http.codec.http.stream.HTTPOutputStream;
 
-import kiss.logger;
-
 import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.io;
 import hunt.util.common;
 
+import kiss.logger;
+import std.range;
+
 alias Request = MetaData.Request;
 alias Response = MetaData.Response;
 
-class SimpleResponse : Closeable { // 
+class SimpleResponse : Closeable { 
 
     Response response;
     HTTPOutputStream output;
     HttpURI uri;
-    // PrintWriter printWriter;
     BufferedHTTPOutputStream bufferedOutputStream;
     int bufferSize = 8 * 1024;
     string characterEncoding = "UTF-8";
@@ -43,9 +43,9 @@ class SimpleResponse : Closeable { //
         return response.getContentLength();
     }
 
-    // Iterator<HttpField> iterator() {
-    //     return response.iterator();
-    // }
+    InputRange!HttpField iterator() {
+        return response.iterator();
+    }
 
     int getStatus() {
         return response.getStatus();
@@ -84,34 +84,11 @@ class SimpleResponse : Closeable { //
     }
 
     OutputStream getOutputStream() {
-        // if (printWriter !is null) {
-        //     throw new IllegalStateException("the response has used print writer -> " ~ uri);
-        // }
-
         if (bufferedOutputStream is null) {
             bufferedOutputStream = new BufferedHTTPOutputStream(output, bufferSize);
-            return bufferedOutputStream;
-        } else {
-            return bufferedOutputStream;
         }
+        return bufferedOutputStream;
     }
-
-    // PrintWriter getPrintWriter() {
-    //     if (bufferedOutputStream !is null) {
-    //         throw new IllegalStateException("the response has used output stream -> " ~ uri);
-    //     }
-    //     if (printWriter is null) {
-    //         try {
-    //             printWriter = new PrintWriter(new OutputStreamWriter(new BufferedHTTPOutputStream(output, bufferSize), characterEncoding));
-    //         } catch (UnsupportedEncodingException e) {
-    //             errorf("create print writer exception " ~ uri, e);
-    //         }
-    //         return printWriter;
-    //     } else {
-    //         return printWriter;
-    //     }
-    // }
-
 
     string getCharacterEncoding() {
         return characterEncoding;
@@ -137,9 +114,6 @@ class SimpleResponse : Closeable { //
         if (bufferedOutputStream !is null) {
             bufferedOutputStream.close();
         } 
-        // else if (printWriter !is null) {
-        //     printWriter.close();
-        // } 
         else {
             getOutputStream().close();
         }
@@ -149,9 +123,6 @@ class SimpleResponse : Closeable { //
         if (bufferedOutputStream !is null) {
             bufferedOutputStream.flush();
         } 
-        // else if (printWriter !is null) {
-        //     printWriter.flush();
-        // }
     }
 
     bool isCommitted() {
@@ -200,7 +171,20 @@ class SimpleResponse : Closeable { //
     }
 
     SimpleResponse write(string value) {
-        // getPrintWriter().print(value);
+        write(cast(byte[])value, 0, cast(int)value.length);
+        return this;
+    }
+
+    SimpleResponse write(byte[] b) {
+        return write(b, 0, cast(int)b.length);
+    }
+
+    SimpleResponse write(byte[] b, int off, int len) {
+        try {
+            getOutputStream().write(b, off, len);
+        } catch (IOException e) {
+            errorf("write data exception " ~ uri.toString(), e);
+        }
         return this;
     }
 
@@ -216,19 +200,6 @@ class SimpleResponse : Closeable { //
         catch (IOException ignore) {
 		}
         return this;
-    }
-
-    SimpleResponse write(byte[] b, int off, int len) {
-        try {
-            getOutputStream().write(b, off, len);
-        } catch (IOException e) {
-            errorf("write data exception " ~ uri.toString(), e);
-        }
-        return this;
-    }
-
-    SimpleResponse write(byte[] b) {
-        return write(b, 0, cast(int)b.length);
     }
 
     SimpleResponse end(byte[] b) {
