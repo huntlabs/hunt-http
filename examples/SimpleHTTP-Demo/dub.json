@@ -1,8 +1,33 @@
 {
 	"name": "simplehttp-demo",
-	"authors": [
-		"zxp"
+    "authors": [
+        "Hunt Labs"
+    ],
+	"description": "A demo for SimpleHTTP Client/Server with Hunt-http.",
+	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"hunt-http" :{"path": "../../"}
+	},
+	"versions": [
+		"HuntDebugMode"
 	],
-	"description": "A minimal D application.",
-	"license": "proprietary"
+	"configurations": [
+		{
+			"name": "client",
+			"targetName": "simple-client",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/server.d"
+			]
+		},
+		{
+			"name": "server",
+			"targetName": "simple-server",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/client.d"
+			]
+		}
+	]
 }
