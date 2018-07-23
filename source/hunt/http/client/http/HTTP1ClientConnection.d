@@ -24,8 +24,6 @@ import hunt.net.ConnectionType;
 import hunt.net.SecureSession;
 import hunt.net.Session;
 
-// import hunt.util.codec.B64Code;
-// import hunt.util.codec.Base64Utils;
 import hunt.util.Assert;
 import hunt.util.io;
 import hunt.util.codec;
@@ -57,7 +55,7 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
     // private IncomingFrames incomingFrames;
     private WebSocketPolicy policy;
     private Promise!(HTTPClientConnection) http2ConnectionPromise;
-    private  HTTP2ClientConnection http2Connection;
+    private HTTP2ClientConnection http2Connection;
     private ClientHTTP2SessionListener http2SessionListener;
     private bool upgradeHTTP2Complete = false; // new bool(false);
     private bool upgradeWebSocketComplete = false; // new bool(false);
@@ -288,6 +286,7 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
                 }
             }
             case HttpProtocol.WEB_SOCKET: {
+                implementationMissing(false);
                 // TODO: Tasks pending completion -@Administrator at 2018-7-13 18:23:21
                 // 
                 // if (webSocketConnectionPromise !is null && incomingFrames !is null && policy !is null) {
@@ -488,6 +487,11 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
 
     override
     bool isOpen() {
+        version(HuntDebugMode)
+        {
+            infof("Connection status: isOpen=%s, upgradeHTTP2Complete=%s, upgradeWebSocketComplete=%s", 
+                tcpSession.isOpen(), upgradeHTTP2Complete, upgradeWebSocketComplete);
+        }
         return tcpSession.isOpen() && !upgradeHTTP2Complete && !upgradeWebSocketComplete;
     }
 

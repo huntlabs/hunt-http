@@ -532,9 +532,8 @@ class HttpFields : Iterable!HttpField {
 			HttpField f = _fields[i];
 			if (f.isSameName(field)) {
 				if (put) {
-					// System.arraycopy(_fields, i + 1, _fields, i, --_size - i);
 					--_size;
-					_fields[i+1 .. _size+1] == _fields[i .. _size];
+					_fields[i+1 .. _size+1] = _fields[i .. _size];
 				} else {
 					_fields[i] = field;
 					put = true;

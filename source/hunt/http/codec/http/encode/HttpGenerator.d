@@ -550,8 +550,9 @@ class HttpGenerator {
         MetaData.Response response = (typeid(info) == typeid(MetaData.Response)) ? cast(MetaData.Response) info : null;
 
         version(HuntDebugMode) {
-            tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
             tracef(info.getFields().toString());
+            // tracef("content: %s", BufferUtils.toSummaryString(content));
+            tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
         }
 
         // default field values
@@ -689,7 +690,7 @@ class HttpGenerator {
         }
 
         version(HuntDebugMode) {
-            trace(_endOfContent.to!string());
+            trace("End Of Content: ", _endOfContent.to!string());
         }
         // Add transfer encoding if it is not chunking
         if (transfer_encoding !is null) {

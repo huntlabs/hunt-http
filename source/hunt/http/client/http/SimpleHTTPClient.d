@@ -2,6 +2,7 @@ module hunt.http.client.http.SimpleHTTPClient;
 
 import hunt.http.client.http.ClientHTTPHandler;
 import hunt.http.client.http.HTTP2Client;
+import hunt.http.client.http.HTTP2ClientConnection;
 import hunt.http.client.http.HTTPClientConnection;
 import hunt.http.client.http.SimpleHTTPClientConfiguration;
 import hunt.http.client.http.SimpleResponse;
@@ -20,14 +21,9 @@ import hunt.util.Charset;
 import hunt.util.concurrent.CompletableFuture;
 import hunt.util.concurrent.Promise;
 import hunt.util.functional;
+import hunt.util.LifeCycle;
 import hunt.util.string;
-// import hunt.util.heartbeat.HealthCheck;
-// import hunt.util.heartbeat.Task;
 import hunt.util.io;
-// import hunt.util.lang.AbstractLifeCycle;
-// import hunt.util.lang.pool.AsynchronousPool;
-// import hunt.util.lang.pool.BoundedAsynchronousPool;
-// import hunt.util.lang.pool.PooledObject;
 import kiss.logger;
 
 import hunt.container.ByteBuffer;
@@ -37,7 +33,7 @@ import std.string;
 
 alias Response = MetaData.Response;
 
-class SimpleHTTPClient  { // : AbstractLifeCycle
+class SimpleHTTPClient  : AbstractLifeCycle { 
 
     private HTTP2Client http2Client;
     // private HashMap!(RequestBuilder, AsynchronousPool!(HTTPClientConnection)) poolMap; // = new ConcurrentHashMap!()();
@@ -64,7 +60,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
         //         return Ratio.of(errorMeter.getOneMinuteRate(), responseTimer.getOneMinuteRate());
         //     }
         // });
-        // start();
+        start();
     }
 
     /**
@@ -77,7 +73,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
 
         List!(ByteBuffer) requestBody; // = new ArrayList!(ByteBuffer)();
 
-        Func1!(HTTPClientConnection, CompletableFuture!(bool)) _connect;
+        Func1!(HTTPClientConnection, CompletableFuture!(bool)) connect;
         Action1!(Response) _headerComplete;
         Action1!ByteBuffer _content;
         Action1!(Response) _contentComplete;
@@ -260,7 +256,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
          * @param output The output stream callback.
          * @return RequestBuilder
          */
-        RequestBuilder output(Action1!(HTTPOutputStream) o) {
+        RequestBuilder onOutput(Action1!(HTTPOutputStream) o) {
             this._output = o;
             return this;
         }
@@ -271,7 +267,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
          * @param promise The output stream callback.
          * @return RequestBuilder
          */
-        RequestBuilder output(Promise!(HTTPOutputStream) promise) {
+        RequestBuilder onOutput(Promise!(HTTPOutputStream) promise) {
             this.promise = promise;
             return this;
         }
@@ -384,10 +380,12 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
          * @param connect the connection establishing callback
          * @return RequestBuilder
          */
-        RequestBuilder connect(Func1!(HTTPClientConnection, CompletableFuture!(bool)) c) {
-            this._connect = c;
+        RequestBuilder onConnect(Func1!(HTTPClientConnection, CompletableFuture!(bool)) c) {
+            this.connect = c;
             return this;
         }
+
+        //  CompletableFuture!(bool)) connect() { return this.connect; }
 
         /**
          * Set the HTTP header complete callback.
@@ -773,6 +771,43 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
     // }
 
     protected void send(RequestBuilder reqBuilder) {
+
+        HTTPClientConnection connection = createConnection(reqBuilder);
+        if(connection is null)
+        {
+            warning("Connection failed");
+            return;
+        }
+
+        if (connection.getHttpVersion() == HttpVersion.HTTP_2) {
+            if (reqBuilder.settingsFrame !is null) {
+                HTTP2ClientConnection http2ClientConnection = cast(HTTP2ClientConnection) connection;
+                http2ClientConnection.getHttp2Session().settings(reqBuilder.settingsFrame, Callback.NOOP);
+            }
+        }
+        // version(HuntDebugMode) {
+        //     tracef("take the connection %s from pool, released: %s, %s", connection.getSessionId(), pooledConn.isReleased(), connection.getHttpVersion());
+        // }
+
+        if (reqBuilder.connect !is null) {
+            CompletableFuture!(bool) r = reqBuilder.connect(connection);
+
+            bool isSendReq = r.get();
+            if (isSendReq) {
+                send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
+            } else {
+                IO.close(connection);
+            }
+            // .exceptionally( (ex) {
+            //     IO.close(connection);
+            // });
+        } else {
+
+            // implementationMissing(false);
+            send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
+        }
+
+
         // Timer.Context resTimerCtx = responseTimer.time();
         // getPool(reqBuilder).take().thenAccept( (pooledConn) {
         //     HTTPClientConnection connection = pooledConn.getObject();
@@ -811,10 +846,58 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
     }
 
     protected void send(RequestBuilder reqBuilder, 
-        // Timer.Context resTimerCtx, 
         HTTPClientConnection connection, ClientHTTPHandler handler) {
 
-        implementationMissing();
+        // implementationMissing();
+
+        List!(ByteBuffer) requestBody = reqBuilder.requestBody;
+
+        if (requestBody !is null && !requestBody.isEmpty()) {
+            connection.send(reqBuilder.request, requestBody.toArray(), handler);
+        } else if (reqBuilder.promise !is null) {
+            connection.send(reqBuilder.request, reqBuilder.promise, handler);
+        } else if (reqBuilder._output !is null) {
+            Promise!(HTTPOutputStream) p = new class Promise!(HTTPOutputStream) {
+                void succeeded(HTTPOutputStream ot) {
+                    reqBuilder._output(ot);
+                }
+
+                void failed(Exception x) {
+                    implementationMissing(false);
+                }
+
+            };
+            connection.send(reqBuilder.request, p, handler);
+        // } else if (reqBuilder.multiPartProvider != null) {
+        //     IO.close(reqBuilder.multiPartProvider);
+        //     reqBuilder.multiPartProvider.setListener(() => tracef("multi part content listener"));
+        //     if (reqBuilder.multiPartProvider.getLength() > 0) {
+        //         reqBuilder.put(HttpHeader.CONTENT_LENGTH, string.valueOf(reqBuilder.multiPartProvider.getLength()));
+        //     }
+        //     Completable!(HTTPOutputStream) p = new Completable!()();
+        //     connection.send(reqBuilder.request, p, handler);
+        //     p.thenAccept( (output) {
+        //         try  {
+        //             HTTPOutputStream ot = output;
+        //             foreach (ByteBuffer buf ; reqBuilder.multiPartProvider) {
+        //                 ot.write(buf);
+        //             }
+        //         } catch (IOException e) {
+        //             errorf("SimpleHTTPClient writes data exception", e);
+        //         }
+        //     }).exceptionally( (t) {
+        //         errorf("SimpleHTTPClient gets output stream exception", t);
+        //         // resTimerCtx.stop();
+        //         // errorMeter.mark();
+        //         return null;
+        //     });
+        } else if (reqBuilder.formUrlEncoded !is null) {
+            string bd = reqBuilder.formUrlEncoded.encode((config.getCharacterEncoding()), true);
+            byte[] content = cast(byte[])bd; // StringUtils.getBytes(bd);
+            connection.send(reqBuilder.request, ByteBuffer.wrap(content), handler);
+        } else {
+            connection.send(reqBuilder.request, handler);
+        }        
 
         // if (!CollectionUtils.isEmpty(reqBuilder.requestBody)) {
         //     connection.send(reqBuilder.request, reqBuilder.requestBody.toArray(BufferUtils.EMPTY_BYTE_BUFFER_ARRAY), handler);
@@ -911,7 +994,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
                 // IO.close(pooledConn.getObject());
                 // pooledConn.release();
                 version(HuntDebugMode) {
-                    // tracef("bad message of the connection %s, released: %s", pooledConn.getObject().getSessionId(), pooledConn.isReleased());
+                    tracef("bad message of the connection %s, released: %s", pooledConn.getSessionId(), "pooledConn.isReleased()");
                 }
             }
         }).earlyEOF(delegate void (req, resp, outputStream, conn) {
@@ -960,6 +1043,14 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
                 tracef("complete request of the connection %s , released: %s", pooledConn.getSessionId(), "pooledConn.isReleased()");
             }
         }
+    }
+
+    protected HTTPClientConnection createConnection(RequestBuilder request) {
+        string host = request.host;
+        int port = request.port;
+
+        Completable!HTTPClientConnection connFuture = http2Client.connect(host, port);
+        return connFuture.get();
     }
 
     // protected AsynchronousPool!(HTTPClientConnection) getPool(RequestBuilder request) {
@@ -1015,7 +1106,7 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
     //     };  
     // }
 
-    // override
+    override
     protected void init() {
         // auto r = config.getHealthCheck();
         // if(r !is null)
@@ -1023,9 +1114,9 @@ class SimpleHTTPClient  { // : AbstractLifeCycle
         // Optional.ofNullable(config.getHealthCheck()).ifPresent(HealthCheck::start);
     }
 
-    // override
+    override
     protected void destroy() {
-        // http2Client.stop();
+        http2Client.stop();
         // poolMap.forEach((k, v) -) v.stop());
         // foreach(k, v; poolMap)
         //     v.stop();

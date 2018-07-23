@@ -23,38 +23,38 @@ interface ClientHTTPHandler : HTTPHandler {
         protected Action4!(Request, Response, HTTPOutputStream, HTTPConnection) _continueToSendData;
 
         ClientHTTPHandler.Adapter headerComplete(
-                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) headerComplete) {
-            this.headerComplete = headerComplete;
+                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) h) {
+            this._headerComplete = h;
             return this;
         }
 
         ClientHTTPHandler.Adapter content(
-                Func5!(ByteBuffer, Request, Response, HTTPOutputStream, HTTPConnection, bool) content) {
-            this.content = content;
+                Func5!(ByteBuffer, Request, Response, HTTPOutputStream, HTTPConnection, bool) c) {
+            this._content = c;
             return this;
         }
 
         ClientHTTPHandler.Adapter contentComplete(
-                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) contentComplete) {
-            this.contentComplete = contentComplete;
+                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) c) {
+            this._contentComplete = c;
             return this;
         }
 
         ClientHTTPHandler.Adapter messageComplete(
-                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) messageComplete) {
-            this.messageComplete = messageComplete;
+                Func4!(Request, Response, HTTPOutputStream, HTTPConnection, bool) m) {
+            this._messageComplete = m;
             return this;
         }
 
         ClientHTTPHandler.Adapter badMessage(
-                Action6!(int, string, Request, Response, HTTPOutputStream, HTTPConnection) badMessage) {
-            this.badMessage = badMessage;
+                Action6!(int, string, Request, Response, HTTPOutputStream, HTTPConnection) b) {
+            this._badMessage = b;
             return this;
         }
 
         ClientHTTPHandler.Adapter earlyEOF(
-                Action4!(Request, Response, HTTPOutputStream, HTTPConnection) earlyEOF) {
-            this.earlyEOF = earlyEOF;
+                Action4!(Request, Response, HTTPOutputStream, HTTPConnection) e) {
+            this._earlyEOF = e;
             return this;
         }
 

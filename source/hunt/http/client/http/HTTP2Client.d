@@ -52,7 +52,7 @@ class HTTP2Client  : AbstractLifeCycle {
         client.setConfig(c.getTcpConfiguration());
 
         client.connectHandler((NetSocket sock){
-            info("The client created a connection...");
+            infof("A connection created with %s:%d", _host, _port);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( ( in ubyte[] data) {      
                     infof("data received (%d bytes): ", data.length); 
@@ -82,6 +82,8 @@ class HTTP2Client  : AbstractLifeCycle {
     }
 
     void connect(string host, int port, Promise!(HTTPClientConnection) promise, ClientHTTP2SessionListener listener) {
+        _host = host;
+        _port = port;        
         start();
         HTTP2ClientContext context = new HTTP2ClientContext();
         context.setPromise(promise);
@@ -90,6 +92,9 @@ class HTTP2Client  : AbstractLifeCycle {
         http2ClientContext.put(0, context);
         client.connect(host, port);
     }
+
+    private string _host;
+    private int _port;
 
     HTTP2Configuration getHttp2Configuration() {
         return http2Configuration;

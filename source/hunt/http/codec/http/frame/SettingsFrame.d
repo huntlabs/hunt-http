@@ -7,7 +7,7 @@ import hunt.container.Map;
 
 import std.format;
 
-class SettingsFrame :Frame {
+class SettingsFrame : Frame {
 	enum HEADER_TABLE_SIZE = 1;
 	enum ENABLE_PUSH = 2;
 	enum MAX_CONCURRENT_STREAMS = 3;

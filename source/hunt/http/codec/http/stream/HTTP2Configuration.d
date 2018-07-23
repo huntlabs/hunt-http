@@ -4,12 +4,13 @@ import hunt.http.codec.http.stream.FlowControlStrategy;
 
 import hunt.net.SecureSessionFactory;
 import hunt.net.Config;
+import hunt.http.codec.http.model.HttpVersion;
 // import hunt.net.tcp.secure.conscrypt.ConscryptSecureSessionFactory;
 
 class HTTP2Configuration {
 
     // TCP settings
-    private hunt.net.Config.Config tcpConfiguration; // = new hunt.net.Config();
+    private Config tcpConfiguration; // = new hunt.net.Config();
 
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
@@ -38,6 +39,7 @@ class HTTP2Configuration {
     {
         // secureSessionFactory = new ConscryptSecureSessionFactory();
         tcpConfiguration = new hunt.net.Config.Config();
+        protocol = HttpVersion.HTTP_1_1.asString();
     }
 
     /**

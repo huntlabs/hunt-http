@@ -17,20 +17,20 @@ import hunt.http.codec.http.stream.HTTPOutputStream;
 // import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-// import hunt.http.utils.lang.AbstractLifeCycle;
 import kiss.logger;
 
+import hunt.util.Charset;
 import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.io;
-import hunt.util.Charset;
+import hunt.util.LifeCycle;
 
 import hunt.container.HashMap;
 import hunt.container.Map;
 
 /**
 */
-class SimpleHTTPServer  { // : AbstractLifeCycle
+class SimpleHTTPServer : AbstractLifeCycle { 
 
     private static  int defaultPoolSize = 10; // int.getInteger("hunt.http.server.http.async.defaultPoolSize", Runtime.getRuntime().availableProcessors());
 
@@ -122,10 +122,10 @@ class SimpleHTTPServer  { // : AbstractLifeCycle
     }
 
     void listen() {
-        // start();
+        start();
     }
 
-    // override
+    override
     protected void init() {
 
         // class SimpleWebSocketHandler : WebSocketHandler
@@ -241,12 +241,10 @@ class SimpleHTTPServer  { // : AbstractLifeCycle
             }
         }), null); // new WebSocketHandler() 
 
-        // TODO: Tasks pending completion -@zxp at 7/5/2018, 3:46:56 PM
-        // 
-        // http2Server.start();
+        http2Server.start();
     }
 
-    // override
+    override
     protected void destroy() {
         try {
             // handlerExecutorService.shutdown();
@@ -255,7 +253,7 @@ class SimpleHTTPServer  { // : AbstractLifeCycle
         } finally {
         // TODO: Tasks pending completion -@zxp at 7/5/2018, 3:47:12 PM            
         // 
-            // http2Server.stop();
+            http2Server.stop();
         }
     }
 
