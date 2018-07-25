@@ -2,7 +2,7 @@ module test.http.router.handler;
 
 import hunt.http.$;
 import hunt.http.client.http2.SimpleHTTPClient;
-import hunt.http.server.http2.HTTP2ServerBuilder;
+import hunt.http.server.http.HTTP2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
 

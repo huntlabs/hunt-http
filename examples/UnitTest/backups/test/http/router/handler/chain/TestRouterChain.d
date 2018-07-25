@@ -2,7 +2,7 @@ module test.http.router.handler.chain;
 
 import hunt.http.$;
 import hunt.http.client.http2.SimpleResponse;
-import hunt.http.server.http2.HTTP2ServerBuilder;
+import hunt.http.server.http.HTTP2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
 import hunt.util.Assert;
 import hunt.util.Test;

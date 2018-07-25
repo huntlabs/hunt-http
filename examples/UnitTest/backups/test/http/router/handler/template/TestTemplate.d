@@ -3,7 +3,7 @@ module test.http.router.handler.template;
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.server.http2.HTTP2ServerBuilder;
+import hunt.http.server.http.HTTP2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHTTPHandlerTest;

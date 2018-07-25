@@ -2,10 +2,10 @@ module test.http.router.handler.session;
 
 import hunt.http.$;
 import hunt.http.codec.http.model.Cookie;
-import hunt.http.server.http2.HTTP2ServerBuilder;
-import hunt.http.server.http2.router.HTTPSession;
-import hunt.http.server.http2.router.handler.session.HTTPSessionConfiguration;
-import hunt.http.server.http2.router.handler.session.LocalHTTPSessionHandler;
+import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.router.HTTPSession;
+import hunt.http.server.http.router.handler.session.HTTPSessionConfiguration;
+import hunt.http.server.http.router.handler.session.LocalHTTPSessionHandler;
 import hunt.util.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHTTPHandlerTest;

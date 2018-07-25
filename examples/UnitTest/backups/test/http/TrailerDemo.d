@@ -3,7 +3,7 @@ module test.http;
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.server.http2.HTTP2ServerBuilder;
+import hunt.http.server.http.HTTP2ServerBuilder;
 
 /**
  * 

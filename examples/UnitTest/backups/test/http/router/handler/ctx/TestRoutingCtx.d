@@ -2,8 +2,8 @@ module test.http.router.handler.ctx;
 
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.server.http2.HTTP2ServerBuilder;
-import hunt.http.server.http2.router.RoutingContext;
+import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.router.RoutingContext;
 import hunt.util.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHTTPHandlerTest;
@@ -11,7 +11,7 @@ import test.http.router.handler.AbstractHTTPHandlerTest;
 import java.util.Optional;
 import java.util.concurrent.Phaser;
 
-import hunt.http.server.http2.HTTP2ServerBuilder.getCurrentCtx;
+import hunt.http.server.http.HTTP2ServerBuilder.getCurrentCtx;
 
 
 /**
