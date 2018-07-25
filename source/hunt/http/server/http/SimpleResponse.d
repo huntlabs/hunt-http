@@ -6,7 +6,7 @@ import hunt.http.codec.http.stream.HTTPOutputStream;
 
 import hunt.util.exception;
 import hunt.util.functional;
-import hunt.util.io;
+import hunt.io;
 import hunt.util.common;
 
 import kiss.logger;

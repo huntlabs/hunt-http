@@ -2,7 +2,7 @@ module test.codec.http2.model;
 
 import hunt.http.codec.http.model.MultiPartFormInputStream;
 import hunt.http.utils.codec.B64Code;
-import hunt.util.io;
+import hunt.io;
 import hunt.util.Test;
 
 import javax.servlet.MultipartConfigElement;

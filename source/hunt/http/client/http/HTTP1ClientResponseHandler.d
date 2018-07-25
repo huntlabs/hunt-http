@@ -10,7 +10,7 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HTTPOutputStream;
 
 import hunt.util.string;
-import hunt.util.io;
+import hunt.io;
 import kiss.logger;
 
 import hunt.container.ByteBuffer;

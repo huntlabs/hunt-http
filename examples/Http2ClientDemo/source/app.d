@@ -12,8 +12,8 @@ import std.stdio;
 
 void main(string[] args) {
 
-	enum host = "127.0.0.1";
-	// enum host = "10.1.222.120";
+	// enum host = "127.0.0.1";
+	enum host = "10.1.222.120";
 	enum port = "3333";
 
 	SimpleHTTPClient client = new SimpleHTTPClient();
@@ -58,6 +58,5 @@ void main(string[] args) {
 	// 		writeln(r.getStringBody());
 	// }
 
-	// getchar();
 	client.stop();
 }

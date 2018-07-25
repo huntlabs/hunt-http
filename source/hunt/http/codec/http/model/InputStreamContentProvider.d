@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.InputStreamContentProvider;
 
 // import hunt.util.functional;
 // import hunt.container.BufferUtils;
-// import hunt.util.io;
+// import hunt.io;
 // import kiss.logger;
 
 

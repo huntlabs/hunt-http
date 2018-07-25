@@ -62,6 +62,6 @@ class AcceptMIMEType {
 
     // override
     // size_t toHash() @trusted nothrow {
-    //     return Objects.hash(parentType, childType);
+    //     return hashOf(parentType, childType);
     // }
 }

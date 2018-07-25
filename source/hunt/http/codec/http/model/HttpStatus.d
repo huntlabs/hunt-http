@@ -4,6 +4,8 @@ import hunt.util.traits;
 import std.conv;
 import std.format;
 
+alias HttpStatusCode = HttpStatus.Code;
+
 /**
  * <p>
  * Http Status Codes

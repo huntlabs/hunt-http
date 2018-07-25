@@ -25,7 +25,7 @@ import hunt.net.SecureSession;
 import hunt.net.Session;
 
 import hunt.util.Assert;
-import hunt.util.io;
+import hunt.io;
 import hunt.util.codec;
 import hunt.util.concurrent.Promise;
 import hunt.util.exception;

@@ -23,7 +23,7 @@ import hunt.util.concurrent.Promise;
 import hunt.util.functional;
 import hunt.util.LifeCycle;
 import hunt.util.string;
-import hunt.util.io;
+import hunt.io;
 import kiss.logger;
 
 import hunt.container.ByteBuffer;
@@ -542,7 +542,7 @@ class SimpleHTTPClient  : AbstractLifeCycle {
 
         // override
         // size_t toHash() @trusted nothrow {
-        //     return Objects.hash(host, port);
+        //     return hashOf(host, port);
         // }
 
     }
