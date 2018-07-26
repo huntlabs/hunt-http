@@ -4,6 +4,7 @@ import hunt.http.server.http.router.Matcher;
 import hunt.http.server.http.router.Router;
 
 import hunt.container;
+import hunt.util.exception;
 
 /**
  * 
@@ -48,6 +49,6 @@ abstract class AbstractPreciseMatcher : Matcher {
         }
     }
 
-    MatchType getMatchType();
+    MatchType getMatchType() { implementationMissing(); return MatchType.PATH; }
 
 }

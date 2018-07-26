@@ -6,7 +6,7 @@ import hunt.http.server.http.router.Router;
 import hunt.http.server.http.router.RequestAcceptor;
 
 import hunt.http.server.http.router.handler.HTTPBodyHandler;
-import hunt.http.server.http.router.handler.error.DefaultErrorResponseHandlerLoader;
+import hunt.http.server.http.router.handler.DefaultErrorResponseHandlerLoader;
 import hunt.http.server.http.router.impl.RouterManagerImpl;
 
 import hunt.container;
@@ -50,7 +50,7 @@ interface RouterManager : RequestAcceptor {
 
         override
         bool opEquals(Object o) {
-            if (this == o) return true;
+            if (this is o) return true;
             if (o is null || typeid(this) != typeid(o)) return false;
             RouterMatchResult that = cast(RouterMatchResult) o;
             return router == that.router;

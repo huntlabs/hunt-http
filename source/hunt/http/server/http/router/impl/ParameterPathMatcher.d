@@ -30,7 +30,7 @@ class ParameterPathMatcher : Matcher {
 
         override
         bool opEquals(Object o) {
-            if (this == o) return true;
+            if (this is o) return true;
             if (o is null || typeid(this) !is typeid(o)) return false;
             ParameterPath that = cast(ParameterPath) o;
             return rule == that.rule;
@@ -59,20 +59,39 @@ class ParameterPathMatcher : Matcher {
         }
     }
 
-    private Map!(int, Map!(ParameterPath, Set!(Router))) parameterPath() {
-        if (_parameterPath is null) {
-            _parameterPath = new HashMap!(int, Map!(ParameterPath, Set!(Router)))();
-        }
-        return _parameterPath;
+    this()
+    {
+        _parameterPath = new HashMap!(int, Map!(ParameterPath, Set!(Router)))();
     }
+
+    // private Map!(int, Map!(ParameterPath, Set!(Router))) parameterPath() {
+    //     if (_parameterPath is null) {
+    //         _parameterPath = new HashMap!(int, Map!(ParameterPath, Set!(Router)))();
+    //     }
+    //     return _parameterPath;
+    // }
 
     override
     void add(string rule, Router router) {
         ParameterPath parameterPath = new ParameterPath(rule);
+        int pathSize = cast(int)parameterPath.paths.length;
+        Map!(ParameterPath, Set!(Router)) p = _parameterPath.get(pathSize);
+        if(p is null)
+        {
+            p = new HashMap!(ParameterPath, Set!(Router))();
+            _parameterPath.put(pathSize, p);
+        }
+
+        Set!(Router) r = p.get(parameterPath);
+        if(r is null)
+        {
+            r = new HashSet!(Router)();
+            p.put(parameterPath, r);
+        }
+        r.add(router);
         // parameterPath().computeIfAbsent(parameterPath.paths.size(), k -> new HashMap<>())
         //                .computeIfAbsent(parameterPath, k -> new HashSet<>())
         //                .add(router);
-        implementationMissing();
     }
 
     override

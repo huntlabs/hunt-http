@@ -4,9 +4,13 @@ import hunt.http.server.http.router.Matcher;
 import hunt.http.server.http.router.Router;
 
 import hunt.container;
+import hunt.util.exception;
+
+import kiss.logger;
 
 import std.conv;
 import std.regex;
+
 
 /**
  * 
@@ -70,31 +74,26 @@ abstract class AbstractRegexMatcher : Matcher {
         Set!Router routers = new HashSet!Router();
         Map!(Router, Map!(string, string)) parameters = new HashMap!(Router, Map!(string, string))();
 
-        // regexMap.forEach((rule, routerSet) 
-        foreach(rule, routerSet; _regexMap)
+        foreach(RegexRule rule, Set!Router routerSet; _regexMap)
         {
+            // tracef("v=%s, pattern=%s", value, rule.rule);
             RegexMatch!string m = matchAll(value, rule.pattern);
 
             if (m.empty) 
                 continue;
 
             routers.addAll(routerSet);
-            // m = rule.pattern.matcher(value);
-            // FIXME: Needing refactor or cleanup -@zxp at 7/24/2018, 6:32:00 PM
-            // 
 
             Map!(string, string) param = new HashMap!(string, string)();
-            int i=0;
             foreach(Captures!string item; m)
             {
-                param.put("group" ~ i.to!string(), item.front);
-                i++;
+                // tracef("front:%s, length:%d", item.front, item.length);
+                for (size_t i = 1; i <item.length; i++) {
+                    // tracef("%d => %s", i, item[i]);
+                    param.put("group" ~ i.to!string(), item[i]);
+                }                
             }
-            // while (m.find()) {
-            //     for (int i = 1; i <= m.groupCount(); i++) {
-            //         param.put("group" ~ i.to!string(), m.group(i));
-            //     }
-            // }
+
             if (!param.isEmpty()) {
                 foreach(router; routerSet)
                     parameters.put(router, param);
@@ -108,5 +107,6 @@ abstract class AbstractRegexMatcher : Matcher {
     }
 
 
-    MatchType getMatchType();
+    MatchType getMatchType() { implementationMissing(); return MatchType.PATH; }
+
 }

@@ -1,4 +1,4 @@
-module hunt.http.server.http.router.handler.error.DefaultErrorResponseHandlerLoader;
+module hunt.http.server.http.router.handler.DefaultErrorResponseHandlerLoader;
 
 // import hunt.http.utils.ServiceUtils;
 import kiss.logger;
@@ -107,6 +107,7 @@ class DefaultErrorResponseHandlerLoader {
         // handler = ServiceUtils.loadService(AbstractErrorResponseHandler.class, new DefaultErrorResponseHandler());
         // info("load AbstractErrorResponseHandler, selected -> %s", handler.getClass().getName());
         implementationMissing(false);
+        handler = new DefaultErrorResponseHandler();
     }
 
     AbstractErrorResponseHandler getHandler() {

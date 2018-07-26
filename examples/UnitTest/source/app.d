@@ -24,6 +24,8 @@ import test.codec.http2.decode.HTTP2DecoderTest;
 
 import test.codec.http2.encode.URLEncodedTest;
 
+import test.http.router.TestMatcher;
+
 import hunt.util.exception;
 import kiss.logger;
 import hunt.http.codec.http.model.HttpHeader;
@@ -32,6 +34,7 @@ void main()
 {
 
 	// testHpackDecoder();
+	testUnits!TestMatcher(); 
 
 	// **********************
 	// bug
@@ -64,7 +67,7 @@ void main()
 	// test.codec.http2.decode.*
 	// **********************
 	
-	testUnits!HttpParserTest(); 
+	// testUnits!HttpParserTest(); 
 	// testUnits!HTTP2DecoderTest();
 
 	// **********************

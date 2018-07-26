@@ -5,9 +5,10 @@ import hunt.http.server.http.router.HTTPSession;
 import hunt.http.codec.http.model;
 import hunt.http.server.http.SimpleRequest;
 import hunt.http.server.http.SimpleResponse;
-import hunt.http.server.http.router.handler.error.DefaultErrorResponseHandlerLoader;
+import hunt.http.server.http.router.handler.DefaultErrorResponseHandlerLoader;
 
 import hunt.util.concurrent.Promise;
+import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.common;
 
@@ -301,19 +302,19 @@ import std.conv;
 
 abstract class RoutingContext : Closeable {
 
-    string getAttribute(string key);
+    string getAttribute(string key) { implementationMissing(); return null;}
 
-    string setAttribute(string key, string value);
+    string setAttribute(string key, string value) { implementationMissing(); return null;}
 
-    string removeAttribute(string key);
+    string removeAttribute(string key) { implementationMissing(); return null;}
 
-    string[string] getAttributes();
+    string[string] getAttributes() { implementationMissing(); return null;}
 
-    SimpleResponse getResponse();
+    SimpleResponse getResponse() { implementationMissing(); return null;}
 
-    SimpleResponse getAsyncResponse();
+    SimpleResponse getAsyncResponse() { implementationMissing(); return null;}
 
-    SimpleRequest getRequest();
+    SimpleRequest getRequest() { implementationMissing(); return null; }
 
     int getConnectionId() {
         return getRequest().getConnection().getSessionId();
@@ -343,7 +344,7 @@ abstract class RoutingContext : Closeable {
      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
      * @return RoutingContext
      */
-    RoutingContext onContent(Action1!ByteBuffer content);
+    RoutingContext onContent(Action1!ByteBuffer content) { implementationMissing(); return null;}
 
     /**
      * Set the HTTP body packet complete callback.
@@ -351,7 +352,7 @@ abstract class RoutingContext : Closeable {
      * @param contentComplete The HTTP body packet complete callback.
      * @return RoutingContext
      */
-    RoutingContext onContentComplete(Action1!(SimpleRequest) contentComplete);
+    RoutingContext onContentComplete(Action1!(SimpleRequest) contentComplete) { implementationMissing(); return null;}
 
     /**
      * Set the HTTP message complete callback.
@@ -359,28 +360,28 @@ abstract class RoutingContext : Closeable {
      * @param messageComplete the HTTP message complete callback.
      * @return RoutingContext
      */
-    RoutingContext onMessageComplete(Action1!(SimpleRequest) messageComplete);
+    RoutingContext onMessageComplete(Action1!(SimpleRequest) messageComplete) { implementationMissing(); return null;}
 
     /**
      * If return true, it represents you has set a HTTP body data receiving callback.
      *
      * @return If return true, it represents you has set a HTTP body data receiving callback
      */
-    bool isAsynchronousRead();
+    bool isAsynchronousRead() { implementationMissing(); return false;}
 
     /**
      * Execute the next handler.
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool next();
+    bool next() { implementationMissing(); return false;}
 
     /**
      * If return false, it represents current handler is the last.
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool hasNext();
+    bool hasNext() { implementationMissing(); return false;}
 
     // <T> RoutingContext complete(Promise<T> promise);
 
@@ -399,9 +400,9 @@ abstract class RoutingContext : Closeable {
     // }
 
     
-    void succeed(bool t);
+    void succeed(bool t) { implementationMissing(); }
 
-    void fail(Exception x);
+    void fail(Exception x) { implementationMissing(); }
 
 
     // request wrap
@@ -509,15 +510,15 @@ abstract class RoutingContext : Closeable {
     }
 
     // HTTP body API
-    string getParameter(string name);
+    string getParameter(string name)  { implementationMissing(); return null; }
 
     // Optional!string getParamOpt(string name) {
     //     return Optional.ofNullable(getParameter(name));
     // }
 
-    List!string getParameterValues(string name);
+    List!string getParameterValues(string name) { implementationMissing(); return null; }
 
-    Map!(string, List!string) getParameterMap();
+    Map!(string, List!string) getParameterMap() { implementationMissing(); return null; }
 
     // Collection!Part getParts();
 
@@ -527,9 +528,9 @@ abstract class RoutingContext : Closeable {
 
     // BufferedReader getBufferedReader();
 
-    string getStringBody(string charset);
+    string getStringBody(string charset) { implementationMissing(); return null; }
 
-    string getStringBody();
+    string getStringBody() { implementationMissing(); return null; }
 
     // <T> T getJsonBody(Class<T> clazz);
 
@@ -577,13 +578,13 @@ abstract class RoutingContext : Closeable {
 
     // CompletableFuture<bool> updateSession(HTTPSession httpSession);
 
-    bool isRequestedSessionIdFromURL();
+    bool isRequestedSessionIdFromURL()  { implementationMissing(); return false; }
 
-    bool isRequestedSessionIdFromCookie();
+    bool isRequestedSessionIdFromCookie(){ implementationMissing(); return false; }
 
-    string getRequestedSessionId();
+    string getRequestedSessionId() { implementationMissing(); return ""; }
 
-    string getSessionIdParameterName();
+    string getSessionIdParameterName() { implementationMissing(); return ""; }
 
     // Template API
     // void renderTemplate(string resourceName, Object scope);

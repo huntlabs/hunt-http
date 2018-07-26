@@ -1,15 +1,17 @@
 module hunt.http.server.http.router.impl.AbstractPatternMatcher;
 
-
 import hunt.http.server.http.router.Matcher;
 import hunt.http.server.http.router.Router;
-// import hunt.http.utils.pattern.Pattern;
 
 import hunt.util.exception;
 import hunt.container;
 
+import kiss.logger;
+import hunt.util.string;
+
 import std.conv;
 import std.regex;
+import std.array;
 
 /**
  * 
@@ -20,11 +22,12 @@ abstract class AbstractPatternMatcher : Matcher {
 
     protected static class PatternRule {
         string rule;
-        Regex!char pattern;
+        Pattern pattern;
 
         protected this(string rule) {
             this.rule = rule;
-            pattern = regex(rule); // Pattern.compile(rule, "*");
+            string[] rules = rule.split("*").array;
+            pattern = Pattern.compile(rule, "*");
         }
 
         override
@@ -41,19 +44,23 @@ abstract class AbstractPatternMatcher : Matcher {
         }
     }
 
-    protected Map!(PatternRule, Set!(Router)) patternMap() {
-        if (_patternMap is null) {
-            _patternMap = new HashMap!(PatternRule, Set!(Router))();
-        }
-        return _patternMap;
+    this()
+    {
+        _patternMap = new HashMap!(PatternRule, Set!(Router))();
     }
 
-    abstract MatchType getMatchType();
+    // protected Map!(PatternRule, Set!(Router)) patternMap() {
+    //     if (_patternMap is null) {
+    //         _patternMap = new HashMap!(PatternRule, Set!(Router))();
+    //     }
+    //     return _patternMap;
+    // }
+
+    abstract MatchType getMatchType() { implementationMissing(); return MatchType.PATH; }
 
     void add(string rule, Router router) {
-        // patternMap().computeIfAbsent(new PatternRule(rule), k => new HashSet<>()).add(router);
-        // if(patternMap)
-        implementationMissing();
+        _patternMap.computeIfAbsent(new PatternRule(rule), k => new HashSet!Router()).add(router);
+        //trace("_patternMap size: ", _patternMap.size()) ;
     }
 
     MatchResult match(string v) {
@@ -64,20 +71,20 @@ abstract class AbstractPatternMatcher : Matcher {
         Set!Router routers = new HashSet!Router();
         Map!(Router, Map!(string, string)) parameters = new HashMap!(Router, Map!(string, string))();
 
-        // patternMap.forEach((rule, routerSet) 
-        foreach(rule, routerSet; patternMap)
+        foreach(PatternRule rule, Set!(Router) routerSet; _patternMap)
         {
-            RegexMatch!string strings = matchAll(v, rule.pattern);
-            if (strings.empty) 
+            // tracef("v=%s, pattern=%s", v, rule.rule);
+            string[] strings = rule.pattern.match(v);
+            if (strings.length == 0) 
                 continue;
 
             routers.addAll(routerSet);
-
             Map!(string, string) param = new HashMap!(string, string)();
 
             int i=0;
-            foreach(Captures!string item; strings) {
-                param.put("param" ~ i.to!string(), item.front);
+            foreach(string item; strings) {
+                // tracef("%d => %s", i, item);
+                param.put("param" ~ i.to!string(), item);
                 i++;
             }
 
