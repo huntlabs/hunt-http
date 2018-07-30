@@ -2,10 +2,10 @@ module hunt.http.codec.http.stream.HTTP2Configuration;
 
 import hunt.http.codec.http.stream.FlowControlStrategy;
 
-import hunt.net.SecureSessionFactory;
+import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Config;
 import hunt.http.codec.http.model.HttpVersion;
-// import hunt.net.tcp.secure.conscrypt.ConscryptSecureSessionFactory;
+import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
 
 class HTTP2Configuration {
 
@@ -14,7 +14,7 @@ class HTTP2Configuration {
 
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
-    // private SecureSessionFactory secureSessionFactory; // = new ConscryptSecureSessionFactory();
+    private SecureSessionFactory secureSessionFactory; // = new ConscryptSecureSessionFactory();
 
     // HTTP settings
     private int maxDynamicTableSize = 4096;
@@ -37,7 +37,7 @@ class HTTP2Configuration {
 
     this()
     {
-        // secureSessionFactory = new ConscryptSecureSessionFactory();
+        secureSessionFactory = new ConscryptSecureSessionFactory();
         tcpConfiguration = new hunt.net.Config.Config();
         protocol = HttpVersion.HTTP_1_1.asString();
     }
@@ -305,18 +305,18 @@ class HTTP2Configuration {
      *
      * @return the SSL/TLS connection factory.
      */
-    // SecureSessionFactory getSecureSessionFactory() {
-    //     return secureSessionFactory;
-    // }
+    SecureSessionFactory getSecureSessionFactory() {
+        return secureSessionFactory;
+    }
 
     /**
      * Set the SSL/TLS connection factory.
      *
      * @param secureSessionFactory the SSL/TLS connection factory.
      */
-    // void setSecureSessionFactory(SecureSessionFactory secureSessionFactory) {
-    //     this.secureSessionFactory = secureSessionFactory;
-    // }
+    void setSecureSessionFactory(SecureSessionFactory secureSessionFactory) {
+        this.secureSessionFactory = secureSessionFactory;
+    }
 
     /**
      * Get the default HTTP protocol version. The value is "HTTP/2.0" or "HTTP/1.1". If the value is null,

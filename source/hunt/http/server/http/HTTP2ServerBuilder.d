@@ -5,7 +5,7 @@ import hunt.http.codec.http.model.HttpMethod;
 // import hunt.http.codec.websocket.frame.Frame;
 // import hunt.http.codec.websocket.stream.AbstractWebSocketBuilder;
 // import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.net.SecureSessionFactory;
+import hunt.net.secure.SecureSessionFactory;
 
 // import hunt.http.server.http.router.Handler;
 // import hunt.http.server.http.router.Router;

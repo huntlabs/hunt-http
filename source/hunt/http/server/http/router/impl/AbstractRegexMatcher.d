@@ -25,7 +25,7 @@ abstract class AbstractRegexMatcher : Matcher {
         
         protected this(string rule) {
             this.rule = rule;
-            pattern = regex(rule); // Pattern.compile(rule);
+            pattern = regex(rule);
         }
 
         override

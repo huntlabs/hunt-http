@@ -6,7 +6,7 @@ import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.net.AbstractConnection;
 import hunt.net.ConnectionEvent;
-import hunt.net.SecureSession;
+import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
 import hunt.util.functional;

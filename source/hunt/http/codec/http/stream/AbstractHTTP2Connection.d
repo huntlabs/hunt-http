@@ -14,7 +14,7 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.SimpleFlowControlStrategy;
 
 import hunt.net.ConnectionType;
-import hunt.net.SecureSession;
+import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
 import hunt.util.exception;

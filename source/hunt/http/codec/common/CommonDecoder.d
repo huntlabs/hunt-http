@@ -1,7 +1,7 @@
 module hunt.http.codec.common.CommonDecoder;
 
 import hunt.net.DecoderChain;
-// import hunt.net.SecureSession;
+// import hunt.net.secure.SecureSession;
 // import hunt.net.Session;
 import kiss.logger;
 

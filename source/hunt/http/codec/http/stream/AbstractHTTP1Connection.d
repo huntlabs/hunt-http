@@ -8,7 +8,7 @@ import hunt.http.codec.http.encode.Generator;
 import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.net.ConnectionType;
-import hunt.net.SecureSession;
+import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
 alias RequestHandler = HttpParser.RequestHandler;

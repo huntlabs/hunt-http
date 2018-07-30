@@ -17,7 +17,7 @@ import hunt.http.codec.http.stream;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.net.ConnectionType;
-import hunt.net.SecureSession;
+import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
 import hunt.util.functional;

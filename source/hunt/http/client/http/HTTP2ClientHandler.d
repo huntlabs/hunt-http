@@ -7,8 +7,8 @@ import hunt.http.client.http.HTTP2ClientConnection;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.AbstractHTTPHandler;
 import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.net.SecureSession;
-import hunt.net.SecureSessionFactory;
+import hunt.net.secure.SecureSession;
+import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
 
 import hunt.util.concurrent.Promise;
@@ -40,30 +40,29 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            implementationMissing();
-            // SecureSessionFactory factory = config.getSecureSessionFactory();
-            // session.attachObject(factory.create(session, true, delegate void (SecureSession sslSession) {
+            // implementationMissing();
+            SecureSessionFactory factory = config.getSecureSessionFactory();
+            SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
 
-            //     string protocol = "http/1.1";
-            //     auto p = sslSession.getApplicationProtocol();
-            //     if( p.empty)
-            //         protocol = p;
+                string protocol = "http/1.1";
+                string p = sslSession.getApplicationProtocol();
+                if(!p.empty)
+                    protocol = p;
 
-            //     // Optional.ofNullable(sslSession.getApplicationProtocol())
-            //     //                           .filter(StringUtils::hasText)
-            //     //                           .orElse("http/1.1");
-            //     info("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
-            //     switch (protocol) {
-            //         case "http/1.1":
-            //             initializeHTTP1ClientConnection(session, context, sslSession);
-            //             break;
-            //         case "h2":
-            //             initializeHTTP2ClientConnection(session, context, sslSession);
-            //             break;
-            //         default:
-            //             throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
-            //     }
-            // }));
+                infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
+                switch (protocol) {
+                    case "http/1.1":
+                        initializeHTTP1ClientConnection(session, context, sslSession);
+                        break;
+                    case "h2":
+                        initializeHTTP2ClientConnection(session, context, sslSession);
+                        break;
+                    default:
+                        throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
+                }
+            });
+
+            session.attachObject(cast(Object)secureSession);
         } else {
             if (config.getProtocol().empty) {
                 initializeHTTP1ClientConnection(session, context, null);
