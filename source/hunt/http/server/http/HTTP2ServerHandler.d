@@ -13,6 +13,7 @@ import hunt.http.codec.http.stream.AbstractHTTPHandler;
 import hunt.http.codec.http.stream.HTTP2Configuration;
 import hunt.http.codec.http.stream.HTTPConnection;
 
+import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
 
@@ -44,7 +45,7 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
     void sessionOpened(Session session) {
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
-            session.attachObject(cast(Object)factory.create(session, false, (sslSession)  {
+            SecureSession secureSession = factory.create(session, false, (sslSession)  {
                 tracef("server session %s SSL handshake finished", session.getSessionId());
                 HTTPConnection httpConnection;
                 // string protocol = Optional.ofNullable(sslSession.getApplicationProtocol())
@@ -68,7 +69,9 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
                 }
                 session.attachObject(cast(Object)httpConnection);
                 serverHTTPHandler.acceptConnection(httpConnection);
-            }));
+            });
+
+            session.attachObject(cast(Object)secureSession);
         } else 
         {
             if (!config.getProtocol().empty) {

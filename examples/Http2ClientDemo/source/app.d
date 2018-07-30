@@ -1,62 +1,76 @@
 
+import hunt.http.codec.http.model;
+
 import hunt.http.client.http.SimpleHTTPClient;
 import hunt.http.client.http.SimpleResponse;
 
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.CompletableFuture;
 
+import hunt.net.secure.SecureSessionFactory;
+import hunt.net.secure.conscrypt;
+
+import hunt.http.helper;
+import hunt.util.datetime;
 import kiss.logger;
 
+import std.datetime;
 import std.conv;
 import std.stdio;
 
+/**
+sudo apt-get install libssl-dev
+*/
+
 void main(string[] args) {
+	SimpleHTTPClient simpleHTTPClient = test(new ConscryptSecureSessionFactory());
 
-	// enum host = "127.0.0.1";
-	enum host = "10.1.222.120";
-	enum port = "3333";
-
-	SimpleHTTPClient client = new SimpleHTTPClient();
-
-	trace("step 1.....");
-	for (int i = 0; i < 1; i++) {
-		client.post("http://" ~ host ~ ":" ~ port ~ "/postData")
-				.put("RequestId", i.to!string ~ "_")
-				.bodyContent("test post data, hello foo " ~ i.to!string)
-				.submit( (SimpleResponse r) {
-					writeln(r.getStringBody());
-				});
-	}
-
-	// FIXME: Needing refactor or cleanup -@zxp at 7/23/2018, 10:40:57 AM
-	// 
-	// trace("step 2.....");
-	// for (int i = 10; i < 11; i++) {
-	// 	client.post("http://" ~ host ~ ":" ~ port ~ "/postData")
-	// 			.put("RequestId", i.to!string ~ "_")
-	// 			.bodyContent("test post data, hello foo " ~ i.to!string)
-	// 			.submit()
-	// 			.thenAccept( (SimpleResponse r) {
-	// 				writeln(r.getStringBody());
-	// 			});
-	// }
-
-	// trace("step 3.....");
-	// for (int i = 30; i < 31; i++) {
-	// 	CompletableFuture!SimpleResponse future = client
-	// 			.post("http://" ~ host ~ ":" ~ port ~ "/postData")
-	// 			.put("RequestId", i.to!string ~ "_")
-	// 			.bodyContent("test post data, hello foo " ~ i.to!string)
-	// 			.submit();
-				
-	// 	SimpleResponse r = future.get();
-	// 	if( r is null)
-	// 	{
-	// 		warning("no response");
-	// 	}
-	// 	else
-	// 		writeln(r.getStringBody());
-	// }
-
-	client.stop();
+	// simpleHTTPClient = test(new JdkSecureSessionFactory());
+	simpleHTTPClient.stop();
 }
+
+
+// string[] urlList = ["https://www.putao.com/",
+//             "https://segmentfault.com"];
+
+string[] urlList = ["https://10.1.222.120/"];
+
+long getMillisecond(long v)
+{
+    return convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(v);
+}
+
+SimpleHTTPClient test(SecureSessionFactory secureSessionFactory) {
+    long testStart = Clock.currStdTime;
+    tracef("The secure session factory is " ~ typeid(secureSessionFactory).name);
+    SimpleHTTPClient client = createHTTPsClient(secureSessionFactory);
+    // for (int i = 0; i < 5; i++) {
+    //     CountDownLatch latch = new CountDownLatch(urlList.size());
+    foreach(string url; urlList)
+    {
+        long start = Clock.currStdTime;
+        client.get(url).submit().thenAccept((SimpleResponse resp) {
+            long end = Clock.currStdTime;
+            if (resp.getStatus() == HttpStatus.OK_200) {
+                tracef("The " ~ url ~ " is OK. " ~
+                        "Size: " ~ resp.getStringBody().length.to!string() ~ ". " ~
+                        "Time: " ~ getMillisecond(end - start).to!string() ~ ". " ~
+                        "Version: " ~ resp.getHttpVersion().toString());
+            } else {
+                tracef("The " ~ url ~ " is failed. " ~
+                        "Status: " ~ resp.getStatus().to!string() ~ ". " ~
+                        "Time: " ~ getMillisecond(end - start).to!string() ~ ". " ~
+                        "Version: " ~ resp.getHttpVersion().toString());
+            }
+                // latch.countDown();
+            });
+        }
+			
+        //     latch.await();
+        //     tracef("test " ~ i.to!string() ~ " completion. ");
+        // }
+        long testEnd = Clock.currStdTime;
+        tracef("The secure session factory " ~ typeid(secureSessionFactory).name ~ " test completed. " ~ 
+            getMillisecond(testEnd - testStart).to!string());
+        return client;
+    }
