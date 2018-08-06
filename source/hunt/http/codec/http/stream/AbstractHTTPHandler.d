@@ -6,6 +6,8 @@ import hunt.http.codec.http.stream.AbstractHTTPConnection;
 // import hunt.http.codec.websocket.stream.impl.WebSocketConnectionImpl;
 import hunt.net.Handler;
 import hunt.net.Session;
+
+import hunt.util.exception;
 import kiss.logger;
 
 import std.exception;
@@ -20,6 +22,7 @@ abstract class AbstractHTTPHandler : Handler {
 
     override
     void messageReceived(Session session, Object message) {
+        implementationMissing(false);
     }
 
     override
@@ -30,9 +33,10 @@ abstract class AbstractHTTPHandler : Handler {
             if (attachment is null) {
                 return;
             }
-            if (typeid(attachment) == typeid(AbstractHTTPConnection)) {
+            AbstractHTTPConnection httpConnection = cast(AbstractHTTPConnection) attachment;
+            // if (typeid(attachment) == typeid(AbstractHTTPConnection)) {
+            if (httpConnection !is null ) {
                 try {
-                    AbstractHTTPConnection httpConnection = cast(AbstractHTTPConnection) attachment;
                     httpConnection.notifyException(t);
                 } catch (Exception e) {
                     errorf("The http connection exception listener error: %s", e.message);

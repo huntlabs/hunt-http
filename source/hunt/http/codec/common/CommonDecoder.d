@@ -2,64 +2,72 @@ module hunt.http.codec.common.CommonDecoder;
 
 import hunt.net.DecoderChain;
 // import hunt.net.secure.SecureSession;
-// import hunt.net.Session;
+
+import hunt.net.AbstractConnection;
+import hunt.net.ConnectionType;
+import hunt.net.DecoderChain;
+import hunt.net.Session;
+import hunt.net.secure.SecureSession;
+
+import hunt.util.exception;
+
 import kiss.logger;
-
-
 import hunt.container.ByteBuffer;
 
 /**
  * 
  */
-class CommonDecoder :DecoderChain
+class CommonDecoder : DecoderChain
 {
-
-    // 
 
     this(DecoderChain next) {
         super(next);
     }
 
-    // override
-    // void decode(ByteBuffer buf, Session session) throws Exception {
-    //     Object attachment = session.getAttachment();
-    //     if (attachment instanceof AbstractConnection) {
-    //         AbstractConnection connection = (AbstractConnection) attachment;
-    //         if (connection.isEncrypted()) {
-    //             ByteBuffer plaintext = connection.decrypt(buf);
-    //             if (plaintext != null && plaintext.hasRemaining() && next != null) {
-    //                 next.decode(plaintext, session);
-    //             }
-    //         } else {
-    //             if (next != null) {
-    //                 next.decode(buf, session);
-    //             }
-    //         }
-    //     } else if (attachment instanceof SecureSession) { // TLS handshake
-    //         SecureSession secureSession = (SecureSession) session.getAttachment();
-    //         ByteBuffer plaintext = secureSession.read(buf);
+    override
+    void decode(ByteBuffer buf, Session session) {
+        Object attachment = session.getAttachment();
+        trace("xxxxxx=>", typeid(attachment));
+        AbstractConnection connection = cast(AbstractConnection) attachment;
+        SecureSession secureSession = cast(SecureSession) attachment;
 
-    //         if (plaintext != null && plaintext.hasRemaining()) {
-    //             version(HuntDebugMode) {
-    //                 tracef("The session %s handshake finished and received cleartext size %s",
-    //                         session.getSessionId(), plaintext.remaining());
-    //             }
-    //             if (session.getAttachment() instanceof AbstractConnection) {
-    //                 if (next != null) {
-    //                     next.decode(plaintext, session);
-    //                 }
-    //             } else {
-    //                 throw new IllegalStateException("the connection has not been created");
-    //             }
-    //         } else {
-    //             version(HuntDebugMode) {
-    //                 if (secureSession.isHandshakeFinished()) {
-    //                     tracef("The ssl session %s need more data", session.getSessionId());
-    //                 } else {
-    //                     tracef("The ssl session %s is shaking hand", session.getSessionId());
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+        if (connection !is null) {
+            if (connection.isEncrypted()) {
+                ByteBuffer plaintext = connection.decrypt(buf);
+                if (plaintext !is null && plaintext.hasRemaining() && next !is null) {
+                    next.decode(plaintext, session);
+                }
+            } else {
+                if (next !is null) {
+                    next.decode(buf, session);
+                }
+            }
+        } else if (secureSession !is null) { // TLS handshake
+            ByteBuffer plaintext = secureSession.read(buf);
+
+            if (plaintext !is null && plaintext.hasRemaining()) {
+                // version(HuntDebugMode) 
+                {
+                    tracef("The session %s handshake finished and received cleartext size %s",
+                            session.getSessionId(), plaintext.remaining());
+                }
+                if (connection !is null) {
+                    if (next !is null) {
+                        next.decode(plaintext, session);
+                    }
+                } else {
+                    throw new IllegalStateException("the connection has not been created");
+                }
+            } else {
+                // version(HuntDebugMode) 
+                {
+                    if (secureSession.isHandshakeFinished()) {
+                        tracef("The ssl session %s need more data", session.getSessionId());
+                    } else {
+                        tracef("The ssl session %s is shaking hand", session.getSessionId());
+                    }
+                }
+            }
+        }
+    }
 }

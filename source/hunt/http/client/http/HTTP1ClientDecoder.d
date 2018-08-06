@@ -14,6 +14,8 @@ import hunt.net.Session;
 import hunt.util.exception;
 
 import hunt.container.ByteBuffer;
+
+import kiss.logger;
 import std.conv;
 
 
@@ -33,10 +35,17 @@ class HTTP1ClientDecoder : DecoderChain {
     override
     void decode(ByteBuffer buffer, Session session) {
         ByteBuffer buf = buffer; // toHeapBuffer(buffer);
+        Object attachment = session.getAttachment();
         AbstractConnection abstractConnection = cast(AbstractConnection) session.getAttachment();
+        if(abstractConnection is null)
+        {
+            throw new IllegalStateException("Client connection is null! The actual type is: " 
+                ~ typeid(attachment).name);
+        }
+
         switch (abstractConnection.getConnectionType()) {
             case ConnectionType.HTTP1: {
-                HTTP1ClientConnection http1Connection = cast(HTTP1ClientConnection) session.getAttachment();
+                HTTP1ClientConnection http1Connection = cast(HTTP1ClientConnection) abstractConnection;
                 HttpParser parser = http1Connection.getParser();
                 while (buf.hasRemaining()) {
                     parser.parseNext(buf);
