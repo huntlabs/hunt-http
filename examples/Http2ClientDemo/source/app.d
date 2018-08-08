@@ -33,7 +33,7 @@ void main(string[] args) {
 // string[] urlList = ["https://www.putao.com/",
 //             "https://segmentfault.com"];
 
-string[] urlList = ["https://10.1.222.120/"];
+string[] urlList = ["https://10.1.222.120:446/"];
 
 long getMillisecond(long v)
 {
@@ -63,14 +63,14 @@ SimpleHTTPClient test(SecureSessionFactory secureSessionFactory) {
                         "Version: " ~ resp.getHttpVersion().toString());
             }
                 // latch.countDown();
-            });
-        }
-			
-        //     latch.await();
-        //     tracef("test " ~ i.to!string() ~ " completion. ");
-        // }
-        long testEnd = Clock.currStdTime;
-        tracef("The secure session factory " ~ typeid(secureSessionFactory).name ~ " test completed. " ~ 
-            getMillisecond(testEnd - testStart).to!string());
-        return client;
+        });
     }
+			
+    //     latch.await();
+    //     tracef("test " ~ i.to!string() ~ " completion. ");
+    // }
+    // long testEnd = Clock.currStdTime;
+    // tracef("The secure session factory " ~ typeid(secureSessionFactory).name ~ " test completed. " ~ 
+    //     getMillisecond(testEnd - testStart).to!string());
+    return client;
+}

@@ -27,7 +27,7 @@ class CommonDecoder : DecoderChain
     override
     void decode(ByteBuffer buf, Session session) {
         Object attachment = session.getAttachment();
-        trace("xxxxxx=>", typeid(attachment));
+        trace("attachment type: ", typeid(attachment));
         AbstractConnection connection = cast(AbstractConnection) attachment;
         SecureSession secureSession = cast(SecureSession) attachment;
 
@@ -46,8 +46,7 @@ class CommonDecoder : DecoderChain
             ByteBuffer plaintext = secureSession.read(buf);
 
             if (plaintext !is null && plaintext.hasRemaining()) {
-                // version(HuntDebugMode) 
-                {
+                version(HuntDebugMode) {
                     tracef("The session %s handshake finished and received cleartext size %s",
                             session.getSessionId(), plaintext.remaining());
                 }
@@ -59,7 +58,7 @@ class CommonDecoder : DecoderChain
                     throw new IllegalStateException("the connection has not been created");
                 }
             } else {
-                // version(HuntDebugMode) 
+                version(HuntDebugMode) 
                 {
                     if (secureSession.isHandshakeFinished()) {
                         tracef("The ssl session %s need more data", session.getSessionId());

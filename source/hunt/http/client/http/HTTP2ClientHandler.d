@@ -40,7 +40,6 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            // implementationMissing();
             SecureSessionFactory factory = config.getSecureSessionFactory();
             SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
 

@@ -775,7 +775,9 @@ class SimpleHTTPClient  : AbstractLifeCycle {
         HTTPClientConnection connection = createConnection(reqBuilder);
         if(connection is null)
         {
-            warning("Connection failed");
+            // TODO: Tasks pending completion -@zxp at 8/7/2018, 5:44:10 PM
+            // 
+            // warning("Connection failed");
             return;
         }
 
@@ -847,8 +849,6 @@ class SimpleHTTPClient  : AbstractLifeCycle {
 
     protected void send(RequestBuilder reqBuilder, 
         HTTPClientConnection connection, ClientHTTPHandler handler) {
-
-        // implementationMissing();
 
         List!(ByteBuffer) requestBody = reqBuilder.requestBody;
 
@@ -1050,6 +1050,17 @@ class SimpleHTTPClient  : AbstractLifeCycle {
         int port = request.port;
 
         Completable!HTTPClientConnection connFuture = http2Client.connect(host, port);
+
+        // import core.thread;
+        // import std.datetime;
+        // auto r = connFuture.get();
+        // while(r is null)
+        // {
+        //     Thread.sleep(dur!("msecs")(100));
+        //     trace("xxxxx");
+        //     r = connFuture.get();
+        // }
+
         return connFuture.get();
     }
 

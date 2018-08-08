@@ -31,7 +31,7 @@ class HTTP2Client  : AbstractLifeCycle {
 
     private Client client;
     private Map!(int, HTTP2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
-    private int sessionId = 0; // new int(0);
+    private __gshared static int sessionId = 0; // new int(0);
     private HTTP2Configuration http2Configuration;
 
     this(HTTP2Configuration c) {
@@ -55,17 +55,22 @@ class HTTP2Client  : AbstractLifeCycle {
         client.connectHandler((NetSocket sock){
             infof("A connection created with %s:%d", _host, _port);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
-            session.handler( ( in ubyte[] data) {      
+
+            session.handler( (const ubyte[] data) {                    
+                version(HuntDebugMode) {
                     infof("data received (%d bytes): ", data.length); 
                     if(data.length<=64)
                         infof("%(%02X %)", data[0 .. $]);
                     else
-                        infof("%(%02X %)", data[0 .. 64]);
-                    // infof(cast(string) data); 
+                    {
+                        infof("%(%02X %) ...", data[0 .. 64]);
+                        // debug { infof("%(%02X %)", data[0 .. $]); }
+                        // else{ infof("%(%02X %) ...", data[0 .. 64]);  }
+                    }
+                }
 
-                    ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
-
-                    commonDecoder.decode(buf, session);
+                ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
+                commonDecoder.decode(buf, session);
 
                     // http11ClientDecoder.decode(buf, session);
                 }
@@ -89,13 +94,16 @@ class HTTP2Client  : AbstractLifeCycle {
         _host = host;
         _port = port;        
         start();
-        HTTP2ClientContext context = new HTTP2ClientContext();
-        context.setPromise(promise);
-        context.setListener(listener);
+        clientContext = new HTTP2ClientContext();
+        clientContext.setPromise(promise);
+        clientContext.setListener(listener);
         int id = sessionId++;
-        http2ClientContext.put(0, context);
-        client.connect(host, port);
+        tracef("Client sessionId = %d", id);
+        http2ClientContext.put(id, clientContext);
+        client.connect(host, port, id);
     }
+
+    HTTP2ClientContext clientContext;
 
     private string _host;
     private int _port;
