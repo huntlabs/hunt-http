@@ -10,6 +10,7 @@ import hunt.http.server.http.router.Router;
 import hunt.http.server.http.router.impl.RouterManagerImpl;
 
 import hunt.container;
+import hunt.util.Comparator;
 import hunt.util.exception;
 import hunt.util.string;
 
@@ -208,14 +209,26 @@ class RouterImpl : Router {
         return _handler;
     }
 
-    override
-    int compareTo(Router o) {
+    // int compareTo(Router o) {
+    //     return compare(id, o.getId());
+    // }
+
+    int opCmp(Router o)
+    {
         return compare(id, o.getId());
     }
 
-    static int compare(int x, int y) {
-        return (x < y) ? -1 : ((x == y) ? 0 : 1);
+    override int opCmp(Object o)
+    {
+        Router r = cast(Router)o;
+        if(r is null)
+                throw new NullPointerException();
+        return opCmp(r);
     }
+
+    // static int compare(int x, int y) {
+    //     return (x < y) ? -1 : ((x == y) ? 0 : 1);
+    // }
 
     override
     bool opEquals(Object o) {

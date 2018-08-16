@@ -1,5 +1,7 @@
 module hunt.http.codec.http.model.HttpComplianceSection;
 
+import std.algorithm;
+
 struct HttpComplianceSection {
     enum HttpComplianceSection Null = HttpComplianceSection("Null", "", "Null");
     enum HttpComplianceSection CASE_INSENSITIVE_FIELD_VALUE_CACHE = HttpComplianceSection("CASE_INSENSITIVE_FIELD_VALUE_CACHE", "", "Use case insensitive field value cache");
@@ -34,6 +36,9 @@ struct HttpComplianceSection {
         return hashOf(_name);
     }  
 
+    int opCmp(ref HttpComplianceSection b) {
+        return std.algorithm.cmp(_name, b._name);
+    }
 
     __gshared HttpComplianceSection[string] values;
 

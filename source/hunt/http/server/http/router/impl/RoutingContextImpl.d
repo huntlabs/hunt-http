@@ -23,15 +23,15 @@ import std.container;
 class RoutingContextImpl : RoutingContext {
 
     private SimpleRequest request;
-    private Array!(RouterManager.RouterMatchResult) routers;
-    private  RouterManager.RouterMatchResult current;
+    private Array!(RouterMatchResult) routers;
+    private  RouterMatchResult current;
     private  HTTPBodyHandlerSPI httpBodyHandlerSPI;
     private  HTTPSessionHandlerSPI httpSessionHandlerSPI;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private  bool asynchronousRead;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
 
-    this(SimpleRequest request, Array!(RouterManager.RouterMatchResult) routers) {
+    this(SimpleRequest request, Array!(RouterMatchResult) routers) {
         this.request = request;
         this.routers = routers;
     }
@@ -106,7 +106,7 @@ class RoutingContextImpl : RoutingContext {
     bool next() {
         // current = routers.pollFirst();
         // return Optional.ofNullable(current)
-        //                .map(RouterManager.RouterMatchResult::getRouter)
+        //                .map(RouterMatchResult::getRouter)
         //                .map(c -> (RouterImpl) c)
         //                .map(RouterImpl::getHandler)
         //                .map(handler -> {

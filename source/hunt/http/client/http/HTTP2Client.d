@@ -98,7 +98,7 @@ class HTTP2Client  : AbstractLifeCycle {
         clientContext.setPromise(promise);
         clientContext.setListener(listener);
         int id = sessionId++;
-        tracef("Client sessionId = %d", id);
+        version(HuntDebugMode) tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);
     }

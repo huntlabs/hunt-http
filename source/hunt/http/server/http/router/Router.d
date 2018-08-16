@@ -50,4 +50,5 @@ interface Router : Comparable!Router {
 
     Router disable();
 
+    // int opCmp(Router o);
 }
