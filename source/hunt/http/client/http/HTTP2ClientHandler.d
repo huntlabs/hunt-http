@@ -45,7 +45,9 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
 
                 string protocol = "http/1.1";
                 string p = sslSession.getApplicationProtocol();
-                if(!p.empty)
+                if(p.empty)
+                    warningf("The selected application protocol is empty. now use default: %s", protocol);
+                else
                     protocol = p;
 
                 infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
@@ -87,7 +89,12 @@ class HTTP2ClientHandler : AbstractHTTPHandler {
         try {
             HTTP1ClientConnection http1ClientConnection = new HTTP1ClientConnection(config, session, sslSession);
             session.attachObject(http1ClientConnection);
-            context.getPromise().succeeded(http1ClientConnection);
+            // context.getPromise().succeeded(http1ClientConnection);
+            import hunt.http.client.http.HTTPClientConnection;
+            Promise!(HTTPClientConnection) promise  = context.getPromise();
+            infof("Promise id = %s", promise.id);
+            promise.succeeded(http1ClientConnection);
+
         } catch (Exception t) {
             context.getPromise().failed(t);
         } finally {

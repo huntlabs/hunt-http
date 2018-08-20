@@ -126,7 +126,6 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
     void send(Request request, ClientHTTPHandler handler) {
         Promise!(HTTPOutputStream) promise = new class Promise!(HTTPOutputStream) {
 
-            override
             void succeeded(HTTPOutputStream output) {
                 try {
                     output.close();
@@ -136,10 +135,11 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
 
             }
 
-            override
             void failed(Exception x) {
                 errorf("write data unsuccessfully", x);
             }
+
+            string id() { return "HTTPOutputStream close"; }
         };
 
         this.request(request, true, promise, handler);
@@ -157,7 +157,6 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
 
         Promise!(HTTPOutputStream) promise = new class Promise!(HTTPOutputStream) {
 
-            override
             void succeeded(HTTPOutputStream output) {
                 try {
                     output.writeWithContentLength(buffers);
@@ -166,10 +165,11 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
                 }
             }
 
-            override
             void failed(Exception x) {
                 errorf("write data unsuccessfully", x);
             }
+
+            string id() { return "writeWithContentLength"; }
         };
 
         send(request, promise, handler);
@@ -187,7 +187,7 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
         send(request, promise, handler);
         try {
             return promise.get();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             errorf("get http output stream unsuccessfully", e);
             return null;
         }

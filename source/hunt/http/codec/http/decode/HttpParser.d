@@ -1233,8 +1233,10 @@ class HttpParser {
      * @return True if an {@link RequestHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
-        version(HuntDebugMode)
+        version(HuntDebugMode) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
+            tracef("buffer: %s", BufferUtils.toHexString(buffer));
+        }
         try {
             // Start a request/response
             if (_state == State.START) {

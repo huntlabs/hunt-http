@@ -27,7 +27,10 @@ class CommonDecoder : DecoderChain
     override
     void decode(ByteBuffer buf, Session session) {
         Object attachment = session.getAttachment();
-        trace("attachment type: ", typeid(attachment));
+        version(HuntDebugMode) {
+            tracef("decoding... session attachment: %s", typeid(attachment).name);
+        }
+
         AbstractConnection connection = cast(AbstractConnection) attachment;
         SecureSession secureSession = cast(SecureSession) attachment;
 

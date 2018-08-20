@@ -772,42 +772,39 @@ class SimpleHTTPClient  : AbstractLifeCycle {
 
     protected void send(RequestBuilder reqBuilder) {
 
-        HTTPClientConnection connection = createConnection(reqBuilder);
-        if(connection is null)
-        {
-            // TODO: Tasks pending completion -@zxp at 8/7/2018, 5:44:10 PM
-            // 
-            // warning("Connection failed");
-            return;
-        }
+        string host = reqBuilder.host;
+        int port = reqBuilder.port;
 
-        if (connection.getHttpVersion() == HttpVersion.HTTP_2) {
-            if (reqBuilder.settingsFrame !is null) {
-                HTTP2ClientConnection http2ClientConnection = cast(HTTP2ClientConnection) connection;
-                http2ClientConnection.getHttp2Session().settings(reqBuilder.settingsFrame, Callback.NOOP);
+        tracef("Creating connection: %s:%d", host, port);
+
+        Completable!HTTPClientConnection connFuture = http2Client.connect(host, port);
+        connFuture.thenAccept( (HTTPClientConnection connection) {
+            infof("Connection created: %s:%d, using %s", host, port, typeid(cast(Object)connection));
+
+            if (connection.getHttpVersion() == HttpVersion.HTTP_2) {
+                if (reqBuilder.settingsFrame !is null) {
+                    HTTP2ClientConnection http2ClientConnection = cast(HTTP2ClientConnection) connection;
+                    http2ClientConnection.getHttp2Session().settings(reqBuilder.settingsFrame, Callback.NOOP);
+                }
             }
-        }
-        // version(HuntDebugMode) {
-        //     tracef("take the connection %s from pool, released: %s, %s", connection.getSessionId(), pooledConn.isReleased(), connection.getHttpVersion());
-        // }
 
-        if (reqBuilder.connect !is null) {
-            CompletableFuture!(bool) r = reqBuilder.connect(connection);
+            if (reqBuilder.connect !is null) {
+                CompletableFuture!(bool) r = reqBuilder.connect(connection);
 
-            bool isSendReq = r.get();
-            if (isSendReq) {
-                send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
+                bool isSendReq = r.get();
+                if (isSendReq) {
+                    send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
+                } else {
+                    IO.close(connection);
+                }
+                // .exceptionally( (ex) {
+                //     IO.close(connection);
+                // });
             } else {
-                IO.close(connection);
+                send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
             }
-            // .exceptionally( (ex) {
-            //     IO.close(connection);
-            // });
-        } else {
 
-            // implementationMissing(false);
-            send(reqBuilder, connection, createClientHTTPHandler(reqBuilder, connection));
-        }
+        });
 
 
         // Timer.Context resTimerCtx = responseTimer.time();
@@ -847,8 +844,7 @@ class SimpleHTTPClient  : AbstractLifeCycle {
         // });
     }
 
-    protected void send(RequestBuilder reqBuilder, 
-        HTTPClientConnection connection, ClientHTTPHandler handler) {
+    protected void send(RequestBuilder reqBuilder, HTTPClientConnection connection, ClientHTTPHandler handler) {
 
         List!(ByteBuffer) requestBody = reqBuilder.requestBody;
 
@@ -865,6 +861,8 @@ class SimpleHTTPClient  : AbstractLifeCycle {
                 void failed(Exception x) {
                     implementationMissing(false);
                 }
+
+                string id() { return "SimpleHttpClient HTTPOutputStream"; }
 
             };
             connection.send(reqBuilder.request, p, handler);
@@ -891,8 +889,8 @@ class SimpleHTTPClient  : AbstractLifeCycle {
         //         // errorMeter.mark();
         //         return null;
         //     });
-        } else if (reqBuilder.formUrlEncoded !is null) {
-            string bd = reqBuilder.formUrlEncoded.encode((config.getCharacterEncoding()), true);
+        } else if (reqBuilder._formUrlEncoded !is null) {
+            string bd = reqBuilder._formUrlEncoded.encode((config.getCharacterEncoding()), true);
             byte[] content = cast(byte[])bd; // StringUtils.getBytes(bd);
             connection.send(reqBuilder.request, ByteBuffer.wrap(content), handler);
         } else {
@@ -1045,24 +1043,29 @@ class SimpleHTTPClient  : AbstractLifeCycle {
         }
     }
 
-    protected HTTPClientConnection createConnection(RequestBuilder request) {
-        string host = request.host;
-        int port = request.port;
 
-        Completable!HTTPClientConnection connFuture = http2Client.connect(host, port);
+    // protected HTTPClientConnection createConnection(RequestBuilder request) {
+    //     string host = request.host;
+    //     int port = request.port;
 
-        // import core.thread;
-        // import std.datetime;
-        // auto r = connFuture.get();
-        // while(r is null)
-        // {
-        //     Thread.sleep(dur!("msecs")(100));
-        //     trace("xxxxx");
-        //     r = connFuture.get();
-        // }
+    //     tracef("Creating connection: %s:%d", host, port);
 
-        return connFuture.get();
-    }
+    //     Completable!HTTPClientConnection connFuture = http2Client.connect(host, port);
+
+    //     import core.thread;
+    //     import std.datetime;
+    //     auto r = connFuture.get();
+    //     while(r is null)
+    //     {
+    //         Thread.sleep(dur!("msecs")(15));
+    //         trace("waiting ...");
+    //         r = connFuture.get();
+    //     }
+
+    //     tracef("Connection created: %s:%d", host, port);
+
+    //     return connFuture.get();
+    // }
 
     // protected AsynchronousPool!(HTTPClientConnection) getPool(RequestBuilder request) {
     //     return poolMap.computeIfAbsent(request, &createConnectionPool);

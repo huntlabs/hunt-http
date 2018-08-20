@@ -52,8 +52,7 @@ abstract class AbstractHTTP1OutputStream :HTTPOutputStream {
         }
     }
 
-    override
-    void write(ByteBuffer data){
+    override void write(ByteBuffer data){
         if (closed)
             return;
 
@@ -88,8 +87,7 @@ abstract class AbstractHTTP1OutputStream :HTTPOutputStream {
         }
     }
 
-    override
-    void close() {
+    override void close() {
         if (closed)
             return;
 
@@ -134,6 +132,7 @@ abstract class AbstractHTTP1OutputStream :HTTPOutputStream {
             }
         } finally {
             closed = true;
+            tracef("http1 output stream closed");
         }
     }
 

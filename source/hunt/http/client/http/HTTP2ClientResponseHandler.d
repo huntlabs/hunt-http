@@ -206,7 +206,6 @@ class HTTP2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
             this.promise = promise;
         }
 
-        override
         void succeeded(Stream stream) {
             version(HuntDebugMode) {
                 tracef("create a new stream %s", stream.getId());
@@ -224,11 +223,12 @@ class HTTP2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
             promise.succeeded(output);
         }
 
-        override
         void failed(Exception x) {
             promise.failed(x);
             errorf("client creates stream unsuccessfully", x);
         }
+
+        string id() { return "undefined"; }
 
     }
 }

@@ -550,7 +550,7 @@ class HttpGenerator {
         MetaData.Response response = (typeid(info) == typeid(MetaData.Response)) ? cast(MetaData.Response) info : null;
 
         version(HuntDebugMode) {
-            tracef(info.getFields().toString());
+            tracef("Header fields:\n%s", info.getFields().toString());
             // tracef("content: %s", BufferUtils.toSummaryString(content));
             tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
         }
@@ -628,7 +628,13 @@ class HttpGenerator {
         // Calculate how to end _content and connection, _content length and transfer encoding
         // settings from http://tools.ietf.org/html/rfc7230#section-3.3.3
 
-        bool assumed_content_request = request !is null && __assumedContentMethods[request.getMethod()];
+        string currentMethold = request.getMethod();
+        bool* itemPtr = currentMethold in __assumedContentMethods;
+        bool haveMethold = false;
+        if(itemPtr !is null )
+            haveMethold = *itemPtr;
+
+        bool assumed_content_request = request !is null && haveMethold;
         bool assumed_content = assumed_content_request || content_type || chunked_hint;
         bool nocontent_request = request !is null && content_length <= 0 && !assumed_content;
 

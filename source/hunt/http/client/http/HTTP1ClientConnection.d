@@ -365,16 +365,16 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
     override
     void send(Request request, ClientHTTPHandler handler) {
         try  {
-            HTTPOutputStream output = getHTTPOutputStream(request, handler);
             tracef("client request and does not send data");
-        } catch (IOException e) {
+            HTTPOutputStream output = getHTTPOutputStream(request, handler);
+            output.close();
+        } catch (Exception e) {
             errorf("client generates the HTTP message exception", e);
         }
     }
 
     override
     void send(Request request, ByteBuffer buffer, ClientHTTPHandler handler) {
-        // send(request, [buffer], handler);
         try  {
             HTTPOutputStream output = getHTTPOutputStream(request, handler);
             if (buffer !is null) {
@@ -487,9 +487,8 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
 
     override
     bool isOpen() {
-        version(HuntDebugMode)
-        {
-            infof("Connection status: isOpen=%s, upgradeHTTP2Complete=%s, upgradeWebSocketComplete=%s", 
+        version(HuntDebugMode) {
+            tracef("Connection status: isOpen=%s, upgradeHTTP2Complete=%s, upgradeWebSocketComplete=%s", 
                 tcpSession.isOpen(), upgradeHTTP2Complete, upgradeWebSocketComplete);
         }
         return tcpSession.isOpen() && !upgradeHTTP2Complete && !upgradeWebSocketComplete;

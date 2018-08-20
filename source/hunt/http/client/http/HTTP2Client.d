@@ -56,9 +56,9 @@ class HTTP2Client  : AbstractLifeCycle {
             infof("A connection created with %s:%d", _host, _port);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
 
-            session.handler( (const ubyte[] data) {                    
+            session.handler( (const ubyte[] data) {    
+                infof("data received (%d bytes): ", data.length);                 
                 version(HuntDebugMode) {
-                    infof("data received (%d bytes): ", data.length); 
                     if(data.length<=64)
                         infof("%(%02X %)", data[0 .. $]);
                     else
@@ -82,6 +82,7 @@ class HTTP2Client  : AbstractLifeCycle {
 
     Completable!(HTTPClientConnection) connect(string host, int port) {
         Completable!(HTTPClientConnection) completable = new Completable!(HTTPClientConnection)();
+        completable.id = "http2client";
         connect(host, port, completable);
         return completable;
     }

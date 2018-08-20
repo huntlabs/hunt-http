@@ -28,13 +28,13 @@ abstract class AbstractHTTPHandler : Handler {
     override
     void exceptionCaught(Session session, Exception t) {
         try {
-            errorf("HTTP handler exception: %s", t.message);
+            errorf("HTTP handler exception: %s", t.toString());
             Object attachment = session.getAttachment();
             if (attachment is null) {
                 return;
             }
+            
             AbstractHTTPConnection httpConnection = cast(AbstractHTTPConnection) attachment;
-            // if (typeid(attachment) == typeid(AbstractHTTPConnection)) {
             if (httpConnection !is null ) {
                 try {
                     httpConnection.notifyException(t);
