@@ -17,7 +17,7 @@ import kiss.logger;
  */
 class TestMatcher {
 
-    void xxtestFindRouter() {
+    void testFindRouter() {
         RouterManager routerManager = new RouterManagerImpl();
         Router router0 = routerManager.register().get("/hello/get").produces("application/json");
         Router router1 = routerManager.register().get("/hello/:testParam0").produces("application/json");
