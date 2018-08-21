@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.AcceptMIMEType;
 
-// import java.util.Objects;
+import hunt.util.common;
 
 /**
  * 
@@ -54,14 +54,16 @@ class AcceptMIMEType {
     override
     bool opEquals(Object o) {
         if (this is o) return true;
-        if (o is null || typeid(this) !is typeid(o)) return false;
+        // if (o is null || typeid(this) !is typeid(o)) return false;
         AcceptMIMEType that = cast(AcceptMIMEType) o;
+        if(that is null)  return false;
+
         return parentType == that.parentType &&
                 childType == that.childType;
     }
 
-    // override
-    // size_t toHash() @trusted nothrow {
-    //     return hashOf(parentType, childType);
-    // }
+    override
+    size_t toHash() @trusted nothrow {
+        return hashCode(parentType, childType);
+    }
 }

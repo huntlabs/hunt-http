@@ -1,6 +1,6 @@
 module hunt.http.server.http.router.Router;
 
-import hunt.http.server.http.router.Handler;
+import hunt.http.server.http.router.handler;
 import hunt.http.server.http.router.Matcher;
 
 import hunt.http.codec.http.model.HttpMethod;

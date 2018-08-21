@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.MimeTypes;
 
-
+import hunt.http.codec.http.model.AcceptMIMEType;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.hpack.HpackEncoder;
@@ -14,7 +14,10 @@ import hunt.util.traits;
 
 import kiss.logger;
 
+import std.algorithm;
+import std.array;
 import std.container.array;
+import std.conv;
 import std.string;
 import std.uni;
 
@@ -22,14 +25,6 @@ import std.uni;
 // import hunt.http.utils.collection.Trie;
 
 
-// import java.io.InputStream;
-// import java.io.InputStreamReader;
-// import java.nio.charset.Charset;
-// import java.nio.charset.StandardCharsets;
-// import java.util;
-// import java.util.Map.Entry;
-// import java.util.stream.Collectors;
-// import java.util.stream.Stream;
 
 
 
@@ -633,76 +628,129 @@ class MimeTypes {
     }
 
     static string getContentTypeMIMEType(string contentType) {
-        if (contentType != null) {
-            // parsing content-type
-            string[] strings = StringUtils.split(contentType, ";");
-            return strings[0];
-        } else {
+        if (contentType.empty) 
             return null;
-        }
+
+        // parsing content-type
+        string[] strings = StringUtils.split(contentType, ";");
+        return strings[0];
     }
 
     static List!string getAcceptMIMETypes(string accept) {
-        if (accept != null) {
-            List!string list = new ArrayList!string();
-            // parsing accept
-            string[] strings = StringUtils.split(accept, ",");
-            foreach (string str ; strings) {
-                string[] s = StringUtils.split(str, ";");
-                list.add(s[0].strip());
-            }
-            return list;
-        } else {
-            return new EmptyList!string(); // Collections.emptyList();
+        if(accept.empty) 
+            new EmptyList!string(); // Collections.emptyList();
+
+        List!string list = new ArrayList!string();
+        // parsing accept
+        string[] strings = StringUtils.split(accept, ",");
+        foreach (string str ; strings) {
+            string[] s = StringUtils.split(str, ";");
+            list.add(s[0].strip());
         }
+        return list;
     }
 
-    // static List!AcceptMIMEType parseAcceptMIMETypes(string accept) {
-    //     return Optional.ofNullable(accept)
-    //                    .filter(StringUtils::hasText)
-    //                    .map(a -> StringUtils.split(a, ','))
-    //                    .map(Arrays::stream)
-    //                    .map(MimeTypes::apply)
-    //                    .orElse(Collections.emptyList());
-    // }
+    static Array!AcceptMIMEType parseAcceptMIMETypes(string accept) {
 
-    // private static List!AcceptMIMEType apply(Stream<string> stream) {
-    //     return stream.map(string::trim)
-    //                  .filter(StringUtils::hasText)
-    //                  .map(type -> {
-    //                      string[] mimeTypeAndQuality = StringUtils.split(type, ';');
-    //                      AcceptMIMEType acceptMIMEType = new AcceptMIMEType();
+        if(accept.empty) 
+            return Array!(AcceptMIMEType).init;
+            // return new EmptyList!(AcceptMIMEType)();
 
-    //                      // parse the MIME type
-    //                      string[] mimeType = StringUtils.split(mimeTypeAndQuality[0].strip(), '/');
-    //                      string parentType = mimeType[0].strip();
-    //                      string childType = mimeType[1].strip();
-    //                      acceptMIMEType.setParentType(parentType);
-    //                      acceptMIMEType.setChildType(childType);
-    //                      if (parentType == "*") {
-    //                          if (childType == "*") {
-    //                              acceptMIMEType.setMatchType(AcceptMIMEMatchType.ALL);
-    //                          } else {
-    //                              acceptMIMEType.setMatchType(AcceptMIMEMatchType.CHILD);
-    //                          }
-    //                      } else {
-    //                          if (childType == "*") {
-    //                              acceptMIMEType.setMatchType(AcceptMIMEMatchType.PARENT);
-    //                          } else {
-    //                              acceptMIMEType.setMatchType(AcceptMIMEMatchType.EXACT);
-    //                          }
-    //                      }
+        string[] arr = StringUtils.split(accept, ",");
+        return apply(arr);
+    }
 
-    //                      // parse the quality
-    //                      if (mimeTypeAndQuality.length > 1) {
-    //                          string q = mimeTypeAndQuality[1];
-    //                          string[] qualityKV = StringUtils.split(q, '=');
-    //                          acceptMIMEType.setQuality(Float.parseFloat(qualityKV[1].strip()));
-    //                      }
+    private static Array!AcceptMIMEType apply(string[] stream) {
 
-    //                      return acceptMIMEType;
-    //                  })
-    //                  .sorted((a1, a2) -> Float.compare(a2.getQuality(), a1.getQuality()))
-    //                  .collect(Collectors.toList());
-    // }
+import std.range;
+// import std.string;
+
+//         auto r = map!(a => strip(a))(stream)
+//             .filter!(s => !s.empty)
+//             .map!( delegate AcceptMIMEType (string type) { 
+//                 string[] mimeTypeAndQuality = StringUtils.split(type, ';');
+//                 AcceptMIMEType acceptMIMEType = new AcceptMIMEType();
+                
+//                 // parse the MIME type
+//                 string[] mimeType = StringUtils.split(mimeTypeAndQuality[0].strip(), '/');
+//                 string parentType = mimeType[0].strip();
+//                 string childType = mimeType[1].strip();
+//                 acceptMIMEType.setParentType(parentType);
+//                 acceptMIMEType.setChildType(childType);
+//                 if (parentType == "*") {
+//                     if (childType == "*") {
+//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.ALL);
+//                     } else {
+//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.CHILD);
+//                     }
+//                 } else {
+//                     if (childType == "*") {
+//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.PARENT);
+//                     } else {
+//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.EXACT);
+//                     }
+//                 }
+
+//                 // parse the quality
+//                 if (mimeTypeAndQuality.length > 1) {
+//                     string q = mimeTypeAndQuality[1];
+//                     string[] qualityKV = StringUtils.split(q, '=');
+//                     acceptMIMEType.setQuality(to!float(qualityKV[1].strip()));
+//                 }
+//                 return acceptMIMEType;
+//             });
+
+            // .sort!("a.getQuality() < b.getQuality()").release;
+
+        Array!AcceptMIMEType arr;
+
+        foreach(string s; stream) {
+            string type = strip(s);
+            if(type.empty) continue;
+            string[] mimeTypeAndQuality = StringUtils.split(type, ';');
+            AcceptMIMEType acceptMIMEType = new AcceptMIMEType();
+            
+            // parse the MIME type
+            string[] mimeType = StringUtils.split(mimeTypeAndQuality[0].strip(), '/');
+            string parentType = mimeType[0].strip();
+            string childType = mimeType[1].strip();
+            acceptMIMEType.setParentType(parentType);
+            acceptMIMEType.setChildType(childType);
+            if (parentType == "*") {
+                if (childType == "*") {
+                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.ALL);
+                } else {
+                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.CHILD);
+                }
+            } else {
+                if (childType == "*") {
+                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.PARENT);
+                } else {
+                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.EXACT);
+                }
+            }
+
+            // parse the quality
+            if (mimeTypeAndQuality.length > 1) {
+                string q = mimeTypeAndQuality[1];
+                string[] qualityKV = StringUtils.split(q, '=');
+                acceptMIMEType.setQuality(to!float(qualityKV[1].strip()));
+            }
+
+            arr.insertBack(acceptMIMEType);
+        }
+
+        for(size_t i=0; i<arr.length-1; i++) {
+            AcceptMIMEType a = arr[i];
+            for(size_t j=i+1; j<arr.length; j++) {
+                AcceptMIMEType b = arr[j];
+                if(b.getQuality() > a.getQuality()) {   // The greater quality is first.
+                    arr[i] = b; arr[j] = a;
+                }
+            }
+        }
+
+        return arr;
+
+    }
 }

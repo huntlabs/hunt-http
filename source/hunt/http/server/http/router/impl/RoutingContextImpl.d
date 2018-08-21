@@ -1,7 +1,7 @@
 module hunt.http.server.http.router.impl.RoutingContextImpl;
 
-import hunt.http.server.http.router.handler.HTTPBodyHandler;
-import hunt.http.server.http.router.handler.HTTPSessionHandler;
+import hunt.http.server.http.router.handler;
+import hunt.http.server.http.router.impl.RouterImpl;
 
 import hunt.http.server.http.SimpleRequest;
 import hunt.http.server.http.SimpleResponse;
@@ -23,7 +23,7 @@ import std.container;
 class RoutingContextImpl : RoutingContext {
 
     private SimpleRequest request;
-    private Array!(RouterMatchResult) routers;
+    private NavigableSet!(RouterMatchResult) routers;
     private  RouterMatchResult current;
     private  HTTPBodyHandlerSPI httpBodyHandlerSPI;
     private  HTTPSessionHandlerSPI httpSessionHandlerSPI;
@@ -31,7 +31,7 @@ class RoutingContextImpl : RoutingContext {
     private  bool asynchronousRead;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
 
-    this(SimpleRequest request, Array!(RouterMatchResult) routers) {
+    this(SimpleRequest request, NavigableSet!(RouterMatchResult) routers) {
         this.request = request;
         this.routers = routers;
     }
@@ -104,7 +104,13 @@ class RoutingContextImpl : RoutingContext {
 
     override
     bool next() {
-        // current = routers.pollFirst();
+        current = routers.pollFirst();
+        if(current !is null) {
+            RouterImpl r = cast(RouterImpl)current.getRouter();
+            Handler handler = r.getHandler();
+            handler.handle(this);
+            return true;
+        }
         // return Optional.ofNullable(current)
         //                .map(RouterMatchResult::getRouter)
         //                .map(c -> (RouterImpl) c)
@@ -114,13 +120,13 @@ class RoutingContextImpl : RoutingContext {
         //                    return true;
         //                })
         //                .orElse(false);
-        implementationMissing();
+        // implementationMissing();
         return false;
     }
 
     override
     bool hasNext() {
-        return !routers.empty();
+        return !routers.isEmpty();
     }
 
     // override

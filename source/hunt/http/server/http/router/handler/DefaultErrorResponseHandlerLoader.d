@@ -8,8 +8,8 @@ import hunt.util.exception;
 import hunt.http.environment;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.server.http.router.handler.Handler;
 import hunt.http.server.http.router.RoutingContext;
-import hunt.http.server.http.router.Handler;
 import hunt.http.server.http.router.RoutingContext;
 
 import std.conv;
@@ -106,7 +106,7 @@ class DefaultErrorResponseHandlerLoader {
     private this() {
         // handler = ServiceUtils.loadService(AbstractErrorResponseHandler.class, new DefaultErrorResponseHandler());
         // info("load AbstractErrorResponseHandler, selected -> %s", handler.getClass().getName());
-        implementationMissing(false);
+        // implementationMissing(false);
         handler = new DefaultErrorResponseHandler();
     }
 

@@ -3,7 +3,7 @@ module hunt.http.server.http.router.impl.RouterImpl;
 import hunt.http.server.http.router.Router;
 
 import hunt.http.codec.http.model.HttpMethod;
-import hunt.http.server.http.router.Handler;
+import hunt.http.server.http.router.handler.Handler;
 import hunt.http.server.http.router.Matcher;
 import hunt.http.server.http.router.Router;
 

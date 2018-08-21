@@ -34,7 +34,7 @@ class RouterMatchResult : Comparable!RouterMatchResult {
         return parameters;
     }
 
-    Set!(Matcher.MatchType)getMatchTypes() {
+    Set!(Matcher.MatchType) getMatchTypes() {
         return matchTypes;
     }
 
@@ -77,7 +77,7 @@ interface RouterManager : RequestAcceptor {
 
     Router register(int id);
 
-    // NavigableSet<RouterMatchResult> findRouter(string method, string path, string contentType, string accept);
+    NavigableSet!(RouterMatchResult) findRouter(string method, string path, string contentType, string accept);
 
     static RouterManager create() {
         return create(new HTTPBodyConfiguration());

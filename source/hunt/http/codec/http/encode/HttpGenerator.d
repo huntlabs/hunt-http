@@ -627,14 +627,14 @@ class HttpGenerator {
 
         // Calculate how to end _content and connection, _content length and transfer encoding
         // settings from http://tools.ietf.org/html/rfc7230#section-3.3.3
-
-        string currentMethold = request.getMethod();
-        bool* itemPtr = currentMethold in __assumedContentMethods;
-        bool haveMethold = false;
-        if(itemPtr !is null )
-            haveMethold = *itemPtr;
-
-        bool assumed_content_request = request !is null && haveMethold;
+        bool assumed_content_request = false;
+        if(request !is null) {
+            string currentMethold = request.getMethod();
+            bool* itemPtr = currentMethold in __assumedContentMethods;
+            if(itemPtr !is null )
+                assumed_content_request = *itemPtr;
+        }
+        
         bool assumed_content = assumed_content_request || content_type || chunked_hint;
         bool nocontent_request = request !is null && content_length <= 0 && !assumed_content;
 

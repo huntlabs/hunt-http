@@ -1,4 +1,4 @@
-module hunt.http.server.http.router.Handler;
+module hunt.http.server.http.router.handler.Handler;
 
 import hunt.http.server.http.router.RoutingContext;
 

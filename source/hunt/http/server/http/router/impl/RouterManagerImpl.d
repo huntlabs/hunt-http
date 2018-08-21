@@ -9,6 +9,7 @@ import hunt.http.server.http.router.impl.PrecisePathMatcher;
 import hunt.http.server.http.router.impl.ParameterPathMatcher;
 import hunt.http.server.http.router.impl.RegexPathMatcher;
 import hunt.http.server.http.router.impl.RouterImpl;
+import hunt.http.server.http.router.impl.RoutingContextImpl;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.server.http.SimpleRequest;
@@ -16,11 +17,12 @@ import hunt.http.server.http.router.Matcher;
 import hunt.http.server.http.router.Router;
 import hunt.http.server.http.router.RouterManager;
 import hunt.http.server.http.router.RoutingContext;
-// import hunt.http.utils.CollectionUtils;
 
 import hunt.container;
 
 import hunt.util.exception;
+
+import kiss.logger;
 
 /**
  * 
@@ -91,41 +93,64 @@ class RouterManagerImpl : RouterManager {
         return contentTypePatternMatcher;
     }
 
-    // override
-    // NavigableSet<RouterMatchResult> findRouter(string method, string path, string contentType, string accept) {
-    //     Map<Router, Set<Matcher.MatchType>> routerMatchTypes = new HashMap<>();
-    //     Map<Router, Map!(string, string)> routerParameters = new HashMap<>();
-    //     findRouter(method, Matcher.MatchType.METHOD, routerMatchTypes, routerParameters);
-    //     findRouter(path, Matcher.MatchType.PATH, routerMatchTypes, routerParameters);
-    //     findRouter(contentType, Matcher.MatchType.CONTENT_TYPE, routerMatchTypes, routerParameters);
-    //     findRouter(accept, Matcher.MatchType.ACCEPT, routerMatchTypes, routerParameters);
+    override
+    NavigableSet!RouterMatchResult findRouter(string method, string path, string contentType, string accept) {
 
-    //     NavigableSet<RouterMatchResult> ret = new TreeSet<>();
-    //     routerMatchTypes.entrySet()
-    //                     .stream()
-    //                     .filter(e -> e.getKey().isEnable())
-    //                     .filter(e -> e.getKey().getMatchTypes().equals(e.getValue()))
-    //                     .map(e -> new RouterMatchResult(e.getKey(), routerParameters.get(e.getKey()), e.getValue()))
-    //                     .forEach(ret::add);
-    //     return ret;
-    // }
+        Map!(Router, Set!(Matcher.MatchType)) routerMatchTypes = new HashMap!(Router, Set!(Matcher.MatchType))();
+        Map!(Router, Map!(string, string)) routerParameters = new HashMap!(Router, Map!(string, string))();
 
-    // private void findRouter(string value, Matcher.MatchType matchType,
-    //                         Map<Router, Set<Matcher.MatchType>> routerMatchTypes,
-    //                         Map<Router, Map!(string, string)> routerParameters) {
-    //     matcherMap.get(matchType)
-    //               .stream()
-    //               .map(m -> m.match(value))
-    //               .filter(Objects::nonNull)
-    //               .forEach(result -> result.getRouters().forEach(router -> {
-    //                   routerMatchTypes.computeIfAbsent(router, k -> new HashSet<>())
-    //                                   .add(result.getMatchType());
-    //                   if (!CollectionUtils.isEmpty(result.getParameters())) {
-    //                       routerParameters.computeIfAbsent(router, k -> new HashMap<>())
-    //                                       .putAll(result.getParameters().get(router));
-    //                   }
-    //               }));
-    // }
+        findRouter(method, Matcher.MatchType.METHOD, routerMatchTypes, routerParameters);
+        findRouter(path, Matcher.MatchType.PATH, routerMatchTypes, routerParameters);
+        findRouter(contentType, Matcher.MatchType.CONTENT_TYPE, routerMatchTypes, routerParameters);
+        findRouter(accept, Matcher.MatchType.ACCEPT, routerMatchTypes, routerParameters);
+        // tracef("xx1=>%d, %d", routerMatchTypes.size(), routerParameters.size());
+
+        NavigableSet!(RouterMatchResult) ret = new TreeSet!(RouterMatchResult)();
+        
+        foreach(Router key, Set!(Matcher.MatchType) value; routerMatchTypes) {
+            if(!key.isEnable()) continue;
+            if(key.getMatchTypes() != value) continue;
+
+            // trace("key types= ",  key.getMatchTypes().toString());
+            // trace("value= ",  value.toString());
+
+            // if(key.getMatchTypes() != value) {
+            //     continue;
+            // }
+
+            RouterMatchResult e = new RouterMatchResult(key, routerParameters.get(key), value);
+            ret.add(e);
+        }
+        return ret;
+    }
+
+    private void findRouter(string value, Matcher.MatchType matchType,
+                            Map!(Router, Set!(Matcher.MatchType)) routerMatchTypes,
+                            Map!(Router, Map!(string, string)) routerParameters) {
+
+        List!(Matcher) matchers = matcherMap.get(matchType);
+        foreach(Matcher m; matchers) {
+            MatchResult mr = m.match(value);
+            if(mr is null) continue;
+            Set!(Router) routers = mr.getRouters();
+            foreach(Router router; routers) {
+                // import std.conv;
+                // MatchType rx  = mr.getMatchType();
+                // trace("value= ",  rx.to!string());
+
+                routerMatchTypes.computeIfAbsent(router, k => new HashSet!(Matcher.MatchType)())
+                                .add(mr.getMatchType());
+                Map!(Router, Map!(string, string)) parameters = mr.getParameters();
+
+                if (parameters !is null && !parameters.isEmpty()) {
+                    routerParameters.computeIfAbsent(router, k => new HashMap!(string, string)())
+                                    .putAll(parameters.get(router));
+                }
+            }
+
+        }
+
+    }
 
     override
     Router register() {
@@ -139,13 +164,13 @@ class RouterManagerImpl : RouterManager {
 
     override
     void accept(SimpleRequest request) {
-        implementationMissing();
-        // NavigableSet<RouterMatchResult> routers = findRouter(
-        //         request.getMethod(),
-        //         request.getURI().getPath(),
-        //         request.getFields().get(HttpHeader.CONTENT_TYPE),
-        //         request.getFields().get(HttpHeader.ACCEPT));
-        // RoutingContext routingContext = new RoutingContextImpl(request, routers);
-        // routingContext.next();
+        // implementationMissing();
+        NavigableSet!(RouterMatchResult) routers = findRouter(
+                request.getMethod(),
+                request.getURI().getPath(),
+                request.getFields().get(HttpHeader.CONTENT_TYPE),
+                request.getFields().get(HttpHeader.ACCEPT));
+        RoutingContext routingContext = new RoutingContextImpl(request, routers);
+        routingContext.next();
     }
 }

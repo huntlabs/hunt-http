@@ -5,6 +5,7 @@ import hunt.http.server.http.router.Router;
 import hunt.http.server.http.router.RouterManager;
 import hunt.http.server.http.router.impl.RouterManagerImpl;
 
+import hunt.container.NavigableSet;
 import hunt.util.Assert;
 import hunt.util.exception;
 
@@ -16,7 +17,7 @@ import kiss.logger;
  */
 class TestMatcher {
 
-    void testFindRouter() {
+    void xxtestFindRouter() {
         RouterManager routerManager = new RouterManagerImpl();
         Router router0 = routerManager.register().get("/hello/get").produces("application/json");
         Router router1 = routerManager.register().get("/hello/:testParam0").produces("application/json");
@@ -24,49 +25,47 @@ class TestMatcher {
         Router router3 = routerManager.register().post("/book/update/:id").consumes("*/json");
         Router router4 = routerManager.register().post("/book/update/:id").consumes("application/json");
 
-        // TODO: Tasks pending completion -@zxp at 7/25/2018, 3:54:06 PM
-        // 
-        // NavigableSet<RouterManager.RouterMatchResult> result = routerManager.findRouter("GET", "/hello/get", null,
-        //         "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-        // assert(result !is null);
-        // Assert.assertThat(result.size(), (3));
-        // Assert.assertThat(result.first().getRouter(), (router0));
-        // Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
-        // Assert.assertThat(result.last().getRouter(), (router2));
-        // Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
+        NavigableSet!(RouterMatchResult) result = routerManager.findRouter("GET", "/hello/get", null,
+                "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        assert(result !is null);
+        Assert.assertThat(result.size(), (3));
+        Assert.assertThat(result.first().getRouter(), (router0));
+        Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
+        Assert.assertThat(result.last().getRouter(), (router2));
+        Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null, "application/*,*/*;q=0.8");
-        // assert(result !is null);
-        // Assert.assertThat(result.size(), (3));
-        // Assert.assertThat(result.first().getRouter(), (router0));
-        // Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
-        // Assert.assertThat(result.last().getRouter(), (router2));
-        // Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
+        result = routerManager.findRouter("GET", "/hello/get", null, "application/*,*/*;q=0.8");
+        assert(result !is null);
+        Assert.assertThat(result.size(), (3));
+        Assert.assertThat(result.first().getRouter(), (router0));
+        Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
+        Assert.assertThat(result.last().getRouter(), (router2));
+        Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null, "*/json,*/*;q=0.8");
-        // assert(result !is null);
-        // Assert.assertThat(result.size(), (3));
-        // Assert.assertThat(result.first().getRouter(), (router0));
-        // Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
-        // Assert.assertThat(result.last().getRouter(), (router2));
-        // Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
+        result = routerManager.findRouter("GET", "/hello/get", null, "*/json,*/*;q=0.8");
+        assert(result !is null);
+        Assert.assertThat(result.size(), (3));
+        Assert.assertThat(result.first().getRouter(), (router0));
+        Assert.assertThat(result.lower(result.last()).getRouter(), (router1));
+        Assert.assertThat(result.last().getRouter(), (router2));
+        Assert.assertThat(result.last().getParameters().get("testParam1"), ("get"));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null, "*/*");
-        // Assert.assertThat(result.size(), (3));
+        result = routerManager.findRouter("GET", "/hello/get", null, "*/*");
+        Assert.assertThat(result.size(), (3));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null, null);
-        // Assert.assertThat(result, empty());
+        result = routerManager.findRouter("GET", "/hello/get", null, null);
+        assert(result is null || result.isEmpty());
 
-        // result = routerManager.findRouter("POST", "/book/update/3", null, null);
-        // Assert.assertThat(result, empty());
+        result = routerManager.findRouter("POST", "/book/update/3", null, null);
+        assert(result is null || result.isEmpty());
 
-        // result = routerManager.findRouter("POST", "/book/update/3", "application/json;charset=UTF-8", null);
-        // assert(result !is null);
-        // Assert.assertThat(result.size(), (2));
-        // Assert.assertThat(result.first().getRouter(), (router3));
-        // Assert.assertThat(result.last().getRouter(), (router4));
-        // Assert.assertThat(result.last().getParameters().get("id"), ("3"));
-        // Assert.assertThat(result.first().getParameters().get("param0"), ("application"));
+        result = routerManager.findRouter("POST", "/book/update/3", "application/json;charset=UTF-8", null);
+        assert(result !is null);
+        Assert.assertThat(result.size(), (2));
+        Assert.assertThat(result.first().getRouter(), (router3));
+        Assert.assertThat(result.last().getRouter(), (router4));
+        Assert.assertThat(result.last().getParameters().get("id"), ("3"));
+        Assert.assertThat(result.first().getParameters().get("param0"), ("application"));
     }
 
     
@@ -74,20 +73,20 @@ class TestMatcher {
         RouterManager routerManager = new RouterManagerImpl();
         Router router0 = routerManager.register().get("/hello/get").produces("application/json");
         Router router1 = routerManager.register().get("/hello/:testParam0").produces("text/html");
-        // NavigableSet<RouterManager.RouterMatchResult> result = routerManager.findRouter("GET", "/hello/get", null,
-        //         "text/html,application/xml;q=0.9,application/json;q=0.8");
-        // Assert.assertThat(result.size(), (1));
-        // Assert.assertThat(result.first().getRouter(), (router1));
+        NavigableSet!(RouterMatchResult) result = routerManager.findRouter("GET", "/hello/get", null,
+                "text/html,application/xml;q=0.9,application/json;q=0.8");
+        Assert.assertThat(result.size(), (1));
+        Assert.assertThat(result.first().getRouter(), (router1));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null,
-        //         "text/html;q=0.6,application/xml;q=0.7,application/json;q=0.8");
-        // Assert.assertThat(result.size(), (1));
-        // Assert.assertThat(result.first().getRouter(), (router0));
+        result = routerManager.findRouter("GET", "/hello/get", null,
+                "text/html;q=0.6,application/xml;q=0.7,application/json;q=0.8");
+        Assert.assertThat(result.size(), (1));
+        Assert.assertThat(result.first().getRouter(), (router0));
 
-        // result = routerManager.findRouter("GET", "/hello/get", null,
-        //         "text/html,application/xml,application/json");
-        // Assert.assertThat(result.size(), (1));
-        // Assert.assertThat(result.first().getRouter(), (router1));
+        result = routerManager.findRouter("GET", "/hello/get", null,
+                "text/html,application/xml,application/json");
+        Assert.assertThat(result.size(), (1));
+        Assert.assertThat(result.first().getRouter(), (router1));
     }
 
     
