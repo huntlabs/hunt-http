@@ -819,7 +819,9 @@ class HttpParser {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
         if (_headerString != null || _valueString != null) {
             // Handle known headers
-            tracef("parsing header:%s,  raw: %s ", _header.toString(), _headerString);
+            version(HuntDebugMode) 
+                tracef("parsing header:%s,  raw: %s ", _header.toString(), _headerString);
+
             if (_header != HttpHeader.Null) {
                 bool add_to_connection_trie = false;
                 // switch (_header) {
@@ -1235,7 +1237,7 @@ class HttpParser {
     bool parseNext(ByteBuffer buffer) {
         version(HuntDebugMode) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
-            tracef("buffer: %s", BufferUtils.toHexString(buffer));
+            // tracef("buffer: %s", BufferUtils.toHexString(buffer));
         }
         try {
             // Start a request/response
@@ -1537,15 +1539,15 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        version(HuntDebugMode)
-            tracef("%s --> %s", _state, state);
+        // version(HuntDebugMode)
+        //     tracef("%s --> %s", _state, state);
         _state = state;
     }
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(FieldState state) {
-        version(HuntDebugMode)
-            tracef("%s:%s --> %s", _state, _field, state);
+        // version(HuntDebugMode)
+        //     tracef("%s:%s --> %s", _state, _field, state);
         _fieldState = state;
     }
 
