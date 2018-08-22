@@ -93,8 +93,8 @@ class RouterManagerImpl : RouterManager {
         return contentTypePatternMatcher;
     }
 
-    override
-    NavigableSet!RouterMatchResult findRouter(string method, string path, string contentType, string accept) {
+    override NavigableSet!RouterMatchResult findRouter(string method, 
+            string path, string contentType, string accept) {
 
         Map!(Router, Set!(Matcher.MatchType)) routerMatchTypes = new HashMap!(Router, Set!(Matcher.MatchType))();
         Map!(Router, Map!(string, string)) routerParameters = new HashMap!(Router, Map!(string, string))();
@@ -103,21 +103,11 @@ class RouterManagerImpl : RouterManager {
         findRouter(path, Matcher.MatchType.PATH, routerMatchTypes, routerParameters);
         findRouter(contentType, Matcher.MatchType.CONTENT_TYPE, routerMatchTypes, routerParameters);
         findRouter(accept, Matcher.MatchType.ACCEPT, routerMatchTypes, routerParameters);
-        // tracef("xx1=>%d, %d", routerMatchTypes.size(), routerParameters.size());
 
         NavigableSet!(RouterMatchResult) ret = new TreeSet!(RouterMatchResult)();
-        
         foreach(Router key, Set!(Matcher.MatchType) value; routerMatchTypes) {
             if(!key.isEnable()) continue;
             if(key.getMatchTypes() != value) continue;
-
-            // trace("key types= ",  key.getMatchTypes().toString());
-            // trace("value= ",  value.toString());
-
-            // if(key.getMatchTypes() != value) {
-            //     continue;
-            // }
-
             RouterMatchResult e = new RouterMatchResult(key, routerParameters.get(key), value);
             ret.add(e);
         }
@@ -134,10 +124,6 @@ class RouterManagerImpl : RouterManager {
             if(mr is null) continue;
             Set!(Router) routers = mr.getRouters();
             foreach(Router router; routers) {
-                // import std.conv;
-                // MatchType rx  = mr.getMatchType();
-                // trace("value= ",  rx.to!string());
-
                 routerMatchTypes.computeIfAbsent(router, k => new HashSet!(Matcher.MatchType)())
                                 .add(mr.getMatchType());
                 Map!(Router, Map!(string, string)) parameters = mr.getParameters();
@@ -152,19 +138,15 @@ class RouterManagerImpl : RouterManager {
 
     }
 
-    override
-    Router register() {
+    override Router register() {
         return new RouterImpl(idGenerator++, this);
     }
 
-    override
-    Router register(int id) {
+    override Router register(int id) {
         return new RouterImpl(id, this);
     }
 
-    override
-    void accept(SimpleRequest request) {
-        // implementationMissing();
+    override void accept(SimpleRequest request) {
         NavigableSet!(RouterMatchResult) routers = findRouter(
                 request.getMethod(),
                 request.getURI().getPath(),

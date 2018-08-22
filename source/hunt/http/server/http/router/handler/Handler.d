@@ -10,3 +10,7 @@ interface Handler {
     void handle(RoutingContext routingContext);
 
 }
+
+
+
+alias RoutingHandler =  void delegate(RoutingContext routingContext);

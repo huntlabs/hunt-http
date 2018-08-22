@@ -4,6 +4,7 @@ import hunt.http.client.http.SimpleHTTPClient;
 import hunt.http.client.http.SimpleHTTPClientConfiguration;
 import hunt.http.client.http.SimpleResponse;
 
+import hunt.http.server.http.HTTP2ServerBuilder;
 import hunt.http.server.http.SimpleHTTPServer;
 import hunt.http.server.http.SimpleHTTPServerConfiguration;
 
@@ -49,9 +50,9 @@ SimpleHTTPClient createHTTPsClient(SecureSessionFactory secureSessionFactory) {
  *
  * @return HTTP server builder.
  */
-// HTTP2ServerBuilder httpsServer() {
-//     return new HTTP2ServerBuilder().httpsServer();
-// }
+HTTP2ServerBuilder httpsServer() {
+    return new HTTP2ServerBuilder().httpsServer();
+}
 
 /**
  * Create a new HTTPs server.

@@ -33,6 +33,7 @@ class RouterImpl : Router {
     private Set!(MatchType) matchTypes;
 
     private Handler _handler;
+    // private RoutingHandler _routingHandler;
     private bool _isEnable = true;
     private List!(string) urlList; // = new ArrayList!(string)();
 
@@ -172,11 +173,15 @@ class RouterImpl : Router {
         return this;
     }
 
-    override
     Router handler(Handler h) {
         this._handler = h;
         return this;
     }
+
+    // Router handler(RoutingHandler h) {
+    //     this._routingHandler = h;
+    //     return this;
+    // }
 
     override
     Router enable() {

@@ -1,16 +1,14 @@
 module hunt.http.server.http.router.handler.DefaultErrorResponseHandlerLoader;
 
-// import hunt.http.utils.ServiceUtils;
-import kiss.logger;
-
-import hunt.util.exception;
-
 import hunt.http.environment;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.server.http.router.handler.Handler;
 import hunt.http.server.http.router.RoutingContext;
 import hunt.http.server.http.router.RoutingContext;
+
+import kiss.logger;
+import hunt.util.exception;
 
 import std.conv;
 
@@ -19,7 +17,7 @@ import std.conv;
  * 
  */
 abstract class AbstractErrorResponseHandler : Handler {
-    override
+
     void handle(RoutingContext ctx) {
         if (ctx.hasNext()) {
             try {
@@ -47,8 +45,7 @@ abstract class AbstractErrorResponseHandler : Handler {
  */
 class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
 
-    override
-    void render(RoutingContext ctx, int status, Throwable t) {
+    override void render(RoutingContext ctx, int status, Throwable t) {
 
         HttpStatusCode code = HttpStatus.getCode(status); 
         if(code == HttpStatusCode.Null)

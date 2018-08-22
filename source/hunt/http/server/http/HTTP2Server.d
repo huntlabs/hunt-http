@@ -71,24 +71,27 @@ class HTTP2Server  : AbstractLifeCycle {
         server.setConfig(c.getTcpConfiguration());
 
         server.connectHandler((NetSocket sock){
-            logInfo("server have accepted a connection...");
+            info("server have accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
-            session.handler( ( in ubyte[] data) {      
-                    infof("data received (%d bytes): ", data.length); 
-                    if(data.length<=64)
-                        infof("%(%02X %)", data[0 .. $]);
-                    else
-                        infof("%(%02X %)", data[0 .. 64]);
-                    // infof(cast(string) data); 
-
+            session.handler( (in ubyte[] data) {     
+                    version(HuntDebugMode) { 
+                        infof("data received (%d bytes): ", data.length); 
+                        if(data.length<=64)
+                            infof("%(%02X %)", data[0 .. $]);
+                        else
+                            infof("%(%02X %)", data[0 .. 64]);
+                        // infof(cast(string) data); 
+                    }
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
                     http1ServerDecoder.decode(buf, session);
                 }
             );
         });
-
-        tracef("Listing at: http://%s:%d", host, port);
         this.http2Configuration = c;
+        if(c.isSecureConnectionEnabled)
+            tracef("Listing at: https://%s:%d", host, port);
+        else
+            tracef("Listing at: http://%s:%d", host, port);
     }
 
     private HTTP2ServerHandler http2ServerHandler;
