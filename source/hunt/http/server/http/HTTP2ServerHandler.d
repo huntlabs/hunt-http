@@ -46,19 +46,21 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
             SecureSession secureSession = factory.create(session, false, (sslSession)  {
-                tracef("server session %s SSL handshake finished", session.getSessionId());
-                HTTPConnection httpConnection;
-                // string protocol = Optional.ofNullable(sslSession.getApplicationProtocol())
-                //                           .filter(StringUtils::hasText)
-                //                           .orElse("http/1.1");
 
+                HTTPConnection httpConnection;
                 string protocol = sslSession.getApplicationProtocol();
                 if(protocol.empty)
                     protocol = "http/1.1";
 
+                version(HuntDebugMode) {
+                    tracef("server session %s SSL handshake finished. Application protocol: %s", 
+                        session.getSessionId(), protocol);
+                }
+
                 switch (protocol) {
                     case "http/1.1":
-                        httpConnection = new HTTP1ServerConnection(config, session, sslSession, new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
+                        httpConnection = new HTTP1ServerConnection(config, session, sslSession, 
+                            new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
                         break;
                     case "h2":
                         httpConnection = new HTTP2ServerConnection(config, session, sslSession, listener);
@@ -72,10 +74,10 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
             });
 
             session.attachObject(cast(Object)secureSession);
-        } else 
-        {
+        } else  {
             if (!config.getProtocol().empty) {
-                HTTP1ServerConnection httpConnection = new HTTP1ServerConnection(config, session, null, new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
+                HTTP1ServerConnection httpConnection = new HTTP1ServerConnection(config, session, null, 
+                    new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
                 session.attachObject(httpConnection);
                 serverHTTPHandler.acceptConnection(httpConnection);
             } else {
@@ -85,7 +87,8 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
                 }
 
                 if(httpVersion == HttpVersion.HTTP_1_1) {
-                    HTTP1ServerConnection httpConnection = new HTTP1ServerConnection(config, session, null, new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
+                    HTTP1ServerConnection httpConnection = new HTTP1ServerConnection(config, session, null, 
+                        new HTTP1ServerRequestHandler(serverHTTPHandler), listener, webSocketHandler);
                     session.attachObject(httpConnection);
                     serverHTTPHandler.acceptConnection(httpConnection);
                 }
