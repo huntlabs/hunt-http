@@ -40,8 +40,8 @@ class HTTP2Client  : AbstractLifeCycle {
         }
         http2ClientContext = new HashMap!(int, HTTP2ClientContext)();
 
-        HTTP1ClientDecoder http11ClientDecoder = new HTTP1ClientDecoder(new HTTP2ClientDecoder());
-        CommonDecoder commonDecoder = new CommonDecoder(http11ClientDecoder);
+        HTTP1ClientDecoder httpClientDecoder = new HTTP1ClientDecoder(new HTTP2ClientDecoder());
+        CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
 
         c.getTcpConfiguration().setDecoder(commonDecoder);
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
@@ -71,8 +71,7 @@ class HTTP2Client  : AbstractLifeCycle {
 
                 ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
                 commonDecoder.decode(buf, session);
-
-                    // http11ClientDecoder.decode(buf, session);
+                // httpClientDecoder.decode(buf, session);
                 }
             );
         });

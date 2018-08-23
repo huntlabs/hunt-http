@@ -37,13 +37,13 @@ class HTTP1ServerDecoder : DecoderChain {
     void decode(ByteBuffer buffer, Session session) {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
-        Object o = session.getAttachment();
-        infof("session type is: %s", typeid(o));
+        Object attachment = session.getAttachment();
+        infof("session type is: %s", typeid(attachment));
 
-        AbstractConnection abstractConnection = cast(AbstractConnection) session.getAttachment();
+        AbstractConnection abstractConnection = cast(AbstractConnection) attachment;
         switch (abstractConnection.getConnectionType()) {
             case ConnectionType.HTTP1: {
-                 HTTP1ServerConnection http1Connection = cast(HTTP1ServerConnection) session.getAttachment();
+                 HTTP1ServerConnection http1Connection = cast(HTTP1ServerConnection) attachment;
                 if (http1Connection.getTunnelConnectionPromise() is null) {
                      HttpParser parser = http1Connection.getParser();
                     while (buf.hasRemaining()) {
@@ -80,7 +80,8 @@ class HTTP1ServerDecoder : DecoderChain {
             }
             break;
             default:
-                throw new IllegalStateException("client does not support the protocol " ~ to!string(abstractConnection.getConnectionType()));
+                throw new IllegalStateException("client does not support the protocol " ~ 
+                    to!string(abstractConnection.getConnectionType()));
         }
     }
 }

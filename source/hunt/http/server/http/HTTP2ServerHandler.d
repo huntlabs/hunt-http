@@ -41,8 +41,8 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
         this.webSocketHandler = webSocketHandler;
     }
 
-    override
-    void sessionOpened(Session session) {
+    override void sessionOpened(Session session) {
+        version(HuntDebugMode) trace("New session...");
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
             SecureSession secureSession = factory.create(session, false, (sslSession)  {

@@ -59,10 +59,9 @@ class HTTP2Server  : AbstractLifeCycle {
         this.port = port;
         http2ServerHandler = new HTTP2ServerHandler(c, listener, serverHTTPHandler, webSocketHandler);
 
-        HTTP1ServerDecoder http1ServerDecoder = new HTTP1ServerDecoder(null, new HTTP2ServerDecoder());
-
-        // c.getTcpConfiguration().setDecoder(new CommonDecoder(new HTTP1ServerDecoder(null, new HTTP2ServerDecoder())));
-        c.getTcpConfiguration().setDecoder(http1ServerDecoder);
+        HTTP1ServerDecoder httpServerDecoder = new HTTP1ServerDecoder(null, new HTTP2ServerDecoder());
+        CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
+        c.getTcpConfiguration().setDecoder(commonDecoder);
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(http2ServerHandler);
 
@@ -83,7 +82,7 @@ class HTTP2Server  : AbstractLifeCycle {
                         // infof(cast(string) data); 
                     }
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
-                    http1ServerDecoder.decode(buf, session);
+                    commonDecoder.decode(buf, session);
                 }
             );
         });
