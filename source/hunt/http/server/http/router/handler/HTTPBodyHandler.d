@@ -16,6 +16,7 @@ import hunt.util.exception;
 import hunt.util.string;
 
 import kiss.logger;
+import std.array;
 
 /**
  * 
@@ -40,88 +41,93 @@ class HTTPBodyHandler : Handler {
         this.configuration = configuration;
     }
 
-    override
-    void handle(RoutingContext context) {
+    override void handle(RoutingContext context) {
 
-        implementationMissing(false);
-        // RoutingContextImpl ctx = cast(RoutingContextImpl) context;
-        // SimpleRequest request = ctx.getRequest();
-        // HTTPBodyHandlerSPIImpl httpBodyHandlerSPI = new HTTPBodyHandlerSPIImpl();
-        // httpBodyHandlerSPI.urlEncodedMap = new UrlEncoded();
-        // httpBodyHandlerSPI.charset = configuration.getCharset();
-        // ctx.setHTTPBodyHandlerSPI(httpBodyHandlerSPI);
+        RoutingContextImpl ctx = cast(RoutingContextImpl) context;
+        SimpleRequest request = ctx.getRequest();
+        HTTPBodyHandlerSPIImpl httpBodyHandlerSPI = new HTTPBodyHandlerSPIImpl();
+        httpBodyHandlerSPI.urlEncodedMap = new UrlEncoded();
+        httpBodyHandlerSPI.charset = configuration.getCharset();
+        ctx.setHTTPBodyHandlerSPI(httpBodyHandlerSPI);
 
-        // if (StringUtils.hasText(request.getURI().getQuery())) {
-        //     httpBodyHandlerSPI.urlEncodedMap.decode(request.getURI().getQuery(), Charset.forName(configuration.getCharset()));
-        // }
+        string queryString = request.getURI().getQuery();
+        if (!queryString.empty()) {
+            httpBodyHandlerSPI.urlEncodedMap.decode(queryString);
+        }
 
-        // if (ctx.isAsynchronousRead()) { // receive content event has been listened
-        //     ctx.next();
-        //     return;
-        // }
+        if (ctx.isAsynchronousRead()) { // receive content event has been listened
+            ctx.next();
+            return;
+        }
 
-        // if (isChunked(request)) {
-        //     // httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(4 * 1024);
-        //     implementationMissing();
-        // } else {
-        //     long contentLength = request.getContentLength();
-        //     if (contentLength <= 0) { // no content
-        //         ctx.next();
-        //         return;
-        //     } else {
-        //         if (contentLength > configuration.getBodyBufferThreshold()) {
-        //             httpBodyHandlerSPI.pipedStream = new FilePipedStream(configuration.getTempFilePath());
-        //         } else {
-        //             httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream((int) contentLength);
-        //         }
-        //     }
-        // }
+        if (isChunked(request)) {
+            // httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(4 * 1024);
+            implementationMissing(false);
+        } else {
+            long contentLength = request.getContentLength();
+            if (contentLength <= 0) { // no content
+                ctx.next();
+                return;
+            } else {
+                if (contentLength > configuration.getBodyBufferThreshold()) {
+                    // httpBodyHandlerSPI.pipedStream = new FilePipedStream(configuration.getTempFilePath());
+                    implementationMissing(false);
+                } else {
+                    httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(cast(int) contentLength);
+                }
+            }
+        }
 
-        // long chunkedEncodingContentLength;
-        // ctx.content(buf -> {
-        //     version(HuntDebugMode) {
-        //         tracef("http body handler received content size -> %s", buf.remaining());
-        //     }
+        long chunkedEncodingContentLength;
+        ctx.onContent( (ByteBuffer buf) {
+            version(HuntDebugMode) {
+                tracef("http body handler received content size -> %s", buf.remaining());
+            }
 
-        //     try {
-        //         if (isChunked(request)) {
-        //             if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > configuration.getBodyBufferThreshold()
-        //                     && httpBodyHandlerSPI.pipedStream instanceof ByteArrayPipedStream) {
-        //                 // chunked encoding content dump to temp file
-        //                 IO.close(httpBodyHandlerSPI.pipedStream.getOutputStream());
-        //                 FilePipedStream filePipedStream = new FilePipedStream(configuration.getTempFilePath());
-        //                 IO.copy(httpBodyHandlerSPI.pipedStream.getInputStream(), filePipedStream.getOutputStream());
-        //                 filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //                 httpBodyHandlerSPI.pipedStream = filePipedStream;
-        //             } else {
-        //                 httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //             }
-        //         } else {
-        //             httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //         }
-        //     } catch (IOException e) {
-        //         errorf("http server receives http body exception", e);
-        //     }
-        // }).contentComplete(req -> {
-        //     try {
-        //         string contentType = MimeTypes.getContentTypeMIMEType(request.getFields().get(HttpHeader.CONTENT_TYPE));
-        //         httpBodyHandlerSPI.pipedStream.getOutputStream().close();
-        //         if ("application/x-www-form-urlencoded".equalsIgnoreCase(contentType)) {
-        //             try (InputStream inputStream = httpBodyHandlerSPI.pipedStream.getInputStream()) {
-        //                 httpBodyHandlerSPI.urlEncodedMap.decode(IO.toString(inputStream, configuration.getCharset()),
-        //                         Charset.forName(configuration.getCharset()));
-        //             }
-        //         } else if ("multipart/form-data".equalsIgnoreCase(contentType)) {
-        //             httpBodyHandlerSPI.multiPartFormInputStream = new MultiPartFormInputStream(
-        //                     httpBodyHandlerSPI.getInputStream(),
-        //                     request.getFields().get(HttpHeader.CONTENT_TYPE),
-        //                     configuration.getMultipartConfigElement(),
-        //                     new File(configuration.getTempFilePath()));
-        //         }
-        //     } catch (IOException e) {
-        //         errorf("http server ends receiving data exception", e);
-        //     }
-        // }).messageComplete(req -> ctx.next());
+            try {
+                if (isChunked(request)) {
+
+                    implementationMissing(false);
+                    // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > configuration.getBodyBufferThreshold()
+                    //         && httpBodyHandlerSPI.pipedStream instanceof ByteArrayPipedStream) {
+                    //     // chunked encoding content dump to temp file
+                    //     IO.close(httpBodyHandlerSPI.pipedStream.getOutputStream());
+                    //     FilePipedStream filePipedStream = new FilePipedStream(configuration.getTempFilePath());
+                    //     IO.copy(httpBodyHandlerSPI.pipedStream.getInputStream(), filePipedStream.getOutputStream());
+                    //     filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                    //     httpBodyHandlerSPI.pipedStream = filePipedStream;
+                    // } else {
+                    //     httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                    // }
+                } else {
+                    httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                }
+            } catch (IOException e) {
+                errorf("http server receives http body exception", e);
+            }
+        }).onContentComplete( (SimpleRequest req) {
+            try {
+                string contentType = MimeTypes.getContentTypeMIMEType(request.getFields().get(HttpHeader.CONTENT_TYPE));
+                httpBodyHandlerSPI.pipedStream.getOutputStream().close();
+
+                if ("application/x-www-form-urlencoded".equalsIgnoreCase(contentType)) {
+                    implementationMissing(false);
+                        // InputStream inputStream = httpBodyHandlerSPI.pipedStream.getInputStream();
+                        // httpBodyHandlerSPI.urlEncodedMap.decode(IO.toString(inputStream, configuration.getCharset()),
+                        //         Charset.forName(configuration.getCharset()));
+                } else if ("multipart/form-data".equalsIgnoreCase(contentType)) {
+
+                    implementationMissing(false);
+                    // httpBodyHandlerSPI.multiPartFormInputStream = new MultiPartFormInputStream(
+                    //         httpBodyHandlerSPI.getInputStream(),
+                    //         request.getFields().get(HttpHeader.CONTENT_TYPE),
+                    //         configuration.getMultipartConfigElement(),
+                    //         new File(configuration.getTempFilePath()));
+                }
+            } catch (IOException e) {
+                errorf("http server ends receiving data exception", e);
+            }
+        }).onMessageComplete((SimpleRequest req) { ctx.next(); });
     }
 
     bool isChunked(SimpleRequest request) {

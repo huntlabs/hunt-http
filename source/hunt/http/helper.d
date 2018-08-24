@@ -7,6 +7,9 @@ import hunt.http.client.http.SimpleResponse;
 import hunt.http.server.http.HTTP2ServerBuilder;
 import hunt.http.server.http.SimpleHTTPServer;
 import hunt.http.server.http.SimpleHTTPServerConfiguration;
+import hunt.http.server.http.router.handler.HTTPBodyHandler;
+
+import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.CompletableFuture;
@@ -44,6 +47,50 @@ SimpleHTTPClient createHTTPsClient(SecureSessionFactory secureSessionFactory) {
     configuration.setSecureConnectionEnabled(true);
     return new SimpleHTTPClient(configuration);
 }
+
+
+/**
+ * Use fluent API to create an new HTTP server instance.
+ *
+ * @return HTTP server builder.
+ */
+static HTTP2ServerBuilder httpServer() {
+    return new HTTP2ServerBuilder().httpServer();
+}
+
+/**
+ * Create a new HTTP2 server. It uses the plaintext HTTP2 protocol.
+ *
+ * @return HTTP server builder.
+ */
+static HTTP2ServerBuilder plaintextHTTP2Server() {
+    SimpleHTTPServerConfiguration configuration = new SimpleHTTPServerConfiguration();
+    configuration.setProtocol(HttpVersion.HTTP_2.asString());
+    return httpServer(configuration);
+}
+
+/**
+ * Create a new HTTP server.
+ *
+ * @param serverConfiguration The server configuration.
+ * @return HTTP server builder
+ */
+static HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration) {
+    return httpServer(serverConfiguration, new HTTPBodyConfiguration());
+}
+
+/**
+ * Create a new HTTP server.
+ *
+ * @param serverConfiguration   HTTP server configuration.
+ * @param httpBodyConfiguration HTTP body process configuration.
+ * @return HTTP server builder.
+ */
+static HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration,
+                                     HTTPBodyConfiguration httpBodyConfiguration) {
+    return new HTTP2ServerBuilder().httpServer(serverConfiguration, httpBodyConfiguration);
+}
+
 
 /**
  * Create a new HTTPs server.

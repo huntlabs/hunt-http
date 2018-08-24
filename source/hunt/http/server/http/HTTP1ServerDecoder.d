@@ -38,9 +38,14 @@ class HTTP1ServerDecoder : DecoderChain {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
         Object attachment = session.getAttachment();
-        infof("session type is: %s", typeid(attachment));
+        version(HuntDebugMode) infof("session type is: %s", typeid(attachment));
 
         AbstractConnection abstractConnection = cast(AbstractConnection) attachment;
+        if(abstractConnection is null) {
+            warningf("Bad connection instance: ", typeid(attachment));
+            return;
+        }
+
         switch (abstractConnection.getConnectionType()) {
             case ConnectionType.HTTP1: {
                  HTTP1ServerConnection http1Connection = cast(HTTP1ServerConnection) attachment;

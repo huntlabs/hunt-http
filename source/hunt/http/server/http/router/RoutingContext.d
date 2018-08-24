@@ -28,293 +28,21 @@ import std.conv;
  *
  * 
  */
-// interface RoutingContext : Closeable {
-
-//     Object getAttribute(string key);
-
-//     Object setAttribute(string key, Object value);
-
-//     Object removeAttribute(string key);
-
-//     HashMap!(string, Object) getAttributes();
-
-//     SimpleResponse getResponse();
-
-//     SimpleResponse getAsyncResponse();
-
-//     SimpleRequest getRequest();
-
-//     int getConnectionId();
-
-//     string getRouterParameter(string name);
-
-//     string getWildcardMatchedResult(int index);
-
-//     string getRegexGroup(int index);
-
-//     string getPathParameter(string name);
-
-//     // string getRouterParamOpt(string name) {
-//     //     return getRouterParameter(name);
-//     // }
-
-//     /**
-//      * Set the HTTP body packet receiving callback.
-//      *
-//      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
-//      * @return RoutingContext
-//      */
-//     RoutingContext content(Action1!ByteBuffer content);
-
-//     /**
-//      * Set the HTTP body packet complete callback.
-//      *
-//      * @param contentComplete The HTTP body packet complete callback.
-//      * @return RoutingContext
-//      */
-//     RoutingContext contentComplete(Action1!(SimpleRequest) contentComplete);
-
-//     /**
-//      * Set the HTTP message complete callback.
-//      *
-//      * @param messageComplete the HTTP message complete callback.
-//      * @return RoutingContext
-//      */
-//     RoutingContext messageComplete(Action1!(SimpleRequest) messageComplete);
-
-//     /**
-//      * If return true, it represents you has set a HTTP body data receiving callback.
-//      *
-//      * @return If return true, it represents you has set a HTTP body data receiving callback
-//      */
-//     bool isAsynchronousRead();
-
-//     /**
-//      * Execute the next handler.
-//      *
-//      * @return If return false, it represents current handler is the last.
-//      */
-//     bool next();
-
-//     /**
-//      * If return false, it represents current handler is the last.
-//      *
-//      * @return If return false, it represents current handler is the last.
-//      */
-//     bool hasNext();
-
-//     // <T> RoutingContext complete(Promise<T> promise);
-
-//     // <T> bool next(Promise<T> promise);
-
-//     // <T> CompletableFuture<T> nextFuture() {
-//     //     Promise.Completable<T> completable = new Promise.Completable<>();
-//     //     next(completable);
-//     //     return completable;
-//     // }
-
-//     // <T> CompletableFuture<T> complete() {
-//     //     Promise.Completable<T> completable = new Promise.Completable<>();
-//     //     complete(completable);
-//     //     return completable;
-//     // }
-
-    // void succeed(bool t);
-
-    // void fail(Exception x);
-
-
-//     // request wrap
-//     string getMethod();
-
-//     HttpURI getURI();
-
-//     HttpVersion getHttpVersion();
-
-//     HttpFields getFields();
-
-//     long getContentLength();
-
-//     List!Cookie getCookies();
-
-//     // response wrap
-//     RoutingContext setStatus(int status);
-
-//     RoutingContext setReason(string reason);
-
-//     RoutingContext setHttpVersion(HttpVersion httpVersion) {
-//         getResponse().setHttpVersion(httpVersion);
-//         return this;
-//     }
-
-//     RoutingContext put(HttpHeader header, string value) {
-//         getResponse().put(header, value);
-//         return this;
-//     }
-
-//     RoutingContext put(string header, string value) {
-//         getResponse().put(header, value);
-//         return this;
-//     }
-
-//     RoutingContext add(HttpHeader header, string value) {
-//         getResponse().add(header, value);
-//         return this;
-//     }
-
-//     RoutingContext add(string name, string value) {
-//         getResponse().add(name, value);
-//         return this;
-//     }
-
-//     RoutingContext addCookie(Cookie cookie) {
-//         getResponse().addCookie(cookie);
-//         return this;
-//     }
-
-//     RoutingContext write(string value) {
-//         getResponse().write(value);
-//         return this;
-//     }
-
-//     RoutingContext writeJson(Object object) {
-//         put(HttpHeader.CONTENT_TYPE, MimeTypes.Type.APPLICATION_JSON_UTF_8.asString()).write(Json.toJson(object));
-//         return this;
-//     }
-
-//     RoutingContext end(string value) {
-//         return write(value).end();
-//     }
-
-//     RoutingContext end() {
-//         getResponse().end();
-//         return this;
-//     }
-
-//     RoutingContext write(byte[] b, int off, int len) {
-//         getResponse().write(b, off, len);
-//         return this;
-//     }
-
-//     RoutingContext write(byte[] b) {
-//         return write(b, 0, b.length);
-//     }
-
-//     RoutingContext end(byte[] b) {
-//         return write(b).end();
-//     }
-
-//     void redirect(string url) {
-//         setStatus(HttpStatus.FOUND_302).put(HttpHeader.LOCATION, url);
-//         DefaultErrorResponseHandlerLoader.getInstance().getHandler().render(this, HttpStatus.FOUND_302, null);
-//     }
-
-//     // HTTP body API
-//     string getParameter(string name);
-
-//     Optional!string getParamOpt(string name) {
-//         return Optional.ofNullable(getParameter(name));
-//     }
-
-//     List!string getParameterValues(string name);
-
-//     Map!(string, List!string) getParameterMap();
-
-//     Collection<Part> getParts();
-
-//     Part getPart(string name);
-
-//     InputStream getInputStream();
-
-//     BufferedReader getBufferedReader();
-
-//     string getStringBody(string charset);
-
-//     string getStringBody();
-
-//     <T> T getJsonBody(Class<T> clazz);
-
-//     <T> T getJsonBody(GenericTypeReference<T> typeReference);
-
-//     JsonObject getJsonObjectBody();
-
-//     JsonArray getJsonArrayBody();
-
-
-//     // HTTP session API
-//     HTTPSession getSessionNow() {
-//         return getSession().getNow(null);
-//     }
-
-//     HTTPSession getSessionNow(bool create) {
-//         return getSession(create).getNow(null);
-//     }
-
-//     int getSessionSizeNow() {
-//         return getSessionSize().getNow(0);
-//     }
-
-//     bool removeSessionNow() {
-//         return removeSession().getNow(false);
-//     }
-
-//     bool updateSessionNow(HTTPSession httpSession) {
-//         return updateSession(httpSession).getNow(false);
-//     }
-
-//     CompletableFuture<HTTPSession> getSessionById(string id);
-
-    HTTPSession getSession();
-
-//     CompletableFuture<HTTPSession> getSession(bool create);
-
-//     CompletableFuture<HTTPSession> getAndCreateSession(int maxAge);
-
-    int getSessionSize();
-
-//     CompletableFuture<bool> removeSessionById(string id);
-    
-    bool removeSession();
-
-//     CompletableFuture<bool> updateSession(HTTPSession httpSession);
-
-//     bool isRequestedSessionIdFromURL();
-
-//     bool isRequestedSessionIdFromCookie();
-
-//     string getRequestedSessionId();
-
-//     string getSessionIdParameterName();
-
-//     // Template API
-//     void renderTemplate(string resourceName, Object scope);
-
-//     void renderTemplate(string resourceName, Object[] scopes);
-
-//     void renderTemplate(string resourceName, List!Object scopes);
-
-//     void renderTemplate(string resourceName) {
-//         renderTemplate(resourceName, Collections.emptyList());
-//     }
-
-// }
-
-
 abstract class RoutingContext : Closeable {
 
-    string getAttribute(string key) { implementationMissing(); return null;}
+    string getAttribute(string key) { implementationMissing(false); return null;}
 
-    string setAttribute(string key, string value) { implementationMissing(); return null;}
+    string setAttribute(string key, string value) { implementationMissing(false); return null;}
 
-    string removeAttribute(string key) { implementationMissing(); return null;}
+    string removeAttribute(string key) { implementationMissing(false); return null;}
 
-    string[string] getAttributes() { implementationMissing(); return null;}
+    string[string] getAttributes() { implementationMissing(false); return null;}
 
-    SimpleResponse getResponse() { implementationMissing(); return null;}
+    SimpleResponse getResponse() { implementationMissing(false); return null;}
 
-    SimpleResponse getAsyncResponse() { implementationMissing(); return null;}
+    SimpleResponse getAsyncResponse() { implementationMissing(false); return null;}
 
-    SimpleRequest getRequest() { implementationMissing(); return null; }
+    SimpleRequest getRequest() { implementationMissing(false); return null; }
 
     int getConnectionId() {
         return getRequest().getConnection().getSessionId();
@@ -344,7 +72,7 @@ abstract class RoutingContext : Closeable {
      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
      * @return RoutingContext
      */
-    RoutingContext onContent(Action1!ByteBuffer content) { implementationMissing(); return null;}
+    RoutingContext onContent(Action1!ByteBuffer content) { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP body packet complete callback.
@@ -352,7 +80,7 @@ abstract class RoutingContext : Closeable {
      * @param contentComplete The HTTP body packet complete callback.
      * @return RoutingContext
      */
-    RoutingContext onContentComplete(Action1!(SimpleRequest) contentComplete) { implementationMissing(); return null;}
+    RoutingContext onContentComplete(Action1!(SimpleRequest) contentComplete) { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP message complete callback.
@@ -360,28 +88,28 @@ abstract class RoutingContext : Closeable {
      * @param messageComplete the HTTP message complete callback.
      * @return RoutingContext
      */
-    RoutingContext onMessageComplete(Action1!(SimpleRequest) messageComplete) { implementationMissing(); return null;}
+    RoutingContext onMessageComplete(Action1!(SimpleRequest) messageComplete) { implementationMissing(false); return null;}
 
     /**
      * If return true, it represents you has set a HTTP body data receiving callback.
      *
      * @return If return true, it represents you has set a HTTP body data receiving callback
      */
-    bool isAsynchronousRead() { implementationMissing(); return false;}
+    bool isAsynchronousRead() { implementationMissing(false); return false;}
 
     /**
      * Execute the next handler.
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool next() { implementationMissing(); return false;}
+    bool next() { implementationMissing(false); return false;}
 
     /**
      * If return false, it represents current handler is the last.
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool hasNext() { implementationMissing(); return false;}
+    bool hasNext() { implementationMissing(false); return false;}
 
     // <T> RoutingContext complete(Promise<T> promise);
 
@@ -400,9 +128,9 @@ abstract class RoutingContext : Closeable {
     // }
 
     
-    void succeed(bool t) { implementationMissing(); }
+    void succeed(bool t) { implementationMissing(false); }
 
-    void fail(Exception x) { implementationMissing(); }
+    void fail(Exception x) { implementationMissing(false); }
 
 
     // request wrap
@@ -510,15 +238,15 @@ abstract class RoutingContext : Closeable {
     }
 
     // HTTP body API
-    string getParameter(string name)  { implementationMissing(); return null; }
+    string getParameter(string name)  { implementationMissing(false); return null; }
 
     // Optional!string getParamOpt(string name) {
     //     return Optional.ofNullable(getParameter(name));
     // }
 
-    List!string getParameterValues(string name) { implementationMissing(); return null; }
+    List!string getParameterValues(string name) { implementationMissing(false); return null; }
 
-    Map!(string, List!string) getParameterMap() { implementationMissing(); return null; }
+    Map!(string, List!string) getParameterMap() { implementationMissing(false); return null; }
 
     // Collection!Part getParts();
 
@@ -528,9 +256,9 @@ abstract class RoutingContext : Closeable {
 
     // BufferedReader getBufferedReader();
 
-    string getStringBody(string charset) { implementationMissing(); return null; }
+    string getStringBody(string charset) { implementationMissing(false); return null; }
 
-    string getStringBody() { implementationMissing(); return null; }
+    string getStringBody() { implementationMissing(false); return null; }
 
     // <T> T getJsonBody(Class<T> clazz);
 
@@ -578,13 +306,13 @@ abstract class RoutingContext : Closeable {
 
     // CompletableFuture<bool> updateSession(HTTPSession httpSession);
 
-    bool isRequestedSessionIdFromURL()  { implementationMissing(); return false; }
+    bool isRequestedSessionIdFromURL()  { implementationMissing(false); return false; }
 
-    bool isRequestedSessionIdFromCookie(){ implementationMissing(); return false; }
+    bool isRequestedSessionIdFromCookie(){ implementationMissing(false); return false; }
 
-    string getRequestedSessionId() { implementationMissing(); return ""; }
+    string getRequestedSessionId() { implementationMissing(false); return ""; }
 
-    string getSessionIdParameterName() { implementationMissing(); return ""; }
+    string getSessionIdParameterName() { implementationMissing(false); return ""; }
 
     // Template API
     // void renderTemplate(string resourceName, Object scope);

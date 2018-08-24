@@ -42,11 +42,12 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
     }
 
     override void sessionOpened(Session session) {
-        version(HuntDebugMode) trace("New session...");
+        version(HuntDebugMode) trace("New http session...", typeid(session));
+        
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
-            SecureSession secureSession = factory.create(session, false, (sslSession)  {
-
+            SecureSession secureSession = factory.create(session, false, (SecureSession sslSession)  {
+                version(HuntDebugMode) info("SecureSession created...");
                 HTTPConnection httpConnection;
                 string protocol = sslSession.getApplicationProtocol();
                 if(protocol.empty)
@@ -69,10 +70,13 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
                         throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ 
                             protocol ~ " is not supported");
                 }
+
+                //infof("attach http connection: %s", typeid(httpConnection));
                 session.attachObject(cast(Object)httpConnection);
                 serverHTTPHandler.acceptConnection(httpConnection);
             });
-
+            
+            //infof("attach secure session: %s", typeid(secureSession));
             session.attachObject(cast(Object)secureSession);
         } else  {
             if (!config.getProtocol().empty) {

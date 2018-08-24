@@ -21,7 +21,8 @@ import hunt.http.helper;
 
 void main(string[] args)
 {
-        httpsServer()
+        httpsServer() // HTTPS
+        // httpServer() // HTTP
          .router().get("/").handler( (RoutingContext ctx) { ctx.end("hello world!"); })
         //  .router().get("/static/*").handler(new StaticFileHandler(path.toAbsolutePath().toString()))
          .listen("0.0.0.0", 8081);

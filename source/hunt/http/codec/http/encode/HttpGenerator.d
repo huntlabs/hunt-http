@@ -551,7 +551,6 @@ class HttpGenerator {
 
         version(HuntDebugMode) {
             tracef("Header fields:\n%s", info.getFields().toString());
-            // tracef("content: %s", BufferUtils.toSummaryString(content));
             tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
         }
 

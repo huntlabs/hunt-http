@@ -24,11 +24,10 @@ class CommonDecoder : DecoderChain
         super(next);
     }
 
-    override
-    void decode(ByteBuffer buf, Session session) {
+    override void decode(ByteBuffer buf, Session session) {
         Object attachment = session.getAttachment();
         version(HuntDebugMode) {
-            tracef("decoding... session attachment: %s", typeid(attachment).name);
+            tracef("decoding with %s", typeid(attachment).name);
         }
 
         AbstractConnection connection = cast(AbstractConnection) attachment;
@@ -39,11 +38,11 @@ class CommonDecoder : DecoderChain
                 ByteBuffer plaintext = connection.decrypt(buf);
                 if (plaintext !is null && plaintext.hasRemaining() && next !is null) {
                     next.decode(plaintext, session);
-                }
+                } else warning("The next decoder is null.");
             } else {
                 if (next !is null) {
                     next.decode(buf, session);
-                }
+                } else warning("The next decoder is null.");
             }
         } else if (secureSession !is null) { // TLS handshake
             ByteBuffer plaintext = secureSession.read(buf);
@@ -53,16 +52,20 @@ class CommonDecoder : DecoderChain
                     tracef("The session %s handshake finished and received cleartext size %s",
                             session.getSessionId(), plaintext.remaining());
                 }
+
+                // The attachment has been reset.
+                connection = cast(AbstractConnection) session.getAttachment();
                 if (connection !is null) {
-                    if (next !is null) {
+                    if (next !is null) 
                         next.decode(plaintext, session);
-                    }
+                    else 
+                        warning("The next decoder is null.");
                 } else {
-                    throw new IllegalStateException("the connection has not been created");
+                        warningf("connection is null");
+                    throw new IllegalStateException("the connection has not been created: ", );
                 }
             } else {
-                version(HuntDebugMode) 
-                {
+                version(HuntDebugMode) {
                     if (secureSession.isHandshakeFinished()) {
                         tracef("The ssl session %s need more data", session.getSessionId());
                     } else {
@@ -70,6 +73,8 @@ class CommonDecoder : DecoderChain
                     }
                 }
             }
+        } else {
+            version(HuntDebugMode) warning("No handler");
         }
     }
 }

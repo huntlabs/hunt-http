@@ -111,16 +111,6 @@ class RoutingContextImpl : RoutingContext {
             handler.handle(this);
             return true;
         }
-        // return Optional.ofNullable(current)
-        //                .map(RouterMatchResult::getRouter)
-        //                .map(c -> (RouterImpl) c)
-        //                .map(RouterImpl::getHandler)
-        //                .map(handler -> {
-        //                    handler.handle(this);
-        //                    return true;
-        //                })
-        //                .orElse(false);
-        // implementationMissing();
         return false;
     }
 
@@ -292,9 +282,9 @@ class RoutingContextImpl : RoutingContext {
     //                    .orElseGet(request::getJsonArrayBody);
     // }
     
-    // void setHTTPBodyHandlerSPI(HTTPBodyHandlerSPI httpBodyHandlerSPI) {
-    //     this.httpBodyHandlerSPI = httpBodyHandlerSPI;
-    // }
+    void setHTTPBodyHandlerSPI(HTTPBodyHandlerSPI httpBodyHandlerSPI) {
+        this.httpBodyHandlerSPI = httpBodyHandlerSPI;
+    }
 
     // override
     // CompletableFuture<HTTPSession> getSessionById(string id) {
