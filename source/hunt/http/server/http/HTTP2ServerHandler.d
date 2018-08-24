@@ -47,7 +47,7 @@ class HTTP2ServerHandler : AbstractHTTPHandler {
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
             SecureSession secureSession = factory.create(session, false, (SecureSession sslSession)  {
-                version(HuntDebugMode) info("SecureSession created...");
+                version(HuntDebugMode) info("Secure session created...");
                 HTTPConnection httpConnection;
                 string protocol = sslSession.getApplicationProtocol();
                 if(protocol.empty)

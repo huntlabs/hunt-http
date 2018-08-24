@@ -6,15 +6,18 @@ import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Config;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
+import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
 
 class HTTP2Configuration {
 
     // TCP settings
-    private Config tcpConfiguration; // = new hunt.net.Config();
+    private Config tcpConfiguration; 
 
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
-    private SecureSessionFactory secureSessionFactory; // = new ConscryptSecureSessionFactory();
+    private SecureSessionFactory secureSessionFactory; 
+    // private string _sslCertificate;
+    // private string _sslPrivateKey;
 
     // HTTP settings
     private int maxDynamicTableSize = 4096;
@@ -37,7 +40,10 @@ class HTTP2Configuration {
 
     this()
     {
-        secureSessionFactory = new ConscryptSecureSessionFactory();
+        secureSessionFactory = new ConscryptSecureSessionFactory(
+            new NoCheckConscryptSSLContextFactory(),
+            new DefaultCredentialConscryptSSLContextFactory()
+        );
         tcpConfiguration = new hunt.net.Config.Config();
         protocol = HttpVersion.HTTP_1_1.asString();
     }
@@ -317,6 +323,23 @@ class HTTP2Configuration {
     void setSecureSessionFactory(SecureSessionFactory secureSessionFactory) {
         this.secureSessionFactory = secureSessionFactory;
     }
+
+    // string sslCertificate() {
+    //     return _sslCertificate;
+    // }
+
+    // void sslCertificate(string fileName) {
+    //     _sslCertificate = fileName;
+    // }
+
+    // string sslPrivateKey() {
+    //     return _sslPrivateKey;
+    // }
+
+    // void sslPrivateKey(string fileName) {
+    //     _sslPrivateKey = fileName;
+    // }
+
 
     /**
      * Get the default HTTP protocol version. The value is "HTTP/2.0" or "HTTP/1.1". If the value is null,

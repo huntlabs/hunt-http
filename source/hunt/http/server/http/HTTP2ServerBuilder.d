@@ -29,11 +29,7 @@ import kiss.logger;
  */
 class HTTP2ServerBuilder {
 
-    private static RoutingContext currentCtx; 
-    // static this()
-    // {
-    //     // currentCtx = new RoutingContext();
-    // }
+    private RoutingContext currentCtx; 
 
     private SimpleHTTPServer server;
     private RouterManager routerManager;
@@ -97,6 +93,18 @@ class HTTP2ServerBuilder {
         if (server is null) {
             throw new IllegalStateException("the http server has not been created, please call httpServer() first");
         }
+    }
+
+
+    HTTP2ServerBuilder useCertificateFile(string certificate, string privateKey ) {
+        check();
+        SimpleHTTPServerConfiguration config = server.getConfiguration();
+
+        import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
+        FileCredentialConscryptSSLContextFactory fc = 
+            new FileCredentialConscryptSSLContextFactory(certificate, privateKey, "hunt2018", "hunt2018");
+        config.getSecureSessionFactory.setServerSSLContextFactory = fc; 
+        return this;
     }
 
     HTTP2ServerBuilder listen(string host, int port) {
