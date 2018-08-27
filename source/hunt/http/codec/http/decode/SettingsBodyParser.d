@@ -14,7 +14,7 @@ import hunt.container.HashMap;
 import hunt.container.Map;
 
 import hunt.util.exception;
-import kiss.logger;
+import hunt.logger;
 import std.format;
 
 class SettingsBodyParser :BodyParser {

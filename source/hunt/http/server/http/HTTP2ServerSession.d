@@ -11,7 +11,7 @@ import hunt.http.codec.http.stream;
 import hunt.util.functional;
 import hunt.util.concurrent.Scheduler;
 
-import kiss.logger;
+import hunt.logger;
 
 import hunt.container.Collections;
 import hunt.container.Map;

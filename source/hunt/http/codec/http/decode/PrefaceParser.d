@@ -6,7 +6,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.PrefaceFrame;
 
 import hunt.container.BufferUtils;
-import kiss.logger;
+import hunt.logger;
 
 import hunt.util.exception;
 import hunt.container.ByteBuffer;

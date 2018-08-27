@@ -14,7 +14,7 @@ import hunt.util.exception;
 import hunt.util.functional;
 
 import hunt.container;
-import kiss.logger;
+import hunt.logger;
 import std.format;
 
 

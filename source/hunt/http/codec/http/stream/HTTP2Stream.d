@@ -15,7 +15,7 @@ import hunt.util.concurrent.Scheduler;
 import hunt.util.functional;
 import hunt.util.exception;
 
-import kiss.logger;
+import hunt.logger;
 import std.format;
 
 alias Listener = hunt.http.codec.http.stream.Stream.Stream.Listener;

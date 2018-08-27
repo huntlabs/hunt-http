@@ -19,7 +19,7 @@ import std.algorithm;
 import std.container.array;
 import std.string; 
 
-import kiss.logger;
+import hunt.logger;
 
 /**
  * 

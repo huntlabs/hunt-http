@@ -11,7 +11,7 @@ import hunt.http.codec.http.stream.HTTPOutputStream;
 
 import hunt.util.string;
 import hunt.io;
-import kiss.logger;
+import hunt.logger;
 
 import hunt.container.ByteBuffer;
 

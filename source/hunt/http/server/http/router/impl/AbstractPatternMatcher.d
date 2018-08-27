@@ -6,7 +6,7 @@ import hunt.http.server.http.router.Router;
 import hunt.util.exception;
 import hunt.container;
 
-import kiss.logger;
+import hunt.logger;
 import hunt.util.string;
 
 import std.conv;

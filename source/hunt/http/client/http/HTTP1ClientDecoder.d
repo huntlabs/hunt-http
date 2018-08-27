@@ -15,7 +15,7 @@ import hunt.util.exception;
 
 import hunt.container.ByteBuffer;
 
-import kiss.logger;
+import hunt.logger;
 import std.conv;
 
 

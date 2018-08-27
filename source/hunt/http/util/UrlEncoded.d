@@ -7,7 +7,7 @@ import hunt.util.exception;
 import hunt.util.string;
 import hunt.util.TypeUtils;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.conv;
 import std.array;

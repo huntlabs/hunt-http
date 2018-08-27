@@ -11,7 +11,7 @@ import hunt.util.Assert;
 import hunt.util.exception;
 import hunt.util.TypeUtils;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.conv;
 import std.string;

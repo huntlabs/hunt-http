@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.FrameType;
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;
 
-import kiss.logger;
+import hunt.logger;
 import hunt.util.exception;
 
 

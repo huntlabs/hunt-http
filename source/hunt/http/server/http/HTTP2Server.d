@@ -21,7 +21,7 @@ import hunt.net.AsynchronousTcpSession;
 // import hunt.net.Net;
 import hunt.net;
 
-import kiss.logger;
+import hunt.logger;
 
 import hunt.util.exception;
 import hunt.util.LifeCycle;

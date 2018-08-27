@@ -19,7 +19,7 @@ import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.string;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.conv;
 import std.format;

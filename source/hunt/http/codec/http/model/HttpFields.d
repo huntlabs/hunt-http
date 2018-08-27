@@ -12,7 +12,7 @@ import hunt.util.exception;
 import hunt.util.string;
 import hunt.container;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.array;
 import std.container.array;

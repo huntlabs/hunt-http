@@ -15,7 +15,7 @@ import hunt.container.ByteBuffer;
 import hunt.container.Iterator;
 
 import hunt.util.Assert;
-import kiss.logger;
+import hunt.logger;
 
 alias assertTrue = Assert.assertTrue;
 alias assertFalse = Assert.assertFalse;

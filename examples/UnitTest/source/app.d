@@ -27,7 +27,7 @@ import test.codec.http2.encode.URLEncodedTest;
 import test.http.router.TestMatcher;
 
 import hunt.util.exception;
-import kiss.logger;
+import hunt.logger;
 import hunt.http.codec.http.model.HttpHeader;
 
 void main()

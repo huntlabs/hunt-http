@@ -18,7 +18,7 @@ import std.algorithm;
 import std.array;
 import std.conv;
 
-import kiss.logger;
+import hunt.logger;
 
 /**
 */

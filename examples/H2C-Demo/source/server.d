@@ -14,7 +14,7 @@ import hunt.http.server.http.ServerSessionListener;
 import hunt.util.functional;
 import hunt.container;
 
-import kiss.logger;
+import hunt.logger;
 
 
 void main(string[] args)

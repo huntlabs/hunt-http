@@ -20,7 +20,7 @@ import hunt.net.Session;
 import hunt.util.exception;
 import hunt.util.string;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.range.primitives;
 

@@ -13,7 +13,7 @@ import hunt.container.ByteBuffer;
 import hunt.container.ArrayList;
 import hunt.container.List;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.conv;
 import std.range;

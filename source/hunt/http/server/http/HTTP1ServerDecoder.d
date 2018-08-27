@@ -18,7 +18,7 @@ import hunt.container.BufferUtils;
 
 import hunt.util.exception;
 
-import kiss.logger;
+import hunt.logger;
 import std.conv;
 
 class HTTP1ServerDecoder : DecoderChain {

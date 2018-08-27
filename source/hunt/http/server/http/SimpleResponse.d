@@ -9,7 +9,7 @@ import hunt.util.functional;
 import hunt.io;
 import hunt.util.common;
 
-import kiss.logger;
+import hunt.logger;
 import std.range;
 
 alias Request = MetaData.Request;

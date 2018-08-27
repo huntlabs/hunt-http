@@ -8,7 +8,7 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 import hunt.util.functional;
 
-import kiss.logger;
+import hunt.logger;
 
 
 /**

@@ -25,7 +25,7 @@ import hunt.net.AsynchronousTcpSession;
 import hunt.net.Client;
 import hunt.net;
 
-import kiss.logger;
+import hunt.logger;
 
 class HTTP2Client  : AbstractLifeCycle { 
 

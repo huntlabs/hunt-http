@@ -24,7 +24,7 @@ import hunt.util.functional;
 import hunt.util.LifeCycle;
 import hunt.util.string;
 import hunt.io;
-import kiss.logger;
+import hunt.logger;
 
 import hunt.container.ByteBuffer;
 import hunt.container.List;

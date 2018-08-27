@@ -16,7 +16,7 @@ import hunt.util.functional;
 import hunt.util.concurrent.FuturePromise;
 
 import hunt.container;
-import kiss.logger;
+import hunt.logger;
 import std.format;
 
 

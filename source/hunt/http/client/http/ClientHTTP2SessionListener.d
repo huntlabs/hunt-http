@@ -7,7 +7,7 @@ import hunt.http.codec.http.frame.ResetFrame;
 import hunt.http.codec.http.stream.HTTPConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.io;
-import kiss.logger;
+import hunt.logger;
 
 
 /**

@@ -4,7 +4,7 @@ import hunt.util.exception;
 import hunt.util.string;
 
 import hunt.container.ByteBuffer;
-import kiss.logger;
+import hunt.logger;
 
 /**
 */

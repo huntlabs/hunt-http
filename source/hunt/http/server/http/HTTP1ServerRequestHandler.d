@@ -13,7 +13,7 @@ import hunt.http.codec.http.model;
 import hunt.container.ByteBuffer;
 import hunt.util.string;
 
-import kiss.logger;
+import hunt.logger;
 
 alias RequestHandler = HttpParser.RequestHandler;
 alias HTTP1ServerResponseOutputStream = HTTP1ServerConnection.HTTP1ServerResponseOutputStream;

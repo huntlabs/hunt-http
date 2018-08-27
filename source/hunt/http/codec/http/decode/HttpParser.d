@@ -10,7 +10,7 @@ import hunt.util.string;
 
 import hunt.container;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.algorithm;
 import std.array;

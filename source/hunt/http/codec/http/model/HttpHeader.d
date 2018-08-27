@@ -6,7 +6,7 @@ import std.algorithm;
 import std.conv;
 import std.string;
 
-import kiss.logger;
+import hunt.logger;
 
 bool contains(HttpHeader[] items, ref HttpHeader item)
 {

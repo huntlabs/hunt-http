@@ -12,7 +12,7 @@ import std.array;
 import std.conv;
 import std.string;
 
-import kiss.logger;
+import hunt.logger;
 
 
 /**

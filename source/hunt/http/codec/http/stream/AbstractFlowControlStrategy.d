@@ -7,12 +7,12 @@ import hunt.http.codec.http.stream.SessionSPI;
 
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
-import kiss.logger;
+import hunt.logger;
 import std.datetime;
 import core.time;
 
 import hunt.util.exception;
-import hunt.util.datetime;
+import hunt.datetime;
 import hunt.container.Map;
 
 

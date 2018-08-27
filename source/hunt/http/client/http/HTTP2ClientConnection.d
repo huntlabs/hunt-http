@@ -26,7 +26,7 @@ import hunt.util.concurrent.Promise;
 // import hunt.util.concurrent.Scheduler;
 import hunt.util.exception;
 import hunt.container.BufferUtils;
-import kiss.logger;
+import hunt.logger;
 
 import hunt.util.exception;
 import hunt.container;

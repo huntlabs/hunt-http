@@ -34,7 +34,7 @@ import hunt.util.TypeUtils;
 // import hunt.http.codec.http.model.HttpHeader;
 // import hunt.http.codec.http.model.HttpVersion;
 
-import kiss.logger;
+import hunt.logger;
 
 import std.range;
 import std.algorithm;

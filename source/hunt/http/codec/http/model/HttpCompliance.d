@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.HttpCompliance;
 
-import kiss.logger;
+import hunt.logger;
 
 import hunt.http.codec.http.model.HttpComplianceSection;
 
