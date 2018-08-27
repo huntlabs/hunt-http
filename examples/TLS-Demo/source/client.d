@@ -18,10 +18,6 @@ import std.datetime;
 import std.conv;
 import std.stdio;
 
-/**
-sudo apt-get install libssl-dev
-*/
-
 void main(string[] args) {
 	SimpleHTTPClient simpleHTTPClient = test(new ConscryptSecureSessionFactory());
 	// simpleHTTPClient = test(new JdkSecureSessionFactory());
