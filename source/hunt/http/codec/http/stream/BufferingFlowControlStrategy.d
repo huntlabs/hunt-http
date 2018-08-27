@@ -10,7 +10,7 @@ import hunt.util.functional;
 
 import hunt.container.Map;
 
-import hunt.logger;
+import hunt.logging;
 import std.format;
 
 /**

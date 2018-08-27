@@ -10,7 +10,7 @@ import hunt.net.Session;
 import hunt.util.functional;
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.Scheduler;
-import hunt.logger;
+import hunt.logging;
 
 
 class HTTP2ClientSession : HTTP2Session {

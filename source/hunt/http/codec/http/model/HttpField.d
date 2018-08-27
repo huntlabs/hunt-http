@@ -15,7 +15,7 @@ import std.uni;
 import std.csv;
 import std.string;
 
-import hunt.logger;
+import hunt.logging;
 
 class HttpField {
 	private __gshared string __zeroquality = "q=0";

@@ -15,7 +15,7 @@ import hunt.container.LinkedList;
 import hunt.util.functional;
 import hunt.util.exception;
 
-import hunt.logger;
+import hunt.logging;
 
 /**
  * 

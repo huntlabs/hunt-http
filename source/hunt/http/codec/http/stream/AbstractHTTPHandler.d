@@ -8,7 +8,7 @@ import hunt.net.Handler;
 import hunt.net.Session;
 
 import hunt.util.exception;
-import hunt.logger;
+import hunt.logging;
 
 import std.exception;
 

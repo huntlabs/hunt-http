@@ -19,7 +19,7 @@
 module hunt.http.codec.http.model.InclusiveByteRange;
 
 
-import hunt.logger;
+import hunt.logging;
 
 import hunt.util.exception;
 import hunt.util.string;

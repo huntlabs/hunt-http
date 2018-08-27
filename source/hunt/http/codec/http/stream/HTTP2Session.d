@@ -26,7 +26,7 @@ import hunt.util.concurrent.Scheduler;
 
 import hunt.net.Session;
 
-import hunt.logger;
+import hunt.logging;
 
 // import core.exception;
 

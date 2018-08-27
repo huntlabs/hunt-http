@@ -6,7 +6,7 @@ import hunt.http.server.http.router.Router;
 import hunt.container;
 import hunt.util.exception;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.conv;
 import std.regex;

@@ -12,7 +12,7 @@ import hunt.net.secure.conscrypt;
 
 import hunt.http.helper;
 import hunt.datetime;
-import hunt.logger;
+import hunt.logging;
 
 import std.datetime;
 import std.conv;

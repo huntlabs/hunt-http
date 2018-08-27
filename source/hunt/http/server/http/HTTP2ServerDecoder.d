@@ -4,7 +4,7 @@ import hunt.http.server.http.HTTP2ServerConnection;
 
 import hunt.net.DecoderChain;
 import hunt.net.Session;
-import hunt.logger;
+import hunt.logging;
 
 
 import hunt.container.ByteBuffer;

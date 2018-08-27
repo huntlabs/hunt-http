@@ -7,7 +7,7 @@ import hunt.util.exception;
 import hunt.util.string;
 import hunt.util.TypeUtils;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.conv;
 import std.array;

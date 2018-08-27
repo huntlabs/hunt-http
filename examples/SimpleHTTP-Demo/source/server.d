@@ -10,7 +10,7 @@ import hunt.http.server.http.SimpleResponse;
 import hunt.container;
 import hunt.util.string;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.conv;
 import std.datetime;

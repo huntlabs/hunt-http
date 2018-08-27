@@ -12,7 +12,7 @@ import hunt.util.string;
 
 import hunt.container.ByteBuffer;
 
-import hunt.logger;
+import hunt.logging;
 import std.datetime;
 
 

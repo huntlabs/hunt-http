@@ -7,7 +7,7 @@ import hunt.http.codec.http.stream.HTTPOutputStream;
 // import hunt.http.codec.websocket.stream.WebSocketConnection;
 // import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.logger;
+import hunt.logging;
 
 
 /**

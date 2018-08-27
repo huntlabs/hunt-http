@@ -7,7 +7,7 @@ import hunt.http.server.http.router.handler.Handler;
 import hunt.http.server.http.router.RoutingContext;
 import hunt.http.server.http.router.RoutingContext;
 
-import hunt.logger;
+import hunt.logging;
 import hunt.util.exception;
 
 import std.conv;

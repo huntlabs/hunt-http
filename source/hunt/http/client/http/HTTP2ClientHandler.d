@@ -17,7 +17,7 @@ import hunt.util.string;
 
 import hunt.container.Map;
 
-import hunt.logger;
+import hunt.logging;
 import std.array;
 
 class HTTP2ClientHandler : AbstractHTTPHandler {

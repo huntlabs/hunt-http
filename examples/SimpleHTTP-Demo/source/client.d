@@ -5,7 +5,7 @@ import hunt.http.client.http.SimpleResponse;
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.CompletableFuture;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.conv;
 import std.stdio;

@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.HttpCompliance;
 
-import hunt.logger;
+import hunt.logging;
 
 import hunt.http.codec.http.model.HttpComplianceSection;
 

@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.MultiPartContentProvider;
 
 // import hunt.util.functional;
 // import hunt.http.utils.exception.CommonRuntimeException;
-import hunt.logger;
+import hunt.logging;
 
 import hunt.container.ByteBuffer;
 

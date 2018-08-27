@@ -34,7 +34,7 @@ import hunt.util.concurrent.CompletableFuture;
 import hunt.util.string;
 import hunt.util.TypeUtils;
 
-import hunt.logger;
+import hunt.logging;
 import std.base64;
 
 

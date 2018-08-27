@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.PathContentProvider;
 
-import hunt.logger;
+import hunt.logging;
 
 
 // import java.io.Closeable;

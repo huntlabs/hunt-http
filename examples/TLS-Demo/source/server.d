@@ -3,7 +3,7 @@ import hunt.http.server.http.router.RoutingContext;
 
 import hunt.http.helper;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.file;
 import std.path;

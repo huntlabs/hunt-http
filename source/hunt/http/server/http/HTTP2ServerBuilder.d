@@ -22,7 +22,7 @@ import hunt.util.exception;
 import hunt.container.ByteBuffer;
 import hunt.container.Collections;
 
-import hunt.logger;
+import hunt.logging;
 
 /**
  * 

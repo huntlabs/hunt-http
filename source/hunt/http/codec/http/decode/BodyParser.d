@@ -8,7 +8,7 @@ import hunt.http.codec.http.frame;
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
-import hunt.logger;
+import hunt.logging;
 
 
 

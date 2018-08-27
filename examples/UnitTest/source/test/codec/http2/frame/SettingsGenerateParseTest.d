@@ -15,7 +15,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.stream.HTTP2Configuration;
 
-import hunt.logger;
+import hunt.logging;
 import hunt.util.exception;
 import hunt.util.TypeUtils;
 

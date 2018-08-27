@@ -7,7 +7,7 @@ import hunt.http.codec.http.stream.SessionSPI;
 
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
-import hunt.logger;
+import hunt.logging;
 import std.datetime;
 import core.time;
 

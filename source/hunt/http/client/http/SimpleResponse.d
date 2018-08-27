@@ -7,7 +7,7 @@ import hunt.http.codec.http.model;
 // import hunt.http.utils.json.JsonArray;
 // import hunt.http.utils.json.JsonObject;
 // import hunt.http.utils.lang.GenericTypeReference;
-import hunt.logger;
+import hunt.logging;
 
 
 // import java.io.ByteArrayInputStream;

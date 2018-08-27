@@ -8,7 +8,7 @@ import hunt.container;
 import hunt.io;
 import hunt.util.exception;
 
-import hunt.logger;
+import hunt.logging;
 import std.conv;
 
 abstract class HTTPOutputStream :OutputStream {

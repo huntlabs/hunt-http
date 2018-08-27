@@ -33,7 +33,7 @@ import hunt.util.string;
 
 import hunt.container;
 
-import hunt.logger;
+import hunt.logging;
 
 import std.array;
 import std.base64;

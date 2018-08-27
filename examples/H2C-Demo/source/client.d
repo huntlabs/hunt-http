@@ -16,7 +16,7 @@ import hunt.util.functional;
 import hunt.util.concurrent.FuturePromise;
 
 import hunt.container;
-import hunt.logger;
+import hunt.logging;
 import std.format;
 
 

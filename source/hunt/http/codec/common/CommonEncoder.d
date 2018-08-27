@@ -10,7 +10,7 @@ import hunt.util.functional;
 
 
 import hunt.container.ByteBuffer;
-import hunt.logger;
+import hunt.logging;
 
 /**
  * 

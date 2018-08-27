@@ -11,7 +11,7 @@ import hunt.util.exception;
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;
 
-import hunt.logger;
+import hunt.logging;
 
 /**
 */

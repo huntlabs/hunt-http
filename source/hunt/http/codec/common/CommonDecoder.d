@@ -11,7 +11,7 @@ import hunt.net.secure.SecureSession;
 
 import hunt.util.exception;
 
-import hunt.logger;
+import hunt.logging;
 import hunt.container.ByteBuffer;
 
 /**
