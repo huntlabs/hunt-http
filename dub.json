@@ -7,8 +7,7 @@
     ],
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt":{"path": "../hunt"},
-        "hunt-net":{"path": "../hunt-net"}
+        "hunt-net":"~>0.0.1"
     },
 	"subConfigurations": {
 		"hunt-net" : "boringssl"
