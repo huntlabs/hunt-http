@@ -60,7 +60,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     string getHeader(string name) {
         List<string> values = headers.get(name);
         // no value list
-        if (values == null) {
+        if (values is null) {
             return null;
         }
         int size = values.size();
@@ -79,7 +79,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     int getHeaderInt(string name) {
         List<string> values = headers.get(name);
         // no value list
-        if (values == null) {
+        if (values is null) {
             return -1;
         }
         int size = values.size();
@@ -137,7 +137,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     override
     string getProtocolVersion() {
         string version = getHeader("Sec-WebSocket-Version");
-        if (version == null) {
+        if (version is null) {
             return "13"; // Default
         }
         return version;
@@ -206,7 +206,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     override
     void setCookies(List<Cookie> cookies) {
         this.cookies.clear();
-        if (cookies != null && !cookies.isEmpty()) {
+        if (cookies !is null && !cookies.isEmpty()) {
             this.cookies.addAll(cookies);
         }
     }
@@ -214,7 +214,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     override
     void setExtensions(List<ExtensionConfig> configs) {
         this.extensions.clear();
-        if (configs != null) {
+        if (configs !is null) {
             this.extensions.addAll(configs);
         }
     }
@@ -280,7 +280,7 @@ class UpgradeRequestAdapter : UpgradeRequest {
     override
     void setSubProtocols(List<string> subProtocols) {
         this.subProtocols.clear();
-        if (subProtocols != null) {
+        if (subProtocols !is null) {
             this.subProtocols.addAll(subProtocols);
         }
     }

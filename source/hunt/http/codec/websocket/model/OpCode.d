@@ -6,47 +6,47 @@ final class OpCode {
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte CONTINUATION = (byte) 0x00;
+    enum byte CONTINUATION = cast(byte) 0x00;
 
     /**
      * OpCode for a Text Frame
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte TEXT = (byte) 0x01;
+    enum byte TEXT = cast(byte) 0x01;
 
     /**
      * OpCode for a Binary Frame
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte BINARY = (byte) 0x02;
+    enum byte BINARY = cast(byte) 0x02;
 
     /**
      * OpCode for a Close Frame
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte CLOSE = (byte) 0x08;
+    enum byte CLOSE = cast(byte) 0x08;
 
     /**
      * OpCode for a Ping Frame
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte PING = (byte) 0x09;
+    enum byte PING = cast(byte) 0x09;
 
     /**
      * OpCode for a Pong Frame
      *
      * @see <a href="https://tools.ietf.org/html/rfc6455#section-11.8">RFC 6455, Section 11.8 (WebSocket Opcode Registry</a>
      */
-    static final byte PONG = (byte) 0x0A;
+    enum byte PONG = cast(byte) 0x0A;
 
     /**
      * An undefined OpCode
      */
-    static final byte UNDEFINED = (byte) -1;
+    enum byte UNDEFINED = cast(byte) -1;
 
     static bool isControlFrame(byte opcode) {
         return (opcode >= CLOSE);
@@ -63,7 +63,8 @@ final class OpCode {
      * @return true if known. false if unknown, undefined, or reserved
      */
     static bool isKnown(byte opcode) {
-        return (opcode == CONTINUATION) || (opcode == TEXT) || (opcode == BINARY) || (opcode == CLOSE) || (opcode == PING) || (opcode == PONG);
+        return (opcode == CONTINUATION) || (opcode == TEXT) || (opcode == BINARY) || 
+            (opcode == CLOSE) || (opcode == PING) || (opcode == PONG);
     }
 
     static string name(byte opcode) {
@@ -83,7 +84,7 @@ final class OpCode {
             case PONG:
                 return "PONG";
             default:
-                return "NON-SPEC[" + opcode + "]";
+                return "NON-SPEC[" ~ opcode ~ "]";
         }
     }
 }

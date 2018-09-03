@@ -56,8 +56,8 @@ class DeMaskProcessor : PayloadProcessor {
     void reset(byte[] mask) {
         this.maskBytes = mask;
         int maskInt = 0;
-        if (mask != null) {
-            for (byte maskByte : mask)
+        if (mask !is null) {
+            foreach (byte maskByte ; mask)
                 maskInt = (maskInt << 8) + (maskByte & 0xFF);
         }
         this.maskInt = maskInt;

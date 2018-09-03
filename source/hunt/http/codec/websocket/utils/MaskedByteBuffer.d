@@ -3,8 +3,7 @@ module hunt.http.codec.websocket.utils;
 import hunt.container.ByteBuffer;
 
 class MaskedByteBuffer {
-    private static byte[] mask = new byte[]
-            {0x00, (byte) 0xF0, 0x0F, (byte) 0xFF};
+    private enum byte[] mask = [0x00, cast(byte) 0xF0, 0x0F, cast(byte) 0xFF];
 
     static void putMask(ByteBuffer buffer) {
         buffer.put(mask, 0, mask.length);

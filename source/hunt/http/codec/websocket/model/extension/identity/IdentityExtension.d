@@ -9,7 +9,7 @@ import hunt.http.utils.lang.QuotedStringTokenizer;
 class IdentityExtension : AbstractExtension {
     private string id;
 
-    IdentityExtension() {
+    this() {
         start();
     }
 

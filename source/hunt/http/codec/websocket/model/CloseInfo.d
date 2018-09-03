@@ -1,22 +1,22 @@
-module hunt.http.codec.websocket.model;
+module hunt.http.codec.websocket.model.CloseInfo;
 
 
-import hunt.http.codec.websocket.exception.BadPayloadException;
-import hunt.http.codec.websocket.exception.ProtocolException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.CloseFrame;
 import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.utils.io.BufferUtils;
-import hunt.http.utils.lang.Utf8Appendable;
-import hunt.http.utils.lang.Utf8StringBuilder;
 
 import hunt.container.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
+import std.algorithm;
+import std.conv;
+
+/**
+*/
 class CloseInfo {
     private int statusCode = 0;
     private byte[] reasonBytes;
 
-    CloseInfo() {
+    this() {
         this(StatusCode.NO_CODE, null);
     }
 
@@ -26,10 +26,10 @@ class CloseInfo {
      * @param payload  the raw close frame payload.
      * @param validate true if payload should be validated per WebSocket spec.
      */
-    CloseInfo(ByteBuffer payload, bool validate) {
+    this(ByteBuffer payload, bool validate) {
         this.statusCode = StatusCode.NO_CODE;
 
-        if ((payload == null) || (payload.remaining() == 0)) {
+        if ((payload is null) || (payload.remaining() == 0)) {
             return; // nothing to do
         }
 
@@ -50,17 +50,19 @@ class CloseInfo {
 
             if (data.remaining() > 0) {
                 // Reason (trimmed to max reason size)
-                int len = Math.min(data.remaining(), CloseStatus.MAX_REASON_PHRASE);
+                int len = std.algorithm.min(data.remaining(), CloseStatus.MAX_REASON_PHRASE);
                 reasonBytes = new byte[len];
                 data.get(reasonBytes, 0, len);
 
                 // Spec Requirement : throw BadPayloadException on invalid UTF8
                 if (validate) {
                     try {
-                        Utf8StringBuilder utf = new Utf8StringBuilder();
-                        // if this throws, we know we have bad UTF8
-                        utf.append(reasonBytes, 0, reasonBytes.length);
-                    } catch (Utf8Appendable.NotUtf8Exception e) {
+                        // Utf8StringBuilder utf = new Utf8StringBuilder();
+                        // // if this throws, we know we have bad UTF8
+                        // utf.append(reasonBytes, 0, reasonBytes.length);
+                        import std.utf;
+                        validate(reasonBytes);
+                    } catch (UTFException e) {
                         throw new BadPayloadException("Invalid Close Reason", e);
                     }
                 }
@@ -68,15 +70,15 @@ class CloseInfo {
         }
     }
 
-    CloseInfo(Frame frame) {
+    this(Frame frame) {
         this(frame.getPayload(), false);
     }
 
-    CloseInfo(Frame frame, bool validate) {
+    this(Frame frame, bool validate) {
         this(frame.getPayload(), validate);
     }
 
-    CloseInfo(int statusCode) {
+    this(int statusCode) {
         this(statusCode, null);
     }
 
@@ -86,9 +88,9 @@ class CloseInfo {
      * @param statusCode the status code
      * @param reason     the raw reason code
      */
-    CloseInfo(int statusCode, string reason) {
+    this(int statusCode, string reason) {
         this.statusCode = statusCode;
-        if (reason != null) {
+        if (reason !is null) {
             byte[] utf8Bytes = reason.getBytes(StandardCharsets.UTF_8);
             if (utf8Bytes.length > CloseStatus.MAX_REASON_PHRASE) {
                 this.reasonBytes = new byte[CloseStatus.MAX_REASON_PHRASE];
@@ -102,17 +104,17 @@ class CloseInfo {
     private void assertValidStatusCode(int statusCode) {
         // Status Codes outside of RFC6455 defined scope
         if ((statusCode <= 999) || (statusCode >= 5000)) {
-            throw new ProtocolException("Out of range close status code: " + statusCode);
+            throw new ProtocolException("Out of range close status code: " ~ statusCode);
         }
 
         // Status Codes not allowed to exist in a Close frame (per RFC6455)
         if ((statusCode == StatusCode.NO_CLOSE) || (statusCode == StatusCode.NO_CODE) || (statusCode == StatusCode.FAILED_TLS_HANDSHAKE)) {
-            throw new ProtocolException("Frame forbidden close status code: " + statusCode);
+            throw new ProtocolException("Frame forbidden close status code: " ~ statusCode);
         }
 
         // Status Code is in defined "reserved space" and is declared (all others are invalid)
         if ((statusCode >= 1000) && (statusCode <= 2999) && !StatusCode.isTransmittable(statusCode)) {
-            throw new ProtocolException("RFC6455 and IANA Undefined close status code: " + statusCode);
+            throw new ProtocolException("RFC6455 and IANA Undefined close status code: " ~ statusCode);
         }
     }
 
@@ -123,7 +125,7 @@ class CloseInfo {
         }
 
         int len = 2; // status code
-        bool hasReason = (this.reasonBytes != null) && (this.reasonBytes.length > 0);
+        bool hasReason = (this.reasonBytes !is null) && (this.reasonBytes.length > 0);
         if (hasReason) {
             len += this.reasonBytes.length;
         }
@@ -145,7 +147,8 @@ class CloseInfo {
         CloseFrame frame = new CloseFrame();
         frame.setFin(true);
         // Frame forbidden codes result in no status code (and no reason string)
-        if ((statusCode != StatusCode.NO_CLOSE) && (statusCode != StatusCode.NO_CODE) && (statusCode != StatusCode.FAILED_TLS_HANDSHAKE)) {
+        if ((statusCode != StatusCode.NO_CLOSE) && (statusCode != StatusCode.NO_CODE) && 
+                (statusCode != StatusCode.FAILED_TLS_HANDSHAKE)) {
             assertValidStatusCode(statusCode);
             frame.setPayload(asByteBuffer());
         }
@@ -153,10 +156,10 @@ class CloseInfo {
     }
 
     string getReason() {
-        if (this.reasonBytes == null) {
+        if (this.reasonBytes is null) {
             return null;
         }
-        return new string(this.reasonBytes, StandardCharsets.UTF_8);
+        return cast(string)(this.reasonBytes);
     }
 
     int getStatusCode() {

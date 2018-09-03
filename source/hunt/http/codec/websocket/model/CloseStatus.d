@@ -1,10 +1,10 @@
-module hunt.http.codec.websocket.model;
+module hunt.http.codec.websocket.model.CloseStatus;
 
 import java.nio.charset.StandardCharsets;
 
 class CloseStatus {
-    private static final int MAX_CONTROL_PAYLOAD = 125;
-    static final int MAX_REASON_PHRASE = MAX_CONTROL_PAYLOAD - 2;
+    private enum int MAX_CONTROL_PAYLOAD = 125;
+    enum int MAX_REASON_PHRASE = MAX_CONTROL_PAYLOAD - 2;
 
     /**
      * Convenience method for trimming a long reason phrase at the maximum reason phrase length of 123 UTF-8 bytes (per WebSocket spec).
@@ -15,16 +15,16 @@ class CloseStatus {
      */
     deprecated("")
     static string trimMaxReasonLength(string reason) {
-        if (reason == null) {
+        if (reason is null) {
             return null;
         }
 
-        byte[] reasonBytes = reason.getBytes(StandardCharsets.UTF_8);
-        if (reasonBytes.length > MAX_REASON_PHRASE) {
-            byte[] trimmed = new byte[MAX_REASON_PHRASE];
-            System.arraycopy(reasonBytes, 0, trimmed, 0, MAX_REASON_PHRASE);
-            return new string(trimmed, StandardCharsets.UTF_8);
-        }
+        // byte[] reasonBytes = reason.getBytes(StandardCharsets.UTF_8);
+        // if (reasonBytes.length > MAX_REASON_PHRASE) {
+        //     byte[] trimmed = reasonBytes[0..MAX_REASON_PHRASE];
+        //     // System.arraycopy(reasonBytes, 0, trimmed, 0, MAX_REASON_PHRASE);
+        //     return new string(trimmed, StandardCharsets.UTF_8);
+        // }
 
         return reason;
     }
@@ -39,11 +39,12 @@ class CloseStatus {
      * @param reasonPhrase the reason phrase
      * @see StatusCode
      */
-    CloseStatus(int closeCode, string reasonPhrase) {
+    this(int closeCode, string reasonPhrase) {
         this.code = closeCode;
         this.phrase = reasonPhrase;
-        if (reasonPhrase.length() > MAX_REASON_PHRASE) {
-            throw new IllegalArgumentException("Phrase exceeds maximum length of " + MAX_REASON_PHRASE);
+        if (reasonPhrase.length > MAX_REASON_PHRASE) {
+            throw new IllegalArgumentException("Phrase exceeds maximum length of " ~ 
+                MAX_REASON_PHRASE.to!string());
         }
     }
 

@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.OpCode;
 import hunt.util.functional;
-import kiss.logger;
+import hunt.logging;
 
 
 import hunt.container.ByteBuffer;
@@ -68,7 +68,7 @@ class PerMessageDeflateExtension : CompressExtension {
     override
     protected void nextIncomingFrame(Frame frame) {
         if (frame.isFin() && !incomingContextTakeover) {
-            LOG.debug("Incoming Context Reset");
+            tracef("Incoming Context Reset");
             decompressCount.set(0);
             getInflater().reset();
         }
@@ -78,7 +78,7 @@ class PerMessageDeflateExtension : CompressExtension {
     override
     protected void nextOutgoingFrame(Frame frame, Callback callback) {
         if (frame.isFin() && !outgoingContextTakeover) {
-            LOG.debug("Outgoing Context Reset");
+            tracef("Outgoing Context Reset");
             getDeflater().reset();
         }
         super.nextOutgoingFrame(frame, callback);
@@ -137,7 +137,7 @@ class PerMessageDeflateExtension : CompressExtension {
             }
         }
 
-        LOG.debug("config: outgoingContextTakover=%s, incomingContextTakeover=%s : %s", outgoingContextTakeover, incomingContextTakeover, this);
+        tracef("config: outgoingContextTakover=%s, incomingContextTakeover=%s : %s", outgoingContextTakeover, incomingContextTakeover, this);
 
         super.setConfig(configNegotiated);
     }

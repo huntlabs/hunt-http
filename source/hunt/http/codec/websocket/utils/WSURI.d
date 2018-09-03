@@ -1,8 +1,8 @@
 module hunt.http.codec.websocket.utils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Objects;
+// import java.net.URI;
+// import java.net.URISyntaxException;
+// import java.util.Objects;
 
 /**
  * Utility methods for converting a {@link URI} between a HTTP(S) and WS(S) URI.
@@ -17,7 +17,7 @@ final class WSURI {
      * @return the HTTP scheme URI for the input URI.
      * @throws URISyntaxException if unable to convert the input URI
      */
-    static URI toHttp(final URI inputUri) throws URISyntaxException {
+    static URI toHttp(final URI inputUri) {
         Objects.requireNonNull(inputUri, "Input URI must not be null");
         string wsScheme = inputUri.getScheme();
         if ("http".equalsIgnoreCase(wsScheme) || "https".equalsIgnoreCase(wsScheme)) {
@@ -27,12 +27,12 @@ final class WSURI {
 
         if ("ws".equalsIgnoreCase(wsScheme)) {
             // convert to http
-            return new URI("http" + inputUri.toString().substring(wsScheme.length()));
+            return new URI("http" ~ inputUri.toString().substring(wsScheme.length()));
         }
 
         if ("wss".equalsIgnoreCase(wsScheme)) {
             // convert to https
-            return new URI("https" + inputUri.toString().substring(wsScheme.length()));
+            return new URI("https" ~ inputUri.toString().substring(wsScheme.length()));
         }
 
         throw new URISyntaxException(inputUri.toString(), "Unrecognized WebSocket scheme");
@@ -47,7 +47,7 @@ final class WSURI {
      * @return the WebSocket scheme URI for the input URI.
      * @throws URISyntaxException if unable to convert the input URI
      */
-    static URI toWebsocket(CharSequence inputUrl) throws URISyntaxException {
+    static URI toWebsocket(CharSequence inputUrl) {
         return toWebsocket(new URI(inputUrl.toString()));
     }
 
@@ -61,8 +61,8 @@ final class WSURI {
      * @return the WebSocket scheme URI for the input URI.
      * @throws URISyntaxException if unable to convert the input URI
      */
-    static URI toWebsocket(CharSequence inputUrl, string query) throws URISyntaxException {
-        if (query == null) {
+    static URI toWebsocket(CharSequence inputUrl, string query) {
+        if (query is null) {
             return toWebsocket(new URI(inputUrl.toString()));
         }
         return toWebsocket(new URI(inputUrl.toString() + '?' + query));
@@ -78,7 +78,7 @@ final class WSURI {
      * @return the WebSocket scheme URI for the input URI.
      * @throws URISyntaxException if unable to convert the input URI
      */
-    static URI toWebsocket(final URI inputUri) throws URISyntaxException {
+    static URI toWebsocket(final URI inputUri) {
         Objects.requireNonNull(inputUri, "Input URI must not be null");
         string httpScheme = inputUri.getScheme();
         if ("ws".equalsIgnoreCase(httpScheme) || "wss".equalsIgnoreCase(httpScheme)) {
@@ -88,12 +88,12 @@ final class WSURI {
 
         if ("http".equalsIgnoreCase(httpScheme)) {
             // convert to ws
-            return new URI("ws" + inputUri.toString().substring(httpScheme.length()));
+            return new URI("ws" ~ inputUri.toString().substring(httpScheme.length()));
         }
 
         if ("https".equalsIgnoreCase(httpScheme)) {
             // convert to wss
-            return new URI("wss" + inputUri.toString().substring(httpScheme.length()));
+            return new URI("wss" ~ inputUri.toString().substring(httpScheme.length()));
         }
 
         throw new URISyntaxException(inputUri.toString(), "Unrecognized HTTP scheme");

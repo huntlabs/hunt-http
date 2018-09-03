@@ -6,7 +6,7 @@ import hunt.http.utils.StringUtils;
 import hunt.container.ByteBuffer;
 
 class PongFrame : ControlFrame {
-    PongFrame() {
+    this() {
         super(OpCode.PONG);
     }
 

@@ -18,8 +18,8 @@ abstract class ControlFrame : WebSocketFrame {
     void assertValid() {
         if (isControlFrame()) {
             if (getPayloadLength() > ControlFrame.MAX_CONTROL_PAYLOAD) {
-                throw new ProtocolException("Desired payload length [" + getPayloadLength() + "] exceeds maximum control payload length ["
-                        + MAX_CONTROL_PAYLOAD + "]");
+                throw new ProtocolException("Desired payload length [" ~ getPayloadLength() ~ "] exceeds maximum control payload length ["
+                        + MAX_CONTROL_PAYLOAD ~ "]");
             }
 
             if ((finRsvOp & 0x80) == 0) {
@@ -45,15 +45,15 @@ abstract class ControlFrame : WebSocketFrame {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (obj is null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
         ControlFrame other = (ControlFrame) obj;
-        if (data == null) {
-            if (other.data != null) {
+        if (data is null) {
+            if (other.data !is null) {
                 return false;
             }
         } else if (!data.equals(other.data)) {
@@ -73,15 +73,15 @@ abstract class ControlFrame : WebSocketFrame {
 
     override
     WebSocketFrame setPayload(ByteBuffer buf) {
-        if (buf != null && buf.remaining() > MAX_CONTROL_PAYLOAD) {
-            throw new ProtocolException("Control Payloads can not exceed " + MAX_CONTROL_PAYLOAD + " bytes in length.");
+        if (buf !is null && buf.remaining() > MAX_CONTROL_PAYLOAD) {
+            throw new ProtocolException("Control Payloads can not exceed " ~ MAX_CONTROL_PAYLOAD ~ " bytes in length.");
         }
         return super.setPayload(buf);
     }
 
     override
     ByteBuffer getPayload() {
-        if (super.getPayload() == null) {
+        if (super.getPayload() is null) {
             return BufferUtils.EMPTY_BUFFER;
         }
         return super.getPayload();

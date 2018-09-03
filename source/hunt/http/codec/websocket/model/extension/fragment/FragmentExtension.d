@@ -7,7 +7,7 @@ import hunt.http.codec.websocket.model.OpCode;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.util.functional;
 import hunt.http.utils.concurrent.IteratingCallback;
-import kiss.logger;
+import hunt.logging;
 
 
 import hunt.container.ByteBuffer;
@@ -41,15 +41,15 @@ class FragmentExtension : AbstractExtension {
     override
     void outgoingFrame(Frame frame, Callback callback) {
         ByteBuffer payload = frame.getPayload();
-        int length = payload != null ? payload.remaining() : 0;
+        int length = payload !is null ? payload.remaining() : 0;
         if (OpCode.isControlFrame(frame.getOpCode()) || maxLength <= 0 || length <= maxLength) {
             nextOutgoingFrame(frame, callback);
             return;
         }
 
         FrameEntry entry = new FrameEntry(frame, callback);
-        if (LOG.isDebugEnabled())
-            LOG.debug("Queuing %s", entry);
+        version(HuntDebugMode)
+            tracef("Queuing %s", entry);
         offerEntry(entry);
         flusher.iterate();
     }
@@ -105,8 +105,8 @@ class FragmentExtension : AbstractExtension {
         protected Action process() {
             if (finished) {
                 current = pollEntry();
-                LOG.debug("Processing %s", current);
-                if (current == null)
+                tracef("Processing %s", current);
+                if (current is null)
                     return Action.IDLE;
                 fragment(current, true);
             } else {
@@ -133,8 +133,8 @@ class FragmentExtension : AbstractExtension {
             ByteBuffer payloadFragment = payload.slice();
             payload.limit(limit);
             fragment.setPayload(payloadFragment);
-            if (LOG.isDebugEnabled())
-                LOG.debug("Fragmented %s->%s", frame, fragment);
+            version(HuntDebugMode)
+                tracef("Fragmented %s->%s", frame, fragment);
             payload.position(newLimit);
 
             nextOutgoingFrame(fragment, this);
@@ -173,21 +173,21 @@ class FragmentExtension : AbstractExtension {
 
         private void notifyCallbackSuccess(Callback callback) {
             try {
-                if (callback != null)
+                if (callback !is null)
                     callback.succeeded();
             } catch (Throwable x) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Exception while notifying success of callback " + callback, x);
+                version(HuntDebugMode)
+                    tracef("Exception while notifying success of callback " ~ callback, x);
             }
         }
 
         private void notifyCallbackFailure(Callback callback, Throwable failure) {
             try {
-                if (callback != null)
+                if (callback !is null)
                     callback.failed(failure);
             } catch (Throwable x) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Exception while notifying failure of callback " + callback, x);
+                version(HuntDebugMode)
+                    tracef("Exception while notifying failure of callback " ~ callback, x);
             }
         }
     }

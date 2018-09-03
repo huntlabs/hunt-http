@@ -7,32 +7,33 @@ import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.util.functional;
-import hunt.http.utils.lang.AbstractLifeCycle;
-import kiss.logger;
+
+import hunt.net.util.AbstractLifeCycle;
+import hunt.logging;
 
 
 import java.io.IOException;
 
-abstract class AbstractExtension : AbstractLifeCycle : Extension {
+abstract class AbstractExtension : AbstractLifeCycle , Extension {
     
     private WebSocketPolicy policy;
     private ExtensionConfig config;
     private OutgoingFrames nextOutgoing;
     private IncomingFrames nextIncoming;
 
-    AbstractExtension() {
+    this() {
     }
 
-    void dump(Appendable out, string indent) throws IOException {
+    void dump(Appendable ot, string indent) {
         // incoming
-        dumpWithHeading(out, indent, "incoming", this.nextIncoming);
-        dumpWithHeading(out, indent, "outgoing", this.nextOutgoing);
+        dumpWithHeading(ot, indent, "incoming", this.nextIncoming);
+        dumpWithHeading(ot, indent, "outgoing", this.nextOutgoing);
     }
 
-    protected void dumpWithHeading(Appendable out, string indent, string heading, Object bean) throws IOException {
-        out.append(indent).append(" +- ");
-        out.append(heading).append(" : ");
-        out.append(bean.toString());
+    protected void dumpWithHeading(Appendable ot, string indent, string heading, Object bean) {
+        ot.append(indent).append(" ~- ");
+        ot.append(heading).append(" : ");
+        ot.append(bean.toString());
     }
 
     override
@@ -132,6 +133,6 @@ abstract class AbstractExtension : AbstractLifeCycle : Extension {
 
     override
     string toString() {
-        return string.format("%s[%s]", this.typeof(this).stringof, config.getParameterizedName());
+        return string.format("%s[%s]", typeid(this).name, config.getParameterizedName());
     }
 }

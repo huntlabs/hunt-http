@@ -1,5 +1,7 @@
 module hunt.http.codec.websocket.frame;
 
+import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.model.OpCode;
 
 /**

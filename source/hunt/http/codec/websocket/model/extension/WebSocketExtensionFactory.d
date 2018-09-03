@@ -5,28 +5,30 @@ import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.utils.StringUtils;
 
+import std.array;
+
 class WebSocketExtensionFactory : ExtensionFactory {
 
     override
     Extension newInstance(ExtensionConfig config) {
-        if (config == null) {
+        if (config is null) {
             return null;
         }
 
         string name = config.getName();
-        if (!StringUtils.hasText(name)) {
+        if (!name.empty()) {
             return null;
         }
 
         Class<? : Extension> extClass = getExtension(name);
-        if (extClass == null) {
+        if (extClass is null) {
             return null;
         }
 
         try {
             return extClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new WebSocketException("Cannot instantiate extension: " + extClass, e);
+            throw new WebSocketException("Cannot instantiate extension: " ~ extClass, e);
         }
     }
 }

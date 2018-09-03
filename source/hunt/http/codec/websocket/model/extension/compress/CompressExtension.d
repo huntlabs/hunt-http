@@ -7,7 +7,7 @@ import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.util.functional;
 import hunt.http.utils.concurrent.IteratingCallback;
 import hunt.http.utils.io.BufferUtils;
-import kiss.logger;
+import hunt.logging;
 
 
 import java.io.ByteArrayOutputStream;
@@ -81,14 +81,14 @@ abstract class CompressExtension : AbstractExtension {
     }
 
     Deflater getDeflater() {
-        if (deflaterImpl == null) {
+        if (deflaterImpl is null) {
             deflaterImpl = new Deflater(Deflater.DEFAULT_COMPRESSION, NOWRAP);
         }
         return deflaterImpl;
     }
 
     Inflater getInflater() {
-        if (inflaterImpl == null) {
+        if (inflaterImpl is null) {
             inflaterImpl = new Inflater(NOWRAP);
         }
         return inflaterImpl;
@@ -134,7 +134,7 @@ abstract class CompressExtension : AbstractExtension {
     }
 
     protected void decompress(ByteAccumulator accumulator, ByteBuffer buf) throws DataFormatException {
-        if ((buf == null) || (!buf.hasRemaining())) {
+        if ((buf is null) || (!buf.hasRemaining())) {
             return;
         }
         byte[] output = new byte[DECOMPRESS_BUF_SIZE];
@@ -143,19 +143,19 @@ abstract class CompressExtension : AbstractExtension {
 
         while (buf.hasRemaining() && inflater.needsInput()) {
             if (!supplyInput(inflater, buf)) {
-                LOG.debug("Needed input, but no buffer could supply input");
+                tracef("Needed input, but no buffer could supply input");
                 return;
             }
 
             int read;
             while ((read = inflater.inflate(output)) >= 0) {
                 if (read == 0) {
-                    LOG.debug("Decompress: read 0 %s", toDetail(inflater));
+                    tracef("Decompress: read 0 %s", toDetail(inflater));
                     break;
                 } else {
                     // do something with output
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Decompressed %s bytes: %s", read, toDetail(inflater));
+                    version(HuntDebugMode) {
+                        tracef("Decompressed %s bytes: %s", read, toDetail(inflater));
                     }
 
                     accumulator.copyChunk(output, 0, read);
@@ -163,8 +163,8 @@ abstract class CompressExtension : AbstractExtension {
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Decompress: exiting %s", toDetail(inflater));
+        version(HuntDebugMode) {
+            tracef("Decompress: exiting %s", toDetail(inflater));
         }
     }
 
@@ -180,8 +180,8 @@ abstract class CompressExtension : AbstractExtension {
         }
 
         FrameEntry entry = new FrameEntry(frame, callback);
-        if (LOG.isDebugEnabled())
-            LOG.debug("Queuing %s", entry);
+        version(HuntDebugMode)
+            tracef("Queuing %s", entry);
         offerEntry(entry);
         flusher.iterate();
     }
@@ -200,28 +200,28 @@ abstract class CompressExtension : AbstractExtension {
 
     protected void notifyCallbackSuccess(Callback callback) {
         try {
-            if (callback != null)
+            if (callback !is null)
                 callback.succeeded();
         } catch (Throwable x) {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Exception while notifying success of callback " + callback, x);
+            version(HuntDebugMode)
+                tracef("Exception while notifying success of callback " ~ callback, x);
         }
     }
 
     protected void notifyCallbackFailure(Callback callback, Throwable failure) {
         try {
-            if (callback != null)
+            if (callback !is null)
                 callback.failed(failure);
         } catch (Throwable x) {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Exception while notifying failure of callback " + callback, x);
+            version(HuntDebugMode)
+                tracef("Exception while notifying failure of callback " ~ callback, x);
         }
     }
 
     private static bool supplyInput(Inflater inflater, ByteBuffer buf) {
-        if (buf == null || buf.remaining() <= 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No data left left to supply to Inflater");
+        if (buf is null || buf.remaining() <= 0) {
+            version(HuntDebugMode) {
+                tracef("No data left left to supply to Inflater");
             }
             return false;
         }
@@ -245,16 +245,16 @@ abstract class CompressExtension : AbstractExtension {
         }
 
         inflater.setInput(input, inputOffset, len);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Supplied %s input bytes: %s", input.length, toDetail(inflater));
+        version(HuntDebugMode) {
+            tracef("Supplied %s input bytes: %s", input.length, toDetail(inflater));
         }
         return true;
     }
 
     private static bool supplyInput(Deflater deflater, ByteBuffer buf) {
-        if (buf == null || buf.remaining() <= 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No data left left to supply to Deflater");
+        if (buf is null || buf.remaining() <= 0) {
+            version(HuntDebugMode) {
+                tracef("No data left left to supply to Deflater");
             }
             return false;
         }
@@ -278,8 +278,8 @@ abstract class CompressExtension : AbstractExtension {
         }
 
         deflater.setInput(input, inputOffset, len);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Supplied %s input bytes: %s", input.length, toDetail(deflater));
+        version(HuntDebugMode) {
+            tracef("Supplied %s input bytes: %s", input.length, toDetail(deflater));
         }
         return true;
     }
@@ -295,7 +295,7 @@ abstract class CompressExtension : AbstractExtension {
     }
 
     static bool endsWithTail(ByteBuffer buf) {
-        if ((buf == null) || (buf.remaining() < TAIL_BYTES.length)) {
+        if ((buf is null) || (buf.remaining() < TAIL_BYTES.length)) {
             return false;
         }
         int limit = buf.limit();
@@ -314,9 +314,9 @@ abstract class CompressExtension : AbstractExtension {
 
     override
     protected void destroy() {
-        if (deflaterImpl != null)
+        if (deflaterImpl !is null)
             deflaterImpl.end();
-        if (inflaterImpl != null)
+        if (inflaterImpl !is null)
             inflaterImpl.end();
     }
 
@@ -348,8 +348,8 @@ abstract class CompressExtension : AbstractExtension {
         protected Action process() throws Exception {
             if (finished) {
                 current = pollEntry();
-                LOG.debug("Processing %s", current);
-                if (current == null)
+                tracef("Processing %s", current);
+                if (current is null)
                     return Action.IDLE;
                 deflate(current);
             } else {
@@ -375,13 +375,13 @@ abstract class CompressExtension : AbstractExtension {
             Frame frame = entry.frame;
             ByteBuffer data = frame.getPayload();
 
-            if (data == null)
+            if (data is null)
                 data = BufferUtils.EMPTY_BUFFER;
 
             int remaining = data.remaining();
             int outputLength = Math.max(256, data.remaining());
-            if (LOG.isDebugEnabled())
-                LOG.debug("Compressing %s: %s bytes in %s bytes chunk", entry, remaining, outputLength);
+            version(HuntDebugMode)
+                tracef("Compressing %s: %s bytes in %s bytes chunk", entry, remaining, outputLength);
 
             bool needsCompress = true;
 
@@ -403,8 +403,8 @@ abstract class CompressExtension : AbstractExtension {
                 int compressed = deflater.deflate(output, 0, outputLength, Deflater.SYNC_FLUSH);
 
                 // Append the output for the eventual frame.
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Wrote %s bytes to output buffer", compressed);
+                version(HuntDebugMode)
+                    tracef("Wrote %s bytes to output buffer", compressed);
                 out.write(output, 0, compressed);
 
                 if (compressed < outputLength) {
@@ -416,21 +416,21 @@ abstract class CompressExtension : AbstractExtension {
 
             if (payload.remaining() > 0) {
                 // Handle tail bytes generated by SYNC_FLUSH.
-                if (LOG.isDebugEnabled())
-                    LOG.debug("compressed bytes[] = %s", BufferUtils.toDetailString(payload));
+                version(HuntDebugMode)
+                    tracef("compressed bytes[] = %s", BufferUtils.toDetailString(payload));
 
                 if (tailDrop == TAIL_DROP_ALWAYS) {
                     if (endsWithTail(payload)) {
                         payload.limit(payload.limit() - TAIL_BYTES.length);
                     }
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("payload (TAIL_DROP_ALWAYS) = %s", BufferUtils.toDetailString(payload));
+                    version(HuntDebugMode)
+                        tracef("payload (TAIL_DROP_ALWAYS) = %s", BufferUtils.toDetailString(payload));
                 } else if (tailDrop == TAIL_DROP_FIN_ONLY) {
                     if (frame.isFin() && endsWithTail(payload)) {
                         payload.limit(payload.limit() - TAIL_BYTES.length);
                     }
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("payload (TAIL_DROP_FIN_ONLY) = %s", BufferUtils.toDetailString(payload));
+                    version(HuntDebugMode)
+                        tracef("payload (TAIL_DROP_FIN_ONLY) = %s", BufferUtils.toDetailString(payload));
                 }
             } else if (fin) {
                 // Special case: 7.2.3.6.  Generating an Empty Fragment Manually
@@ -438,8 +438,8 @@ abstract class CompressExtension : AbstractExtension {
                 payload = ByteBuffer.wrap(new byte[]{0x00});
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Compressed %s: input:%s -> payload:%s", entry, outputLength, payload.remaining());
+            version(HuntDebugMode) {
+                tracef("Compressed %s: input:%s -> payload:%s", entry, outputLength, payload.remaining());
             }
 
             bool continuation = frame.getType().isContinuation() || !first;
@@ -465,7 +465,7 @@ abstract class CompressExtension : AbstractExtension {
         protected void onCompleteFailure(Throwable x) {
             // Fail all the frames in the queue.
             FrameEntry entry;
-            while ((entry = pollEntry()) != null)
+            while ((entry = pollEntry()) !is null)
                 notifyCallbackFailure(entry.callback, x);
         }
 

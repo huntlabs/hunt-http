@@ -1,12 +1,13 @@
 module hunt.http.codec.websocket.model;
 
+import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.http2.model.Cookie;
 import hunt.http.codec.http2.model.HttpURI;
 
-import java.net.URI;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+// import hunt.net.URI;
+import hunt.security.Principal;
+
+import hunt.container;
 
 /**
  * The HTTP Upgrade to WebSocket Request
@@ -20,7 +21,7 @@ interface UpgradeRequest {
      *
      * @param configs the configuration(s) to add
      */
-    void addExtensions(ExtensionConfig... configs);
+    void addExtensions(ExtensionConfig[] configs ...);
 
     /**
      * Add WebSocket Extension Configuration(s) to request
@@ -30,14 +31,14 @@ interface UpgradeRequest {
      *
      * @param configs the configuration(s) to add
      */
-    void addExtensions(string... configs);
+    void addExtensions(string[] configs...);
 
     /**
      * Get the list of Cookies on the Upgrade request
      *
      * @return the list of Cookies
      */
-    List<Cookie> getCookies();
+    List!(Cookie) getCookies();
 
     /**
      * Get the list of WebSocket Extension Configurations for this Upgrade Request.
@@ -47,7 +48,7 @@ interface UpgradeRequest {
      *
      * @return the list of Extension configurations (in the order they were specified)
      */
-    List<ExtensionConfig> getExtensions();
+    List!(ExtensionConfig) getExtensions();
 
     /**
      * Get a specific Header value from Upgrade Request
@@ -71,7 +72,7 @@ interface UpgradeRequest {
      *
      * @return the headers
      */
-    Map<string, List<string>> getHeaders();
+    Map!(string, List!(string)) getHeaders();
 
     /**
      * Get the specific header values (for multi-value headers)
@@ -79,7 +80,7 @@ interface UpgradeRequest {
      * @param name the header name
      * @return the value list (null if no header exists)
      */
-    List<string> getHeaders(string name);
+    List!(string) getHeaders(string name);
 
     /**
      * The host of the Upgrade Request URI
@@ -123,7 +124,7 @@ interface UpgradeRequest {
      *
      * @return a unmodifiable map of query parameters of the request.
      */
-    Map<string, List<string>> getParameterMap();
+    Map!(string, List!(string)) getParameterMap();
 
     /**
      * Get the WebSocket Protocol Version
@@ -163,7 +164,7 @@ interface UpgradeRequest {
      *
      * @return the list of offered sub-protocols
      */
-    List<string> getSubProtocols();
+    List!(string) getSubProtocols();
 
     /**
      * Get the User Principal for this request.
@@ -202,14 +203,14 @@ interface UpgradeRequest {
      *
      * @param cookies the cookies to use
      */
-    void setCookies(List<Cookie> cookies);
+    void setCookies(List!(Cookie) cookies);
 
     /**
      * Set the list of WebSocket Extension configurations on the request.
      *
      * @param configs the list of extension configurations
      */
-    void setExtensions(List<ExtensionConfig> configs);
+    void setExtensions(List!(ExtensionConfig) configs);
 
     /**
      * Set a specific header with multi-value field
@@ -219,7 +220,7 @@ interface UpgradeRequest {
      * @param name   the name of the header
      * @param values the multi-value field
      */
-    void setHeader(string name, List<string> values);
+    void setHeader(string name, List!(string) values);
 
     /**
      * Set a specific header value
@@ -242,7 +243,7 @@ interface UpgradeRequest {
      *
      * @param headers the headers to set
      */
-    void setHeaders(Map<string, List<string>> headers);
+    void setHeaders(Map!(string, List!(string)) headers);
 
     /**
      * Set the HTTP Version to use.
@@ -286,13 +287,13 @@ interface UpgradeRequest {
      *
      * @param protocols the offered sub-protocol list
      */
-    void setSubProtocols(List<string> protocols);
+    void setSubProtocols(List!(string) protocols);
 
     /**
      * Set the offered WebSocket Sub-Protocol list.
      *
      * @param protocols the offered sub-protocol list
      */
-    void setSubProtocols(string... protocols);
+    void setSubProtocols(string[] protocols...);
 
 }

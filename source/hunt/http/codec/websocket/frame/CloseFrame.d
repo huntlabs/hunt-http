@@ -1,5 +1,6 @@
 module hunt.http.codec.websocket.frame;
 
+import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.model.OpCode;
 import hunt.http.utils.StringUtils;
 
@@ -20,6 +21,10 @@ class CloseFrame : ControlFrame {
      * @return the possibly truncated reason string.
      */
     static string truncate(string reason) {
-        return StringUtils.truncate(reason, (ControlFrame.MAX_CONTROL_PAYLOAD - 2));
+        enum limit = ControlFrame.MAX_CONTROL_PAYLOAD - 2;
+        if(reason.length > limit)
+            return reason[0..limit];
+        else
+            return reason;
     }
 }

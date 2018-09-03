@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 
  */
-class WebSocketConnectionImpl : AbstractConnection : WebSocketConnection, IncomingFrames {
+class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, IncomingFrames {
 
     protected final ConnectionEvent<WebSocketConnection> connectionEvent;
     protected final Parser parser;
@@ -49,7 +49,7 @@ class WebSocketConnectionImpl : AbstractConnection : WebSocketConnection, Incomi
     protected final HTTP2Configuration config;
     protected final ExtensionNegotiator extensionNegotiator = new ExtensionNegotiator();
 
-    WebSocketConnectionImpl(SecureSession secureSession, Session tcpSession,
+    this(SecureSession secureSession, Session tcpSession,
                                    IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
                                    MetaData.Request upgradeRequest, MetaData.Response upgradeResponse,
                                    HTTP2Configuration config) {
@@ -139,7 +139,7 @@ class WebSocketConnectionImpl : AbstractConnection : WebSocketConnection, Incomi
     }
 
     void setNextIncomingFrames(IncomingFrames nextIncomingFrames) {
-        if (nextIncomingFrames != null) {
+        if (nextIncomingFrames !is null) {
             extensionNegotiator.setNextIncomingFrames(nextIncomingFrames);
             MetaData metaData;
             if (upgradeResponse.getFields().contains(HttpHeader.SEC_WEBSOCKET_EXTENSIONS)) {
@@ -188,7 +188,7 @@ class WebSocketConnectionImpl : AbstractConnection : WebSocketConnection, Incomi
 
     override
     bool isEncrypted() {
-        return secureSession != null;
+        return secureSession !is null;
     }
 
     override

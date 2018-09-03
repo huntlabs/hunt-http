@@ -7,18 +7,17 @@ import hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExten
 import hunt.http.codec.websocket.model.extension.compress.XWebkitDeflateFrameExtension;
 import hunt.http.codec.websocket.model.extension.fragment.FragmentExtension;
 import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
-import hunt.http.utils.CollectionUtils;
+// import hunt.http.utils.CollectionUtils;
 
-import java.util.*;
 
 abstract class ExtensionFactory : Iterable<Class<? : Extension>> {
     private ServiceLoader<Extension> extensionLoader = ServiceLoader.load(Extension.class);
     private Map<string, Class<? : Extension>> availableExtensions;
 
-    ExtensionFactory() {
+    this() {
         availableExtensions = new HashMap<>();
         for (Extension ext : extensionLoader) {
-            if (ext != null) {
+            if (ext !is null) {
                 availableExtensions.put(ext.getName(), ext.getClass());
             }
         }

@@ -172,7 +172,7 @@ class QuoteUtil {
         if ((b >= 'A') && (b <= 'F')) {
             return (byte) ((b - 'A') + 10);
         }
-        throw new IllegalArgumentException("!hex:" + Integer.toHexString(0xff & b));
+        throw new IllegalArgumentException("!hex:" ~ Integer.toHexString(0xff & b));
     }
 
     /**
@@ -243,7 +243,7 @@ class QuoteUtil {
      * @param delim the delimiter characters that will trigger automatic quoting
      */
     static void quoteIfNeeded(StringBuilder buf, string str, string delim) {
-        if (str == null) {
+        if (str is null) {
             return;
         }
         // check for delimiters in input string
@@ -278,7 +278,7 @@ class QuoteUtil {
     }
 
     static string unescape(string str) {
-        if (str == null) {
+        if (str is null) {
             // nothing there
             return null;
         }
@@ -338,7 +338,7 @@ class QuoteUtil {
     }
 
     static string join(Object[] objs, string delim) {
-        if (objs == null) {
+        if (objs is null) {
             return "";
         }
         StringBuilder ret = new StringBuilder();
@@ -357,7 +357,7 @@ class QuoteUtil {
     }
 
     static string join(Collection<?> objs, string delim) {
-        if (objs == null) {
+        if (objs is null) {
             return "";
         }
         StringBuilder ret = new StringBuilder();

@@ -2,53 +2,21 @@ module hunt.http.codec.websocket.frame;
 
 import hunt.container.ByteBuffer;
 
+import hunt.util.exception;
+
+alias FrameType = Frame.Type;
+
 /**
  * An immutable websocket frame.
  */
 interface Frame {
-    enum Type {
-        CONTINUATION((byte) 0x00),
-        TEXT((byte) 0x01),
-        BINARY((byte) 0x02),
-        CLOSE((byte) 0x08),
-        PING((byte) 0x09),
-        PONG((byte) 0x0A);
-
-        static Type from(byte op) {
-            for (Type type : values()) {
-                if (type.opcode == op) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("OpCode " + op + " is not a valid Frame.Type");
-        }
-
-        private byte opcode;
-
-        Type(byte code) {
-            this.opcode = code;
-        }
-
-        byte getOpCode() {
-            return opcode;
-        }
-
-        bool isControl() {
-            return (opcode >= CLOSE.getOpCode());
-        }
-
-        bool isData() {
-            return (opcode == TEXT.getOpCode()) || (opcode == BINARY.getOpCode());
-        }
-
-        bool isContinuation() {
-            return opcode == CONTINUATION.getOpCode();
-        }
-
-        override
-        string toString() {
-            return this.name();
-        }
+    enum Type : byte {
+        CONTINUATION = 0x00,
+        TEXT = 0x01,
+        BINARY = 0x02,
+        CLOSE = 0x08,
+        PING = 0x09,
+        PONG = 0x0A
     }
 
     byte[] getMask();
@@ -77,4 +45,31 @@ interface Frame {
     bool isRsv2();
 
     bool isRsv3();
+}
+
+import std.traits;
+
+class FrameTypeHelper {
+    
+        static FrameType from(byte op) {
+            foreach (FrameType type ; EnumMembers!(FrameType)) {
+                if (type.opcode == op) 
+                    return type;
+            }
+            throw new IllegalArgumentException("OpCode " ~ op.to!string() ~ 
+                " is not a valid Frame.Type");
+        }
+
+        static bool isControl(FrameType type) {
+            return type >= FrameType.CLOSE;
+        }
+
+        bool isData(FrameType type) {
+            return (type == FrameType.TEXT) || (type == FrameType.BINARY);
+        }
+
+        bool isContinuation(FrameType type) {
+            return type == FrameType.CONTINUATION;
+        }
+
 }

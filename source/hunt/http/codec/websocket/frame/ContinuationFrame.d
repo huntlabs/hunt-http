@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.frame;
 
+import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.model.OpCode;
-import hunt.http.utils.StringUtils;
 
 import hunt.container.ByteBuffer;
 
@@ -15,12 +15,12 @@ class ContinuationFrame : DataFrame {
         return this;
     }
 
-    ContinuationFrame setPayload(byte buf[]) {
+    ContinuationFrame setPayload(byte[] buf) {
         return this.setPayload(ByteBuffer.wrap(buf));
     }
 
     ContinuationFrame setPayload(string message) {
-        return this.setPayload(StringUtils.getUtf8Bytes(message));
+        return this.setPayload(cast(byte[])(message));
     }
 
     override

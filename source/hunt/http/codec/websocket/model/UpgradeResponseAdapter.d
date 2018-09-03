@@ -19,7 +19,7 @@ class UpgradeResponseAdapter : UpgradeResponse {
     void addHeader(string name, string value) {
         string key = name;
         List<string> values = headers.get(key);
-        if (values == null) {
+        if (values is null) {
             values = new ArrayList<>();
         }
         values.add(value);
@@ -50,7 +50,7 @@ class UpgradeResponseAdapter : UpgradeResponse {
     string getHeader(string name) {
         List<string> values = getHeaders(name);
         // no value list
-        if (values == null) {
+        if (values is null) {
             return null;
         }
         int size = values.size();
@@ -136,7 +136,7 @@ class UpgradeResponseAdapter : UpgradeResponse {
     override
     void setExtensions(List<ExtensionConfig> extensions) {
         this.extensions.clear();
-        if (extensions != null) {
+        if (extensions !is null) {
             this.extensions.addAll(extensions);
         }
     }

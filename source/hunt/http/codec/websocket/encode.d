@@ -135,7 +135,7 @@ class Generator {
             if (frame.getOpCode() == OpCode.CLOSE) {
 
                 ByteBuffer payload = frame.getPayload();
-                if (payload != null) {
+                if (payload !is null) {
                     new CloseInfo(payload, true);
                 }
             }
@@ -254,7 +254,7 @@ class Generator {
 
             // perform data masking here
             ByteBuffer payload = frame.getPayload();
-            if ((payload != null) && (payload.remaining() > 0)) {
+            if ((payload !is null) && (payload.remaining() > 0)) {
                 int maskOffset = 0;
                 int start = payload.position();
                 int end = payload.limit();

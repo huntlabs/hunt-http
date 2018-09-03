@@ -5,9 +5,10 @@ import hunt.http.utils.StringUtils;
 import hunt.http.utils.io.BufferUtils;
 
 import hunt.container.ByteBuffer;
+import hunt.container.BufferUtils;
 
 class TextFrame : DataFrame {
-    TextFrame() {
+    this() {
         super(OpCode.TEXT);
     }
 
@@ -17,14 +18,14 @@ class TextFrame : DataFrame {
     }
 
     TextFrame setPayload(string str) {
-        setPayload(ByteBuffer.wrap(StringUtils.getUtf8Bytes(str)));
+        setPayload(ByteBuffer.wrap(cast(byte[])(str)));
         return this;
     }
 
     string getPayloadAsUTF8() {
-        if (data == null) {
+        if (data is null) {
             return null;
         }
-        return BufferUtils.toUTF8String(data);
+        return BufferUtils.toString(data);
     }
 }

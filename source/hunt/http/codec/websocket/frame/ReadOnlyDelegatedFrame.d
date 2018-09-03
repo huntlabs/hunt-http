@@ -6,67 +6,67 @@ import hunt.container.ByteBuffer;
  * Immutable, Read-only, Frame implementation.
  */
 class ReadOnlyDelegatedFrame : Frame {
-    private final Frame delegate;
+    private final Frame dg;
 
-    ReadOnlyDelegatedFrame(Frame frame) {
-        this.delegate = frame;
+    this(Frame frame) {
+        this.dg = frame;
     }
 
     override
     byte[] getMask() {
-        return delegate.getMask();
+        return dg.getMask();
     }
 
     override
     byte getOpCode() {
-        return delegate.getOpCode();
+        return dg.getOpCode();
     }
 
     override
     ByteBuffer getPayload() {
-        if (!delegate.hasPayload()) {
+        if (!dg.hasPayload()) {
             return null;
         }
-        return delegate.getPayload().asReadOnlyBuffer();
+        return dg.getPayload().asReadOnlyBuffer();
     }
 
     override
     int getPayloadLength() {
-        return delegate.getPayloadLength();
+        return dg.getPayloadLength();
     }
 
     override
     Type getType() {
-        return delegate.getType();
+        return dg.getType();
     }
 
     override
     bool hasPayload() {
-        return delegate.hasPayload();
+        return dg.hasPayload();
     }
 
     override
     bool isFin() {
-        return delegate.isFin();
+        return dg.isFin();
     }
 
     override
     bool isMasked() {
-        return delegate.isMasked();
+        return dg.isMasked();
     }
 
     override
     bool isRsv1() {
-        return delegate.isRsv1();
+        return dg.isRsv1();
     }
 
     override
     bool isRsv2() {
-        return delegate.isRsv2();
+        return dg.isRsv2();
     }
 
     override
     bool isRsv3() {
-        return delegate.isRsv3();
+        return dg.isRsv3();
     }
 }

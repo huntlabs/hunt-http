@@ -1,26 +1,20 @@
 module hunt.http.codec.websocket.decode;
 
-import hunt.http.codec.websocket.exception.MessageTooLargeException;
-import hunt.http.codec.websocket.exception.ProtocolException;
-import hunt.http.codec.websocket.exception.WebSocketException;
-import hunt.http.codec.websocket.frame.*;
-import hunt.http.codec.websocket.model.*;
-import hunt.http.codec.websocket.decode.payload.DeMaskProcessor;
-import hunt.http.codec.websocket.decode.payload.PayloadProcessor;
+import hunt.http.codec.websocket.exception;
+import hunt.http.codec.websocket.frame;
+import hunt.http.codec.websocket.model;
+import hunt.http.codec.websocket.decode.payload;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.http.utils.io.BufferUtils;
-import kiss.logger;
 
+import hunt.logging;
+import hunt.container;
 
-import hunt.container.ByteBuffer;
-import java.util.List;
+import std.conv;
 
 /**
  * Parsing of a frames in WebSocket land.
  */
 class Parser {
-
-
     private enum State {
         START,
         PAYLOAD_LEN,
@@ -30,7 +24,7 @@ class Parser {
         PAYLOAD
     }
 
-    private final WebSocketPolicy policy;
+    private WebSocketPolicy policy;
 
     // State specific
     private State state = State.START;
@@ -41,7 +35,7 @@ class Parser {
     // payload specific
     private ByteBuffer payload;
     private int payloadLength;
-    private PayloadProcessor maskProcessor = new DeMaskProcessor();
+    private PayloadProcessor maskProcessor;
     // private PayloadProcessor strictnessProcessor;
 
     /**
@@ -58,57 +52,62 @@ class Parser {
 
     private IncomingFrames incomingFramesHandler;
 
-    Parser(WebSocketPolicy wspolicy) {
+    this(WebSocketPolicy wspolicy) {
         this.policy = wspolicy;
+         maskProcessor = new DeMaskProcessor();
     }
 
     private void assertSanePayloadLength(long len) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("%s Payload Length: %s - %s", policy.getBehavior(), len, this);
+        version(HuntDebugMode) {
+            tracef("%s Payload Length: %s - %s", policy.getBehavior(), 
+                len.to!string(), this.toString();
         }
 
-        // Since we use ByteBuffer so often, having lengths over Integer.MAX_VALUE is really impossible.
-        if (len > Integer.MAX_VALUE) {
+        // Since we use ByteBuffer so often, having lengths over int.max is really impossible.
+        if (len > int.max) {
             // OMG! Sanity Check! DO NOT WANT! Won't anyone think of the memory!
-            throw new MessageTooLargeException("[int-sane!] cannot handle payload lengths larger than " + Integer.MAX_VALUE);
+            throw new MessageTooLargeException("[int-sane!] cannot handle payload lengths larger than " 
+                ~ int.max);
         }
 
         switch (frame.getOpCode()) {
             case OpCode.CLOSE:
                 if (len == 1) {
-                    throw new ProtocolException("Invalid close frame payload length, [" + payloadLength + "]");
+                    throw new ProtocolException("Invalid close frame payload length, [" ~ 
+                        payloadLength.to!string() ~ "]");
                 }
                 // fall thru
             case OpCode.PING:
             case OpCode.PONG:
                 if (len > ControlFrame.MAX_CONTROL_PAYLOAD) {
-                    throw new ProtocolException("Invalid control frame payload length, [" + payloadLength + "] cannot exceed ["
-                            + ControlFrame.MAX_CONTROL_PAYLOAD + "]");
+                    throw new ProtocolException("Invalid control frame payload length, [" ~ 
+                        payloadLength.to!string() ~ "] cannot exceed [" ~ 
+                        ControlFrame.MAX_CONTROL_PAYLOAD.to!string() ~ "]");
                 }
                 break;
             case OpCode.TEXT:
-                policy.assertValidTextMessageSize((int) len);
+                policy.assertValidTextMessageSize(cast(int) len);
                 break;
             case OpCode.BINARY:
-                policy.assertValidBinaryMessageSize((int) len);
+                policy.assertValidBinaryMessageSize(cast(int) len);
                 break;
         }
     }
 
-    void configureFromExtensions(List<? : Extension> exts) {
+    void configureFromExtensions(List!Extension exts) {
         // default
         flagsInUse = 0x00;
 
         // configure from list of extensions in use
-        for (Extension ext : exts) {
+        foreach (Extension ext ; exts) {
             if (ext.isRsv1User()) {
-                flagsInUse = (byte) (flagsInUse | 0x40);
+                flagsInUse = cast(byte) (flagsInUse | 0x40);
             }
             if (ext.isRsv2User()) {
-                flagsInUse = (byte) (flagsInUse | 0x20);
+                flagsInUse = cast(byte) (flagsInUse | 0x20);
             }
             if (ext.isRsv3User()) {
-                flagsInUse = (byte) (flagsInUse | 0x10);
+                flagsInUse = cast(byte) (flagsInUse | 0x10);
             }
         }
     }
@@ -133,9 +132,9 @@ class Parser {
         return (flagsInUse & 0x10) != 0;
     }
 
-    protected void notifyFrame(final Frame f) throws WebSocketException {
-        if (LOG.isDebugEnabled())
-            LOG.debug("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
+    protected void notifyFrame(Frame f) {
+        version(HuntDebugMode)
+            tracef("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
 
         if (policy.getBehavior() == WebSocketBehavior.SERVER) {
             /* Parsing on server.
@@ -158,27 +157,27 @@ class Parser {
             }
         }
 
-        if (incomingFramesHandler == null) {
+        if (incomingFramesHandler is null) {
             return;
         }
         try {
             incomingFramesHandler.incomingFrame(f);
         } catch (WebSocketException e) {
             throw e;
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw new WebSocketException(t);
         }
     }
 
-    void parse(ByteBuffer buffer) throws WebSocketException {
+    void parse(ByteBuffer buffer) {
         if (buffer.remaining() <= 0) {
             return;
         }
         try {
             // parse through all the frames in the buffer
             while (parseFrame(buffer)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("%s Parsed Frame: %s", policy.getBehavior(), frame);
+                version(HuntDebugMode) {
+                    tracef("%s Parsed Frame: %s", policy.getBehavior(), frame);
                 }
                 notifyFrame(frame);
                 if (frame.isDataFrame()) {
@@ -191,7 +190,7 @@ class Parser {
             reset();
             // need to throw for proper close behavior in connection
             throw e;
-        } catch (Throwable t) {
+        } catch (Exception t) {
             buffer.position(buffer.limit()); // consume remaining
             reset();
             // need to throw for proper close behavior in connection
@@ -200,7 +199,7 @@ class Parser {
     }
 
     private void reset() {
-        if (frame != null)
+        if (frame !is null)
             frame.reset();
         frame = null;
         payload = null;
@@ -217,8 +216,8 @@ class Parser {
      * @return true if done parsing base framing protocol and ready for parsing of the payload. false if incomplete parsing of base framing protocol.
      */
     private bool parseFrame(ByteBuffer buffer) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("%s Parsing %s bytes", policy.getBehavior(), buffer.remaining());
+        version(HuntDebugMode) {
+            tracef("%s Parsing %s bytes", policy.getBehavior(), buffer.remaining());
         }
         while (buffer.hasRemaining()) {
             switch (state) {
@@ -227,14 +226,14 @@ class Parser {
                     byte b = buffer.get();
                     bool fin = ((b & 0x80) != 0);
 
-                    byte opcode = (byte) (b & 0x0F);
+                    byte opcode = cast(byte) (b & 0x0F);
 
                     if (!OpCode.isKnown(opcode)) {
-                        throw new ProtocolException("Unknown opcode: " + opcode);
+                        throw new ProtocolException("Unknown opcode: " ~ opcode);
                     }
 
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("%s OpCode %s, fin=%s rsv=%s%s%s",
+                    version(HuntDebugMode)
+                        tracef("%s OpCode %s, fin=%s rsv=%s%s%s",
                                 policy.getBehavior(),
                                 OpCode.name(opcode),
                                 fin,
@@ -248,14 +247,16 @@ class Parser {
                             frame = new TextFrame();
                             // data validation
                             if (priorDataFrame) {
-                                throw new ProtocolException("Unexpected " + OpCode.name(opcode) + " frame, was expecting CONTINUATION");
+                                throw new ProtocolException("Unexpected " ~ OpCode.name(opcode) ~ 
+                                    " frame, was expecting CONTINUATION");
                             }
                             break;
                         case OpCode.BINARY:
                             frame = new BinaryFrame();
                             // data validation
                             if (priorDataFrame) {
-                                throw new ProtocolException("Unexpected " + OpCode.name(opcode) + " frame, was expecting CONTINUATION");
+                                throw new ProtocolException("Unexpected " ~ OpCode.name(opcode) ~ 
+                                    " frame, was expecting CONTINUATION");
                             }
                             break;
                         case OpCode.CONTINUATION:
@@ -270,21 +271,24 @@ class Parser {
                             frame = new CloseFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Close Frame [" + OpCode.name(opcode) + "]");
+                                throw new ProtocolException("Fragmented Close Frame [" ~ 
+                                    OpCode.name(opcode) ~ "]");
                             }
                             break;
                         case OpCode.PING:
                             frame = new PingFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Ping Frame [" + OpCode.name(opcode) + "]");
+                                throw new ProtocolException("Fragmented Ping Frame [" ~ 
+                                    OpCode.name(opcode) ~ "]");
                             }
                             break;
                         case OpCode.PONG:
                             frame = new PongFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Pong Frame [" + OpCode.name(opcode) + "]");
+                                throw new ProtocolException("Fragmented Pong Frame [" ~ 
+                                    OpCode.name(opcode) ~ "]");
                             }
                             break;
                     }
@@ -304,8 +308,8 @@ class Parser {
                                 frame.setRsv1(true);
                             else {
                                 string err = "RSV1 not allowed to be set";
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug(err + ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
+                                version(HuntDebugMode) {
+                                    tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
                             }
@@ -315,8 +319,8 @@ class Parser {
                                 frame.setRsv2(true);
                             else {
                                 string err = "RSV2 not allowed to be set";
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug(err + ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
+                                version(HuntDebugMode) {
+                                    tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
                             }
@@ -326,8 +330,8 @@ class Parser {
                                 frame.setRsv3(true);
                             else {
                                 string err = "RSV3 not allowed to be set";
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug(err + ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
+                                version(HuntDebugMode) {
+                                    tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
                             }
@@ -341,7 +345,7 @@ class Parser {
                 case PAYLOAD_LEN: {
                     byte b = buffer.get();
                     frame.setMasked((b & 0x80) != 0);
-                    payloadLength = (byte) (0x7F & b);
+                    payloadLength = cast(byte) (0x7F & b);
 
                     if (payloadLength == 127) // 0x7F
                     {
@@ -470,7 +474,7 @@ class Parser {
             // Create a small window of the incoming buffer to work with.
             // this should only show the payload itself, and not any more
             // bytes that could belong to the start of the next frame.
-            int bytesSoFar = payload == null ? 0 : payload.position();
+            int bytesSoFar = payload is null ? 0 : payload.position();
             int bytesExpected = payloadLength - bytesSoFar;
             int bytesAvailable = buffer.remaining();
             int windowBytes = Math.min(bytesAvailable, bytesExpected);
@@ -480,8 +484,8 @@ class Parser {
             buffer.limit(limit);
             buffer.position(buffer.position() + window.remaining());
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("%s Window: %s", policy.getBehavior(), BufferUtils.toDetailString(window));
+            version(HuntDebugMode) {
+                tracef("%s Window: %s", policy.getBehavior(), BufferUtils.toDetailString(window));
             }
 
             maskProcessor.process(window);
@@ -491,7 +495,7 @@ class Parser {
                 frame.setPayload(window);
                 return true;
             } else {
-                if (payload == null) {
+                if (payload is null) {
                     payload = BufferUtils.allocate(payloadLength);
                     BufferUtils.clearToFill(payload);
                 }
@@ -517,7 +521,7 @@ class Parser {
         StringBuilder builder = new StringBuilder();
         builder.append("Parser@").append(Integer.toHexString(hashCode()));
         builder.append("[");
-        if (incomingFramesHandler == null) {
+        if (incomingFramesHandler is null) {
             builder.append("NO_HANDLER");
         } else {
             builder.append(incomingFramesHandler.typeof(this).stringof);

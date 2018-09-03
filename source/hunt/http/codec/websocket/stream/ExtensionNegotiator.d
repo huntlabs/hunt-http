@@ -12,9 +12,7 @@ import hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 import hunt.http.utils.Assert;
 import hunt.http.utils.CollectionUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import hunt.container;
 
 import hunt.http.codec.websocket.model.ExtensionConfig.parseEnum;
 
@@ -29,11 +27,11 @@ class ExtensionNegotiator {
     private IncomingFrames incomingFrames;
     private OutgoingFrames outgoingFrames;
 
-    ExtensionNegotiator() {
+    this() {
         this(new WebSocketExtensionFactory());
     }
 
-    ExtensionNegotiator(ExtensionFactory factory) {
+    this(ExtensionFactory factory) {
         this.factory = factory;
     }
 

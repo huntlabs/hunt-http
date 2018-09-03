@@ -1,6 +1,5 @@
 module hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-// import hunt.http.codec.websocket.stream.impl.WebSocketConnectionImpl;
 import hunt.net.DecoderChain;
 import hunt.net.Session;
 

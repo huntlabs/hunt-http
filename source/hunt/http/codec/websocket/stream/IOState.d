@@ -4,7 +4,7 @@ import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.ConnectionState;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.utils.StringUtils;
-import kiss.logger;
+import hunt.logging;
 
 
 import java.io.EOFException;
@@ -89,7 +89,7 @@ class IOState {
     /**
      * Create a new IOState, initialized to {@link ConnectionState#CONNECTING}
      */
-    IOState() {
+    this() {
         this.state = ConnectionState.CONNECTING;
         this.inputAvailable = false;
         this.outputAvailable = false;
@@ -116,7 +116,7 @@ class IOState {
 
     CloseInfo getCloseInfo() {
         CloseInfo ci = finalClose.get();
-        if (ci != null) {
+        if (ci !is null) {
             return ci;
         }
         return closeInfo;
@@ -145,11 +145,11 @@ class IOState {
     }
 
     private void notifyStateListeners(ConnectionState state) {
-        if (LOG.isDebugEnabled())
-            LOG.debug("Notify State Listeners: %s", state);
+        version(HuntDebugMode)
+            tracef("Notify State Listeners: %s", state);
         for (ConnectionStateListener listener : listeners) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("%s.onConnectionStateChange(%s)", listener.typeof(this).stringof, state.name());
+            version(HuntDebugMode) {
+                tracef("%s.onConnectionStateChange(%s)", listener.typeof(this).stringof, state.name());
             }
             listener.onConnectionStateChange(state);
         }
@@ -163,8 +163,8 @@ class IOState {
      * @param close the close information
      */
     void onAbnormalClose(CloseInfo close) {
-        if (LOG.isDebugEnabled())
-            LOG.debug("onAbnormalClose(%s)", close);
+        version(HuntDebugMode)
+            tracef("onAbnormalClose(%s)", close);
         ConnectionState event = null;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
@@ -195,19 +195,19 @@ class IOState {
         bool open = false;
         synchronized (this) {
             ConnectionState initialState = this.state;
-            if (LOG.isDebugEnabled())
-                LOG.debug("onCloseLocal(%s) : %s", closeInfo, initialState);
+            version(HuntDebugMode)
+                tracef("onCloseLocal(%s) : %s", closeInfo, initialState);
             if (initialState == ConnectionState.CLOSED) {
                 // already closed
-                if (LOG.isDebugEnabled())
-                    LOG.debug("already closed");
+                version(HuntDebugMode)
+                    tracef("already closed");
                 return;
             }
 
             if (initialState == ConnectionState.CONNECTED) {
                 // fast close. a local close request from end-user onConnect/onOpen method
-                if (LOG.isDebugEnabled())
-                    LOG.debug("FastClose in CONNECTED detected");
+                version(HuntDebugMode)
+                    tracef("FastClose in CONNECTED detected");
                 open = true;
             }
         }
@@ -221,8 +221,8 @@ class IOState {
     private void openAndCloseLocal(CloseInfo closeInfo) {
         // Force the state open (to allow read/write to endpoint)
         onOpened();
-        if (LOG.isDebugEnabled())
-            LOG.debug("FastClose continuing with Closure");
+        version(HuntDebugMode)
+            tracef("FastClose continuing with Closure");
         closeLocal(closeInfo);
     }
 
@@ -230,8 +230,8 @@ class IOState {
         ConnectionState event = null;
         ConnectionState abnormalEvent = null;
         synchronized (this) {
-            if (LOG.isDebugEnabled())
-                LOG.debug("onCloseLocal(), input=%s, output=%s", inputAvailable, outputAvailable);
+            version(HuntDebugMode)
+                tracef("onCloseLocal(), input=%s, output=%s", inputAvailable, outputAvailable);
 
             this.closeInfo = closeInfo;
 
@@ -243,8 +243,8 @@ class IOState {
             }
 
             if (!inputAvailable) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Close Handshake satisfied, disconnecting");
+                version(HuntDebugMode)
+                    tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 this.state = ConnectionState.CLOSED;
                 finalClose.compareAndSet(null, closeInfo);
@@ -267,9 +267,9 @@ class IOState {
         }
 
         // Only notify on state change events
-        if (event != null) {
+        if (event !is null) {
             notifyStateListeners(event);
-            if (abnormalEvent != null) {
+            if (abnormalEvent !is null) {
                 notifyStateListeners(abnormalEvent);
             }
         }
@@ -281,8 +281,8 @@ class IOState {
      * @param closeInfo the close information
      */
     void onCloseRemote(CloseInfo closeInfo) {
-        if (LOG.isDebugEnabled())
-            LOG.debug("onCloseRemote(%s)", closeInfo);
+        version(HuntDebugMode)
+            tracef("onCloseRemote(%s)", closeInfo);
         ConnectionState event = null;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
@@ -290,8 +290,8 @@ class IOState {
                 return;
             }
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("onCloseRemote(), input=%s, output=%s", inputAvailable, outputAvailable);
+            version(HuntDebugMode)
+                tracef("onCloseRemote(), input=%s, output=%s", inputAvailable, outputAvailable);
 
             this.closeInfo = closeInfo;
 
@@ -303,7 +303,7 @@ class IOState {
             }
 
             if (!outputAvailable) {
-                LOG.debug("Close Handshake satisfied, disconnecting");
+                tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 state = ConnectionState.CLOSED;
                 finalClose.compareAndSet(null, closeInfo);
@@ -316,7 +316,7 @@ class IOState {
         }
 
         // Only notify on state change events
-        if (event != null) {
+        if (event !is null) {
             notifyStateListeners(event);
         }
     }
@@ -330,7 +330,7 @@ class IOState {
         ConnectionState event = null;
         synchronized (this) {
             if (this.state != ConnectionState.CONNECTING) {
-                LOG.debug("Unable to set to connected, not in CONNECTING state: %s", this.state);
+                tracef("Unable to set to connected, not in CONNECTING state: %s", this.state);
                 return;
             }
 
@@ -362,8 +362,8 @@ class IOState {
      * A websocket connection has finished its upgrade handshake, and is now open.
      */
     void onOpened() {
-        if (LOG.isDebugEnabled())
-            LOG.debug("onOpened()");
+        version(HuntDebugMode)
+            tracef("onOpened()");
 
         ConnectionState event = null;
         synchronized (this) {
@@ -373,7 +373,7 @@ class IOState {
             }
 
             if (this.state != ConnectionState.CONNECTED) {
-                LOG.debug("Unable to open, not in CONNECTED state: %s", this.state);
+                tracef("Unable to open, not in CONNECTED state: %s", this.state);
                 return;
             }
 
@@ -405,8 +405,8 @@ class IOState {
             if (t instanceof EOFException) {
                 reason = "WebSocket Read EOF";
                 Throwable cause = t.getCause();
-                if ((cause != null) && (StringUtils.hasText(cause.getMessage()))) {
-                    reason = "EOF: " + cause.getMessage();
+                if ((cause !is null) && (StringUtils.hasText(cause.getMessage()))) {
+                    reason = "EOF: " ~ cause.getMessage();
                 }
             } else {
                 if (StringUtils.hasText(t.getMessage())) {
@@ -449,8 +449,8 @@ class IOState {
             if (t instanceof EOFException) {
                 reason = "WebSocket Write EOF";
                 Throwable cause = t.getCause();
-                if ((cause != null) && (StringUtils.hasText(cause.getMessage()))) {
-                    reason = "EOF: " + cause.getMessage();
+                if ((cause !is null) && (StringUtils.hasText(cause.getMessage()))) {
+                    reason = "EOF: " ~ cause.getMessage();
                 }
             } else {
                 if (StringUtils.hasText(t.getMessage())) {
@@ -510,7 +510,7 @@ class IOState {
         str.append("out");
         if ((state == ConnectionState.CLOSED) || (state == ConnectionState.CLOSING)) {
             CloseInfo ci = finalClose.get();
-            if (ci != null) {
+            if (ci !is null) {
                 str.append(",finalClose=").append(ci);
             } else {
                 str.append(",close=").append(closeInfo);

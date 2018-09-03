@@ -4,8 +4,8 @@ import hunt.http.codec.common.ConnectionExtInfo;
 import hunt.http.codec.http2.model.MetaData;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.net.Connection;
-import hunt.http.utils.function.Action1;
-import hunt.http.utils.function.Action2;
+
+import hunt.util.functional;
 
 import hunt.container.ByteBuffer;
 import java.util.concurrent.CompletableFuture;
@@ -18,7 +18,7 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param closedListener The connection close callback.
      * @return The WebSocket connection.
      */
-    WebSocketConnection onClose(Action1<WebSocketConnection> closedListener);
+    WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener);
 
     /**
      * Register the exception callback.
@@ -62,7 +62,7 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param text The text message.
      * @return The future result.
      */
-    CompletableFuture<Boolean> sendText(string text);
+    CompletableFuture!(bool) sendText(string text);
 
     /**
      * Send binary message.
@@ -70,7 +70,7 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param data The binary message.
      * @return The future result.
      */
-    CompletableFuture<Boolean> sendData(byte[] data);
+    CompletableFuture!(bool) sendData(byte[] data);
 
     /**
      * Send binary message.
@@ -78,7 +78,7 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param data The binary message.
      * @return The future result.
      */
-    CompletableFuture<Boolean> sendData(ByteBuffer data);
+    CompletableFuture!(bool) sendData(ByteBuffer data);
 
     /**
      * Get the websocket upgrade request.

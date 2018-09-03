@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.model;
+module hunt.http.codec.websocket.model.ConnectionState;
 
 import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.IOState.ConnectionStateListener;
