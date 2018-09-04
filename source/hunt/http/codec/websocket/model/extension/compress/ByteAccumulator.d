@@ -4,16 +4,17 @@ import hunt.http.codec.websocket.exception.MessageTooLargeException;
 import hunt.http.utils.io.BufferUtils;
 
 import hunt.container.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+
+import hunt.container;
 
 class ByteAccumulator {
-    private final List<byte[]> chunks = new ArrayList<>();
+    private final List!(byte[]) chunks;
     private final int maxSize;
     private int length = 0;
 
-    ByteAccumulator(int maxOverallBufferSize) {
+    this(int maxOverallBufferSize) {
         this.maxSize = maxOverallBufferSize;
+        chunks = new ArrayList!(byte[])();
     }
 
     void copyChunk(byte buf[], int offset, int length) {
@@ -22,7 +23,8 @@ class ByteAccumulator {
         }
 
         byte copy[] = new byte[length - offset];
-        System.arraycopy(buf, offset, copy, 0, length);
+        // System.arraycopy(buf, offset, copy, 0, length);
+        copy[0..length] = buf[offset .. offset+length];
 
         chunks.add(copy);
         this.length += length;
@@ -34,12 +36,13 @@ class ByteAccumulator {
 
     void transferTo(ByteBuffer buffer) {
         if (buffer.remaining() < length) {
-            throw new IllegalArgumentException(string.format("Not enough space in ByteBuffer remaining [%d] for accumulated buffers length [%d]",
-                    buffer.remaining(), length));
+            string msg = string.format("Not enough space in ByteBuffer remaining [%d] " ~ 
+                "for accumulated buffers length [%d]", buffer.remaining(), length);
+            throw new IllegalArgumentException(msg);
         }
 
         int position = buffer.position();
-        for (byte[] chunk : chunks) {
+        foreach (byte[] chunk ; chunks) {
             buffer.put(chunk, 0, chunk.length);
         }
         BufferUtils.flipToFlush(buffer, position);

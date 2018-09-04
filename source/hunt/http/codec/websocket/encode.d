@@ -1,16 +1,14 @@
 module hunt.http.codec.websocket.encode;
 
-import hunt.http.codec.websocket.exception.ProtocolException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.OpCode;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.http.utils.io.BufferUtils;
 
-import hunt.container.ByteBuffer;
-import java.util.List;
+import hunt.container;
 
 /**
  * Generating a frame in WebSocket land.
@@ -40,11 +38,11 @@ class Generator {
     /**
      * The overhead (maximum) for a framing header. Assuming a maximum sized payload with masking key.
      */
-    static final int MAX_HEADER_LENGTH = 28;
+    enum int MAX_HEADER_LENGTH = 28;
 
-    private final WebSocketBehavior behavior;
-    private final bool validating;
-    private final bool readOnly;
+    private WebSocketBehavior behavior;
+    private bool validating;
+    private bool readOnly;
 
     /**
      * Are any flags in use
@@ -63,7 +61,7 @@ class Generator {
      *
      * @param policy the policy to use
      */
-    Generator(WebSocketPolicy policy) {
+    this(WebSocketPolicy policy) {
         this(policy, true, false);
     }
 
@@ -73,7 +71,7 @@ class Generator {
      * @param policy     the policy to use
      * @param validating true to enable RFC frame validation
      */
-    Generator(WebSocketPolicy policy, bool validating) {
+    this(WebSocketPolicy policy, bool validating) {
         this(policy, validating, false);
     }
 
@@ -84,7 +82,7 @@ class Generator {
      * @param validating true to enable RFC frame validation
      * @param readOnly   true if generator is to treat frames as read-only and not modify them. Useful for debugging purposes, but not generally for runtime use.
      */
-    Generator(WebSocketPolicy policy, bool validating, bool readOnly) {
+    this(WebSocketPolicy policy, bool validating, bool readOnly) {
         this.behavior = policy.getBehavior();
         this.validating = validating;
         this.readOnly = readOnly;
@@ -142,20 +140,20 @@ class Generator {
         }
     }
 
-    void configureFromExtensions(List<? : Extension> exts) {
+    void configureFromExtensions(List!Extension exts) {
         // default
         flagsInUse = 0x00;
 
         // configure from list of extensions in use
-        for (Extension ext : exts) {
+        foreach (Extension ext ; exts) {
             if (ext.isRsv1User()) {
-                flagsInUse = (byte) (flagsInUse | 0x40);
+                flagsInUse = cast(byte) (flagsInUse | 0x40);
             }
             if (ext.isRsv2User()) {
-                flagsInUse = (byte) (flagsInUse | 0x20);
+                flagsInUse = cast(byte) (flagsInUse | 0x20);
             }
             if (ext.isRsv3User()) {
-                flagsInUse = (byte) (flagsInUse | 0x10);
+                flagsInUse = cast(byte) (flagsInUse | 0x10);
             }
         }
     }
@@ -206,7 +204,7 @@ class Generator {
         buffer.put(b);
 
         // is masked
-        b = (frame.isMasked() ? (byte) 0x80 : (byte) 0x00);
+        b = (frame.isMasked() ? cast(byte) 0x80 : cast(byte) 0x00);
 
         // payload lengths
         int payloadLength = frame.getPayloadLength();
@@ -218,14 +216,14 @@ class Generator {
             // we have a 64 bit length
             b |= 0x7F;
             buffer.put(b); // indicate 8 byte length
-            buffer.put((byte) 0); //
-            buffer.put((byte) 0); // anything over an
-            buffer.put((byte) 0); // int is just
-            buffer.put((byte) 0); // insane!
-            buffer.put((byte) ((payloadLength >> 24) & 0xFF));
-            buffer.put((byte) ((payloadLength >> 16) & 0xFF));
-            buffer.put((byte) ((payloadLength >> 8) & 0xFF));
-            buffer.put((byte) (payloadLength & 0xFF));
+            buffer.put(cast(byte) 0); //
+            buffer.put(cast(byte) 0); // anything over an
+            buffer.put(cast(byte) 0); // int is just
+            buffer.put(cast(byte) 0); // insane!
+            buffer.put(cast(byte) ((payloadLength >> 24) & 0xFF));
+            buffer.put(cast(byte) ((payloadLength >> 16) & 0xFF));
+            buffer.put(cast(byte) ((payloadLength >> 8) & 0xFF));
+            buffer.put(cast(byte) (payloadLength & 0xFF));
         }
         /*
          * if payload is greater that 126 we have a 7 + 16 bit length
@@ -233,8 +231,8 @@ class Generator {
         else if (payloadLength >= 0x7E) {
             b |= 0x7E;
             buffer.put(b); // indicate 2 byte length
-            buffer.put((byte) (payloadLength >> 8));
-            buffer.put((byte) (payloadLength & 0xFF));
+            buffer.put(cast(byte) (payloadLength >> 8));
+            buffer.put(cast(byte) (payloadLength & 0xFF));
         }
         /*
          * we have a 7 bit length
@@ -249,7 +247,7 @@ class Generator {
             byte[] mask = frame.getMask();
             buffer.put(mask);
             int maskInt = 0;
-            for (byte maskByte : mask)
+            foreach (byte maskByte ; mask)
                 maskInt = (maskInt << 8) + (maskByte & 0xFF);
 
             // perform data masking here
@@ -264,7 +262,7 @@ class Generator {
                         payload.putInt(start, payload.getInt(start) ^ maskInt);
                         start += 4;
                     } else {
-                        payload.put(start, (byte) (payload.get(start) ^ mask[maskOffset & 3]));
+                        payload.put(start, cast(byte) (payload.get(start) ^ mask[maskOffset & 3]));
                         ++start;
                         ++maskOffset;
                     }
@@ -298,21 +296,21 @@ class Generator {
         if (readOnly) {
             throw new RuntimeException("Not allowed to modify read-only frame");
         }
-        flagsInUse = (byte) ((flagsInUse & 0xBF) | (rsv1InUse ? 0x40 : 0x00));
+        flagsInUse = cast(byte) ((flagsInUse & 0xBF) | (rsv1InUse ? 0x40 : 0x00));
     }
 
     void setRsv2InUse(bool rsv2InUse) {
         if (readOnly) {
             throw new RuntimeException("Not allowed to modify read-only frame");
         }
-        flagsInUse = (byte) ((flagsInUse & 0xDF) | (rsv2InUse ? 0x20 : 0x00));
+        flagsInUse = cast(byte) ((flagsInUse & 0xDF) | (rsv2InUse ? 0x20 : 0x00));
     }
 
     void setRsv3InUse(bool rsv3InUse) {
         if (readOnly) {
             throw new RuntimeException("Not allowed to modify read-only frame");
         }
-        flagsInUse = (byte) ((flagsInUse & 0xEF) | (rsv3InUse ? 0x10 : 0x00));
+        flagsInUse = cast(byte) ((flagsInUse & 0xEF) | (rsv3InUse ? 0x10 : 0x00));
     }
 
     bool isRsv1InUse() {
