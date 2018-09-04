@@ -1,9 +1,10 @@
 module hunt.http.codec.websocket.model.AcceptHash;
 
-import hunt.http.utils.codec.B64Code;
+// import hunt.http.utils.codec.B64Code;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
+// import java.nio.charset.StandardCharsets;
+// import hunt.security.MessageDigest;
+import hunt.util.exception;
 
 /**
  * Logic for working with the <code>Sec-WebSocket-Key</code> and <code>Sec-WebSocket-Accept</code> headers.
@@ -25,13 +26,15 @@ class AcceptHash {
      * @return the <code>Sec-WebSocket-Accept</code> header response (per opening handshake spec)
      */
     static string hashKey(string key) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA1");
-            md.update(key.getBytes(StandardCharsets.UTF_8));
-            md.update(MAGIC);
-            return new string(B64Code.encode(md.digest()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // try {
+        //     MessageDigest md = MessageDigest.getInstance("SHA1");
+        //     md.update(key.getBytes(StandardCharsets.UTF_8));
+        //     md.update(MAGIC);
+        //     return new string(B64Code.encode(md.digest()));
+        // } catch (Exception e) {
+        //     throw new RuntimeException(e);
+        // }
+        implementationMissing(false);
+        return "";
     }
 }

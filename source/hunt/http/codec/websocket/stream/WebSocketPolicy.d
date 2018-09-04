@@ -1,8 +1,8 @@
 module hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.http.codec.websocket.exception.MessageTooLargeException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.model.StatusCode;
-import hunt.http.codec.websocket.model.WebSocketBehavior;
+import hunt.http.codec.websocket.model.common;
 
 import hunt.util.exception;
 import hunt.util.string;

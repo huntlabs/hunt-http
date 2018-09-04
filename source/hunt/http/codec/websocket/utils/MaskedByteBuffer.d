@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.utils;
+module hunt.http.codec.websocket.utils.MaskedByteBuffer;
 
 import hunt.container.ByteBuffer;
 
@@ -12,14 +12,14 @@ class MaskedByteBuffer {
     static void putPayload(ByteBuffer buffer, byte[] payload) {
         int len = payload.length;
         for (int i = 0; i < len; i++) {
-            buffer.put((byte) (payload[i] ^ mask[i % 4]));
+            buffer.put(cast(byte) (payload[i] ^ mask[i % 4]));
         }
     }
 
     static void putPayload(ByteBuffer buffer, ByteBuffer payload) {
         int len = payload.remaining();
         for (int i = 0; i < len; i++) {
-            buffer.put((byte) (payload.get() ^ mask[i % 4]));
+            buffer.put(cast(byte) (payload.get() ^ mask[i % 4]));
         }
     }
 }

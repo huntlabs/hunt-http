@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.decode;
+module hunt.http.codec.websocket.decode.Parser;
 
 import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame;
@@ -60,7 +60,7 @@ class Parser {
     private void assertSanePayloadLength(long len) {
         version(HuntDebugMode) {
             tracef("%s Payload Length: %s - %s", policy.getBehavior(), 
-                len.to!string(), this.toString();
+                len.to!string(), this.toString());
         }
 
         // Since we use ByteBuffer so often, having lengths over int.max is really impossible.
@@ -403,7 +403,7 @@ class Parser {
                 }
 
                 case MASK: {
-                    byte m[] = new byte[4];
+                    byte[] m = new byte[4];
                     frame.setMask(m);
                     if (buffer.remaining() >= 4) {
                         buffer.get(m, 0, 4);
@@ -524,7 +524,7 @@ class Parser {
         if (incomingFramesHandler is null) {
             builder.append("NO_HANDLER");
         } else {
-            builder.append(incomingFramesHandler.typeof(this).stringof);
+            builder.append(typeid(incomingFramesHandler).name);
         }
         builder.append(",s=").append(state);
         builder.append(",c=").append(cursor);

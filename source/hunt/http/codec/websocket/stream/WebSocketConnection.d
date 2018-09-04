@@ -1,14 +1,14 @@
-module hunt.http.codec.websocket.stream;
+module hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.codec.common.ConnectionExtInfo;
-import hunt.http.codec.http2.model.MetaData;
+import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.net.Connection;
+import hunt.net.ConnectionExtInfo;
 
 import hunt.util.functional;
 
 import hunt.container.ByteBuffer;
-import java.util.concurrent.CompletableFuture;
+import hunt.util.concurrent.CompletableFuture;
 
 interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
 
@@ -26,7 +26,7 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param exceptionListener The exception callback.
      * @return The WebSocket connection.
      */
-    WebSocketConnection onException(Action2<WebSocketConnection, Throwable> exceptionListener);
+    WebSocketConnection onException(Action2!(WebSocketConnection, Throwable) exceptionListener);
 
     /**
      * Get the read/write idle timeout.

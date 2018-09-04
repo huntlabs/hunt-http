@@ -1,9 +1,9 @@
-module hunt.http.codec.websocket.model.extension.fragment;
+module hunt.http.codec.websocket.model.extension.fragment.FragmentExtension;
 
 import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.util.functional;
 // import hunt.http.utils.concurrent.IteratingCallback;

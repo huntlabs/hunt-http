@@ -1,8 +1,9 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.ControlFrame;
 
+import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.exception;
-import hunt.http.utils.io.BufferUtils;
 
+import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
 abstract class ControlFrame : WebSocketFrame {
@@ -51,7 +52,7 @@ abstract class ControlFrame : WebSocketFrame {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ControlFrame other = (ControlFrame) obj;
+        ControlFrame other = cast(ControlFrame) obj;
         if (data is null) {
             if (other.data !is null) {
                 return false;

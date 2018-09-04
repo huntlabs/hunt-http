@@ -1,9 +1,9 @@
-module hunt.http.codec.websocket.utils;
+module hunt.http.codec.websocket.utils.QuoteUtil;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import hunt.util.exception;
+import hunt.util.string;
+
+import std.string;
 
 /**
  * Provide some consistent Http header value and Extension configuration parameter quoting support.
@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * It was decided to keep this implementation separate for the above reasons.
  */
 class QuoteUtil {
-    private static class DeQuotingStringIterator : Iterator<string> {
+    private static class DeQuotingStringIterator  { // : Iterator<string>
         private enum State {
             START,
             TOKEN,
@@ -32,10 +32,10 @@ class QuoteUtil {
         private bool hasToken = false;
         private int i = 0;
 
-        DeQuotingStringIterator(string input, string delims) {
+        this(string input, string delims) {
             this.input = input;
             this.delims = delims;
-            int len = input.length();
+            size_t len = input.length;
             token = new StringBuilder(len > 1024 ? 512 : len / 2);
         }
 
@@ -147,13 +147,14 @@ class QuoteUtil {
     /**
      * ABNF from RFC 2616, RFC 822, and RFC 6455 specified characters requiring quoting.
      */
-    static final string ABNF_REQUIRED_QUOTING = "\"'\\\n\r\t\f\b%+ ;=";
+    enum string ABNF_REQUIRED_QUOTING = "\"'\\\n\r\t\f\b%+ ;=";
 
-    private static final char UNICODE_TAG = 0xFFFF;
-    private static final char[] escapes = new char[32];
+    private enum char UNICODE_TAG = 0xFFFF;
+    private __gshared char[] escapes;
 
-    static {
-        Arrays.fill(escapes, UNICODE_TAG);
+    shared static this() {
+        escapes = new char[32];
+        escapes[] = UNICODE_TAG;
         // non-unicode
         escapes['\b'] = 'b';
         escapes['\t'] = 't';
@@ -164,13 +165,13 @@ class QuoteUtil {
 
     private static int dehex(byte b) {
         if ((b >= '0') && (b <= '9')) {
-            return (byte) (b - '0');
+            return cast(byte) (b - '0');
         }
         if ((b >= 'a') && (b <= 'f')) {
-            return (byte) ((b - 'a') + 10);
+            return cast(byte) ((b - 'a') + 10);
         }
         if ((b >= 'A') && (b <= 'F')) {
-            return (byte) ((b - 'A') + 10);
+            return cast(byte) ((b - 'A') + 10);
         }
         throw new IllegalArgumentException("!hex:" ~ Integer.toHexString(0xff & b));
     }
@@ -195,7 +196,7 @@ class QuoteUtil {
     }
 
     static void escape(StringBuilder buf, string str) {
-        for (char c : str.toCharArray()) {
+        foreach (char c ; str) {
             if (c >= 32) {
                 // non special character
                 if ((c == '"') || (c == '\\')) {
@@ -273,9 +274,9 @@ class QuoteUtil {
      * @param delims the delimiter characters to split the string on
      * @return the iterator of the parts of the string, trimmed, with quotes around the string part removed, and unescaped
      */
-    static Iterator<string> splitAt(string str, string delims) {
-        return new DeQuotingStringIterator(str.trim(), delims);
-    }
+    // static Iterator<string> splitAt(string str, string delims) {
+    //     return new DeQuotingStringIterator(str.trim(), delims);
+    // }
 
     static string unescape(string str) {
         if (str is null) {
@@ -293,7 +294,7 @@ class QuoteUtil {
         bool escaped = false;
         char c;
         for (int i = 0; i < len; i++) {
-            c = str.charAt(i);
+            c = str[i];
             if (escaped) {
                 escaped = false;
                 switch (c) {
@@ -322,8 +323,10 @@ class QuoteUtil {
                         ret.append('"');
                         break;
                     case 'u':
-                        ret.append((char) ((dehex((byte) str.charAt(i++)) << 24) + (dehex((byte) str.charAt(i++)) << 16) + (dehex((byte) str.charAt(i++)) << 8) + (dehex((byte) str
-                                .charAt(i++)))));
+                        ret.append(cast(char) ((dehex(cast(byte) str[i++]) << 24) + 
+                            (dehex(cast(byte) str[i++]) << 16) + 
+                            (dehex(cast(byte) str[i++]) << 8) + 
+                            (dehex(cast(byte) str[i++]))));
                         break;
                     default:
                         ret.append(c);
@@ -337,42 +340,42 @@ class QuoteUtil {
         return ret.toString();
     }
 
-    static string join(Object[] objs, string delim) {
-        if (objs is null) {
-            return "";
-        }
-        StringBuilder ret = new StringBuilder();
-        int len = objs.length;
-        for (int i = 0; i < len; i++) {
-            if (i > 0) {
-                ret.append(delim);
-            }
-            if (objs[i] instanceof string) {
-                ret.append('"').append(objs[i]).append('"');
-            } else {
-                ret.append(objs[i]);
-            }
-        }
-        return ret.toString();
-    }
+    // static string join(Object[] objs, string delim) {
+    //     if (objs is null) {
+    //         return "";
+    //     }
+    //     StringBuilder ret = new StringBuilder();
+    //     int len = objs.length;
+    //     for (int i = 0; i < len; i++) {
+    //         if (i > 0) {
+    //             ret.append(delim);
+    //         }
+    //         if (objs[i] instanceof string) {
+    //             ret.append('"').append(objs[i]).append('"');
+    //         } else {
+    //             ret.append(objs[i]);
+    //         }
+    //     }
+    //     return ret.toString();
+    // }
 
-    static string join(Collection<?> objs, string delim) {
-        if (objs is null) {
-            return "";
-        }
-        StringBuilder ret = new StringBuilder();
-        bool needDelim = false;
-        for (Object obj : objs) {
-            if (needDelim) {
-                ret.append(delim);
-            }
-            if (obj instanceof string) {
-                ret.append('"').append(obj).append('"');
-            } else {
-                ret.append(obj);
-            }
-            needDelim = true;
-        }
-        return ret.toString();
-    }
+    // static string join(Collection<?> objs, string delim) {
+    //     if (objs is null) {
+    //         return "";
+    //     }
+    //     StringBuilder ret = new StringBuilder();
+    //     bool needDelim = false;
+    //     foreach (Object obj ; objs) {
+    //         if (needDelim) {
+    //             ret.append(delim);
+    //         }
+    //         if (obj instanceof string) {
+    //             ret.append('"').append(obj).append('"');
+    //         } else {
+    //             ret.append(obj);
+    //         }
+    //         needDelim = true;
+    //     }
+    //     return ret.toString();
+    // }
 }

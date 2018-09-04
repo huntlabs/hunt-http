@@ -1,11 +1,16 @@
-module hunt.http.codec.websocket.model.extension.identity;
+module hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
-import hunt.util.functional;
-import hunt.http.utils.lang.QuotedStringTokenizer;
+// import hunt.http.utils.lang.QuotedStringTokenizer;
 
+import hunt.util.exception;
+import hunt.util.functional;
+
+
+/**
+*/
 class IdentityExtension : AbstractExtension {
     private string id;
 
@@ -48,11 +53,12 @@ class IdentityExtension : AbstractExtension {
         s.append("@").append(Integer.toHexString(hashCode()));
         s.append("[");
         bool delim = false;
-        for (string param : config.getParameterKeys()) {
+        foreach (string param ; config.getParameterKeys()) {
             if (delim) {
                 s.append(';');
             }
-            s.append(param).append('=').append(QuotedStringTokenizer.quoteIfNeeded(config.getParameter(param, ""), ";="));
+            implementationMissing(false);
+            // s.append(param).append('=').append(QuotedStringTokenizer.quoteIfNeeded(config.getParameter(param, ""), ";="));
             delim = true;
         }
         s.append("]");

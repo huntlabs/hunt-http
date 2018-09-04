@@ -1,8 +1,8 @@
-module hunt.http.codec.websocket.model;
+module hunt.http.codec.websocket.model.UpgradeRequest;
 
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.http2.model.Cookie;
-import hunt.http.codec.http2.model.HttpURI;
+import hunt.http.codec.http.model.Cookie;
+import hunt.http.codec.http.model.HttpURI;
 
 // import hunt.net.URI;
 import hunt.security.Principal;

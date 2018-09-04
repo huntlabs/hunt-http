@@ -1,5 +1,6 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.ReadOnlyDelegatedFrame;
 
+import hunt.http.codec.websocket.frame.Frame;
 import hunt.container.ByteBuffer;
 
 /**

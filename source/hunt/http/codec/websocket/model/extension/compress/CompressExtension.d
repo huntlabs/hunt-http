@@ -2,11 +2,11 @@ module hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 
 // import hunt.http.codec.websocket.frame.DataFrame;
 // import hunt.http.codec.websocket.frame.Frame;
-// import hunt.http.codec.websocket.model.OpCode;
+// import hunt.http.codec.websocket.model.common;
 // import hunt.http.codec.websocket.model.extension.AbstractExtension;
 // import hunt.util.functional;
 // import hunt.http.utils.concurrent.IteratingCallback;
-// import hunt.http.utils.io.BufferUtils;
+// import hunt.container.BufferUtils;
 // import hunt.logging;
 
 

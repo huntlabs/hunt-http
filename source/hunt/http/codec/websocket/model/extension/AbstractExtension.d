@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.model.extension;
+module hunt.http.codec.websocket.model.extension.AbstractExtension;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.Extension;
@@ -6,13 +6,11 @@ import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.util.functional;
 
-import hunt.net.util.AbstractLifeCycle;
 import hunt.logging;
-
-
-import java.io.IOException;
+import hunt.util.LifeCycle;
+import hunt.util.exception;
+import hunt.util.functional;
 
 abstract class AbstractExtension : AbstractLifeCycle , Extension {
     

@@ -2,7 +2,7 @@ module test.codec.websocket;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.util.functional;
 import hunt.container.BufferUtils;

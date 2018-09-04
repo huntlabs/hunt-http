@@ -1,8 +1,8 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.DataFrame;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 
 /**
  * A Data Frame

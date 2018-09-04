@@ -2,7 +2,7 @@ module test.codec.websocket.decode;
 
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.model.CloseInfo;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;

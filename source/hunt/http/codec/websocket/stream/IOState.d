@@ -1,17 +1,15 @@
-module hunt.http.codec.websocket.stream;
+module hunt.http.codec.websocket.stream.IOState;
 
 import hunt.http.codec.websocket.model.CloseInfo;
-import hunt.http.codec.websocket.model.ConnectionState;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.StatusCode;
-import hunt.http.utils.StringUtils;
+
+import hunt.container;
 import hunt.logging;
+import hunt.util.exception;
 
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicReference;
+import std.array;
+import std.conv;
 
 /**
  * Simple state tracker for Input / Output and {@link ConnectionState}.
@@ -50,7 +48,7 @@ class IOState {
 
 
     private ConnectionState state;
-    private final List<ConnectionStateListener> listeners = new CopyOnWriteArrayList<>();
+    private List!(ConnectionStateListener) listeners;
 
     /**
      * Is input on websocket available (for reading frames).
@@ -79,7 +77,7 @@ class IOState {
      * This can only be set once, and is used for the WS-Endpoint's onClose()
      * event.
      */
-    private AtomicReference<CloseInfo> finalClose = new AtomicReference<>();
+    private AtomicReference!(CloseInfo) finalClose;
     /**
      * Tracker for if the close handshake was completed successfully by
      * both sides.  False if close was sudden or abnormal.
@@ -90,6 +88,9 @@ class IOState {
      * Create a new IOState, initialized to {@link ConnectionState#CONNECTING}
      */
     this() {
+        finalClose = new AtomicReference!(CloseInfo)();
+        listeners = new CopyOnWriteArrayList!(ConnectionStateListener)();
+
         this.state = ConnectionState.CONNECTING;
         this.inputAvailable = false;
         this.outputAvailable = false;
@@ -102,13 +103,13 @@ class IOState {
         listeners.add(listener);
     }
 
-    void assertInputOpen() throws IOException {
+    void assertInputOpen() {
         if (!isInputAvailable()) {
             throw new IOException("Connection input is closed");
         }
     }
 
-    void assertOutputOpen() throws IOException {
+    void assertOutputOpen() {
         if (!isOutputAvailable()) {
             throw new IOException("Connection output is closed");
         }
@@ -147,9 +148,9 @@ class IOState {
     private void notifyStateListeners(ConnectionState state) {
         version(HuntDebugMode)
             tracef("Notify State Listeners: %s", state);
-        for (ConnectionStateListener listener : listeners) {
+        foreach (ConnectionStateListener listener ; listeners) {
             version(HuntDebugMode) {
-                tracef("%s.onConnectionStateChange(%s)", listener.typeof(this).stringof, state.name());
+                tracef("%s.onConnectionStateChange(%s)", typeid(listener).name, state.name());
             }
             listener.onConnectionStateChange(state);
         }
@@ -402,15 +403,16 @@ class IOState {
 
             // Build out Close Reason
             string reason = "WebSocket Read Failure";
-            if (t instanceof EOFException) {
+            EOFException ee = cast(EOFException)t;
+            if (ee !is null) {
                 reason = "WebSocket Read EOF";
-                Throwable cause = t.getCause();
-                if ((cause !is null) && (StringUtils.hasText(cause.getMessage()))) {
-                    reason = "EOF: " ~ cause.getMessage();
+                Throwable cause = t.next();
+                if ((cause !is null) && (!cause.message().empty())) {
+                    reason = "EOF: " ~ cause.message();
                 }
             } else {
-                if (StringUtils.hasText(t.getMessage())) {
-                    reason = t.getMessage();
+                if (!t.message().empty()) {
+                    reason = t.message();
                 }
             }
 
@@ -446,15 +448,17 @@ class IOState {
 
             // Build out Close Reason
             string reason = "WebSocket Write Failure";
-            if (t instanceof EOFException) {
+            EOFException ee = cast(EOFException)t;
+            if (ee !is null) {
                 reason = "WebSocket Write EOF";
-                Throwable cause = t.getCause();
-                if ((cause !is null) && (StringUtils.hasText(cause.getMessage()))) {
-                    reason = "EOF: " ~ cause.getMessage();
+                Throwable cause = t.next();
+
+                if ((cause !is null) && (!cause.message().empty())) {
+                    reason = "EOF: " ~ cause.message();
                 }
             } else {
-                if (StringUtils.hasText(t.getMessage())) {
-                    reason = t.getMessage();
+                if (!t.message().empty()) {
+                    reason = t.message();
                 }
             }
 
@@ -496,8 +500,8 @@ class IOState {
     override
     string toString() {
         StringBuilder str = new StringBuilder();
-        str.append(this.typeof(this).stringof);
-        str.append("@").append(Integer.toHexString(hashCode()));
+        str.append(typeid(this).name);
+        str.append("@").append(to!string(hashCode(), 16));
         str.append("[").append(state);
         str.append(',');
         if (!inputAvailable) {

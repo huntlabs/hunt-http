@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.model.extension.compress.DeflateFrameExtension;
 
-import hunt.http.codec.websocket.exception.BadPayloadException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.Frame;
 
 

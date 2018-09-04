@@ -1,9 +1,10 @@
-module hunt.http.codec.websocket.model.extension;
+module hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 
-import hunt.http.codec.websocket.exception.WebSocketException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.utils.StringUtils;
+
+import hunt.util.exception;
 
 import std.array;
 
@@ -20,15 +21,17 @@ class WebSocketExtensionFactory : ExtensionFactory {
             return null;
         }
 
-        Class<? : Extension> extClass = getExtension(name);
-        if (extClass is null) {
-            return null;
-        }
+implementationMissing(false);
+    return null;
+        // Class<? : Extension> extClass = getExtension(name);
+        // if (extClass is null) {
+        //     return null;
+        // }
 
-        try {
-            return extClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new WebSocketException("Cannot instantiate extension: " ~ extClass, e);
-        }
+        // try {
+        //     return extClass.newInstance();
+        // } catch (InstantiationException | IllegalAccessException e) {
+        //     throw new WebSocketException("Cannot instantiate extension: " ~ extClass, e);
+        // }
     }
 }

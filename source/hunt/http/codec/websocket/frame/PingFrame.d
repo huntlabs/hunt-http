@@ -1,12 +1,14 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.PingFrame;
 
-import hunt.http.codec.websocket.model.OpCode;
-import hunt.http.utils.StringUtils;
+import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.frame.ControlFrame;
+import hunt.http.codec.websocket.model.common;
 
+import hunt.util.string;
 import hunt.container.ByteBuffer;
 
 class PingFrame : ControlFrame {
-    PingFrame() {
+    this() {
         super(OpCode.PING);
     }
 

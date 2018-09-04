@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.stream;
+module hunt.http.codec.websocket.stream.AbstractWebSocketBuilder;
 
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
@@ -36,7 +36,7 @@ abstract class AbstractWebSocketBuilder {
         switch (frame.getType()) {
             case TEXT:
                 if(_onText !is null)
-                    _onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection)；
+                    _onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
                 // Optional.ofNullable(onText).ifPresent(t -> t.call(((DataFrame) frame).getPayloadAsUTF8(), connection));
                 break;
             case CONTINUATION:

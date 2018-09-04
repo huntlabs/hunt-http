@@ -1,7 +1,7 @@
-module hunt.http.codec.websocket.model.extension.compress;
+module hunt.http.codec.websocket.model.extension.compress.ByteAccumulator;
 
-import hunt.http.codec.websocket.exception.MessageTooLargeException;
-import hunt.http.utils.io.BufferUtils;
+import hunt.http.codec.websocket.exception;
+import hunt.container.BufferUtils;
 
 import hunt.container.ByteBuffer;
 
@@ -17,12 +17,12 @@ class ByteAccumulator {
         chunks = new ArrayList!(byte[])();
     }
 
-    void copyChunk(byte buf[], int offset, int length) {
+    void copyChunk(byte[] buf, int offset, int length) {
         if (this.length + length > maxSize) {
             throw new MessageTooLargeException("Frame is too large");
         }
 
-        byte copy[] = new byte[length - offset];
+        byte[] copy = new byte[length - offset];
         // System.arraycopy(buf, offset, copy, 0, length);
         copy[0..length] = buf[offset .. offset+length];
 

@@ -4,7 +4,7 @@ import hunt.http.codec.websocket.exception.WebSocketException;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 import hunt.container.BufferUtils;
 import hunt.util.Assert;
 import org.slf4j.Logger;

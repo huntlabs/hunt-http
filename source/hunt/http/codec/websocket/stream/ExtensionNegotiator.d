@@ -1,7 +1,7 @@
-module hunt.http.codec.websocket.stream;
+module hunt.http.codec.websocket.stream.ExtensionNegotiator;
 
-import hunt.http.codec.http2.model.HttpHeader;
-import hunt.http.codec.http2.model.MetaData;
+import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.IncomingFrames;
@@ -9,12 +9,13 @@ import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;
 import hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
-import hunt.http.utils.Assert;
-import hunt.http.utils.CollectionUtils;
 
 import hunt.container;
 
-import hunt.http.codec.websocket.model.ExtensionConfig.parseEnum;
+import hunt.http.codec.websocket.model.ExtensionConfig;
+
+import hunt.container;
+import hunt.util.exception;
 
 /**
  * 
@@ -43,17 +44,19 @@ class ExtensionNegotiator {
         this.factory = factory;
     }
 
-    List<ExtensionConfig> negotiate(MetaData metaData) {
-        return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
-                .stream().filter(c -> factory.isAvailable(c.getName()))
-                .collect(Collectors.toList());
+    List!(ExtensionConfig) negotiate(MetaData metaData) {
+        implementationMissing(false);
+        return null;
+        // return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
+        //         .stream().filter(c -> factory.isAvailable(c.getName()))
+        //         .collect(Collectors.toList());
     }
 
-    List<Extension> parse(MetaData metaData) {
+    List!(Extension) parse(MetaData metaData) {
         Assert.notNull(nextIncomingFrames, "The next incoming frames MUST be not null");
         Assert.notNull(nextOutgoingFrames, "The next outgoing frames MUST be not null");
 
-        List<Extension> extensions = _parse(metaData);
+        List!(Extension) extensions = _parse(metaData);
         if (!CollectionUtils.isEmpty(extensions)) {
             for (int i = 0; i < extensions.size(); i++) {
                 int next = i + 1;
@@ -82,18 +85,21 @@ class ExtensionNegotiator {
         }
     }
 
-    protected List<Extension> _parse(MetaData metaData) {
-        return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
-                .stream().filter(c -> factory.isAvailable(c.getName()))
-                .map(c -> {
-                    Extension e = factory.newInstance(c);
-                    if (e instanceof AbstractExtension) {
-                        AbstractExtension abstractExtension = (AbstractExtension) e;
-                        abstractExtension.setConfig(c);
-                    }
-                    return e;
-                })
-                .collect(Collectors.toList());
+    protected List!(Extension) _parse(MetaData metaData) {
+
+        implementationMissing(false);
+        return null;
+        // return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
+        //         .stream().filter(c -> factory.isAvailable(c.getName()))
+        //         .map(c -> {
+        //             Extension e = factory.newInstance(c);
+        //             if (e instanceof AbstractExtension) {
+        //                 AbstractExtension abstractExtension = (AbstractExtension) e;
+        //                 abstractExtension.setConfig(c);
+        //             }
+        //             return e;
+        //         })
+        //         .collect(Collectors.toList());
     }
 
     IncomingFrames getNextIncomingFrames() {

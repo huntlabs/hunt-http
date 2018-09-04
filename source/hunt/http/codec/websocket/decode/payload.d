@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.decode.payload;
 
-import hunt.http.codec.websocket.exception.BadPayloadException;
+import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.Frame;
 
 import hunt.container.ByteBuffer;

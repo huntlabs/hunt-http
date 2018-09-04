@@ -4,8 +4,7 @@ import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.Extension;
-import hunt.http.codec.websocket.model.OpCode;
-import hunt.http.codec.websocket.model.WebSocketBehavior;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.container;

@@ -1,53 +1,48 @@
 module hunt.http.codec.websocket.stream.impl;
 
-import hunt.http.codec.common.AbstractConnection;
-import hunt.http.codec.common.ConnectionEvent;
-import hunt.http.codec.common.ConnectionType;
-import hunt.http.codec.http2.model.HttpHeader;
-import hunt.http.codec.http2.model.MetaData;
-import hunt.http.codec.http2.stream.HTTP2Configuration;
+import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.codec.http.model.MetaData;
+import hunt.http.codec.http.stream.HTTP2Configuration;
 import hunt.http.codec.websocket.decode.Parser;
-import hunt.http.codec.websocket.encode.Generator;
-import hunt.http.codec.websocket.frame.*;
+import hunt.http.codec.websocket.encode;
+import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.WebSocketBehavior;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.stream.ExtensionNegotiator;
 import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.net.ByteBufferOutputEntry;
-import hunt.net.SecureSession;
-import hunt.net.Session;
-import hunt.util.functional;
-import hunt.http.utils.concurrent.Scheduler;
-import hunt.http.utils.function.Action1;
-import hunt.http.utils.function.Action2;
-import hunt.http.utils.io.BufferUtils;
 
-import hunt.container.ByteBuffer;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import hunt.net.AbstractConnection;
+// import hunt.net.ByteBufferOutputEntry;
+import hunt.net.ConnectionEvent;
+import hunt.net.ConnectionType;
+import hunt.net.secure.SecureSession;
+import hunt.net.Session;
+
+import hunt.container;
+import hunt.logging;
+import hunt.util.exception;
+import hunt.util.functional;
+
 
 /**
  * 
  */
 class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, IncomingFrames {
 
-    protected final ConnectionEvent<WebSocketConnection> connectionEvent;
-    protected final Parser parser;
-    protected final Generator generator;
-    protected final WebSocketPolicy policy;
-    protected final MetaData.Request upgradeRequest;
-    protected final MetaData.Response upgradeResponse;
+    protected ConnectionEvent!(WebSocketConnection) connectionEvent;
+    protected Parser parser;
+    protected Generator generator;
+    protected WebSocketPolicy policy;
+    protected MetaData.Request upgradeRequest;
+    protected MetaData.Response upgradeResponse;
     protected IOState ioState;
-    protected final HTTP2Configuration config;
-    protected final ExtensionNegotiator extensionNegotiator = new ExtensionNegotiator();
+    protected HTTP2Configuration config;
+    protected ExtensionNegotiator extensionNegotiator;
 
     this(SecureSession secureSession, Session tcpSession,
                                    IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
@@ -55,7 +50,8 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
                                    HTTP2Configuration config) {
         super(secureSession, tcpSession);
 
-        connectionEvent = new ConnectionEvent<>(this);
+        extensionNegotiator = new ExtensionNegotiator();
+        connectionEvent = new ConnectionEvent!(WebSocketConnection)(this);
         parser = new Parser(policy);
         parser.setIncomingFramesHandler(this);
         generator = new Generator(policy);
@@ -66,52 +62,54 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         ioState = new IOState();
         ioState.onOpened();
 
-        extensionNegotiator.setNextOutgoingFrames((frame, callback) -> {
-            if (policy.getBehavior() == WebSocketBehavior.CLIENT && frame instanceof WebSocketFrame) {
-                WebSocketFrame webSocketFrame = (WebSocketFrame) frame;
-                if (!webSocketFrame.isMasked()) {
-                    webSocketFrame.setMask(generateMask());
-                }
-            }
-            ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
-            generator.generateWholeFrame(frame, buf);
-            BufferUtils.flipToFlush(buf, 0);
-            tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
-            if (frame.getType() == Frame.Type.CLOSE && frame instanceof CloseFrame) {
-                CloseFrame closeFrame = (CloseFrame) frame;
-                CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
-                getIOState().onCloseLocal(closeInfo);
-                WebSocketConnectionImpl.this.close();
-            }
-        });
+        implementationMissing(false);
+
+        // extensionNegotiator.setNextOutgoingFrames((frame, callback) -> {
+        //     if (policy.getBehavior() == WebSocketBehavior.CLIENT && frame instanceof WebSocketFrame) {
+        //         WebSocketFrame webSocketFrame = (WebSocketFrame) frame;
+        //         if (!webSocketFrame.isMasked()) {
+        //             webSocketFrame.setMask(generateMask());
+        //         }
+        //     }
+        //     ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
+        //     generator.generateWholeFrame(frame, buf);
+        //     BufferUtils.flipToFlush(buf, 0);
+        //     tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
+        //     if (frame.getType() == Frame.Type.CLOSE && frame instanceof CloseFrame) {
+        //         CloseFrame closeFrame = (CloseFrame) frame;
+        //         CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
+        //         getIOState().onCloseLocal(closeInfo);
+        //         WebSocketConnectionImpl.this.close();
+        //     }
+        // });
 
         setNextIncomingFrames(nextIncomingFrames);
 
-        if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
-            Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() -> {
-                PingFrame pingFrame = new PingFrame();
-                outgoingFrame(pingFrame, new Callback() {
-                    void succeeded() {
-                        info("The websocket connection %s sent ping frame success", getSessionId());
-                    }
+        // if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
+        //     Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
+        //         PingFrame pingFrame = new PingFrame();
+        //         outgoingFrame(pingFrame, new class Callback {
+        //             void succeeded() {
+        //                 info("The websocket connection %s sent ping frame success", getSessionId());
+        //             }
 
-                    void failed(Throwable x) {
-                        log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
-                    }
-                });
-            }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
-            onClose(c -> pingFuture.cancel());
-        }
+        //             void failed(Throwable x) {
+        //                 log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
+        //             }
+        //         });
+        //     }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
+        //     onClose(c -> pingFuture.cancel());
+        // }
 
     }
 
     override
-    WebSocketConnection onClose(Action1<WebSocketConnection> closedListener) {
+    WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
         return connectionEvent.onClose(closedListener);
     }
 
     override
-    WebSocketConnection onException(Action2<WebSocketConnection, Throwable> exceptionListener) {
+    WebSocketConnection onException(Action2!(WebSocketConnection, Throwable) exceptionListener) {
         return connectionEvent.onException(exceptionListener);
     }
 
@@ -147,20 +145,25 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
             } else {
                 metaData = upgradeRequest;
             }
-            List<Extension> extensions = extensionNegotiator.parse(metaData);
+            List!(Extension) extensions = extensionNegotiator.parse(metaData);
             if (!extensions.isEmpty()) {
                 generator.configureFromExtensions(extensions);
                 parser.configureFromExtensions(extensions);
-                extensions.stream().filter(e -> e instanceof AbstractExtension)
-                          .map(e -> (AbstractExtension) e)
-                          .forEach(e -> e.setPolicy(policy));
+
+
+        implementationMissing(false);
+                // extensions.stream().filter(e -> e instanceof AbstractExtension)
+                //           .map(e -> (AbstractExtension) e)
+                //           .forEach(e -> e.setPolicy(policy));
             }
         }
     }
 
     override
     void incomingError(Throwable t) {
-        Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingError(t));
+        // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingError(t));
+
+        implementationMissing(false);
     }
 
     override
@@ -172,7 +175,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
             }
             break;
             case CLOSE: {
-                CloseFrame closeFrame = (CloseFrame) frame;
+                CloseFrame closeFrame = cast(CloseFrame) frame;
                 CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
                 ioState.onCloseRemote(closeInfo);
                 this.close();
@@ -183,7 +186,10 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
             }
             break;
         }
-        Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingFrame(frame));
+        IncomingFrames e = extensionNegotiator.getIncomingFrames();
+        if(e !is null)
+            e.incomingFrame(frame);
+        // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingFrame(frame));
     }
 
     override
@@ -204,11 +210,11 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     }
 
     override
-    CompletableFuture<Boolean> sendText(string text) {
+    CompletableFuture!(bool) sendText(string text) {
         TextFrame textFrame = new TextFrame();
         textFrame.setPayload(text);
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        outgoingFrame(textFrame, new Callback() {
+        CompletableFuture!(bool) future = new CompletableFuture!bool();
+        outgoingFrame(textFrame, new class Callback {
             override
             void succeeded() {
                 future.complete(true);
@@ -223,20 +229,20 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     }
 
     override
-    CompletableFuture<Boolean> sendData(byte[] data) {
-        return _sendData(data, BinaryFrame::setPayload);
+    CompletableFuture!(bool) sendData(byte[] data) {
+        return _sendData(data);
     }
 
     override
-    CompletableFuture<Boolean> sendData(ByteBuffer data) {
-        return _sendData(data, BinaryFrame::setPayload);
+    CompletableFuture!(bool) sendData(ByteBuffer data) {
+        return _sendData(data);
     }
 
-    private <T> CompletableFuture<Boolean> _sendData(T data, Action2<BinaryFrame, T> setData) {
+    private  CompletableFuture!(bool) _sendData(T)(T data) {
         BinaryFrame binaryFrame = new BinaryFrame();
-        setData.call(binaryFrame, data);
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        outgoingFrame(binaryFrame, new Callback() {
+        binaryFrame.setPayload(data);
+        CompletableFuture!(bool) future = new CompletableFuture!bool();
+        outgoingFrame(binaryFrame, new class Callback {
             override
             void succeeded() {
                 future.complete(true);

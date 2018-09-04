@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.model;
+module hunt.http.codec.websocket.model.OutgoingFrames;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.util.functional;

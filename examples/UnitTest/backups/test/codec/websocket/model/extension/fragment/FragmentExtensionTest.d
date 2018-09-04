@@ -2,7 +2,7 @@ module test.codec.websocket.model.extension.fragment;
 
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.fragment.FragmentExtension;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.container.BufferUtils;

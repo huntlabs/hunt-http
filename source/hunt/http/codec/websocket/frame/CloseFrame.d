@@ -1,8 +1,9 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.CloseFrame;
 
 import hunt.http.codec.websocket.frame.ControlFrame;
-import hunt.http.codec.websocket.model.OpCode;
-import hunt.http.utils.StringUtils;
+import hunt.http.codec.websocket.model.common;
+
+import hunt.util.string;
 
 class CloseFrame : ControlFrame {
     this() {

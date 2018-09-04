@@ -1,7 +1,7 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.ContinuationFrame;
 
 import hunt.http.codec.websocket.frame.DataFrame;
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 
 import hunt.container.ByteBuffer;
 

@@ -132,8 +132,8 @@ class CloseInfo {
 
         ByteBuffer buf = BufferUtils.allocate(len);
         BufferUtils.flipToFill(buf);
-        buf.put((byte) ((statusCode >>> 8) & 0xFF));
-        buf.put((byte) ((statusCode >>> 0) & 0xFF));
+        buf.put(cast(byte) ((statusCode >>> 8) & 0xFF));
+        buf.put(cast(byte) ((statusCode >>> 0) & 0xFF));
 
         if (hasReason) {
             buf.put(this.reasonBytes, 0, this.reasonBytes.length);

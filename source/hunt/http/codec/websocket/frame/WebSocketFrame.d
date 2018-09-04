@@ -1,8 +1,7 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.WebSocketFrame;
 
 import hunt.http.codec.websocket.frame.Frame;
-
-import hunt.http.codec.websocket.model.OpCode;
+import hunt.http.codec.websocket.model.common;
 
 import hunt.container;
 
@@ -81,7 +80,7 @@ abstract class WebSocketFrame : Frame {
     protected byte finRsvOp;
     protected bool masked = false;
 
-    protected byte mask[];
+    protected byte[] mask;
     /**
      * The payload data.
      * <p>

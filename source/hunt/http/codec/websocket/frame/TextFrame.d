@@ -1,8 +1,7 @@
-module hunt.http.codec.websocket.frame;
+module hunt.http.codec.websocket.frame.TextFrame;
 
-import hunt.http.codec.websocket.model.OpCode;
-import hunt.http.utils.StringUtils;
-import hunt.http.utils.io.BufferUtils;
+import hunt.http.codec.websocket.model.common;
+import hunt.util.string;
 
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;
