@@ -152,7 +152,7 @@ class IOState {
             tracef("Notify State Listeners: %s", state);
         foreach (ConnectionStateListener listener ; listeners) {
             version(HuntDebugMode) {
-                tracef("%s.onConnectionStateChange(%s)", typeid(listener).name, state.name());
+                tracef("%s.onConnectionStateChange(%s)", typeid(listener).name, to!string(state));
             }
             listener.onConnectionStateChange(state);
         }

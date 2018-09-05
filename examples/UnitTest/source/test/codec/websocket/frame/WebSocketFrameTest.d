@@ -2,7 +2,7 @@ module test.codec.websocket.frame.WebSocketFrameTest;
 
 import test.codec.websocket.utils.Hex;
 
-import hunt.http.codec.websocket.encode.Generator;
+import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.StatusCode;
@@ -38,7 +38,7 @@ class WebSocketFrameTest {
 
     private void assertFrameHex(string message, string expectedHex, ByteBuffer actual) {
         string actualHex = Hex.asHex(actual);
-        Assert.assertThat("Generated Frame:" ~ message, actualHex, is(expectedHex));
+        Assert.assertThat("Generated Frame:" ~ message, actualHex, expectedHex);
     }
 
     
