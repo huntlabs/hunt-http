@@ -8,8 +8,11 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
 import hunt.container;
+import hunt.util.string;
 
+import std.algorithm;
 import std.conv;
+
 
 /**
  * Parsing of a frames in WebSocket land.
@@ -67,7 +70,7 @@ class Parser {
         if (len > int.max) {
             // OMG! Sanity Check! DO NOT WANT! Won't anyone think of the memory!
             throw new MessageTooLargeException("[int-sane!] cannot handle payload lengths larger than " 
-                ~ int.max);
+                ~ to!string(int.max));
         }
 
         switch (frame.getOpCode()) {
@@ -76,8 +79,10 @@ class Parser {
                     throw new ProtocolException("Invalid close frame payload length, [" ~ 
                         payloadLength.to!string() ~ "]");
                 }
+                goto case;
                 // fall thru
             case OpCode.PING:
+                goto case;
             case OpCode.PONG:
                 if (len > ControlFrame.MAX_CONTROL_PAYLOAD) {
                     throw new ProtocolException("Invalid control frame payload length, [" ~ 
@@ -90,6 +95,9 @@ class Parser {
                 break;
             case OpCode.BINARY:
                 policy.assertValidBinaryMessageSize(cast(int) len);
+                break;
+
+            default:
                 break;
         }
     }
@@ -221,7 +229,7 @@ class Parser {
         }
         while (buffer.hasRemaining()) {
             switch (state) {
-                case START: {
+                case State.START: {
                     // peek at byte
                     byte b = buffer.get();
                     bool fin = ((b & 0x80) != 0);
@@ -291,6 +299,8 @@ class Parser {
                                     OpCode.name(opcode) ~ "]");
                             }
                             break;
+
+                        default: break;
                     }
 
                     frame.setFin(fin);
@@ -342,7 +352,7 @@ class Parser {
                     break;
                 }
 
-                case PAYLOAD_LEN: {
+                case State.PAYLOAD_LEN: {
                     byte b = buffer.get();
                     frame.setMasked((b & 0x80) != 0);
                     payloadLength = cast(byte) (0x7F & b);
@@ -380,7 +390,7 @@ class Parser {
                     break;
                 }
 
-                case PAYLOAD_LEN_BYTES: {
+                case State.PAYLOAD_LEN_BYTES: {
                     byte b = buffer.get();
                     --cursor;
                     payloadLength |= (b & 0xFF) << (8 * cursor);
@@ -402,7 +412,7 @@ class Parser {
                     break;
                 }
 
-                case MASK: {
+                case State.MASK: {
                     byte[] m = new byte[4];
                     frame.setMask(m);
                     if (buffer.remaining() >= 4) {
@@ -422,7 +432,7 @@ class Parser {
                     break;
                 }
 
-                case MASK_BYTES: {
+                case State.MASK_BYTES: {
                     byte b = buffer.get();
                     frame.getMask()[4 - cursor] = b;
                     --cursor;
@@ -439,7 +449,7 @@ class Parser {
                     break;
                 }
 
-                case PAYLOAD: {
+                case State.PAYLOAD: {
                     frame.assertValid();
                     if (parsePayload(buffer)) {
                         // special check for close
@@ -453,6 +463,8 @@ class Parser {
                     }
                     break;
                 }
+
+                default: break;
             }
         }
 
@@ -477,7 +489,7 @@ class Parser {
             int bytesSoFar = payload is null ? 0 : payload.position();
             int bytesExpected = payloadLength - bytesSoFar;
             int bytesAvailable = buffer.remaining();
-            int windowBytes = Math.min(bytesAvailable, bytesExpected);
+            int windowBytes = std.algorithm.min(bytesAvailable, bytesExpected);
             int limit = buffer.limit();
             buffer.limit(buffer.position() + windowBytes);
             ByteBuffer window = buffer.slice();
@@ -519,17 +531,17 @@ class Parser {
     override
     string toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Parser@").append(Integer.toHexString(hashCode()));
+        builder.append("Parser@").append(toHash().to!string(16));
         builder.append("[");
         if (incomingFramesHandler is null) {
             builder.append("NO_HANDLER");
         } else {
             builder.append(typeid(incomingFramesHandler).name);
         }
-        builder.append(",s=").append(state);
-        builder.append(",c=").append(cursor);
+        builder.append(",s=").append(state.to!string());
+        builder.append(",c=").append(cursor.to!string());
         builder.append(",len=").append(payloadLength);
-        builder.append(",f=").append(frame);
+        builder.append(",f=").append(frame.toString());
         // builder.append(",p=").append(policy);
         builder.append("]");
         return builder.toString();

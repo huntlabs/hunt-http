@@ -18,9 +18,11 @@ class PingFrame : ControlFrame {
     }
 
     PingFrame setPayload(string payload) {
-        setPayload(ByteBuffer.wrap(StringUtils.getUtf8Bytes(payload)));
+        setPayload(ByteBuffer.wrap(cast(byte[])(payload)));
         return this;
     }
+
+    alias setPayload = ControlFrame.setPayload;
 
     override
     Type getType() {

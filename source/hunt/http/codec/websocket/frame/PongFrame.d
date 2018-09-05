@@ -1,5 +1,7 @@
 module hunt.http.codec.websocket.frame.PongFrame;
 
+import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.model.common;
 import hunt.util.string;
 
@@ -16,9 +18,11 @@ class PongFrame : ControlFrame {
     }
 
     PongFrame setPayload(string payload) {
-        setPayload(StringUtils.getUtf8Bytes(payload));
+        setPayload(cast(byte[])(payload));
         return this;
     }
+
+    alias setPayload = ControlFrame.setPayload;
 
     override
     Type getType() {

@@ -6,10 +6,13 @@ import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
 import hunt.container;
+import hunt.util.exception;
+
+import std.format;
 
 class ByteAccumulator {
-    private final List!(byte[]) chunks;
-    private final int maxSize;
+    private List!(byte[]) chunks;
+    private int maxSize;
     private int length = 0;
 
     this(int maxOverallBufferSize) {
@@ -36,14 +39,14 @@ class ByteAccumulator {
 
     void transferTo(ByteBuffer buffer) {
         if (buffer.remaining() < length) {
-            string msg = string.format("Not enough space in ByteBuffer remaining [%d] " ~ 
+            string msg = format("Not enough space in ByteBuffer remaining [%d] " ~ 
                 "for accumulated buffers length [%d]", buffer.remaining(), length);
             throw new IllegalArgumentException(msg);
         }
 
         int position = buffer.position();
         foreach (byte[] chunk ; chunks) {
-            buffer.put(chunk, 0, chunk.length);
+            buffer.put(chunk, 0, cast(int)chunk.length);
         }
         BufferUtils.flipToFlush(buffer, position);
     }

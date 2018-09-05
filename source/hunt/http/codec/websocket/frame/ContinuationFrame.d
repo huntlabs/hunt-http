@@ -10,7 +10,7 @@ class ContinuationFrame : DataFrame {
         super(OpCode.CONTINUATION);
     }
 
-    ContinuationFrame setPayload(ByteBuffer buf) {
+    override ContinuationFrame setPayload(ByteBuffer buf) {
         super.setPayload(buf);
         return this;
     }

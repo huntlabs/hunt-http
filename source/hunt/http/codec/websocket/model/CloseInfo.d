@@ -1,14 +1,19 @@
 module hunt.http.codec.websocket.model.CloseInfo;
 
+import hunt.http.codec.websocket.model.CloseStatus;
+import hunt.http.codec.websocket.model.StatusCode;
 
 import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.CloseFrame;
 import hunt.http.codec.websocket.frame.Frame;
 
+import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
 import std.algorithm;
 import std.conv;
+import std.format;
+import std.utf;
 
 /**
 */
@@ -60,8 +65,7 @@ class CloseInfo {
                         // Utf8StringBuilder utf = new Utf8StringBuilder();
                         // // if this throws, we know we have bad UTF8
                         // utf.append(reasonBytes, 0, reasonBytes.length);
-                        import std.utf;
-                        validate(reasonBytes);
+                        std.utf.validate(cast(string)reasonBytes);
                     } catch (UTFException e) {
                         throw new BadPayloadException("Invalid Close Reason", e);
                     }
@@ -90,13 +94,12 @@ class CloseInfo {
      */
     this(int statusCode, string reason) {
         this.statusCode = statusCode;
-        if (reason !is null) {
-            byte[] utf8Bytes = reason.getBytes(StandardCharsets.UTF_8);
-            if (utf8Bytes.length > CloseStatus.MAX_REASON_PHRASE) {
-                this.reasonBytes = new byte[CloseStatus.MAX_REASON_PHRASE];
-                System.arraycopy(utf8Bytes, 0, this.reasonBytes, 0, CloseStatus.MAX_REASON_PHRASE);
+        if (reason !is null) {            
+            int len = CloseStatus.MAX_REASON_PHRASE;
+            if (reason.length > len) {
+                this.reasonBytes = cast(byte[])reason[0..len].dup;
             } else {
-                this.reasonBytes = utf8Bytes;
+                this.reasonBytes = cast(byte[])reason.dup;
             }
         }
     }
@@ -104,17 +107,19 @@ class CloseInfo {
     private void assertValidStatusCode(int statusCode) {
         // Status Codes outside of RFC6455 defined scope
         if ((statusCode <= 999) || (statusCode >= 5000)) {
-            throw new ProtocolException("Out of range close status code: " ~ statusCode);
+            throw new ProtocolException("Out of range close status code: " ~ statusCode.to!string());
         }
 
         // Status Codes not allowed to exist in a Close frame (per RFC6455)
-        if ((statusCode == StatusCode.NO_CLOSE) || (statusCode == StatusCode.NO_CODE) || (statusCode == StatusCode.FAILED_TLS_HANDSHAKE)) {
-            throw new ProtocolException("Frame forbidden close status code: " ~ statusCode);
+        if ((statusCode == StatusCode.NO_CLOSE) || 
+            (statusCode == StatusCode.NO_CODE) || 
+            (statusCode == StatusCode.FAILED_TLS_HANDSHAKE)) {
+            throw new ProtocolException("Frame forbidden close status code: " ~ statusCode.to!string());
         }
 
         // Status Code is in defined "reserved space" and is declared (all others are invalid)
         if ((statusCode >= 1000) && (statusCode <= 2999) && !StatusCode.isTransmittable(statusCode)) {
-            throw new ProtocolException("RFC6455 and IANA Undefined close status code: " ~ statusCode);
+            throw new ProtocolException("RFC6455 and IANA Undefined close status code: " ~ statusCode.to!string());
         }
     }
 
@@ -136,7 +141,7 @@ class CloseInfo {
         buf.put(cast(byte) ((statusCode >>> 0) & 0xFF));
 
         if (hasReason) {
-            buf.put(this.reasonBytes, 0, this.reasonBytes.length);
+            buf.put(this.reasonBytes, 0, cast(int)this.reasonBytes.length);
         }
         BufferUtils.flipToFlush(buf, 0);
 
@@ -176,6 +181,6 @@ class CloseInfo {
 
     override
     string toString() {
-        return string.format("CloseInfo[code=%d,reason=%s]", statusCode, getReason());
+        return format("CloseInfo[code=%d,reason=%s]", statusCode, getReason());
     }
 }

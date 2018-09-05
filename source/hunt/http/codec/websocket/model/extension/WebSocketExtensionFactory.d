@@ -1,5 +1,6 @@
 module hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 
+import hunt.http.codec.websocket.model.extension.ExtensionFactory;
 import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
@@ -10,7 +11,7 @@ import std.array;
 
 class WebSocketExtensionFactory : ExtensionFactory {
 
-    override
+    // override
     Extension newInstance(ExtensionConfig config) {
         if (config is null) {
             return null;

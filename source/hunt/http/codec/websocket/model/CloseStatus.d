@@ -1,6 +1,9 @@
 module hunt.http.codec.websocket.model.CloseStatus;
 
-// import java.nio.charset.StandardCharsets;
+import hunt.util.exception;
+
+import std.conv;
+
 
 class CloseStatus {
     private enum int MAX_CONTROL_PAYLOAD = 125;

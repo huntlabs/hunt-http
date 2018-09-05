@@ -7,6 +7,7 @@ import hunt.http.codec.websocket.model.extension.AbstractExtension;
 
 import hunt.util.exception;
 import hunt.util.functional;
+import hunt.util.string;
 
 
 /**
@@ -33,13 +34,13 @@ class IdentityExtension : AbstractExtension {
         nextIncomingError(e);
     }
 
-    override
+    // override
     void incomingFrame(Frame frame) {
         // pass through
         nextIncomingFrame(frame);
     }
 
-    override
+    // override
     void outgoingFrame(Frame frame, Callback callback) {
         // pass through
         nextOutgoingFrame(frame, callback);
@@ -50,7 +51,8 @@ class IdentityExtension : AbstractExtension {
         super.setConfig(config);
         StringBuilder s = new StringBuilder();
         s.append(config.getName());
-        s.append("@").append(Integer.toHexString(hashCode()));
+        s.append("@").append(to!string(toHash(), 16));
+        // s.append("@").append(Integer.toHexString(hashCode()));
         s.append("[");
         bool delim = false;
         foreach (string param ; config.getParameterKeys()) {

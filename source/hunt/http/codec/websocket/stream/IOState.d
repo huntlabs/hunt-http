@@ -7,6 +7,7 @@ import hunt.http.codec.websocket.model.StatusCode;
 import hunt.container;
 import hunt.logging;
 import hunt.util.exception;
+import hunt.util.string;
 
 import std.array;
 import std.conv;
@@ -77,7 +78,7 @@ class IOState {
      * This can only be set once, and is used for the WS-Endpoint's onClose()
      * event.
      */
-    private AtomicReference!(CloseInfo) finalClose;
+    private CloseInfo finalClose;
     /**
      * Tracker for if the close handshake was completed successfully by
      * both sides.  False if close was sudden or abnormal.
@@ -88,8 +89,9 @@ class IOState {
      * Create a new IOState, initialized to {@link ConnectionState#CONNECTING}
      */
     this() {
-        finalClose = new AtomicReference!(CloseInfo)();
-        listeners = new CopyOnWriteArrayList!(ConnectionStateListener)();
+        // finalClose = new AtomicReference!(CloseInfo)();
+        // listeners = new CopyOnWriteArrayList!(ConnectionStateListener)();
+        listeners = new ArrayList!(ConnectionStateListener)();
 
         this.state = ConnectionState.CONNECTING;
         this.inputAvailable = false;
@@ -166,7 +168,7 @@ class IOState {
     void onAbnormalClose(CloseInfo close) {
         version(HuntDebugMode)
             tracef("onAbnormalClose(%s)", close);
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
                 // already closed
@@ -178,7 +180,8 @@ class IOState {
             }
 
             this.state = ConnectionState.CLOSED;
-            finalClose.compareAndSet(null, close);
+            finalClose = close;
+            // finalClose.compareAndSet(null, close);
             this.inputAvailable = false;
             this.outputAvailable = false;
             this.closeHandshakeSource = CloseHandshakeSource.ABNORMAL;
@@ -228,8 +231,8 @@ class IOState {
     }
 
     private void closeLocal(CloseInfo closeInfo) {
-        ConnectionState event = null;
-        ConnectionState abnormalEvent = null;
+        ConnectionState event = ConnectionState.Unknown;
+        ConnectionState abnormalEvent = ConnectionState.Unknown;
         synchronized (this) {
             version(HuntDebugMode)
                 tracef("onCloseLocal(), input=%s, output=%s", inputAvailable, outputAvailable);
@@ -248,7 +251,8 @@ class IOState {
                     tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 this.state = ConnectionState.CLOSED;
-                finalClose.compareAndSet(null, closeInfo);
+                // finalClose.compareAndSet(null, closeInfo);
+                finalClose = closeInfo;
                 event = this.state;
             } else if (this.state == ConnectionState.OPEN) {
                 // We are now entering CLOSING (or half-closed).
@@ -258,7 +262,8 @@ class IOState {
                 // If abnormal, we don't expect an answer.
                 if (closeInfo.isAbnormal()) {
                     abnormalEvent = ConnectionState.CLOSED;
-                    finalClose.compareAndSet(null, closeInfo);
+                    // finalClose.compareAndSet(null, closeInfo);
+                    finalClose = closeInfo;
                     cleanClose = false;
                     outputAvailable = false;
                     inputAvailable = false;
@@ -268,9 +273,9 @@ class IOState {
         }
 
         // Only notify on state change events
-        if (event !is null) {
+        if (event != ConnectionState.Unknown) {
             notifyStateListeners(event);
-            if (abnormalEvent !is null) {
+            if (abnormalEvent != ConnectionState.Unknown) {
                 notifyStateListeners(abnormalEvent);
             }
         }
@@ -284,7 +289,7 @@ class IOState {
     void onCloseRemote(CloseInfo closeInfo) {
         version(HuntDebugMode)
             tracef("onCloseRemote(%s)", closeInfo);
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
                 // already closed
@@ -307,7 +312,8 @@ class IOState {
                 tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 state = ConnectionState.CLOSED;
-                finalClose.compareAndSet(null, closeInfo);
+                finalClose = closeInfo;
+                // finalClose.compareAndSet(null, closeInfo);
                 event = this.state;
             } else if (this.state == ConnectionState.OPEN) {
                 // We are now entering CLOSING (or half-closed)
@@ -317,7 +323,7 @@ class IOState {
         }
 
         // Only notify on state change events
-        if (event !is null) {
+        if (event != ConnectionState.Unknown) {
             notifyStateListeners(event);
         }
     }
@@ -328,7 +334,7 @@ class IOState {
      * This is an intermediate state between the RFC's {@link ConnectionState#CONNECTING} and {@link ConnectionState#OPEN}
      */
     void onConnected() {
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state != ConnectionState.CONNECTING) {
                 tracef("Unable to set to connected, not in CONNECTING state: %s", this.state);
@@ -348,7 +354,7 @@ class IOState {
      */
     void onFailedUpgrade() {
         assert (this.state == ConnectionState.CONNECTING);
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             this.state = ConnectionState.CLOSED;
             cleanClose = false;
@@ -366,7 +372,7 @@ class IOState {
         version(HuntDebugMode)
             tracef("onOpened()");
 
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.OPEN) {
                 // already opened
@@ -394,7 +400,7 @@ class IOState {
      * @param t the read failure
      */
     void onReadFailure(Throwable t) {
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
                 // already closed
@@ -439,7 +445,7 @@ class IOState {
      * @param t the throwable that caused the write failure
      */
     void onWriteFailure(Throwable t) {
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
                 // already closed
@@ -463,8 +469,8 @@ class IOState {
             }
 
             CloseInfo close = new CloseInfo(StatusCode.ABNORMAL, reason);
-
-            finalClose.compareAndSet(null, close);
+            finalClose = close;
+            // finalClose.compareAndSet(null, close);
 
             this.cleanClose = false;
             this.state = ConnectionState.CLOSED;
@@ -477,7 +483,7 @@ class IOState {
     }
 
     void onDisconnected() {
-        ConnectionState event = null;
+        ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
             if (this.state == ConnectionState.CLOSED) {
                 // already closed
@@ -501,7 +507,7 @@ class IOState {
     string toString() {
         StringBuilder str = new StringBuilder();
         str.append(typeid(this).name);
-        str.append("@").append(to!string(hashCode(), 16));
+        str.append("@").append(to!string(toHash(), 16));
         str.append("[").append(state);
         str.append(',');
         if (!inputAvailable) {
@@ -515,7 +521,7 @@ class IOState {
         if ((state == ConnectionState.CLOSED) || (state == ConnectionState.CLOSING)) {
             CloseInfo ci = finalClose.get();
             if (ci !is null) {
-                str.append(",finalClose=").append(ci);
+                str.append(",finalClose=").append(ci.toString());
             } else {
                 str.append(",close=").append(closeInfo);
             }

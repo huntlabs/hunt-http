@@ -2,6 +2,12 @@ module hunt.http.codec.websocket.model.ExtensionConfig;
 
 import hunt.http.codec.websocket.utils.QuoteUtil;
 
+import hunt.container;
+import hunt.util.exception;
+import hunt.util.string;
+
+import std.conv;
+import std.range;
 
 /**
  * Represents an Extension Configuration, as seen during the connection Handshake process.
@@ -13,9 +19,9 @@ class ExtensionConfig {
      * @param parameterizedName the parameterized name
      * @return the ExtensionConfig
      */
-    // static ExtensionConfig parse(string parameterizedName) {
-    //     return new ExtensionConfig(parameterizedName);
-    // }
+    static ExtensionConfig parse(string parameterizedName) {
+        return new ExtensionConfig(parameterizedName);
+    }
 
     /**
      * Parse enumeration of <code>Sec-WebSocket-Extensions</code> header values into a {@link ExtensionConfig} list
@@ -81,107 +87,108 @@ class ExtensionConfig {
     //     return parameters.toString();
     // }
 
-    // private final string name;
-    // private final Map<string, string> parameters;
+    private string name;
+    private Map!(string, string) parameters;
 
-    // /**
-    //  * Copy constructor
-    //  *
-    //  * @param copy the extension config to copy
-    //  */
-    // this(ExtensionConfig copy) {
-    //     this.name = copy.name;
-    //     this.parameters = new HashMap<>();
-    //     this.parameters.putAll(copy.parameters);
-    // }
+    /**
+     * Copy constructor
+     *
+     * @param copy the extension config to copy
+     */
+    this(ExtensionConfig copy) {
+        this.name = copy.name;
+        // this.parameters = new HashMap<>();
+        // this.parameters.putAll(copy.parameters);
+    }
 
-    // this(string parameterizedName) {
-    //     Iterator<string> extListIter = QuoteUtil.splitAt(parameterizedName, ";");
-    //     this.name = extListIter.next();
-    //     this.parameters = new HashMap<>();
+    this(string parameterizedName) {
+        implementationMissing(false);
+        // Iterator<string> extListIter = QuoteUtil.splitAt(parameterizedName, ";");
+        // this.name = extListIter.next();
+        this.parameters = new HashMap!(string, string)();
 
-    //     // now for parameters
-    //     while (extListIter.hasNext()) {
-    //         string extParam = extListIter.next();
-    //         Iterator<string> extParamIter = QuoteUtil.splitAt(extParam, "=");
-    //         string key = extParamIter.next().trim();
-    //         string value = null;
-    //         if (extParamIter.hasNext()) {
-    //             value = extParamIter.next();
-    //         }
-    //         parameters.put(key, value);
-    //     }
-    // }
+        // now for parameters
+        // while (extListIter.hasNext()) {
+        //     string extParam = extListIter.next();
+        //     Iterator<string> extParamIter = QuoteUtil.splitAt(extParam, "=");
+        //     string key = extParamIter.next().trim();
+        //     string value = null;
+        //     if (extParamIter.hasNext()) {
+        //         value = extParamIter.next();
+        //     }
+        //     parameters.put(key, value);
+        // }
+    }
 
-    // string getName() {
-    //     return name;
-    // }
+    string getName() {
+        return name;
+    }
 
-    // final int getParameter(string key, int defValue) {
-    //     string val = parameters.get(key);
-    //     if (val is null) {
-    //         return defValue;
-    //     }
-    //     return Integer.valueOf(val);
-    // }
+    final int getParameter(string key, int defValue) {
+        string val = parameters.get(key);
+        if (val is null) {
+            return defValue;
+        }
+        return to!int(val);
+    }
 
-    // final string getParameter(string key, string defValue) {
-    //     string val = parameters.get(key);
-    //     if (val is null) {
-    //         return defValue;
-    //     }
-    //     return val;
-    // }
+    final string getParameter(string key, string defValue) {
+        string val = parameters.get(key);
+        if (val is null) {
+            return defValue;
+        }
+        return val;
+    }
 
-    // final string getParameterizedName() {
-    //     StringBuilder str = new StringBuilder();
-    //     str.append(name);
-    //     for (string param : parameters.keySet()) {
-    //         str.append(';');
-    //         str.append(param);
-    //         string value = parameters.get(param);
-    //         if (value !is null) {
-    //             str.append('=');
-    //             QuoteUtil.quoteIfNeeded(str, value, ";=");
-    //         }
-    //     }
-    //     return str.toString();
-    // }
+    final string getParameterizedName() {
+        StringBuilder str = new StringBuilder();
+        str.append(name);
+        foreach (string param ; parameters.byKey) {
+            str.append(';');
+            str.append(param);
+            string value = parameters.get(param);
+            if (value !is null) {
+                str.append('=');
+                QuoteUtil.quoteIfNeeded(str, value, ";=");
+            }
+        }
+        return str.toString();
+    }
 
-    // final Set<string> getParameterKeys() {
-    //     return parameters.keySet();
-    // }
+    final InputRange!string getParameterKeys() {
+        return parameters.byKey;
+    }
 
-    // /**
-    //  * Return parameters found in request URI.
-    //  *
-    //  * @return the parameter map
-    //  */
-    // final Map<string, string> getParameters() {
-    //     return parameters;
-    // }
+    /**
+     * Return parameters found in request URI.
+     *
+     * @return the parameter map
+     */
+    final Map!(string, string) getParameters() {
+        return parameters;
+    }
 
-    // /**
-    //  * Initialize the parameters on this config from the other configuration.
-    //  *
-    //  * @param other the other configuration.
-    //  */
-    // final void init(ExtensionConfig other) {
-    //     this.parameters.clear();
-    //     this.parameters.putAll(other.parameters);
-    // }
+    /**
+     * Initialize the parameters on this config from the other configuration.
+     *
+     * @param other the other configuration.
+     */
+    final void init(ExtensionConfig other) {
+        this.parameters.clear();
+        this.parameters.putAll(other.parameters);
+    }
 
-    // final void setParameter(string key) {
-    //     parameters.put(key, null);
-    // }
+    final void setParameter(string key) {
+        parameters.put(key, null);
+    }
 
-    // final void setParameter(string key, int value) {
-    //     parameters.put(key, Integer.toString(value));
-    // }
+    final void setParameter(string key, int value) {
+        parameters.put(key, value.to!string());
+    }
 
-    // final void setParameter(string key, string value) {
-    //     parameters.put(key, value);
-    // }
+    final void setParameter(string key, string value) {
+        parameters.put(key, value);
+    }
 
     // override
     // string toString() {

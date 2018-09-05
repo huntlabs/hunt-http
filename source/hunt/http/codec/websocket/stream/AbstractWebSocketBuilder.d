@@ -34,17 +34,19 @@ abstract class AbstractWebSocketBuilder {
 
     void onFrame(Frame frame, WebSocketConnection connection) {
         switch (frame.getType()) {
-            case TEXT:
+            case FrameType.TEXT:
                 if(_onText !is null)
                     _onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
                 // Optional.ofNullable(onText).ifPresent(t -> t.call(((DataFrame) frame).getPayloadAsUTF8(), connection));
                 break;
-            case CONTINUATION:
-            case BINARY:
+            case FrameType.CONTINUATION:
+            case FrameType.BINARY:
                 if(_onData !is null)
                     _onData(frame.getPayload(), connection);
                 // Optional.ofNullable(onData).ifPresent(d -> d.call(frame.getPayload(), connection));
                 break;
+
+            default: break;
         }
     }
 

@@ -8,10 +8,16 @@ import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
-import hunt.util.LifeCycle;
+
+import hunt.util.common;
 import hunt.util.exception;
 import hunt.util.functional;
+import hunt.util.LifeCycle;
 
+import std.format;
+
+/**
+*/
 abstract class AbstractExtension : AbstractLifeCycle , Extension {
     
     private WebSocketPolicy policy;
@@ -24,8 +30,8 @@ abstract class AbstractExtension : AbstractLifeCycle , Extension {
 
     void dump(Appendable ot, string indent) {
         // incoming
-        dumpWithHeading(ot, indent, "incoming", this.nextIncoming);
-        dumpWithHeading(ot, indent, "outgoing", this.nextOutgoing);
+        dumpWithHeading(ot, indent, "incoming", cast(Object)this.nextIncoming);
+        dumpWithHeading(ot, indent, "outgoing", cast(Object)this.nextOutgoing);
     }
 
     protected void dumpWithHeading(Appendable ot, string indent, string heading, Object bean) {
@@ -131,6 +137,6 @@ abstract class AbstractExtension : AbstractLifeCycle , Extension {
 
     override
     string toString() {
-        return string.format("%s[%s]", typeid(this).name, config.getParameterizedName());
+        return format("%s[%s]", typeid(this).name, config.getParameterizedName());
     }
 }

@@ -26,8 +26,8 @@ class QuoteUtil {
             QUOTE_DOUBLE
         }
 
-        private final string input;
-        private final string delims;
+        private string input;
+        private string delims;
         private StringBuilder token;
         private bool hasToken = false;
         private int i = 0;
@@ -52,7 +52,7 @@ class QuoteUtil {
             }
         }
 
-        override
+        // override
         bool hasNext() {
             // already found a token
             if (hasToken) {
@@ -127,7 +127,7 @@ class QuoteUtil {
             return hasToken;
         }
 
-        override
+        // override
         string next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
@@ -138,7 +138,7 @@ class QuoteUtil {
             return QuoteUtil.dequote(ret.trim());
         }
 
-        override
+        // override
         void remove() {
             throw new UnsupportedOperationException("Remove not supported with this iterator");
         }
@@ -149,7 +149,7 @@ class QuoteUtil {
      */
     enum string ABNF_REQUIRED_QUOTING = "\"'\\\n\r\t\f\b%+ ;=";
 
-    private enum char UNICODE_TAG = 0xFFFF;
+    private enum char UNICODE_TAG = cast(char)0xFF;
     private __gshared char[] escapes;
 
     shared static this() {

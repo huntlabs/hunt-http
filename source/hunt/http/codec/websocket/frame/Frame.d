@@ -4,6 +4,8 @@ import hunt.container.ByteBuffer;
 
 import hunt.util.exception;
 
+import std.conv;
+
 alias FrameType = Frame.Type;
 
 /**
@@ -53,10 +55,10 @@ class FrameTypeHelper {
     
         static FrameType from(byte op) {
             foreach (FrameType type ; EnumMembers!(FrameType)) {
-                if (type.opcode == op) 
+                if (cast(byte)type == op) 
                     return type;
             }
-            throw new IllegalArgumentException("OpCode " ~ op.to!string() ~ 
+            throw new IllegalArgumentException("OpCode " ~ to!string(op) ~ 
                 " is not a valid Frame.Type");
         }
 

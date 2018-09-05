@@ -25,6 +25,7 @@ import hunt.net.Session;
 
 import hunt.container;
 import hunt.logging;
+import hunt.util.concurrent.CompletableFuture;
 import hunt.util.exception;
 import hunt.util.functional;
 

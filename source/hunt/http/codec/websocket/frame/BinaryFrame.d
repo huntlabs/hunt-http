@@ -15,12 +15,12 @@ class BinaryFrame : DataFrame {
         return this;
     }
 
-    override BinaryFrame setPayload(byte[] buf) {
+    BinaryFrame setPayload(byte[] buf) {
         setPayload(ByteBuffer.wrap(buf));
         return this;
     }
 
-    override BinaryFrame setPayload(string payload) {
+    BinaryFrame setPayload(string payload) {
         setPayload(cast(byte[])(payload));
         return this;
     }

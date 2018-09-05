@@ -4,6 +4,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.container;
+import hunt.util.string;
 
 /**
  * A Base Frame as seen in <a href="https://tools.ietf.org/html/rfc6455#section-5.2">RFC 6455. Sec 5.2</a>
@@ -30,41 +31,6 @@ import hunt.container;
  * </pre>
  */
 abstract class WebSocketFrame : Frame {
-    static WebSocketFrame copy(Frame original) {
-        WebSocketFrame copy;
-        switch (original.getOpCode()) {
-            case OpCode.BINARY:
-                copy = new BinaryFrame();
-                break;
-            case OpCode.TEXT:
-                copy = new TextFrame();
-                break;
-            case OpCode.CLOSE:
-                copy = new CloseFrame();
-                break;
-            case OpCode.CONTINUATION:
-                copy = new ContinuationFrame();
-                break;
-            case OpCode.PING:
-                copy = new PingFrame();
-                break;
-            case OpCode.PONG:
-                copy = new PongFrame();
-                break;
-            default:
-                throw new IllegalArgumentException("Cannot copy frame with opcode " ~ 
-                    to!string(cast(int)original.getOpCode()) ~ " - " ~ original);
-        }
-
-        copy.copyHeaders(original);
-        ByteBuffer payload = original.getPayload();
-        if (payload !is null) {
-            ByteBuffer payloadCopy = ByteBuffer.allocate(payload.remaining());
-            payloadCopy.put(payload.slice()).flip();
-            copy.setPayload(payloadCopy);
-        }
-        return copy;
-    }
 
     /**
      * Combined FIN + RSV1 + RSV2 + RSV3 + OpCode byte.
@@ -100,7 +66,7 @@ abstract class WebSocketFrame : Frame {
 
     abstract void assertValid();
 
-    protected void copyHeaders(Frame frame) {
+    void copyHeaders(Frame frame) {
         finRsvOp = 0x00;
         finRsvOp |= frame.isFin() ? 0x80 : 0x00;
         finRsvOp |= frame.isRsv1() ? 0x40 : 0x00;
@@ -121,7 +87,7 @@ abstract class WebSocketFrame : Frame {
         masked = copy.masked;
         mask = null;
         if (copy.mask !is null)
-            mask = Arrays.copyOf(copy.mask, copy.mask.length);
+            mask = copy.mask.dup;
     }
 
     bool equals(Object obj) { return opEquals(obj); }
@@ -188,7 +154,7 @@ abstract class WebSocketFrame : Frame {
 
     override
     Type getType() {
-        return Type.from(getOpCode());
+        return FrameTypeHelper.from(getOpCode());
     }
 
     size_t hashCode() { return toHash(); }

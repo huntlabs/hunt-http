@@ -53,11 +53,11 @@ class ExtensionNegotiator {
     }
 
     List!(Extension) parse(MetaData metaData) {
-        Assert.notNull(nextIncomingFrames, "The next incoming frames MUST be not null");
-        Assert.notNull(nextOutgoingFrames, "The next outgoing frames MUST be not null");
+        assert(nextIncomingFrames !is null, "The next incoming frames MUST be not null");
+        assert(nextOutgoingFrames !is null, "The next outgoing frames MUST be not null");
 
         List!(Extension) extensions = _parse(metaData);
-        if (!CollectionUtils.isEmpty(extensions)) {
+        if (extensions !is null && extensions.size() > 0) {
             for (int i = 0; i < extensions.size(); i++) {
                 int next = i + 1;
                 if (next < extensions.size() - 1) {
@@ -81,7 +81,7 @@ class ExtensionNegotiator {
         } else {
             incomingFrames = nextIncomingFrames;
             outgoingFrames = nextOutgoingFrames;
-            return Collections.emptyList();
+            return new EmptyList!Extension();
         }
     }
 

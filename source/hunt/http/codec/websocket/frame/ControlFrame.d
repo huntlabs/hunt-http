@@ -6,6 +6,8 @@ import hunt.http.codec.websocket.exception;
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
+import std.conv;
+
 abstract class ControlFrame : WebSocketFrame {
     /**
      * Maximum size of Control frame, per RFC 6455
@@ -16,11 +18,12 @@ abstract class ControlFrame : WebSocketFrame {
         super(opcode);
     }
 
-    void assertValid() {
+    override void assertValid() {
         if (isControlFrame()) {
             if (getPayloadLength() > ControlFrame.MAX_CONTROL_PAYLOAD) {
-                throw new ProtocolException("Desired payload length [" ~ getPayloadLength() ~ "] exceeds maximum control payload length ["
-                        + MAX_CONTROL_PAYLOAD ~ "]");
+                throw new ProtocolException("Desired payload length [" ~ getPayloadLength().to!string() ~ 
+                    "] exceeds maximum control payload length [" ~
+                         MAX_CONTROL_PAYLOAD.to!string() ~ "]");
             }
 
             if ((finRsvOp & 0x80) == 0) {
@@ -41,29 +44,27 @@ abstract class ControlFrame : WebSocketFrame {
         }
     }
 
-    override
-    bool equals(Object obj) {
-        if (this == obj) {
+    override bool opEquals(Object obj) {   
+        if (obj is null) 
+            return false;
+
+        if (this is obj) 
             return true;
-        }
-        if (obj is null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+
         ControlFrame other = cast(ControlFrame) obj;
+        if(other is null)   return false;
+
         if (data is null) {
             if (other.data !is null) {
                 return false;
             }
-        } else if (!data.equals(other.data)) {
+        } else if (!data.opEquals(other.data)) {
             return false;
         }
-        return finRsvOp == other.finRsvOp && Arrays.equals(mask, other.mask) && masked == other.masked;
+        return finRsvOp == other.finRsvOp && mask == other.mask && masked == other.masked;
     }
 
-    bool isControlFrame() {
+    override bool isControlFrame() {
         return true;
     }
 
