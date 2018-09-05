@@ -28,14 +28,14 @@ interface WebSocketConnection : OutgoingFrames, Connection, ConnectionExtInfo {
      * @param exceptionListener The exception callback.
      * @return The WebSocket connection.
      */
-    WebSocketConnection onException(Action2!(WebSocketConnection, Throwable) exceptionListener);
+    WebSocketConnection onException(Action2!(WebSocketConnection, Exception) exceptionListener);
 
     /**
      * Get the read/write idle timeout.
      *
      * @return the idle timeout in milliseconds
      */
-    long getIdleTimeout();
+    // long getIdleTimeout();
 
     /**
      * Get the IOState of the connection.

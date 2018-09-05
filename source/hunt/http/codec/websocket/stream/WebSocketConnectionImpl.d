@@ -29,6 +29,8 @@ import hunt.util.concurrent.CompletableFuture;
 import hunt.util.exception;
 import hunt.util.functional;
 
+import std.random; 
+import std.socket;
 
 /**
  * 
@@ -89,12 +91,12 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         // if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
         //     Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
         //         PingFrame pingFrame = new PingFrame();
-        //         outgoingFrame(pingFrame, new class Callback {
+        //         outgoingFrame(pingFrame, new class NoopCallback {
         //             void succeeded() {
         //                 info("The websocket connection %s sent ping frame success", getSessionId());
         //             }
 
-        //             void failed(Throwable x) {
+        //             void failed(Exception x) {
         //                 log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
         //             }
         //         });
@@ -110,7 +112,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     }
 
     override
-    WebSocketConnection onException(Action2!(WebSocketConnection, Throwable) exceptionListener) {
+    WebSocketConnection onException(Action2!(WebSocketConnection, Exception) exceptionListener) {
         return connectionEvent.onException(exceptionListener);
     }
 
@@ -118,7 +120,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         connectionEvent.notifyClose();
     }
 
-    void notifyException(Throwable t) {
+    void notifyException(Exception t) {
         connectionEvent.notifyException(t);
     }
 
@@ -170,22 +172,24 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     override
     void incomingFrame(Frame frame) {
         switch (frame.getType()) {
-            case PING: {
+            case FrameType.PING: {
                 PongFrame pongFrame = new PongFrame();
                 outgoingFrame(pongFrame, Callback.NOOP);
             }
             break;
-            case CLOSE: {
+            case FrameType.CLOSE: {
                 CloseFrame closeFrame = cast(CloseFrame) frame;
                 CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
                 ioState.onCloseRemote(closeInfo);
                 this.close();
             }
             break;
-            case PONG: {
+            case FrameType.PONG: {
                 info("The websocket connection %s received pong frame", getSessionId());
             }
             break;
+
+            default: break;
         }
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
         if(e !is null)
@@ -206,7 +210,9 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     override
     byte[] generateMask() {
         byte[] mask = new byte[4];
-        ThreadLocalRandom.current().nextBytes(mask);
+        // ThreadLocalRandom.current().nextBytes(mask);
+        foreach(size_t i; 0..mask.length)
+            mask[i] = uniform(byte.min, byte.max);
         return mask;
     }
 
@@ -215,14 +221,14 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         TextFrame textFrame = new TextFrame();
         textFrame.setPayload(text);
         CompletableFuture!(bool) future = new CompletableFuture!bool();
-        outgoingFrame(textFrame, new class Callback {
+        outgoingFrame(textFrame, new class NoopCallback {
             override
             void succeeded() {
                 future.complete(true);
             }
 
             override
-            void failed(Throwable x) {
+            void failed(Exception x) {
                 future.completeExceptionally(x);
             }
         });
@@ -243,14 +249,14 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         BinaryFrame binaryFrame = new BinaryFrame();
         binaryFrame.setPayload(data);
         CompletableFuture!(bool) future = new CompletableFuture!bool();
-        outgoingFrame(binaryFrame, new class Callback {
+        outgoingFrame(binaryFrame, new class NoopCallback {
             override
             void succeeded() {
                 future.complete(true);
             }
 
             override
-            void failed(Throwable x) {
+            void failed(Exception x) {
                 future.completeExceptionally(x);
             }
         });
@@ -277,5 +283,85 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
 
     Generator getGenerator() {
         return generator;
+    }
+
+    override long getIdleTimeout() {
+        return super.getIdleTimeout();
+    }
+    
+    override long getMaxIdleTimeout() {
+        return super.getMaxIdleTimeout();
+    }
+    
+    override Object getAttachment() {
+        return super.getAttachment();
+    }
+
+    
+    override void setAttachment(Object attachment) {
+        super.setAttachment(attachment);
+    }
+
+
+    override int getSessionId() {
+        return super.getSessionId();
+    }
+
+    
+    override long getOpenTime() {
+        return super.getOpenTime();
+    }
+
+    
+    override long getCloseTime() {
+        return super.getCloseTime();
+    }
+
+    
+    override long getDuration() {
+        return super.getDuration();
+    }
+
+    
+    override long getLastReadTime() {
+        return super.getLastReadTime();
+    }
+
+    
+    override long getLastWrittenTime() {
+        return super.getLastWrittenTime();
+    }
+
+    
+    override long getLastActiveTime() {
+        return super.getLastActiveTime();
+    }
+
+    
+    override long getReadBytes() {
+        return super.getReadBytes();
+    }
+
+    
+    override long getWrittenBytes() {
+        return super.getWrittenBytes();
+    }
+
+    
+    override bool isOpen() {
+        return super.isOpen();
+    }
+
+    
+    override bool isClosed() {
+        return super.isClosed();
+    }
+
+    override Address getLocalAddress() {
+        return super.getLocalAddress();
+    }
+
+    override Address getRemoteAddress() {
+        return super.getRemoteAddress();
     }
 }

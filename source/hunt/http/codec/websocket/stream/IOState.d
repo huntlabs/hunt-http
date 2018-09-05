@@ -118,7 +118,7 @@ class IOState {
     }
 
     CloseInfo getCloseInfo() {
-        CloseInfo ci = finalClose.get();
+        CloseInfo ci = finalClose;
         if (ci !is null) {
             return ci;
         }
@@ -414,17 +414,17 @@ class IOState {
                 reason = "WebSocket Read EOF";
                 Throwable cause = t.next();
                 if ((cause !is null) && (!cause.message().empty())) {
-                    reason = "EOF: " ~ cause.message();
+                    reason = "EOF: " ~ cast(string)cause.message();
                 }
             } else {
                 if (!t.message().empty()) {
-                    reason = t.message();
+                    reason = cast(string)t.message();
                 }
             }
 
             CloseInfo close = new CloseInfo(StatusCode.ABNORMAL, reason);
-
-            finalClose.compareAndSet(null, close);
+            finalClose = close;
+            // finalClose.compareAndSet(null, close);
 
             this.cleanClose = false;
             this.state = ConnectionState.CLOSED;
@@ -460,11 +460,11 @@ class IOState {
                 Throwable cause = t.next();
 
                 if ((cause !is null) && (!cause.message().empty())) {
-                    reason = "EOF: " ~ cause.message();
+                    reason = "EOF: " ~ cast(string)cause.message();
                 }
             } else {
                 if (!t.message().empty()) {
-                    reason = t.message();
+                    reason = cast(string)t.message();
                 }
             }
 
@@ -519,11 +519,11 @@ class IOState {
         }
         str.append("out");
         if ((state == ConnectionState.CLOSED) || (state == ConnectionState.CLOSING)) {
-            CloseInfo ci = finalClose.get();
+            CloseInfo ci = finalClose;
             if (ci !is null) {
                 str.append(",finalClose=").append(ci.toString());
             } else {
-                str.append(",close=").append(closeInfo);
+                str.append(",close=").append(closeInfo.toString());
             }
             str.append(",clean=").append(cleanClose);
             str.append(",closeSource=").append(closeHandshakeSource);

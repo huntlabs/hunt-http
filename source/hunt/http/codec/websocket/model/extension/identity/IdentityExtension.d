@@ -9,6 +9,7 @@ import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.string;
 
+import std.conv;
 
 /**
 */

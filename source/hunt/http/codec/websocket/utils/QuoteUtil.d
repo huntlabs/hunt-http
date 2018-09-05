@@ -3,6 +3,8 @@ module hunt.http.codec.websocket.utils.QuoteUtil;
 import hunt.util.exception;
 import hunt.util.string;
 
+import std.ascii;
+import std.conv;
 import std.string;
 
 /**
@@ -43,7 +45,7 @@ class QuoteUtil {
             if (hasToken) {
                 token.append(c);
             } else {
-                if (Character.isWhitespace(c)) {
+                if (isWhite(c)) {
                     return; // skip whitespace at start of token.
                 } else {
                     token.append(c);
@@ -61,13 +63,13 @@ class QuoteUtil {
 
             State state = State.START;
             bool escape = false;
-            int inputLen = input.length();
+            size_t inputLen = input.length;
 
             while (i < inputLen) {
                 char c = input.charAt(i++);
 
                 switch (state) {
-                    case START: {
+                    case State.START: {
                         if (c == '\'') {
                             state = State.QUOTE_SINGLE;
                             appendToken(c);
@@ -80,7 +82,7 @@ class QuoteUtil {
                         }
                         break;
                     }
-                    case TOKEN: {
+                    case State.TOKEN: {
                         if (delims.indexOf(c) >= 0) {
                             // System.out.printf("hasNext/t: %b [%s]%n",hasToken,token);
                             return hasToken;
@@ -92,7 +94,7 @@ class QuoteUtil {
                         appendToken(c);
                         break;
                     }
-                    case QUOTE_SINGLE: {
+                    case State.QUOTE_SINGLE: {
                         if (escape) {
                             escape = false;
                             appendToken(c);
@@ -106,7 +108,7 @@ class QuoteUtil {
                         }
                         break;
                     }
-                    case QUOTE_DOUBLE: {
+                    case State.QUOTE_DOUBLE: {
                         if (escape) {
                             escape = false;
                             appendToken(c);
@@ -120,6 +122,8 @@ class QuoteUtil {
                         }
                         break;
                     }
+
+                    default: break;
                 }
                 // System.out.printf("%s <%s> : [%s]%n",state,c,token);
             }
@@ -135,7 +139,7 @@ class QuoteUtil {
             string ret = token.toString();
             token.setLength(0);
             hasToken = false;
-            return QuoteUtil.dequote(ret.trim());
+            return QuoteUtil.dequote(ret.strip());
         }
 
         // override
@@ -173,7 +177,7 @@ class QuoteUtil {
         if ((b >= 'A') && (b <= 'F')) {
             return cast(byte) ((b - 'A') + 10);
         }
-        throw new IllegalArgumentException("!hex:" ~ Integer.toHexString(0xff & b));
+        throw new IllegalArgumentException("!hex:" ~ to!string(0xff & b, 16));
     }
 
     /**
@@ -183,13 +187,13 @@ class QuoteUtil {
      * @return the de-quoted string
      */
     static string dequote(string str) {
-        char start = str.charAt(0);
+        char start = str[0];
         if ((start == '\'') || (start == '\"')) {
             // possibly quoted
-            char end = str.charAt(str.length() - 1);
+            char end = str[$ - 1];
             if (start == end) {
                 // dequote
-                return str.substring(1, str.length() - 1);
+                return str[1 .. $-1];
             }
         }
         return str;
@@ -213,7 +217,7 @@ class QuoteUtil {
                     if (c < 0x10) {
                         buf.append('0');
                     }
-                    buf.append(Integer.toString(c, 16)); // hex
+                    buf.append(to!string(cast(int)c, 16)); // hex
                 } else {
                     // normal escape
                     buf.append('\\').append(escaped);
@@ -248,13 +252,14 @@ class QuoteUtil {
             return;
         }
         // check for delimiters in input string
-        int len = str.length();
+        size_t len = str.length;
         if (len == 0) {
             return;
         }
         int ch;
-        for (int i = 0; i < len; i++) {
-            ch = str.codePointAt(i);
+        for (size_t i = 0; i < len; i++) {
+            // ch = str.codePointAt(i);
+            ch = str[i];
             if (delim.indexOf(ch) >= 0) {
                 // found a delimiter codepoint. we need to quote it.
                 quote(buf, str);
@@ -284,7 +289,7 @@ class QuoteUtil {
             return null;
         }
 
-        int len = str.length();
+        size_t len = str.length;
         if (len <= 1) {
             // impossible to be escaped
             return str;
@@ -293,7 +298,7 @@ class QuoteUtil {
         StringBuilder ret = new StringBuilder(len - 2);
         bool escaped = false;
         char c;
-        for (int i = 0; i < len; i++) {
+        for (size_t i = 0; i < len; i++) {
             c = str[i];
             if (escaped) {
                 escaped = false;

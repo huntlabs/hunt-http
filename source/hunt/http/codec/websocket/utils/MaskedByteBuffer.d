@@ -10,8 +10,8 @@ class MaskedByteBuffer {
     }
 
     static void putPayload(ByteBuffer buffer, byte[] payload) {
-        int len = payload.length;
-        for (int i = 0; i < len; i++) {
+        size_t len = payload.length;
+        for (size_t i = 0; i < len; i++) {
             buffer.put(cast(byte) (payload[i] ^ mask[i % 4]));
         }
     }
