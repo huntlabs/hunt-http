@@ -17,12 +17,13 @@ import test.codec.http2.hpack.TestHuffman;
 
 import test.codec.http2.frame.SettingsGenerateParseTest;
 
-import test.codec.http2.encode.TestPredefinedHTTP1Response;
-
 import test.codec.http2.decode.HttpParserTest;
 import test.codec.http2.decode.HTTP2DecoderTest;
 
+import test.codec.http2.encode.TestPredefinedHTTP1Response;
 import test.codec.http2.encode.URLEncodedTest;
+
+import test.codec.websocket.frame.WebSocketFrameTest;
 
 import test.http.router.TestMatcher;
 
@@ -34,7 +35,11 @@ void main()
 {
 
 	// testHpackDecoder();
-	testUnits!TestMatcher(); 
+
+	// **********************
+	// test.codec.websocket.*
+	// **********************
+	testUnits!WebSocketFrameTest(); 
 
 	// **********************
 	// bug
@@ -81,6 +86,11 @@ void main()
 	// **********************
 	// testUnits!SettingsGenerateParseTest();
 	// testUnits!URLEncodedTest();
+
+	// **********************
+	// test.http.router.*
+	// **********************
+	// testUnits!TestMatcher(); 
 
 }
 
