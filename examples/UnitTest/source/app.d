@@ -24,6 +24,7 @@ import test.codec.http2.encode.TestPredefinedHTTP1Response;
 import test.codec.http2.encode.URLEncodedTest;
 
 import test.codec.websocket.frame.WebSocketFrameTest;
+import test.codec.websocket.utils.QuoteUtilTest;
 
 import test.http.router.TestMatcher;
 
@@ -39,7 +40,8 @@ void main()
 	// **********************
 	// test.codec.websocket.*
 	// **********************
-	testUnits!WebSocketFrameTest(); 
+	testUnits!QuoteUtilTest(); 
+	// testUnits!WebSocketFrameTest(); 
 
 	// **********************
 	// bug

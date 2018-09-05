@@ -5,7 +5,10 @@ import hunt.util.string;
 
 import std.ascii;
 import std.conv;
+import std.range;
 import std.string;
+
+
 
 /**
  * Provide some consistent Http header value and Extension configuration parameter quoting support.
@@ -20,7 +23,7 @@ import std.string;
  * It was decided to keep this implementation separate for the above reasons.
  */
 class QuoteUtil {
-    private static class DeQuotingStringIterator  { // : Iterator<string>
+    private static class DeQuotingStringIterator : InputRange!string { 
         private enum State {
             START,
             TOKEN,
@@ -39,6 +42,8 @@ class QuoteUtil {
             this.delims = delims;
             size_t len = input.length;
             token = new StringBuilder(len > 1024 ? 512 : len / 2);
+
+            popFront();
         }
 
         private void appendToken(char c) {
@@ -54,6 +59,120 @@ class QuoteUtil {
             }
         }
 
+        bool empty() {
+            return !hasToken;
+        }
+
+        string front() @property { 
+            if (!hasToken) {
+                throw new NoSuchElementException();
+            }
+            string ret = token.toString();
+            return QuoteUtil.dequote(ret.strip());
+         }
+
+        void popFront() {
+            token.setLength(0);
+            hasToken = false;
+
+            State state = State.START;
+            bool escape = false;
+            size_t inputLen = input.length;
+
+            while (i < inputLen) {
+                char c = input[i++];
+
+                switch (state) {
+                    case State.START: {
+                        if (c == '\'') {
+                            state = State.QUOTE_SINGLE;
+                            appendToken(c);
+                        } else if (c == '\"') {
+                            state = State.QUOTE_DOUBLE;
+                            appendToken(c);
+                        } else {
+                            appendToken(c);
+                            state = State.TOKEN;
+                        }
+                        break;
+                    }
+                    case State.TOKEN: {
+                        if (delims.indexOf(c) >= 0) {
+                            // System.out.printf("hasNext/t: %b [%s]%n",hasToken,token);
+                            // return hasToken;
+                            return;
+                        } else if (c == '\'') {
+                            state = State.QUOTE_SINGLE;
+                        } else if (c == '\"') {
+                            state = State.QUOTE_DOUBLE;
+                        }
+                        appendToken(c);
+                        break;
+                    }
+                    case State.QUOTE_SINGLE: {
+                        if (escape) {
+                            escape = false;
+                            appendToken(c);
+                        } else if (c == '\'') {
+                            appendToken(c);
+                            state = State.TOKEN;
+                        } else if (c == '\\') {
+                            escape = true;
+                        } else {
+                            appendToken(c);
+                        }
+                        break;
+                    }
+                    case State.QUOTE_DOUBLE: {
+                        if (escape) {
+                            escape = false;
+                            appendToken(c);
+                        } else if (c == '\"') {
+                            appendToken(c);
+                            state = State.TOKEN;
+                        } else if (c == '\\') {
+                            escape = true;
+                        } else {
+                            appendToken(c);
+                        }
+                        break;
+                    }
+
+                    default: break;
+                }
+                // System.out.printf("%s <%s> : [%s]%n",state,c,token);
+            }
+        }
+
+
+        int opApply(scope int delegate(string) dg) {
+            if(dg is null)
+                throw new NullPointerException("");
+            int result = 0;
+            while(hasToken && result == 0) {
+                result = dg(front());
+                popFront();
+            }
+            return result;
+        }
+
+        int opApply(scope int delegate(size_t, string) dg) {
+            if(dg is null)
+                throw new NullPointerException("");
+            int result = 0;          
+            size_t index = 0;
+            while(hasToken && result == 0) {
+                result = dg(index++, front());
+                popFront();
+            }
+            return result;
+        }
+
+        string moveFront() {
+            throw new UnsupportedOperationException("Remove not supported with this iterator");
+        }
+
+/++
         // override
         bool hasNext() {
             // already found a token
@@ -141,11 +260,7 @@ class QuoteUtil {
             hasToken = false;
             return QuoteUtil.dequote(ret.strip());
         }
-
-        // override
-        void remove() {
-            throw new UnsupportedOperationException("Remove not supported with this iterator");
-        }
+++/
     }
 
     /**
@@ -279,9 +394,9 @@ class QuoteUtil {
      * @param delims the delimiter characters to split the string on
      * @return the iterator of the parts of the string, trimmed, with quotes around the string part removed, and unescaped
      */
-    // static Iterator<string> splitAt(string str, string delims) {
-    //     return new DeQuotingStringIterator(str.trim(), delims);
-    // }
+    static InputRange!string splitAt(string str, string delims) {
+        return new DeQuotingStringIterator(str.strip(), delims);
+    }
 
     static string unescape(string str) {
         if (str is null) {
