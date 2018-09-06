@@ -25,7 +25,7 @@ class UnitGenerator : Generator {
      * @param frames the frames to generate from
      * @return the ByteBuffer representing all of the generated frames provided.
      */
-    static ByteBuffer generate(Frame[] frames) {
+    static ByteBuffer generate(T = Frame)(T[] frames) {
         Generator generator = new UnitGenerator();
 
         // Generate into single bytebuffer

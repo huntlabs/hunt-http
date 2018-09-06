@@ -1,37 +1,42 @@
 module test.codec.websocket.utils.Hex;
 
-import hunt.container.BufferUtils;
+import hunt.util.character;
+import hunt.util.exception;
 
+import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
+
+import std.math;
+import std.format;
 
 final class Hex {
     private enum string hexcodes = "0123456789ABCDEF";
 
-    // static byte[] asByteArray(string hstr) {
-    //     if ((hstr.length < 0) || ((hstr.length % 2) != 0)) {
-    //         throw new IllegalArgumentException(string.format("Invalid string length of <%d>", hstr.length));
-    //     }
+    static byte[] asByteArray(string hstr) { 
+        if ((hstr.length < 0) || ((hstr.length % 2) != 0)) {
+            throw new IllegalArgumentException(format("Invalid string length of <%d>", hstr.length));
+        }
 
-    //     int size = hstr.length / 2;
-    //     byte buf[] = new byte[size];
-    //     byte hex;
-    //     int len = hstr.length;
+        size_t size = hstr.length / 2;
+        byte[] buf = new byte[size];
+        byte hex;
+        size_t len = hstr.length;
 
-    //     int idx = (int) Math.floor(((size * 2) - (double) len) / 2);
-    //     for (int i = 0; i < len; i++) {
-    //         hex = 0;
-    //         if (i >= 0) {
-    //             hex = cast(byte) (Character.digit(hstr[i], 16) << 4);
-    //         }
-    //         i++;
-    //         hex += cast(byte) (Character.digit(hstr[i], 16));
+        int idx = cast(int) std.math.floor(((size * 2) - cast(double) len) / 2);
+        for (size_t i = 0; i < len; i++) {
+            hex = 0;
+            if (i >= 0) {
+                hex = cast(byte) (CharacterHelper.digit(hstr[i], 16) << 4);
+            }
+            i++;
+            hex += cast(byte) (CharacterHelper.digit(hstr[i], 16));
 
-    //         buf[idx] = hex;
-    //         idx++;
-    //     }
+            buf[idx] = hex;
+            idx++;
+        }
 
-    //     return buf;
-    // }
+        return buf;
+    }
 
     static ByteBuffer asByteBuffer(string hstr) {
         return ByteBuffer.wrap(cast(byte[])(hstr));
