@@ -20,7 +20,7 @@ class ContinuationFrame : DataFrame {
     }
 
     ContinuationFrame setPayload(string message) {
-        return this.setPayload(cast(byte[])(message));
+        return this.setPayload(cast(byte[])(message.dup));
     }
 
     override

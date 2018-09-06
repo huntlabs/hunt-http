@@ -18,6 +18,7 @@ import test.codec.websocket.UnitGenerator;
 import test.codec.websocket.UnitParser;
 
 import std.algorithm;
+import std.exception;
 
 class ParserTest {
 
@@ -39,10 +40,9 @@ class ParserTest {
         IncomingFramesCapture capture = new IncomingFramesCapture();
         parser.setIncomingFramesHandler(capture);
 
-        //assertThrown!ProtocolException();
-        // expectedException.expect(ProtocolException.class);
-        // expectedException.expectMessage(containsString("CONTINUATION frame without prior !FIN"));
-        parser.parseQuietly(completeBuf);
+        ProtocolException expectedException = collectException!(ProtocolException)(parser.parseQuietly(completeBuf));
+        assert(expectedException !is null);
+        assert(expectedException.msg.canFind("CONTINUATION frame without prior !FIN"));
     }
 
     /**
@@ -60,9 +60,9 @@ class ParserTest {
         IncomingFramesCapture capture = new IncomingFramesCapture();
         parser.setIncomingFramesHandler(capture);
 
-        // expectedException.expect(ProtocolException.class);
-        // expectedException.expectMessage(containsString("Unexpected TEXT frame"));
-        parser.parseQuietly(completeBuf);
+        ProtocolException expectedException = collectException!(ProtocolException)(parser.parseQuietly(completeBuf));
+        assert(expectedException !is null);
+        assert(expectedException.msg.canFind("Unexpected TEXT frame"));
     }
 
     /**
@@ -208,7 +208,7 @@ class ParserTest {
         capture.assertNoErrors();
         WebSocketFrame[] captureFrames = capture.getFrames();
         Assert.assertThat("Frame Count", captureFrames.length, (2));
-        WebSocketFrame frame = captureFrames[1];
+        WebSocketFrame frame = captureFrames[0];
         Assert.assertThat("Frame[0].opcode", frame.getOpCode(), (OpCode.TEXT));
         ByteBuffer actualPayload = frame.getPayload();
         Assert.assertThat("Frame[0].payload.length", actualPayload.remaining(), (payload.length));

@@ -21,7 +21,7 @@ class BinaryFrame : DataFrame {
     }
 
     BinaryFrame setPayload(string payload) {
-        setPayload(cast(byte[])(payload));
+        setPayload(cast(byte[])(payload.dup));
         return this;
     }
 

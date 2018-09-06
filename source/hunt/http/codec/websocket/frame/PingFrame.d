@@ -18,7 +18,7 @@ class PingFrame : ControlFrame {
     }
 
     PingFrame setPayload(string payload) {
-        setPayload(ByteBuffer.wrap(cast(byte[])(payload)));
+        setPayload(ByteBuffer.wrap(cast(byte[])(payload.dup)));
         return this;
     }
 

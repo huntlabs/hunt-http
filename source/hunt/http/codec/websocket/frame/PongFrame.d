@@ -18,7 +18,7 @@ class PongFrame : ControlFrame {
     }
 
     PongFrame setPayload(string payload) {
-        setPayload(cast(byte[])(payload));
+        setPayload(cast(byte[])(payload.dup));
         return this;
     }
 

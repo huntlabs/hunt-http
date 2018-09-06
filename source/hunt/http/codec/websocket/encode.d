@@ -258,6 +258,8 @@ class Generator {
                 int start = payload.position();
                 int end = payload.limit();
                 int remaining;
+                // import hunt.logging;
+                // trace(payload.toString());
                 while ((remaining = end - start) > 0) {
                     if (remaining >= 4) {
                         payload.putInt(start, payload.getInt(start) ^ maskInt);
