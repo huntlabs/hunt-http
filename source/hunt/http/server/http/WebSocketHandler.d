@@ -3,9 +3,10 @@ module hunt.http.server.http.WebSocketHandler;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HTTPConnection;
 import hunt.http.codec.http.stream.HTTPOutputStream;
-// import hunt.http.codec.websocket.frame.Frame;
-// import hunt.http.codec.websocket.stream.WebSocketConnection;
-// import hunt.http.codec.websocket.stream.WebSocketPolicy;
+
+import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
 
@@ -13,31 +14,31 @@ import hunt.logging;
 /**
  * 
  */
-interface WebSocketHandler {
+// interface WebSocketHandler {
 
-    bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
-                                  HTTPOutputStream output,
-                                  HTTPConnection connection);
+//     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
+//                                   HTTPOutputStream output,
+//                                   HTTPConnection connection);
 
-    // void onConnect(WebSocketConnection webSocketConnection);
+//     void onConnect(WebSocketConnection webSocketConnection);
 
-    // WebSocketPolicy getWebSocketPolicy();
+//     WebSocketPolicy getWebSocketPolicy();
 
-    // void onFrame(Frame frame, WebSocketConnection connection);
+//     void onFrame(Frame frame, WebSocketConnection connection);
 
-    // void onError(Throwable t, WebSocketConnection connection);
+//     void onError(Exception t, WebSocketConnection connection);
 
-}
+// }
 
 /**
 */
-class DefaultWebSocketHandler : WebSocketHandler {
+class WebSocketHandler {
 
-    // private WebSocketPolicy defaultWebSocketPolicy;
+    protected WebSocketPolicy defaultWebSocketPolicy;
 
     this()
     {
-        // defaultWebSocketPolicy = WebSocketPolicy.newServerPolicy();
+        defaultWebSocketPolicy = WebSocketPolicy.newServerPolicy();
     }
 
     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
@@ -47,22 +48,23 @@ class DefaultWebSocketHandler : WebSocketHandler {
         return true;
     }
 
-    // void onConnect(WebSocketConnection webSocketConnection) {
+    void onConnect(WebSocketConnection webSocketConnection) {
 
-    // }
+    }
 
-    // WebSocketPolicy getWebSocketPolicy() {
-    //     return defaultWebSocketPolicy;
-    // }
+    WebSocketPolicy getWebSocketPolicy() {
+        return defaultWebSocketPolicy;
+    }
 
-    // void onFrame(Frame frame, WebSocketConnection connection) {
-    //     version(HuntDebugMode) {
-    //         tracef("The WebSocket connection %s received a  frame: %s", connection.getSessionId(), frame.toString());
-    //     }
-    // }
+    void onFrame(Frame frame, WebSocketConnection connection) {
+        version(HuntDebugMode) {
+            tracef("The WebSocket connection %s received a frame: %s", 
+                connection.getSessionId(), (cast(Object)frame).toString());
+        }
+    }
 
-    // void onError(Throwable t, WebSocketConnection connection) {
-    //     errorf("The WebSocket error", t);
-    // }
+    void onError(Exception t, WebSocketConnection connection) {
+        errorf("The WebSocket error", t);
+    }
 
 }

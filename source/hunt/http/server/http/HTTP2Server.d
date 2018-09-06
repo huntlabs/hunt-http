@@ -37,7 +37,10 @@ class HTTP2Server  : AbstractLifeCycle {
 
     this(string host, int port, HTTP2Configuration http2Configuration,
                        ServerHTTPHandler serverHTTPHandler) {
-        this(host, port, http2Configuration, new HTTP2ServerRequestHandler(serverHTTPHandler), serverHTTPHandler, new DefaultWebSocketHandler());
+        this(host, port, http2Configuration, 
+            new HTTP2ServerRequestHandler(serverHTTPHandler), 
+            serverHTTPHandler, 
+            new WebSocketHandler());
     }
 
     this(string host, int port, HTTP2Configuration http2Configuration,
@@ -78,7 +81,7 @@ class HTTP2Server  : AbstractLifeCycle {
                         if(data.length<=64)
                             infof("%(%02X %)", data[0 .. $]);
                         else
-                            infof("%(%02X %)", data[0 .. 64]);
+                            infof("%(%02X %) ...", data[0 .. 64]);
                         // infof(cast(string) data); 
                     }
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);

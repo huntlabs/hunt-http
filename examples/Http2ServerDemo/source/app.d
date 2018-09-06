@@ -46,18 +46,23 @@ void main(string[] args)
 
             override
             void onFrame(Frame frame, WebSocketConnection connection) {
-                switch (frame.getType()) {
-                    case TEXT: {
+                FrameType type = frame.getType();
+                switch (type) {
+                    case FrameType.TEXT: {
                         TextFrame textFrame = cast(TextFrame) frame;
-                        tracef("Server received: " ~ textFrame ~ ", " ~ textFrame.getPayloadAsUTF8());
+                        tracef("Server received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
                         assert(textFrame.getPayloadAsUTF8() == ("Hello WebSocket"));
-                        latch.countDown();
+                        break;
                     }
+
+                    default: 
+                        warningf("Can't handle ", type);
+                        break;
                 }
 
             }
         });
-        server.start();
-
+    
+    server.start();
 }
 
