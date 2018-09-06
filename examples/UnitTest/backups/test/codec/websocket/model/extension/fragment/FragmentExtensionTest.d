@@ -155,8 +155,8 @@ public class FragmentExtensionTest {
             WebSocketFrame actualFrame = frames.get(i);
             WebSocketFrame expectedFrame = expectedFrames.get(i);
 
-            // System.out.printf("actual: %s%n",actualFrame);
-            // System.out.printf("expect: %s%n",expectedFrame);
+            // tracef("actual: %s%n",actualFrame);
+            // tracef("expect: %s%n",expectedFrame);
 
             // Validate Frame
             Assert.assertThat(prefix ~ ".opcode", actualFrame.getOpCode(), is(expectedFrame.getOpCode()));

@@ -23,6 +23,7 @@ import test.codec.http2.decode.HTTP2DecoderTest;
 import test.codec.http2.encode.TestPredefinedHTTP1Response;
 import test.codec.http2.encode.URLEncodedTest;
 
+import test.codec.websocket.decode.ParserTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
@@ -37,10 +38,12 @@ void main()
 
 	// testHpackDecoder();
 
+	testUnits!ParserTest(); 
+
 	// **********************
 	// test.codec.websocket.*
 	// **********************
-	testUnits!QuoteUtilTest(); 
+	// testUnits!QuoteUtilTest(); 
 	// testUnits!WebSocketFrameTest(); 
 
 	// **********************

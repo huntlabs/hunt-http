@@ -359,7 +359,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
         clientExtension.setNextOutgoingFrames(new OutgoingFrames() {
             override
             public void outgoingFrame(Frame frame, Callback callback) {
-                LOG.debug("outgoingFrame({})", frame);
+                tracef("outgoingFrame({})", frame);
                 serverExtension.incomingFrame(frame);
                 callback.succeeded();
             }
@@ -369,7 +369,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
         serverExtension.setNextIncomingFrames(new IncomingFrames() {
             override
             public void incomingFrame(Frame frame) {
-                LOG.debug("incomingFrame({})", frame);
+                tracef("incomingFrame({})", frame);
                 try {
                     result.write(BufferUtils.toArray(frame.getPayload()));
                 } catch (IOException x) {

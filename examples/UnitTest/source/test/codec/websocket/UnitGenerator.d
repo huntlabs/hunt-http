@@ -1,25 +1,20 @@
-module test.codec.websocket;
+module test.codec.websocket.UnitGenerator;
 
-import hunt.http.codec.websocket.encode.Generator;
+import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.container.BufferUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import hunt.container.ByteBuffer;
-import hunt.container.List;
+import hunt.container;
+import hunt.logging;
 
 /**
  * Convenience Generator.
  */
-public class UnitGenerator extends Generator {
-    private static Logger LOG = LoggerFactory.getLogger("hunt-system");
+class UnitGenerator : Generator {
 
-    public static ByteBuffer generate(Frame frame) {
-        return generate(new Frame[]
-                {frame});
+    static ByteBuffer generate(Frame frame) {
+        return generate([frame]);
     }
 
     /**
@@ -30,25 +25,25 @@ public class UnitGenerator extends Generator {
      * @param frames the frames to generate from
      * @return the ByteBuffer representing all of the generated frames provided.
      */
-    public static ByteBuffer generate(Frame[] frames) {
+    static ByteBuffer generate(Frame[] frames) {
         Generator generator = new UnitGenerator();
 
         // Generate into single bytebuffer
         int buflen = 0;
-        for (Frame f : frames) {
+        foreach (Frame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
         ByteBuffer completeBuf = ByteBuffer.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames
-        for (Frame f : frames) {
+        foreach (Frame f ; frames) {
             generator.generateWholeFrame(f, completeBuf);
         }
 
         BufferUtils.flipToFlush(completeBuf, 0);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("generate({} frames) - {}", frames.length, BufferUtils.toDetailString(completeBuf));
+        version(HuntDebugMode) {
+            tracef("generate(%s frames) - %s", frames.length, BufferUtils.toDetailString(completeBuf));
         }
         return completeBuf;
     }
@@ -59,24 +54,23 @@ public class UnitGenerator extends Generator {
      * @param frames the list of frames to generate from
      * @return the bytebuffer representing all of the generated frames
      */
-    public static ByteBuffer generate(List<WebSocketFrame> frames) {
+    static ByteBuffer generate(List!WebSocketFrame frames) {
         // Create non-symmetrical mask (helps show mask bytes order issues)
-        byte[] MASK =
-                {0x11, 0x22, 0x33, 0x44};
+        byte[] MASK = [0x11, 0x22, 0x33, 0x44];
 
         // the generator
         Generator generator = new UnitGenerator();
 
         // Generate into single bytebuffer
         int buflen = 0;
-        for (Frame f : frames) {
+        foreach (WebSocketFrame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
         ByteBuffer completeBuf = ByteBuffer.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames
-        for (WebSocketFrame f : frames) {
+        foreach (WebSocketFrame f ; frames) {
             f.setMask(MASK); // make sure we have the test mask set
             BufferUtils.put(generator.generateHeaderBytes(f), completeBuf);
             ByteBuffer window = f.getPayload();
@@ -86,13 +80,13 @@ public class UnitGenerator extends Generator {
         }
 
         BufferUtils.flipToFlush(completeBuf, 0);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("generate({} frames) - {}", frames.size(), BufferUtils.toDetailString(completeBuf));
+        version(HuntDebugMode) {
+            tracef("generate(%s frames) - %s", frames.size(), BufferUtils.toDetailString(completeBuf));
         }
         return completeBuf;
     }
 
-    public UnitGenerator() {
+    this() {
         super(WebSocketPolicy.newServerPolicy());
     }
 

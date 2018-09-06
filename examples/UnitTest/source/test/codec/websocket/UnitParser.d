@@ -1,22 +1,24 @@
-module test.codec.websocket;
+module test.codec.websocket.UnitParser;
 
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.container.ByteBuffer;
 
-public class UnitParser extends Parser {
-    public UnitParser() {
+import std.algorithm;
+
+class UnitParser : Parser {
+    this() {
         this(WebSocketPolicy.newServerPolicy());
     }
 
-    public UnitParser(WebSocketPolicy policy) {
+    this(WebSocketPolicy policy) {
         super(policy);
     }
 
     private void parsePartial(ByteBuffer buf, int numBytes) {
-        int len = Math.min(numBytes, buf.remaining());
-        byte arr[] = new byte[len];
+        int len = std.algorithm.min(numBytes, buf.remaining());
+        byte[] arr = new byte[len];
         buf.get(arr, 0, len);
         this.parse(ByteBuffer.wrap(arr));
     }
@@ -28,11 +30,11 @@ public class UnitParser extends Parser {
      *
      * @param buf the buffer to parse
      */
-    public void parseQuietly(ByteBuffer buf) {
+    void parseQuietly(ByteBuffer buf) {
         parse(buf);
     }
 
-    public void parseSlowly(ByteBuffer buf, int segmentSize) {
+    void parseSlowly(ByteBuffer buf, int segmentSize) {
         while (buf.remaining() > 0) {
             parsePartial(buf, segmentSize);
         }
