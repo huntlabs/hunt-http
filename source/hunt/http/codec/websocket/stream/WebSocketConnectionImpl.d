@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.stream.impl;
+module hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;

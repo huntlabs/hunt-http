@@ -39,7 +39,6 @@ void main()
 
 	// testHpackDecoder();
 
-	testUnits!GeneratorTest(); 
 	// **********************
 	// bug
 	// **********************
@@ -94,6 +93,7 @@ void main()
 	// **********************
 	// test.codec.websocket.*
 	// **********************
+	// testUnits!GeneratorTest(); 
 	// testUnits!ParserTest(); 
 	// testUnits!QuoteUtilTest(); 
 	// testUnits!WebSocketFrameTest(); 

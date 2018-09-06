@@ -1,7 +1,14 @@
-import hunt.http.server.http.SimpleHTTPServer;
-import hunt.http.server.http.router.RoutingContext;
 
-import hunt.http.helper;
+import hunt.http.codec.http.model;
+import hunt.http.codec.http.stream;
+import hunt.http.codec.websocket.frame;
+import hunt.http.codec.websocket.model;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
+
+import hunt.http.server.http.HTTP2Server;
+import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.server.http.WebSocketHandler;
+
 
 import hunt.logging;
 
@@ -20,15 +27,37 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args)
 {
-	string currentRootPath = dirName(thisExePath);
-    writeln(currentRootPath);
+    HTTP2Server server = new HTTP2Server("0.0.0.0", 8080, new HTTP2Configuration(), 
+        new class ServerHTTPHandlerAdapter {
 
-    httpsServer() // For HTTPS
-    .useCertificateFile(currentRootPath ~ "/cert/server.crt", currentRootPath ~ "/cert/server.key")
-    // httpServer() // For HTTP
-    .router().get("/").handler((RoutingContext ctx) {
-        info("Resposing a HTTP request.");
-        ctx.end("hello world!");
-    }) //  .router().get("/static/*").handler(new StaticFileHandler(path.toAbsolutePath().toString()))
-    .listen("0.0.0.0", 8081);
+            override
+            bool messageComplete(MetaData.Request request, MetaData.Response response,
+                                           HTTPOutputStream output,
+                                           HTTPConnection connection) {
+                return true;
+            }
+        }, 
+
+        new class WebSocketHandler {
+            override
+            void onConnect(WebSocketConnection webSocketConnection) {
+                webSocketConnection.sendText("OK").thenAccept( (r) { tracef("Server sends text frame success."); });
+            }
+
+            override
+            void onFrame(Frame frame, WebSocketConnection connection) {
+                switch (frame.getType()) {
+                    case TEXT: {
+                        TextFrame textFrame = cast(TextFrame) frame;
+                        tracef("Server received: " ~ textFrame ~ ", " ~ textFrame.getPayloadAsUTF8());
+                        assert(textFrame.getPayloadAsUTF8() == ("Hello WebSocket"));
+                        latch.countDown();
+                    }
+                }
+
+            }
+        });
+        server.start();
+
 }
+
