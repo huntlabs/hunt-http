@@ -13,8 +13,6 @@ import std.format;
 
 
 class IncomingFramesCapture : IncomingFrames {
-    // private EventQueue<WebSocketFrame> frames = new EventQueue<>();
-    // private EventQueue<Throwable> errors = new EventQueue<>();
 
     private WebSocketFrame[] frames;
     private Throwable[] errors;

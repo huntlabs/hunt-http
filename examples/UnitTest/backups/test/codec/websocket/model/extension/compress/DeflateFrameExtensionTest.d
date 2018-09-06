@@ -41,7 +41,7 @@ import java.util.zip.Inflater;
 
 
 public class DeflateFrameExtensionTest extends AbstractExtensionTest {
-    private static Logger LOG = LoggerFactory.getLogger("hunt-system");
+    
 
     private void assertIncoming(byte[] raw, string... expectedTextDatas) {
         WebSocketPolicy policy = WebSocketPolicy.newClientPolicy();
