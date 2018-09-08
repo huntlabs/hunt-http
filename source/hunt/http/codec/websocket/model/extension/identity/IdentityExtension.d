@@ -30,7 +30,7 @@ class IdentityExtension : AbstractExtension {
     }
 
     override
-    void incomingError(Throwable e) {
+    void incomingError(Exception e) {
         // pass through
         nextIncomingError(e);
     }
@@ -60,8 +60,8 @@ class IdentityExtension : AbstractExtension {
             if (delim) {
                 s.append(';');
             }
-            implementationMissing(false);
-            // s.append(param).append('=').append(QuotedStringTokenizer.quoteIfNeeded(config.getParameter(param, ""), ";="));
+            string str = QuotedStringTokenizer.quoteIfNeeded(config.getParameter(param, ""), ";=");
+            s.append(param).append('=').append(str);
             delim = true;
         }
         s.append("]");
@@ -74,7 +74,7 @@ class IdentityExtension : AbstractExtension {
     }
 
     override
-    protected void init() {
+    protected void initilize() {
 
     }
 

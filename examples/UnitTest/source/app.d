@@ -70,7 +70,7 @@ void main()
 	// test.codec.http2.decode.*
 	// **********************
 	
-	// testUnits!HttpParserTest(); 
+	testUnits!HttpParserTest(); 
 	// testUnits!HTTP2DecoderTest();
 
 	// **********************

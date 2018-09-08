@@ -3,6 +3,8 @@ module hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.util.functional;
 
+alias OutgoingFramesHandler = void delegate(Frame frame, Callback callback);
+
 /**
  * Interface for dealing with frames outgoing to (eventually) the network layer.
  */

@@ -824,7 +824,6 @@ class HttpParser {
 
             if (_header != HttpHeader.Null) {
                 bool add_to_connection_trie = false;
-                // switch (_header) {
                 if(_header == HttpHeader.CONTENT_LENGTH) {
                     if (_endOfContent == EndOfContent.CONTENT_LENGTH) {
                         throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Duplicate Content-Length");
@@ -851,10 +850,10 @@ class HttpParser {
                 }                    
                 else if(_header == HttpHeader.HOST){
                     _host = true;
-                    if (_field is null || !(typeid(_field) == typeid(HostPortHttpField)) && _valueString != null && !_valueString.empty()) {
-                        _field = new HostPortHttpField(_header,
-                                _compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE) ? _header.asString() : _headerString,
-                                _valueString);
+                    if ((_field is null) && !_valueString.empty()) {
+                        string headerStr = _compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE) ? 
+                                    _header.asString() : _headerString;
+                        _field = new HostPortHttpField(_header, headerStr, _valueString);
                         add_to_connection_trie = _fieldCache != null;
                     }
                 }
@@ -874,7 +873,7 @@ class HttpParser {
 
                 //  && !_fieldCache.isFull()
 
-                if (add_to_connection_trie && _header != HttpHeader.Null && _valueString != null) {
+                if (add_to_connection_trie && _header != HttpHeader.Null && !_valueString.empty()) {
                     if (_field is null)
                         _field = new HttpField(_header, caseInsensitiveHeader(_headerString, _header.asString()), _valueString);
                     // _fieldCache.put(_field);
@@ -1345,7 +1344,8 @@ class HttpParser {
             badMessage(x);
         } catch (Exception x) {
             BufferUtils.clear(buffer);
-            badMessage(new BadMessageException(HttpStatus.BAD_REQUEST_400, _requestHandler !is null ? "Bad Request" : "Bad Response", x));
+            badMessage(new BadMessageException(HttpStatus.BAD_REQUEST_400, 
+                _requestHandler !is null ? "Bad Request" : "Bad Response", x));
         }
         return false;
     }
@@ -1353,6 +1353,12 @@ class HttpParser {
     protected void badMessage(BadMessageException x) {
         // version(HuntDebugMode)
             warning("Parse exception: " ~ this.toString() ~ " for " ~ _handler.toString(), x.toString());
+        version(HuntDebugMode) {
+            Throwable t = x;
+            while((t = t.next) !is null) {
+                error(t.msg);
+            }
+        }
         setState(State.CLOSE);
         if (_headerComplete)
             _handler.earlyEOF();
@@ -1539,8 +1545,8 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        // version(HuntDebugMode)
-        //     tracef("%s --> %s", _state, state);
+        version(HuntDebugMode)
+            tracef("%s --> %s", _state, state);
         _state = state;
     }
 

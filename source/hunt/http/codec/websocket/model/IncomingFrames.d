@@ -7,7 +7,7 @@ import hunt.http.codec.websocket.frame.Frame;
  */
 interface IncomingFrames {
     
-    void incomingError(Throwable t);
+    void incomingError(Exception t);
 
     /**
      * Process the incoming frame.

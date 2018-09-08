@@ -126,7 +126,7 @@ class SimpleHTTPServer : AbstractLifeCycle {
     }
 
     override
-    protected void init() {
+    protected void initilize() {
 
         // class SimpleWebSocketHandler : WebSocketHandler
         // {

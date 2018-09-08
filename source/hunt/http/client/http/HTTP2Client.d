@@ -113,7 +113,7 @@ class HTTP2Client  : AbstractLifeCycle {
     }
 
     override
-    protected void init() {
+    protected void initilize() {
     }
 
     override

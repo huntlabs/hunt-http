@@ -6,6 +6,7 @@ public import hunt.http.codec.websocket.model.CloseStatus;
 public import hunt.http.codec.websocket.model.common;
 public import hunt.http.codec.websocket.model.Extension;
 public import hunt.http.codec.websocket.model.ExtensionConfig;
+public import hunt.http.codec.websocket.model.handler;
 public import hunt.http.codec.websocket.model.IncomingFrames;
 public import hunt.http.codec.websocket.model.OutgoingFrames;
 public import hunt.http.codec.websocket.model.StatusCode;

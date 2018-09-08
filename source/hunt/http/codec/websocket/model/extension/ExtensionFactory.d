@@ -1,5 +1,7 @@
 module hunt.http.codec.websocket.model.extension.ExtensionFactory;
 
+import hunt.http.codec.websocket.model.extension.AbstractExtension;
+
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.extension.compress.DeflateFrameExtension;
@@ -7,15 +9,17 @@ import hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExten
 import hunt.http.codec.websocket.model.extension.compress.XWebkitDeflateFrameExtension;
 import hunt.http.codec.websocket.model.extension.fragment.FragmentExtension;
 import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
-// import hunt.http.utils.CollectionUtils;
+
+import hunt.container.Map;
+import hunt.container.HashMap;
+import hunt.logging;
 
 
 abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
-    // private ServiceLoader<Extension> extensionLoader = ServiceLoader.load(Extension.class);
-    // private Map<string, Class<? : Extension>> availableExtensions;
+    private Map!(string, AbstractExtension) availableExtensions;
 
     this() {
-        // availableExtensions = new HashMap<>();
+        availableExtensions = new HashMap!(string, AbstractExtension)();
         // for (Extension ext : extensionLoader) {
         //     if (ext !is null) {
         //         availableExtensions.put(ext.getName(), ext.getClass());
@@ -42,9 +46,10 @@ abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
     //     return availableExtensions.keySet();
     // }
 
-    // bool isAvailable(string name) {
-    //     return availableExtensions.containsKey(name);
-    // }
+    bool isAvailable(string name) {
+        tracef("Extension: %s", name);
+        return availableExtensions.containsKey(name);
+    }
 
     // override
     // Iterator<Class<? : Extension>> iterator() {

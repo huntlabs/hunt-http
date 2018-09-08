@@ -80,50 +80,7 @@ class HttpParserTest {
                 break;
         }
     }
-
-
-    
-    void testHTTP2Preface_temp() {
-        ByteBuffer buffer = BufferUtils.toBuffer(
-                "PRI * HTTP/2.0\r\n" ~
-                        "\r\n" ~
-                        "SM\r\n" ~
-                        "\r\n");
-
-        HttpParser.RequestHandler handler = new Handler();
-        HttpParser parser = new HttpParser(handler);
-        parseAll(parser, buffer);
-
-        Assert.assertTrue(_headerCompleted);
-        Assert.assertTrue(_messageCompleted);
-        Assert.assertEquals("PRI", _methodOrVersion);
-        Assert.assertEquals("*", _uriOrStatus);
-        Assert.assertEquals("HTTP/2.0", _versionOrReason);
-        Assert.assertEquals(-1, _headers);
-        // Assert.assertEquals(null, _bad);
-    }
-
-
-    // void testResponseParse0_temp() {
-    //     ByteBuffer buffer = BufferUtils.toBuffer(
-    //             "HTTP/1.1 200 Correct\r\n"
-    //                     ~ "Content-Length: 10\r\n"
-    //                     ~ "Content-Type: text/plain\r\n"
-    //                     ~ "\r\n"
-    //                     ~ "0123456789\r\n");
-
-    //     HttpParser.ResponseHandler handler = new Handler();
-    //     HttpParser parser = new HttpParser(handler);
-    //     parser.parseNext(buffer);
-    //     Assert.assertEquals("HTTP/1.1", _methodOrVersion);
-    //     Assert.assertEquals("200", _uriOrStatus);
-    //     Assert.assertEquals("Correct", _versionOrReason);
-    //     trace("content: ", _content);
-    //     Assert.assertEquals(10, _content.length);
-    //     Assert.assertTrue(_headerCompleted);
-    //     Assert.assertTrue(_messageCompleted);
-    // }
-    
+ 
     void HttpMethodTest() {
         Assert.assertNull(HttpMethod.lookAheadGet(BufferUtils.toBuffer("Wibble ")));
         Assert.assertNull(HttpMethod.lookAheadGet(BufferUtils.toBuffer("GET")));
@@ -670,6 +627,7 @@ class HttpParserTest {
 
     
     void testEncodedHeader() {
+        init();
         ByteBuffer buffer = BufferUtils.allocate(4096);
         BufferUtils.flipToFill(buffer);
         BufferUtils.put(BufferUtils.toBuffer("GET "), buffer);
@@ -694,9 +652,7 @@ class HttpParserTest {
         Assert.assertEquals("Header2", _hdr[1]);
         Assert.assertEquals("" ~ to!string( cast(char)255), _val[1]);
         Assert.assertEquals(1, _headers);
-        // FIXME: Needing refactor or cleanup -@zxp at 7/9/2018, 3:38:20 PM
-        // 
-        // Assert.assertEquals(null, _bad);
+        Assert.assertEquals(null, _bad);
     }
 
     
@@ -1095,13 +1051,14 @@ class HttpParserTest {
 
     
     void testStartEOF() {
+        init();
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
         parser.atEOF();
         parser.parseNext(BufferUtils.EMPTY_BUFFER);
 
         Assert.assertTrue(_early);
-        // Assert.assertEquals(null, _bad);
+        Assert.assertEquals(null, _bad);
     }
 
     
@@ -1281,6 +1238,7 @@ class HttpParserTest {
 
     
     void testResponseParse0() {
+        init();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "HTTP/1.1 200 Correct\r\n"
                         ~ "Content-Length: 10\r\n"
@@ -1999,9 +1957,9 @@ class HttpParserTest {
         Assert.assertEquals("[::1]", _host);
         Assert.assertEquals(8888, _port);
     }
-
     
     void testEmptyHostPort() {
+        init();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n"
                         ~ "Host:\r\n"
@@ -2011,13 +1969,12 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _host);
-        // Assert.assertEquals(null, _bad);
+        Assert.assertEquals(null, _host);
+        Assert.assertEquals(null, _bad);
     }
-
-    
     
     void testCachedField() {
+        init();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n" ~
                         "Host: www.smh.com.au\r\n" ~
@@ -2038,6 +1995,7 @@ class HttpParserTest {
 
     
     void testParseRequest() {
+        init();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n" ~
                         "Host: localhost\r\n" ~
@@ -2066,6 +2024,7 @@ class HttpParserTest {
 
     
     void testHTTP2Preface() {
+        init();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "PRI * HTTP/2.0\r\n" ~
                         "\r\n" ~
@@ -2082,12 +2041,13 @@ class HttpParserTest {
         Assert.assertEquals("*", _uriOrStatus);
         Assert.assertEquals("HTTP/2.0", _versionOrReason);
         Assert.assertEquals(-1, _headers);
-        // Assert.assertEquals(null, _bad);
+        Assert.assertEquals(null, _bad);
     }
 
     
     void init() {
         _bad = null;
+        _host = null;
         _content = null;
         _methodOrVersion = null;
         _uriOrStatus = null;

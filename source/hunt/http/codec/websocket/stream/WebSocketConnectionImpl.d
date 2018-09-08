@@ -9,15 +9,16 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.Extension;
-import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
+import hunt.http.codec.websocket.model.IncomingFrames;
+import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.ExtensionNegotiator;
 import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.net.AbstractConnection;
-// import hunt.net.ByteBufferOutputEntry;
+import hunt.net.OutputEntry;;
 import hunt.net.ConnectionEvent;
 import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
@@ -65,45 +66,49 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         ioState = new IOState();
         ioState.onOpened();
 
-        implementationMissing(false);
-
-        // extensionNegotiator.setNextOutgoingFrames((frame, callback) -> {
-        //     if (policy.getBehavior() == WebSocketBehavior.CLIENT && frame instanceof WebSocketFrame) {
-        //         WebSocketFrame webSocketFrame = (WebSocketFrame) frame;
-        //         if (!webSocketFrame.isMasked()) {
-        //             webSocketFrame.setMask(generateMask());
-        //         }
-        //     }
-        //     ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
-        //     generator.generateWholeFrame(frame, buf);
-        //     BufferUtils.flipToFlush(buf, 0);
-        //     tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
-        //     if (frame.getType() == Frame.Type.CLOSE && frame instanceof CloseFrame) {
-        //         CloseFrame closeFrame = (CloseFrame) frame;
-        //         CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
-        //         getIOState().onCloseLocal(closeInfo);
-        //         WebSocketConnectionImpl.this.close();
-        //     }
-        // });
+        extensionNegotiator.setNextOutgoingFrames(new class OutgoingFrames { 
+            void outgoingFrame(Frame frame, Callback callback) {
+            WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
+            if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
+                if (!webSocketFrame.isMasked()) {
+                    webSocketFrame.setMask(generateMask());
+                }
+            }
+            ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
+            generator.generateWholeFrame(frame, buf);
+            BufferUtils.flipToFlush(buf, 0);
+            tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
+            if (frame.getType() == Frame.Type.CLOSE) {
+                CloseFrame closeFrame = cast(CloseFrame) frame;
+                if(closeFrame !is null) {
+                    CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
+                    getIOState().onCloseLocal(closeInfo);
+                    this.outer.close();
+                }
+            }
+        }
+        });
 
         setNextIncomingFrames(nextIncomingFrames);
 
-        // if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
-        //     Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
-        //         PingFrame pingFrame = new PingFrame();
-        //         outgoingFrame(pingFrame, new class NoopCallback {
-        //             void succeeded() {
-        //                 info("The websocket connection %s sent ping frame success", getSessionId());
-        //             }
+        if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
 
-        //             void failed(Exception x) {
-        //                 log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
-        //             }
-        //         });
-        //     }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
-        //     onClose(c -> pingFuture.cancel());
-        // }
+        implementationMissing(false);
 
+            // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
+            //     PingFrame pingFrame = new PingFrame();
+            //     outgoingFrame(pingFrame, new class NoopCallback {
+            //         void succeeded() {
+            //             info("The websocket connection %s sent ping frame success", getSessionId());
+            //         }
+
+            //         void failed(Exception x) {
+            //             log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
+            //         }
+            //     });
+            // }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
+            // onClose(c -> pingFuture.cancel());
+        }
     }
 
     override
@@ -134,7 +139,6 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         return policy;
     }
 
-    override
     void outgoingFrame(Frame frame, Callback callback) {
         extensionNegotiator.getOutgoingFrames().outgoingFrame(frame, callback);
     }
@@ -162,11 +166,12 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         }
     }
 
-    override
-    void incomingError(Throwable t) {
+    void incomingError(Exception t) {
         // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingError(t));
+        IncomingFrames frames = extensionNegotiator.getIncomingFrames();
+        if(frames !is null)
+            frames.incomingError(t);
 
-        implementationMissing(false);
     }
 
     override

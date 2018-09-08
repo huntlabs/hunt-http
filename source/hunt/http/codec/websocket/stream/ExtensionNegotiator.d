@@ -17,6 +17,11 @@ import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.container;
 import hunt.util.exception;
 
+import std.algorithm;
+import std.array;
+import std.container.array;
+import std.range;
+
 /**
  * 
  */
@@ -44,9 +49,13 @@ class ExtensionNegotiator {
         this.factory = factory;
     }
 
-    List!(ExtensionConfig) negotiate(MetaData metaData) {
-        implementationMissing(false);
-        return null;
+    ExtensionConfig[] negotiate(MetaData metaData) {
+        InputRange!string fieldValues = metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString());
+
+        Array!(ExtensionConfig) configList = ExtensionConfig.parseEnum(fieldValues);
+        auto r = configList[].filter!(c => factory.isAvailable(c.getName()));
+
+        return r.array;
         // return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
         //         .stream().filter(c -> factory.isAvailable(c.getName()))
         //         .collect(Collectors.toList());

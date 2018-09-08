@@ -115,7 +115,7 @@ class HTTP2Server  : AbstractLifeCycle {
     // }
 
     override
-    protected void init() {
+    protected void initilize() {
         server.listen(host, port);
     }
 

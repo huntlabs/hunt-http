@@ -6,6 +6,8 @@ import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 
+import hunt.logging;
+
 class HostPortHttpField :HttpField {
 	HostPort _hostPort;
 
@@ -14,6 +16,8 @@ class HostPortHttpField :HttpField {
 	}
 
 	this(HttpHeader header, string name, string authority) {
+		version(HuntDebugMode)
+		tracef("name=%s, authority=%s", name, authority);
 		super(header, name, authority);
 		try {
 			_hostPort = new HostPort(authority);

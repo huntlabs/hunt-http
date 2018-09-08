@@ -62,8 +62,7 @@ abstract class AbstractExtension : AbstractLifeCycle , Extension {
         return policy;
     }
 
-    override
-    void incomingError(Throwable e) {
+    void incomingError(Exception e) {
         nextIncomingError(e);
     }
 
@@ -103,7 +102,7 @@ abstract class AbstractExtension : AbstractLifeCycle , Extension {
         return false;
     }
 
-    protected void nextIncomingError(Throwable e) {
+    protected void nextIncomingError(Exception e) {
         this.nextIncoming.incomingError(e);
     }
 

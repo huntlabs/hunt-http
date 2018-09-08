@@ -12,6 +12,12 @@ import hunt.http.codec.http.decode.SettingsBodyParser;
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.encode.PredefinedHTTP1Response;
 
+import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.model.AcceptHash;
+import hunt.http.codec.websocket.model.ExtensionConfig;
+import hunt.http.codec.websocket.model.IncomingFrames;
+import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
+
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PrefaceFrame;
 import hunt.http.codec.http.frame.SettingsFrame;
@@ -27,6 +33,7 @@ import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 import hunt.container.List;
 
+import hunt.io;
 import hunt.util.Assert;
 import hunt.util.exception;
 import hunt.util.concurrent.Promise;
@@ -35,6 +42,9 @@ import hunt.util.string;
 import hunt.util.TypeUtils;
 
 import hunt.logging;
+
+import std.algorithm;
+import std.array;
 import std.base64;
 
 
@@ -264,54 +274,62 @@ class HTTP1ServerConnection : AbstractHTTP1Connection , HTTPServerConnection {
                 }
                 return true;
             }
+
             case Protocol.WEB_SOCKET: {
-                implementationMissing();
-                // if (upgradeWebSocketComplete) {
-                //     throw new IllegalStateException("The connection has been upgraded WebSocket");
-                // }
+                if (upgradeWebSocketComplete) {
+                    throw new IllegalStateException("The connection has been upgraded WebSocket");
+                }
 
-                // Assert.isTrue(HttpMethod.GET.isSame(request.getMethod()), "The method of the request MUST be GET in the websocket handshake.");
-                // Assert.isTrue(request.getHttpVersion() == HttpVersion.HTTP_1_1, "The http version MUST be HTTP/1.1");
+                assert(HttpMethod.GET.isSame(request.getMethod()), 
+                    "The method of the request MUST be GET in the websocket handshake.");
+                assert(request.getHttpVersion() == HttpVersion.HTTP_1_1, "The http version MUST be HTTP/1.1");
 
-                // bool accept = webSocketHandler.acceptUpgrade(request, response, output, connection);
-                // if (!accept) {
-                //     return false;
-                // }
+                bool accept = webSocketHandler.acceptUpgrade(request, response, output, connection);
+                if (!accept) {
+                    return false;
+                }
 
-                // string key = request.getFields().get("Sec-WebSocket-Key");
-                // Assert.hasText(key, "Missing request header 'Sec-WebSocket-Key'");
+                string key = request.getFields().get("Sec-WebSocket-Key");
+                assert(!key.empty(), "Missing request header 'Sec-WebSocket-Key'");
 
-                // WebSocketConnectionImpl webSocketConnection = new WebSocketConnectionImpl(
-                //         secureSession, tcpSession,
-                //         null, webSocketHandler.getWebSocketPolicy(),
-                //         request, response, config);
-                // webSocketConnection.setNextIncomingFrames(new IncomingFrames() {
-                //     override
-                //     void incomingError(Throwable t) {
-                //         webSocketHandler.onError(t, webSocketConnection);
-                //     }
+                WebSocketConnectionImpl webSocketConnection = new WebSocketConnectionImpl(
+                        secureSession, tcpSession,
+                        null, webSocketHandler.getWebSocketPolicy(),
+                        request, response, config);
 
-                //     override
-                //     void incomingFrame(Frame frame) {
-                //         webSocketHandler.onFrame(frame, webSocketConnection);
-                //     }
-                // });
-                // List<ExtensionConfig> negotiatedExtensions = webSocketConnection.getExtensionNegotiator().negotiate(request);
+                webSocketConnection.setNextIncomingFrames(new class IncomingFrames {
 
-                // response.setStatus(HttpStatus.SWITCHING_PROTOCOLS_101);
-                // response.getFields().put(HttpHeader.UPGRADE, "WebSocket");
-                // response.getFields().add(HttpHeader.CONNECTION.asString(), "Upgrade");
-                // response.getFields().add(HttpHeader.SEC_WEBSOCKET_ACCEPT.asString(), AcceptHash.hashKey(key));
-                // if (!CollectionUtils.isEmpty(negotiatedExtensions)) {
-                //     negotiatedExtensions.stream().filter(e -> e.getName().equals("permessage-deflate"))
-                //                         .findFirst().ifPresent(e -> e.getParameters().clear());
-                //     response.getFields().add(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString(), ExtensionConfig.toHeaderValue(negotiatedExtensions));
-                // }
+                    void incomingError(Exception t) {
+                        webSocketHandler.onError(t, webSocketConnection);
+                    }
 
-                // IO.close(output);
-                // tcpSession.attachObject(webSocketConnection);
-                // upgradeWebSocketComplete.compareAndSet(false, true);
-                // webSocketHandler.onConnect(webSocketConnection);
+                    void incomingFrame(Frame frame) {
+                        webSocketHandler.onFrame(frame, webSocketConnection);
+                    }
+                });
+
+                ExtensionConfig[] negotiatedExtensions = webSocketConnection.getExtensionNegotiator().negotiate(request);
+
+                response.setStatus(HttpStatus.SWITCHING_PROTOCOLS_101);
+                response.getFields().put(HttpHeader.UPGRADE, "WebSocket");
+                response.getFields().add(HttpHeader.CONNECTION.asString(), "Upgrade");
+                response.getFields().add(HttpHeader.SEC_WEBSOCKET_ACCEPT.asString(), AcceptHash.hashKey(key));
+
+                if (!negotiatedExtensions.empty) {
+                    auto r = negotiatedExtensions.filter!(e => e.getName() == ("permessage-deflate"));
+                    if(!r.empty) {
+                        r.front.getParameters().clear();
+                    }
+                    // negotiatedExtensions.stream().filter(e -> e.getName().equals("permessage-deflate"))
+                    //                     .findFirst().ifPresent(e -> e.getParameters().clear());
+                    response.getFields().add(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString(), ExtensionConfig.toHeaderValue(negotiatedExtensions));
+                }
+
+                IO.close(output);
+                output.close();
+                tcpSession.attachObject(webSocketConnection);
+                upgradeWebSocketComplete = true;
+                webSocketHandler.onConnect(webSocketConnection);
                 return true;
             }
             default:

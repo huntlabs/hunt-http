@@ -11,7 +11,7 @@ import hunt.util.exception;
 import hunt.logging;
 import std.conv;
 
-abstract class HTTPOutputStream :OutputStream {
+abstract class HTTPOutputStream : OutputStream {
 
     protected bool clientMode;
     protected MetaData info;

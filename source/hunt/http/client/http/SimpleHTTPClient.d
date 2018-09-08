@@ -1121,7 +1121,7 @@ class SimpleHTTPClient  : AbstractLifeCycle {
     // }
 
     override
-    protected void init() {
+    protected void initilize() {
         // auto r = config.getHealthCheck();
         // if(r !is null)
         //     r.start();

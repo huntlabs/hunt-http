@@ -44,7 +44,7 @@ class WebSocketHandler {
     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
                                   HTTPOutputStream output,
                                   HTTPConnection connection) {
-        info("The connection %s will upgrade to WebSocket connection", connection.getSessionId());
+        infof("The connection %s will upgrade to WebSocket connection", connection.getSessionId());
         return true;
     }
 

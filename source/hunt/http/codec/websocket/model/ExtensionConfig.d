@@ -6,8 +6,11 @@ import hunt.container;
 import hunt.util.exception;
 import hunt.util.string;
 
+import std.array;
+import std.container.array;
 import std.conv;
 import std.range;
+import std.string;
 
 /**
  * Represents an Extension Configuration, as seen during the connection Handshake process.
@@ -29,21 +32,21 @@ class ExtensionConfig {
      * @param valuesEnum the raw header values enum
      * @return the list of extension configs
      */
-    // static List<ExtensionConfig> parseEnum(Enumeration<string> valuesEnum) {
-    //     List<ExtensionConfig> configs = new ArrayList<>();
+    static Array!ExtensionConfig parseEnum(InputRange!string valuesEnum) {
+        Array!(ExtensionConfig) configs;
 
-    //     if (valuesEnum !is null) {
-    //         while (valuesEnum.hasMoreElements()) {
-    //             Iterator<string> extTokenIter = QuoteUtil.splitAt(valuesEnum.nextElement(), ",");
-    //             while (extTokenIter.hasNext()) {
-    //                 string extToken = extTokenIter.next();
-    //                 configs.add(ExtensionConfig.parse(extToken));
-    //             }
-    //         }
-    //     }
+        if (valuesEnum !is null) {
+            foreach(string value; valuesEnum) {
+                InputRange!string extTokenIter = QuoteUtil.splitAt(value, ",");
+                foreach(string extToken; extTokenIter) {
+                    // configs.add(ExtensionConfig.parse(extToken));
+                    configs.insert(ExtensionConfig.parse(extToken));
+                }
+            }
+        }
 
-    //     return configs;
-    // }
+        return configs;
+    }
 
     /**
      * Parse 1 or more raw <code>Sec-WebSocket-Extensions</code> header values into a {@link ExtensionConfig} list
@@ -71,21 +74,21 @@ class ExtensionConfig {
      * @param configs the list of extension configs
      * @return the header value (null if no configs present)
      */
-    // static string toHeaderValue(List<ExtensionConfig> configs) {
-    //     if ((configs is null) || (configs.isEmpty())) {
-    //         return null;
-    //     }
-    //     StringBuilder parameters = new StringBuilder();
-    //     bool needsDelim = false;
-    //     for (ExtensionConfig ext : configs) {
-    //         if (needsDelim) {
-    //             parameters.append(", ");
-    //         }
-    //         parameters.append(ext.getParameterizedName());
-    //         needsDelim = true;
-    //     }
-    //     return parameters.toString();
-    // }
+    static string toHeaderValue(ExtensionConfig[] configs) {
+        if (configs.empty()) {
+            return null;
+        }
+        Appender!(string)  parameters;
+        bool needsDelim = false;
+        foreach (ExtensionConfig ext ; configs) {
+            if (needsDelim) {
+                parameters.put(", ");
+            }
+            parameters.put(ext.getParameterizedName());
+            needsDelim = true;
+        }
+        return parameters.data;
+    }
 
     private string name;
     private Map!(string, string) parameters;
@@ -97,27 +100,31 @@ class ExtensionConfig {
      */
     this(ExtensionConfig copy) {
         this.name = copy.name;
-        // this.parameters = new HashMap<>();
-        // this.parameters.putAll(copy.parameters);
+        this.parameters = new HashMap!(string, string)();
+        this.parameters.putAll(copy.parameters);
     }
 
     this(string parameterizedName) {
-        implementationMissing(false);
-        // Iterator<string> extListIter = QuoteUtil.splitAt(parameterizedName, ";");
-        // this.name = extListIter.next();
+        InputRange!string extListIter = QuoteUtil.splitAt(parameterizedName, ";");
+        this.name = extListIter.front();
         this.parameters = new HashMap!(string, string)();
 
         // now for parameters
-        // while (extListIter.hasNext()) {
-        //     string extParam = extListIter.next();
-        //     Iterator<string> extParamIter = QuoteUtil.splitAt(extParam, "=");
-        //     string key = extParamIter.next().trim();
-        //     string value = null;
-        //     if (extParamIter.hasNext()) {
-        //         value = extParamIter.next();
-        //     }
-        //     parameters.put(key, value);
-        // }
+        extListIter.popFront();
+        while (!extListIter.empty()) {
+            string extParam = extListIter.front();
+            InputRange!string extParamIter = QuoteUtil.splitAt(extParam, "=");
+
+            string key = extParamIter.front().strip();
+            extParamIter.popFront();
+
+            string value = null;
+            if (!extParamIter.empty()) {
+                value = extParamIter.front();
+            }
+            parameters.put(key, value);
+            extListIter.popFront();
+        }
     }
 
     string getName() {
@@ -173,7 +180,7 @@ class ExtensionConfig {
      *
      * @param other the other configuration.
      */
-    final void init(ExtensionConfig other) {
+    final void initilize(ExtensionConfig other) {
         this.parameters.clear();
         this.parameters.putAll(other.parameters);
     }
@@ -190,8 +197,8 @@ class ExtensionConfig {
         parameters.put(key, value);
     }
 
-    // override
-    // string toString() {
-    //     return getParameterizedName();
-    // }
+    override
+    string toString() {
+        return getParameterizedName();
+    }
 }
