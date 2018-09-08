@@ -61,44 +61,56 @@ class ExtensionNegotiator {
         //         .collect(Collectors.toList());
     }
 
-    List!(Extension) parse(MetaData metaData) {
+    Extension[] parse(MetaData metaData) {
         assert(nextIncomingFrames !is null, "The next incoming frames MUST be not null");
         assert(nextOutgoingFrames !is null, "The next outgoing frames MUST be not null");
 
-        List!(Extension) extensions = _parse(metaData);
-        if (extensions !is null && extensions.size() > 0) {
-            for (int i = 0; i < extensions.size(); i++) {
-                int next = i + 1;
-                if (next < extensions.size() - 1) {
-                    extensions.get(i).setNextIncomingFrames(extensions.get(next));
+        Extension[] extensions = _parse(metaData);
+        if (!extensions.empty) {
+            size_t len = extensions.length;
+            for (size_t i = 0; i < len; i++) {
+                size_t next = i + 1;
+                if (next < len - 1) {
+                    extensions[i].setNextIncomingFrames(extensions[next]);
                 } else {
-                    extensions.get(i).setNextIncomingFrames(nextIncomingFrames);
+                    extensions[i].setNextIncomingFrames(nextIncomingFrames);
                 }
             }
-            incomingFrames = extensions.get(0);
+            incomingFrames = extensions[0];
 
-            for (int i = extensions.size() - 1; i >= 0; i--) {
-                int next = i - 1;
+            for (size_t i = len - 1; i >= 0; i--) {
+                size_t next = i - 1;
                 if (next > 0) {
-                    extensions.get(i).setNextOutgoingFrames(extensions.get(next));
+                    extensions[i].setNextOutgoingFrames(extensions[next]);
                 } else {
-                    extensions.get(i).setNextOutgoingFrames(nextOutgoingFrames);
+                    extensions[i].setNextOutgoingFrames(nextOutgoingFrames);
                 }
             }
-            outgoingFrames = extensions.get(extensions.size() - 1);
+            outgoingFrames = extensions[len - 1];
             return extensions;
         } else {
             incomingFrames = nextIncomingFrames;
             outgoingFrames = nextOutgoingFrames;
-            return new EmptyList!Extension();
+            return [];
         }
     }
 
-    protected List!(Extension) _parse(MetaData metaData) {
+    protected Extension[] _parse(MetaData metaData) {
 
-        implementationMissing(false);
-        return null;
-        // return parseEnum(metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString()))
+        InputRange!string fieldValues = metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString());
+        Array!(ExtensionConfig) configList = ExtensionConfig.parseEnum(fieldValues);
+        auto r = configList[].filter!(c => factory.isAvailable(c.getName()))
+            .map!(delegate Extension (ExtensionConfig c) {
+                Extension e = factory.newInstance(c);
+                AbstractExtension abstractExtension = cast(AbstractExtension) e;
+                if (abstractExtension !is null) 
+                    abstractExtension.setConfig(c);
+                return e;
+            });
+
+        return r.array;
+
+        // return parseEnum()
         //         .stream().filter(c -> factory.isAvailable(c.getName()))
         //         .map(c -> {
         //             Extension e = factory.newInstance(c);

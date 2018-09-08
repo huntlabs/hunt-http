@@ -32,6 +32,7 @@ import hunt.util.functional;
 
 import std.random; 
 import std.socket;
+import std.array;
 
 /**
  * 
@@ -152,13 +153,18 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
             } else {
                 metaData = upgradeRequest;
             }
-            List!(Extension) extensions = extensionNegotiator.parse(metaData);
-            if (!extensions.isEmpty()) {
+            Extension[] extensions = extensionNegotiator.parse(metaData);
+            if (!extensions.empty()) {
                 generator.configureFromExtensions(extensions);
                 parser.configureFromExtensions(extensions);
 
-
-        implementationMissing(false);
+                foreach(Extension e; extensions) {
+                    AbstractExtension ae = cast(AbstractExtension)e;
+                    if(ae is null) continue;
+                    ae.setPolicy(policy);
+                }
+                // auto r = extensions.filter!(e => instanceof!(AbstractExtension)(e))
+                //     .map!(e => cast(AbstractExtension)e);
                 // extensions.stream().filter(e -> e instanceof AbstractExtension)
                 //           .map(e -> (AbstractExtension) e)
                 //           .forEach(e -> e.setPolicy(policy));
@@ -166,12 +172,12 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         }
     }
 
+
     void incomingError(Exception t) {
         // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingError(t));
         IncomingFrames frames = extensionNegotiator.getIncomingFrames();
         if(frames !is null)
             frames.incomingError(t);
-
     }
 
     override
@@ -182,6 +188,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
                 outgoingFrame(pongFrame, Callback.NOOP);
             }
             break;
+
             case FrameType.CLOSE: {
                 CloseFrame closeFrame = cast(CloseFrame) frame;
                 CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
@@ -189,6 +196,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
                 this.close();
             }
             break;
+
             case FrameType.PONG: {
                 info("The websocket connection %s received pong frame", getSessionId());
             }
@@ -196,6 +204,7 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
 
             default: break;
         }
+        
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
         if(e !is null)
             e.incomingFrame(frame);

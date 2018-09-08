@@ -141,7 +141,7 @@ class Generator {
         }
     }
 
-    void configureFromExtensions(List!Extension exts) {
+    void configureFromExtensions(Extension[] exts) {
         // default
         flagsInUse = 0x00;
 

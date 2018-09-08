@@ -56,7 +56,7 @@ abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
     //     return availableExtensions.values().iterator();
     // }
 
-    // abstract Extension newInstance(ExtensionConfig config);
+    abstract Extension newInstance(ExtensionConfig config);
 
     // void register(string name, Class<? : Extension> extension) {
     //     availableExtensions.put(name, extension);

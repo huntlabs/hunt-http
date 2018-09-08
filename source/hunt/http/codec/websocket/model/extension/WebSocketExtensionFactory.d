@@ -11,14 +11,14 @@ import std.array;
 
 class WebSocketExtensionFactory : ExtensionFactory {
 
-    // override
+    override
     Extension newInstance(ExtensionConfig config) {
         if (config is null) {
             return null;
         }
 
         string name = config.getName();
-        if (!name.empty()) {
+        if (name.empty()) {
             return null;
         }
 

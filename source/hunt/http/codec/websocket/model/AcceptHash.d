@@ -1,10 +1,11 @@
 module hunt.http.codec.websocket.model.AcceptHash;
 
-// import hunt.http.utils.codec.B64Code;
 
-// import java.nio.charset.StandardCharsets;
 // import hunt.security.MessageDigest;
 import hunt.util.exception;
+
+import std.base64;
+import std.digest.sha;
 
 /**
  * Logic for working with the <code>Sec-WebSocket-Key</code> and <code>Sec-WebSocket-Accept</code> headers.
@@ -17,7 +18,7 @@ class AcceptHash {
      * <p>
      * See <a href="https://tools.ietf.org/html/rfc6455#section-1.3">Opening Handshake (Section 1.3)</a>
      */
-    private enum byte[] MAGIC = cast(byte[])"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    private enum const(ubyte)[] MAGIC = cast(const(ubyte)[])"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
     /**
      * Concatenate the provided key with the Magic GUID and return the Base64 encoded form.
@@ -26,15 +27,17 @@ class AcceptHash {
      * @return the <code>Sec-WebSocket-Accept</code> header response (per opening handshake spec)
      */
     static string hashKey(string key) {
-        // try {
-        //     MessageDigest md = MessageDigest.getInstance("SHA1");
-        //     md.update(key.getBytes(StandardCharsets.UTF_8));
-        //     md.update(MAGIC);
-        //     return new string(B64Code.encode(md.digest()));
-        // } catch (Exception e) {
-        //     throw new RuntimeException(e);
-        // }
-        implementationMissing(false);
-        return "";
+        try {
+            SHA1 hash;
+            hash.start();
+            hash.put(cast(const(ubyte)[])key);
+            hash.put(MAGIC);
+            ubyte[20] result = hash.finish();
+            const(char)[] encoded = Base64.encode(result);
+            return cast(string)encoded;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
