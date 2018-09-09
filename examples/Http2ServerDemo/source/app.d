@@ -41,7 +41,9 @@ void main(string[] args)
         new class WebSocketHandler {
             override
             void onConnect(WebSocketConnection webSocketConnection) {
-                webSocketConnection.sendText("OK").thenAccept( (r) { tracef("Server sends text frame success."); });
+                webSocketConnection.sendText("Say hi from Hunt.HTTP.").thenAccept( 
+                    (r) { tracef("Server sends text frame success."); }
+                );
             }
 
             override
@@ -50,13 +52,14 @@ void main(string[] args)
                 switch (type) {
                     case FrameType.TEXT: {
                         TextFrame textFrame = cast(TextFrame) frame;
-                        tracef("Server received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
-                        assert(textFrame.getPayloadAsUTF8() == ("Hello WebSocket"));
+                        string msg = textFrame.getPayloadAsUTF8();
+                        tracef("Server received: " ~ textFrame.toString() ~ ", " ~ msg);
+                        connection.sendText(msg); // echo back
                         break;
                     }
 
                     default: 
-                        warningf("Can't handle ", type);
+                        warningf("Can't handle the frame of ", type);
                         break;
                 }
 

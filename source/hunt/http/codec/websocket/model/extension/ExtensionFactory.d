@@ -13,6 +13,7 @@ import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 import hunt.container.Map;
 import hunt.container.HashMap;
 import hunt.logging;
+import hunt.util.exception;
 
 
 abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
@@ -20,6 +21,7 @@ abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
 
     this() {
         availableExtensions = new HashMap!(string, AbstractExtension)();
+        implementationMissing(false);
         // for (Extension ext : extensionLoader) {
         //     if (ext !is null) {
         //         availableExtensions.put(ext.getName(), ext.getClass());

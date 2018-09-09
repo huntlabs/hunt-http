@@ -11,18 +11,15 @@ import hunt.http.server.http.WebSocketHandler;
 import hunt.http.codec.common.CommonDecoder;
 import hunt.http.codec.common.CommonEncoder;
 import hunt.http.codec.http.stream.HTTP2Configuration;
-// import hunt.http.codec.websocket.decode.WebSocketDecoder;
+import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.container.ByteBuffer;
 // import hunt.container.BufferUtils;
 
 import hunt.net.AsynchronousTcpSession;
-// import hunt.net.Server;
-// import hunt.net.Net;
 import hunt.net;
 
 import hunt.logging;
-
 import hunt.util.exception;
 import hunt.util.LifeCycle;
 
@@ -62,7 +59,7 @@ class HTTP2Server  : AbstractLifeCycle {
         this.port = port;
         http2ServerHandler = new HTTP2ServerHandler(c, listener, serverHTTPHandler, webSocketHandler);
 
-        HTTP1ServerDecoder httpServerDecoder = new HTTP1ServerDecoder(null, new HTTP2ServerDecoder());
+        HTTP1ServerDecoder httpServerDecoder = new HTTP1ServerDecoder(new WebSocketDecoder(), new HTTP2ServerDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
         c.getTcpConfiguration().setDecoder(commonDecoder);
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
