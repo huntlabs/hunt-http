@@ -2,25 +2,14 @@
 
 
 ## TODO
-- [x] hunt.container
-- [ ] hunt.util.concurrent: CompletableFuture, IdleTimeout, Scheduler
-- [ ] hunt.http.codec.websocket
-- [x] hunt.http.client.http
-- [ ] hunt.http.client.websocket
-- [x] hunt.http.server.http
-- [ ] hunt.http.server.websocket
-- [ ] hunt.http.server.http.router
-- [ ] SecureSessionFactory
-- [x] TestHttpField
-- [x] HttpFieldsTest
-- [x] QuotedCSV
-- [x] HttpURIParseTest
-- [x] HttpURITest
-- [x] TestHuffman
-- [x] HpackContextTest
-- [x] CookieTest
-- [x] HttpParserTest
-- [x] HTTP2DecoderTest
-- [x] HpackTest
+- [x] Implement HTTP1 server/client
+- [x] Implement HTTP2 server/client
+- [x] Implement WebSocket server/client
 - [x] H2C Demo
+- [x] WebSocket Demo
 - [x] SimpleHTTP Demo
+- [x] TLS Demo
+- [ ] Improve some modules's names
+- [ ] Implement more secure modules in pure D
+- [ ] Implement more unit tests
+- [ ] Move out SimpleXXX modules
