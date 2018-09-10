@@ -15,9 +15,4 @@ public import hunt.http.client.http.Http2ClientSession;
 public import hunt.http.client.http.HttpClientConnection;
 public import hunt.http.client.http.HttpClientRequest;
 public import hunt.http.client.http.HttpClientResponse;
-public import hunt.http.client.http.HttpClientSingleton;
-public import hunt.http.client.http.HttpsClientSingleton;
-public import hunt.http.client.http.PlaintextHttp2ClientSingleton;
-public import hunt.http.client.http.SimpleHttpClient;
-public import hunt.http.client.http.SimpleHttpClientConfiguration;
-public import hunt.http.client.http.SimpleResponse;
+

@@ -28,7 +28,6 @@ import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
-import test.http.router.TestMatcher;
 
 import hunt.util.exception;
 import hunt.logging;
@@ -85,10 +84,6 @@ void main()
 	// testUnits!SettingsGenerateParseTest();
 	// testUnits!URLEncodedTest();
 
-	// **********************
-	// test.http.router.*
-	// **********************
-	// testUnits!TestMatcher(); 
 
 	// **********************
 	// test.codec.websocket.*

@@ -12,4 +12,4 @@
 - [ ] Improve some modules's names
 - [ ] Implement more secure modules in pure D
 - [ ] Implement more unit tests
-- [ ] Move out SimpleXXX modules
+- [x] Move out SimpleXXX modules

@@ -19,7 +19,6 @@ import hunt.util.concurrent.FuturePromise;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.secure.conscrypt;
 
-import hunt.http.helper;
 import hunt.datetime;
 import hunt.logging;
 
