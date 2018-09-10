@@ -1,0 +1,33 @@
+{
+	"name": "websocketdemo",
+    "authors": [
+        "Hunt Labs"
+    ],
+	"description": "A demo for WebSocket Client/Server with Hunt-http.",
+	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"hunt-http" :{"path": "../../"}
+	},
+	"versions": [
+		"HuntDebugMode"
+	],
+	"configurations": [
+		{
+			"name": "client",
+			"targetName": "websocket-client",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/server.d"
+			]
+		},
+		{
+			"name": "server",
+			"targetName": "websocket-server",
+			"targetType": "executable",
+			"excludedSourceFiles": [
+				"source/client.d"
+			]
+		}
+	]
+}

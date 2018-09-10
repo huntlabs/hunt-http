@@ -1,0 +1,14 @@
+.dub
+docs.json
+__dummy.html
+docs/
+websocketdemo.so
+websocketdemo.dylib
+websocketdemo.dll
+websocketdemo.a
+websocketdemo.lib
+websocketdemo-test-*
+*.exe
+*.o
+*.obj
+*.lst
