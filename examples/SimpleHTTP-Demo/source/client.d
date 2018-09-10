@@ -1,5 +1,5 @@
 
-import hunt.http.client.http.SimpleHTTPClient;
+import hunt.http.client.http.SimpleHttpClient;
 import hunt.http.client.http.SimpleResponse;
 
 import hunt.util.concurrent.Promise;
@@ -15,7 +15,7 @@ void main(string[] args) {
 	enum host = "127.0.0.1";
 	enum port = "3333";
 
-	SimpleHTTPClient client = new SimpleHTTPClient();
+	SimpleHttpClient client = new SimpleHttpClient();
 
 	trace("step 1.....");
 	for (int i = 0; i < 1; i++) {

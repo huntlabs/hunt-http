@@ -4,8 +4,8 @@ import hunt.http.server.http.SimpleResponse;
 import hunt.http.server.http.WebSocketHandler;
 
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.util.exception;
 import hunt.util.string;
@@ -21,7 +21,7 @@ class SimpleRequest {
 
     Request request;
     SimpleResponse response;
-    HTTPConnection connection;
+    HttpConnection connection;
     Action1!ByteBuffer content;
     Action1!SimpleRequest contentComplete;
     Action1!SimpleRequest messageComplete;
@@ -33,8 +33,8 @@ class SimpleRequest {
     string[string] attributes; // = new ConcurrentHashMap<>();
 
     this(Request request, Response response,
-                         HTTPOutputStream output,
-                         HTTPConnection connection) {
+                         HttpOutputStream output,
+                         HttpConnection connection) {
         requestBody = new ArrayList!(ByteBuffer)();
         this.request = request;
         response.setStatus(HttpStatus.OK_200);
@@ -119,7 +119,7 @@ class SimpleRequest {
         return response;
     }
 
-    HTTPConnection getConnection() {
+    HttpConnection getConnection() {
         return connection;
     }
 

@@ -33,8 +33,8 @@ examples/Http2ServerDemo/server-demo
 examples/Http2ClientDemo/client-demo
 examples/H2C-Demo/h2c-client
 examples/H2C-Demo/h2c-server
-examples/SimpleHTTP-Demo/simple-client
-examples/SimpleHTTP-Demo/simple-server
+examples/SimpleHttp-Demo/simple-client
+examples/SimpleHttp-Demo/simple-server
 examples/TLS-Demo/tls-client
 examples/TLS-Demo/tls-server
 examples/WebSocketDemo/websocket-client

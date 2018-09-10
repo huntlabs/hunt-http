@@ -1,6 +1,6 @@
 module hunt.http.server.http.router.SessionStore;
 
-import hunt.http.server.http.router.HTTPSession;
+import hunt.http.server.http.router.HttpSession;
 import hunt.util.LifeCycle;
 
 
@@ -11,9 +11,9 @@ interface SessionStore : LifeCycle {
 
     bool remove(string key);
 
-    bool put(string key, HTTPSession value);
+    bool put(string key, HttpSession value);
 
-    HTTPSession get(string key);
+    HttpSession get(string key);
 
     int size();
 

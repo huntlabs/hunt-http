@@ -2,10 +2,10 @@ module client;
 
 import std.stdio;
 
-import hunt.http.client.http.ClientHTTP2SessionListener;
-import hunt.http.client.http.HTTP2Client;
-import hunt.http.client.http.HTTP2ClientConnection;
-import hunt.http.client.http.HTTPClientConnection;
+import hunt.http.client.http.ClientHttp2SessionListener;
+import hunt.http.client.http.Http2Client;
+import hunt.http.client.http.Http2ClientConnection;
+import hunt.http.client.http.HttpClientConnection;
 
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
@@ -25,16 +25,16 @@ void main(string[] args) {
 	enum host = "127.0.0.1";
 	enum port = 6677;
 
-	HTTP2Configuration http2Configuration = new HTTP2Configuration();
+	Http2Configuration http2Configuration = new Http2Configuration();
 	http2Configuration.setSecureConnectionEnabled(false);
 	http2Configuration.setFlowControlStrategy("simple");
 	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
 
-	FuturePromise!(HTTPClientConnection) promise = new FuturePromise!(HTTPClientConnection)();
-	HTTP2Client client = new HTTP2Client(http2Configuration);
+	FuturePromise!(HttpClientConnection) promise = new FuturePromise!(HttpClientConnection)();
+	Http2Client client = new Http2Client(http2Configuration);
 
-	client.connect(host, port, promise, new class ClientHTTP2SessionListener {
+	client.connect(host, port, promise, new class ClientHttp2SessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {
@@ -88,8 +88,8 @@ void main(string[] args) {
 	MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
 			new HostPortHttpField(format("%s:%d", host, port)), "/data", HttpVersion.HTTP_2, fields);
 
-	HTTPConnection connection = promise.get();
-	HTTP2ClientConnection clientConnection = cast(HTTP2ClientConnection) connection;
+	HttpConnection connection = promise.get();
+	Http2ClientConnection clientConnection = cast(Http2ClientConnection) connection;
 
 	FuturePromise!(Stream) streamPromise = new FuturePromise!(Stream)();
 	auto http2Session = clientConnection.getHttp2Session();

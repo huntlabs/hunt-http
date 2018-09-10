@@ -1,4 +1,4 @@
-import hunt.http.server.http.SimpleHTTPServer;
+import hunt.http.server.http.SimpleHttpServer;
 import hunt.http.server.http.router.RoutingContext;
 
 import hunt.http.helper;

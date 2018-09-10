@@ -3,7 +3,7 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.codec.http.model.MimeTypes;
 
-import hunt.http.server.http.SimpleHTTPServer;
+import hunt.http.server.http.SimpleHttpServer;
 import hunt.http.server.http.SimpleRequest;
 import hunt.http.server.http.SimpleResponse;
 
@@ -19,7 +19,7 @@ import std.stdio;
 
 void main(string[] args)
 {
-	SimpleHTTPServer server = new SimpleHTTPServer();
+	SimpleHttpServer server = new SimpleHttpServer();
         server.headerComplete( (SimpleRequest req) {
             List!(ByteBuffer) list = new ArrayList!ByteBuffer();
             req.onContent( (ByteBuffer b) {

@@ -2,13 +2,13 @@ module test.http.router.handler.session;
 
 import hunt.http.$;
 import hunt.http.codec.http.model.Cookie;
-import hunt.http.server.http.HTTP2ServerBuilder;
-import hunt.http.server.http.router.HTTPSession;
-import hunt.http.server.http.router.handler.session.HTTPSessionConfiguration;
-import hunt.http.server.http.router.handler.session.LocalHTTPSessionHandler;
+import hunt.http.server.http.Http2ServerBuilder;
+import hunt.http.server.http.router.HttpSession;
+import hunt.http.server.http.router.handler.session.HttpSessionConfiguration;
+import hunt.http.server.http.router.handler.session.LocalHttpSessionHandler;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import hunt.container.List;
 import java.util.concurrent.Phaser;
@@ -18,21 +18,21 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestLocalHTTPSessionHandler extends AbstractHTTPHandlerTest {
+public class TestLocalHttpSessionHandler extends AbstractHttpHandlerTest {
 
     
     public void test() {
         int maxGetSession = 3;
         Phaser phaser = new Phaser(1 + maxGetSession);
-        HTTP2ServerBuilder httpsServer = $.httpsServer();
-        LocalHTTPSessionHandler sessionHandler = new LocalHTTPSessionHandler(new HTTPSessionConfiguration());
+        Http2ServerBuilder httpsServer = $.httpsServer();
+        LocalHttpSessionHandler sessionHandler = new LocalHttpSessionHandler(new HttpSessionConfiguration());
         httpsServer.router().path("*").handler(sessionHandler)
                    .router().post("/session/:name")
                    .handler(ctx -> {
                        string name = ctx.getRouterParameter("name");
                        writeln("the path param -> " ~ name);
                        Assert.assertThat(name, is("foo"));
-                       HTTPSession session = ctx.getSessionNow();
+                       HttpSession session = ctx.getSessionNow();
                        session.getAttributes().put(name, "bar");
                        session.setMaxInactiveInterval(1);
                        ctx.updateSessionNow(session);
@@ -42,7 +42,7 @@ public class TestLocalHTTPSessionHandler extends AbstractHTTPHandlerTest {
                    .handler(ctx -> {
                        string name = ctx.getRouterParameter("name");
                        Assert.assertThat(name, is("foo"));
-                       HTTPSession session = ctx.getSessionNow();
+                       HttpSession session = ctx.getSessionNow();
                        if (session != null) {
                            Assert.assertThat(session.getAttributes().get("foo"), is("bar"));
                            ctx.end("session value is " ~ session.getAttributes().get("foo"));

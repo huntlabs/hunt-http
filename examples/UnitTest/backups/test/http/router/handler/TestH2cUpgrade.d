@@ -3,11 +3,11 @@ module test.http.router.handler;
 import hunt.http.client.http2;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.container.BufferUtils;
 import hunt.util.Assert;
@@ -29,7 +29,7 @@ import hunt.http.utils.io.BufferUtils.toBuffer;
 /**
  * 
  */
-public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
+public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
     private static final int timeout = 20 * 1000;
     private static final int corePoolSize = 4;
@@ -37,14 +37,14 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
 
     
     public void test() {
-        HTTP2Server server = createServer();
-        HTTP2Client client = createClient();
+        Http2Server server = createServer();
+        Http2Client client = createClient();
 
-        FuturePromise<HTTPClientConnection> promise = new FuturePromise<>();
+        FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect(host, port, promise);
 
-        final HTTPClientConnection httpConnection = promise.get();
-        final HTTP2ClientConnection clientConnection = upgradeHttp2(client.getHttp2Configuration(), httpConnection);
+        final HttpClientConnection httpConnection = promise.get();
+        final Http2ClientConnection clientConnection = upgradeHttp2(client.getHttp2Configuration(), httpConnection);
 
         Phaser phaser = new Phaser(loop * 3 + 1);
         clientConnection.onClose(c -> {
@@ -72,7 +72,7 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
         client.stop();
     }
 
-    private static class TestH2cHandler extends ClientHTTPHandler.Adapter {
+    private static class TestH2cHandler extends ClientHttpHandler.Adapter {
 
         protected final ByteBuffer[] buffers;
         protected final List!(ByteBuffer) contentList = new ArrayList<>();
@@ -86,12 +86,12 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
         }
 
         override
-        public void continueToSendData(MetaData.Request request, MetaData.Response response, HTTPOutputStream output,
-                                       HTTPConnection connection) {
+        public void continueToSendData(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+                                       HttpConnection connection) {
             writeln("client received 100 continue");
             if (buffers != null) {
                 writeln("buffers: " ~ buffers.length);
-                try (HTTPOutputStream out = output) {
+                try (HttpOutputStream out = output) {
                     for (ByteBuffer buf : buffers) {
                         out.write(buf);
                     }
@@ -104,8 +104,8 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
 
         override
         public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
-                               HTTPOutputStream output,
-                               HTTPConnection connection) {
+                               HttpOutputStream output,
+                               HttpConnection connection) {
             writeln("client received data: " ~ BufferUtils.toUTF8String(item));
             contentList.add(item);
             return false;
@@ -113,41 +113,41 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
 
         override
         public void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,
-                               HTTPOutputStream output, HTTPConnection connection) {
+                               HttpOutputStream output, HttpConnection connection) {
             writeln("Client received the bad message. " ~ reason);
         }
 
         override
         public void earlyEOF(MetaData.Request request, MetaData.Response response,
-                             HTTPOutputStream output,
-                             HTTPConnection connection) {
+                             HttpOutputStream output,
+                             HttpConnection connection) {
             writeln("Client is early EOF. ");
         }
 
     }
 
-    private HTTP2Client createClient() {
-        final HTTP2Configuration config = new HTTP2Configuration();
+    private Http2Client createClient() {
+        final Http2Configuration config = new Http2Configuration();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
-        return new HTTP2Client(config);
+        return new Http2Client(config);
     }
 
-    private HTTP2ClientConnection upgradeHttp2(HTTP2Configuration http2Configuration, HTTPClientConnection httpConnection) {
-        HTTPClientRequest request = new HTTPClientRequest("GET", "/index");
+    private Http2ClientConnection upgradeHttp2(Http2Configuration http2Configuration, HttpClientConnection httpConnection) {
+        HttpClientRequest request = new HttpClientRequest("GET", "/index");
 
         Map<Integer, Integer> settings = new HashMap<>();
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
         settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
         SettingsFrame settingsFrame = new SettingsFrame(settings, false);
 
-        FuturePromise<HTTP2ClientConnection> http2Promise = new FuturePromise<>();
+        FuturePromise<Http2ClientConnection> http2Promise = new FuturePromise<>();
 
-        ClientHTTPHandler upgradeHandler = new TestH2cHandler() {
+        ClientHttpHandler upgradeHandler = new TestH2cHandler() {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 printResponse(request, response, BufferUtils.toString(contentList));
                 Assert.assertThat(response.getStatus(), is(HttpStatus.SWITCHING_PROTOCOLS_101));
                 Assert.assertThat(response.getFields().get(HttpHeader.UPGRADE), is("h2c"));
@@ -155,11 +155,11 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
             }
         };
 
-        ClientHTTPHandler h2ResponseHandler = new TestH2cHandler() {
+        ClientHttpHandler h2ResponseHandler = new TestH2cHandler() {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 writeln("Client received init status: " ~ response.getStatus());
                 string content = BufferUtils.toString(contentList);
                 printResponse(request, response, content);
@@ -169,12 +169,12 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
             }
         };
 
-        httpConnection.upgradeHTTP2(request, settingsFrame, http2Promise, upgradeHandler, h2ResponseHandler);
+        httpConnection.upgradeHttp2(request, settingsFrame, http2Promise, upgradeHandler, h2ResponseHandler);
         writeln("get the h2 connection");
         return http2Promise.get();
     }
 
-    private void test404(Phaser phaser, HTTP2ClientConnection clientConnection) {
+    private void test404(Phaser phaser, Http2ClientConnection clientConnection) {
         writeln("Client test 404.");
         MetaData.Request get = new MetaData.Request("GET", HttpScheme.HTTP,
                 new HostPortHttpField(host ~ ":" ~ port),
@@ -182,8 +182,8 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
         clientConnection.send(get, new TestH2cHandler() {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 printResponse(request, response, BufferUtils.toString(contentList));
                 Assert.assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND_404));
                 phaser.arrive();
@@ -193,7 +193,7 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
         });
     }
 
-    private void sendData(Phaser phaser, HTTP2ClientConnection clientConnection) throws UnsupportedEncodingException {
+    private void sendData(Phaser phaser, Http2ClientConnection clientConnection) throws UnsupportedEncodingException {
         writeln("Client sends data.");
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
@@ -205,14 +205,14 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
                 ByteBuffer.wrap("finished test data 2".getBytes("UTF-8"))}, new TestH2cHandler() {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 return dataComplete(phaser, BufferUtils.toString(contentList), request, response);
             }
         });
     }
 
-    private void sendDataWithContinuation(Phaser phaser, HTTP2ClientConnection clientConnection) throws UnsupportedEncodingException {
+    private void sendDataWithContinuation(Phaser phaser, Http2ClientConnection clientConnection) throws UnsupportedEncodingException {
         writeln("Client sends data with continuation");
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
@@ -224,8 +224,8 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
                 ByteBuffer.wrap("big hello world!".getBytes("UTF-8"))}) {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 return dataComplete(phaser, BufferUtils.toString(contentList), request, response);
             }
         });
@@ -249,42 +249,42 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
         return true;
     }
 
-    private HTTP2Server createServer() {
-        final HTTP2Configuration config = new HTTP2Configuration();
+    private Http2Server createServer() {
+        final Http2Configuration config = new Http2Configuration();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
-        HTTP2Server server = new HTTP2Server(host, port, config, new ServerHTTPHandlerAdapter() {
+        Http2Server server = new Http2Server(host, port, config, new ServerHttpHandlerAdapter() {
 
             override
             public void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,
-                                   HTTPOutputStream output, HTTPConnection connection) {
+                                   HttpOutputStream output, HttpConnection connection) {
                 writeln("Server received the bad message. " ~ reason);
             }
 
             override
             public void earlyEOF(MetaData.Request request, MetaData.Response response,
-                                 HTTPOutputStream output,
-                                 HTTPConnection connection) {
+                                 HttpOutputStream output,
+                                 HttpConnection connection) {
                 writeln("Server is early EOF. ");
             }
 
             override
-            public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response, HTTPOutputStream output,
-                                   HTTPConnection connection) {
+            public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+                                   HttpConnection connection) {
 //                writeln("Server received data: " ~ BufferUtils.toString(item, StandardCharsets.UTF_8));
                 return false;
             }
 
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response, HTTPOutputStream outputStream,
-                                           HTTPConnection connection) {
+            public bool messageComplete(MetaData.Request request, MetaData.Response response, HttpOutputStream outputStream,
+                                           HttpConnection connection) {
                 writeln("Server received request: " ~ request ~ ", " ~ outputStream.getClass() ~ ", " ~ connection.getHttpVersion());
                 HttpURI uri = request.getURI();
                 switch (uri.getPath()) {
                     case "/index":
                         response.setStatus(HttpStatus.Code.OK.getCode());
                         response.setReason(HttpStatus.Code.OK.getMessage());
-                        try (HTTPOutputStream output = outputStream) {
+                        try (HttpOutputStream output = outputStream) {
                             output.writeWithContentLength(toBuffer("receive initial stream successful", StandardCharsets.UTF_8));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -293,7 +293,7 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
                     case "/data":
                         response.setStatus(HttpStatus.Code.OK.getCode());
                         response.setReason(HttpStatus.Code.OK.getMessage());
-                        try (HTTPOutputStream output = outputStream) {
+                        try (HttpOutputStream output = outputStream) {
                             output.writeWithContentLength(new ByteBuffer[]{
                                     toBuffer("Receive data stream successful. ", StandardCharsets.UTF_8),
                                     toBuffer("Thank you!", StandardCharsets.UTF_8)
@@ -305,7 +305,7 @@ public class TestH2cUpgrade extends AbstractHTTPHandlerTest {
                     default:
                         response.setStatus(HttpStatus.Code.NOT_FOUND.getCode());
                         response.setReason(HttpStatus.Code.NOT_FOUND.getMessage());
-                        try (HTTPOutputStream output = outputStream) {
+                        try (HttpOutputStream output = outputStream) {
                             output.writeWithContentLength(toBuffer(uri.getPath() ~ " not found", StandardCharsets.UTF_8));
                         } catch (IOException e) {
                             e.printStackTrace();

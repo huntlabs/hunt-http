@@ -3,14 +3,14 @@ module test.http;
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 
 /**
  * 
  */
 public class TrailerDemo {
     public static void main(string[] args) {
-        HTTP2ServerBuilder httpServer = $.httpsServer();
+        Http2ServerBuilder httpServer = $.httpsServer();
         httpServer.router().get("/trailer").handler(ctx -> {
             writeln("get request");
             ctx.put(HttpHeader.CONTENT_TYPE, "text/plain");

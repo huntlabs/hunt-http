@@ -155,7 +155,7 @@ interface UpgradeRequest {
      * <p>
      * Note: Never present on a Client UpgradeRequest.
      *
-     * @return the Servlet HTTPSession on server side UpgradeRequests
+     * @return the Servlet HttpSession on server side UpgradeRequests
      */
     Object getSession();
 

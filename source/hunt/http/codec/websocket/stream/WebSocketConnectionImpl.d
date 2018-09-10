@@ -2,7 +2,7 @@ module hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
@@ -46,13 +46,13 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
     protected MetaData.Request upgradeRequest;
     protected MetaData.Response upgradeResponse;
     protected IOState ioState;
-    protected HTTP2Configuration config;
+    protected Http2Configuration config;
     protected ExtensionNegotiator extensionNegotiator;
 
     this(SecureSession secureSession, Session tcpSession,
                                    IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
                                    MetaData.Request upgradeRequest, MetaData.Response upgradeResponse,
-                                   HTTP2Configuration config) {
+                                   Http2Configuration config) {
         super(secureSession, tcpSession);
 
         extensionNegotiator = new ExtensionNegotiator();

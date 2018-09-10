@@ -1,8 +1,8 @@
 module hunt.http.codec.http.stream.DataFrameHandler;
 
-import hunt.http.codec.http.stream.HTTPHandler;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.codec.http.stream.HttpHandler;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.model.MetaData;
@@ -15,8 +15,8 @@ abstract class DataFrameHandler {
 
     static void handleDataFrame(DataFrame dataFrame, Callback callback,
                                  MetaData.Request request, MetaData.Response response,
-                                 HTTPOutputStream output, HTTPConnection connection,
-                                 HTTPHandler httpHandler) {
+                                 HttpOutputStream output, HttpConnection connection,
+                                 HttpHandler httpHandler) {
         try {
             httpHandler.content(dataFrame.getData(), request, response, output, connection);
             if (dataFrame.isEndStream()) {

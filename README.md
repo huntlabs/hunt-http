@@ -7,7 +7,7 @@
 - [x] Implement WebSocket server/client
 - [x] H2C Demo
 - [x] WebSocket Demo
-- [x] SimpleHTTP Demo
+- [x] SimpleHttp Demo
 - [x] TLS Demo
 - [ ] Improve some modules's names
 - [ ] Implement more secure modules in pure D

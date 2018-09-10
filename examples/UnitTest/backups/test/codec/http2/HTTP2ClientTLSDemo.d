@@ -1,35 +1,35 @@
 module test.codec.http2;
 
-import hunt.http.client.http2.ClientHTTPHandler;
-import hunt.http.client.http2.HTTP2Client;
-import hunt.http.client.http2.HTTPClientConnection;
+import hunt.http.client.http2.ClientHttpHandler;
+import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.utils.concurrent.FuturePromise;
 
 import java.io.UnsupportedEncodingException;
 import hunt.container.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
-import test.codec.http2.HTTPClientHandlerFactory.newHandler;
+import test.codec.http2.HttpClientHandlerFactory.newHandler;
 
-public class HTTP2ClientTLSDemo {
+public class Http2ClientTLSDemo {
 
     public static void main(string[] args)
             throws InterruptedException, ExecutionException, UnsupportedEncodingException {
-        final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+        final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
         http2Configuration.setSecureConnectionEnabled(true);
-        HTTP2Client client = new HTTP2Client(http2Configuration);
+        Http2Client client = new Http2Client(http2Configuration);
 
-        FuturePromise<HTTPClientConnection> promise = new FuturePromise<>();
+        FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect("127.0.0.1", 6677, promise);
 
-        final HTTPClientConnection httpConnection = promise.get();
+        final HttpClientConnection httpConnection = promise.get();
 
         final ByteBuffer[] buffers = new ByteBuffer[]{ByteBuffer.wrap("hello world!".getBytes("UTF-8")),
                 ByteBuffer.wrap("big hello world!".getBytes("UTF-8"))};
-        ClientHTTPHandler handler = newHandler(buffers);
+        ClientHttpHandler handler = newHandler(buffers);
 
         // test
         HttpFields fields = new HttpFields();

@@ -1,12 +1,12 @@
 module test.codec.http2;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.Stream.Listener;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
 import hunt.util.functional;
@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HTTP2ServerDemo {
+public class Http2ServerDemo {
 
 	
 
 	public static void main(string[] args) {
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.setFlowControlStrategy("simple");
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
@@ -31,7 +31,7 @@ public class HTTP2ServerDemo {
 		settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 		settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-		HTTP2Server server = new HTTP2Server("127.0.0.1", 6677, http2Configuration, new ServerSessionListener() {
+		Http2Server server = new Http2Server("127.0.0.1", 6677, http2Configuration, new ServerSessionListener() {
 
 			override
 			public Map<Integer, Integer> onPreface(Session session) {
@@ -109,7 +109,7 @@ public class HTTP2ServerDemo {
 			public bool onIdleTimeout(Session session) {
 				return false;
 			}
-		}, new ServerHTTPHandlerAdapter(), new WebSocketHandler() {});
+		}, new ServerHttpHandlerAdapter(), new WebSocketHandler() {});
 
 		server.start();
 	}

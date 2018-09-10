@@ -1,7 +1,7 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHTTPClient;
+import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.tcp.secure.conscrypt.ConscryptSecureSessionFactory;
@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * 
  */
-public class HTTPsClientDemo {
+public class HttpsClientDemo {
     public static final List<string> urlList = Arrays.asList(
             "https://www.jd.com",
             "https://segmentfault.com",
@@ -24,16 +24,16 @@ public class HTTPsClientDemo {
             "https://login.taobao.com");
 
     public static void main(string[] args) throws InterruptedException {
-        List<SimpleHTTPClient> clients = Arrays.asList(
+        List<SimpleHttpClient> clients = Arrays.asList(
                 test(new ConscryptSecureSessionFactory()),
                 test(new JdkSecureSessionFactory()));
-        clients.forEach(SimpleHTTPClient::stop);
+        clients.forEach(SimpleHttpClient::stop);
     }
 
-    public static SimpleHTTPClient test(SecureSessionFactory secureSessionFactory) throws InterruptedException {
+    public static SimpleHttpClient test(SecureSessionFactory secureSessionFactory) throws InterruptedException {
         long testStart = System.currentTimeMillis();
         writeln("The secure session factory is " ~ secureSessionFactory.typeof(this).stringof);
-        SimpleHTTPClient client = $.createHTTPsClient(secureSessionFactory);
+        SimpleHttpClient client = $.createHttpsClient(secureSessionFactory);
         for (int i = 0; i < 5; i++) {
             CountDownLatch latch = new CountDownLatch(urlList.size());
             urlList.forEach(url -> {

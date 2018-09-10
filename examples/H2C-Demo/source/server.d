@@ -6,8 +6,8 @@ import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream;
 
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 // import hunt.http.server.http.WebSocketHandler;
 
@@ -19,7 +19,7 @@ import hunt.logging;
 
 void main(string[] args)
 {
-	HTTP2Configuration http2Configuration = new HTTP2Configuration();
+	Http2Configuration http2Configuration = new Http2Configuration();
 	http2Configuration.setSecureConnectionEnabled(true);
 	http2Configuration.setFlowControlStrategy("simple");
 	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
@@ -29,7 +29,7 @@ void main(string[] args)
 	settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 	settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-	HTTP2Server server = new HTTP2Server("0.0.0.0", 6677, http2Configuration, new class ServerSessionListener {
+	Http2Server server = new Http2Server("0.0.0.0", 6677, http2Configuration, new class ServerSessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {
@@ -145,7 +145,7 @@ void main(string[] args)
 		bool onIdleTimeout(Session session) {
 			return false;
 		}
-	}, new ServerHTTPHandlerAdapter(), null);
+	}, new ServerHttpHandlerAdapter(), null);
 
 	server.start();
 }

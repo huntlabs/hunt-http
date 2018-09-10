@@ -1,8 +1,8 @@
 module hunt.http.server.http.SimpleResponse;
 
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.BufferedHTTPOutputStream;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.codec.http.stream.BufferedHttpOutputStream;
+import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.util.exception;
 import hunt.util.functional;
@@ -18,14 +18,14 @@ alias Response = MetaData.Response;
 class SimpleResponse : Closeable { 
 
     Response response;
-    HTTPOutputStream output;
+    HttpOutputStream output;
     HttpURI uri;
-    BufferedHTTPOutputStream bufferedOutputStream;
+    BufferedHttpOutputStream bufferedOutputStream;
     int bufferSize = 8 * 1024;
     string characterEncoding = "UTF-8";
     bool asynchronous;
 
-    this(Response response, HTTPOutputStream output, HttpURI uri) {
+    this(Response response, HttpOutputStream output, HttpURI uri) {
         this.output = output;
         this.response = response;
         this.uri = uri;
@@ -85,7 +85,7 @@ class SimpleResponse : Closeable {
 
     OutputStream getOutputStream() {
         if (bufferedOutputStream is null) {
-            bufferedOutputStream = new BufferedHTTPOutputStream(output, bufferSize);
+            bufferedOutputStream = new BufferedHttpOutputStream(output, bufferSize);
         }
         return bufferedOutputStream;
     }

@@ -6,30 +6,30 @@ import java.nio.charset.StandardCharsets;
 
 import java.util.concurrent.ExecutionException;
 
-import hunt.http.client.http2.ClientHTTPHandler;
-import hunt.http.client.http2.HTTP2Client;
-import hunt.http.client.http2.HTTPClientConnection;
+import hunt.http.client.http2.ClientHttpHandler;
+import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.model.HostPortHttpField;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpScheme;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.container.BufferUtils;
 
-public class HTTP2ClientTLSDemo2 {
+public class Http2ClientTLSDemo2 {
 
 	public static void main(string[] args) throws InterruptedException, ExecutionException, IOException {
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 		http2Configuration.setSecureConnectionEnabled(true);
-		HTTP2Client client = new HTTP2Client(http2Configuration);
-		HTTPClientConnection httpConnection = null;
+		Http2Client client = new Http2Client(http2Configuration);
+		HttpClientConnection httpConnection = null;
 		try {
 
-			FuturePromise<HTTPClientConnection> promise = new FuturePromise<>();
+			FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
 			client.connect("127.0.0.1", 6655, promise);
 
 			httpConnection = promise.get();
@@ -41,7 +41,7 @@ public class HTTP2ClientTLSDemo2 {
 				httpConnection.send(
 						new MetaData.Request("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"), "/index",
 								HttpVersion.HTTP_1_1, fields),
-						new ClientHTTPHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 							writeln();
 							writeln();
@@ -56,7 +56,7 @@ public class HTTP2ClientTLSDemo2 {
 				httpConnection.send(
 						new MetaData.Request("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"),
 								"/index_1", HttpVersion.HTTP_1_1, fields),
-						new ClientHTTPHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 							writeln();
 							writeln();

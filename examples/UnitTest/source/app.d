@@ -18,9 +18,9 @@ import test.codec.http2.hpack.TestHuffman;
 import test.codec.http2.frame.SettingsGenerateParseTest;
 
 import test.codec.http2.decode.HttpParserTest;
-import test.codec.http2.decode.HTTP2DecoderTest;
+import test.codec.http2.decode.Http2DecoderTest;
 
-import test.codec.http2.encode.TestPredefinedHTTP1Response;
+import test.codec.http2.encode.TestPredefinedHttp1Response;
 import test.codec.http2.encode.URLEncodedTest;
 
 import test.codec.websocket.decode.ParserTest;
@@ -71,13 +71,13 @@ void main()
 	// **********************
 	
 	testUnits!HttpParserTest(); 
-	// testUnits!HTTP2DecoderTest();
+	// testUnits!Http2DecoderTest();
 
 	// **********************
 	// test.codec.http2.encode.*
 	// **********************
 
-	// testUnits!TestPredefinedHTTP1Response();
+	// testUnits!TestPredefinedHttp1Response();
 
 	// **********************
 	// test.codec.http2.frame.*

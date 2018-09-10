@@ -1,6 +1,6 @@
 module hunt.http.server.http.router.RoutingContext;
 
-import hunt.http.server.http.router.HTTPSession;
+import hunt.http.server.http.router.HttpSession;
 
 import hunt.http.codec.http.model;
 import hunt.http.server.http.SimpleRequest;
@@ -270,11 +270,11 @@ abstract class RoutingContext : Closeable {
 
 
     // HTTP session API
-    // HTTPSession getSessionNow() {
+    // HttpSession getSessionNow() {
     //     return getSession();
     // }
 
-    // HTTPSession getSessionNow(bool create) {
+    // HttpSession getSessionNow(bool create) {
     //     return getSession(create).getNow(null);
     // }
 
@@ -286,17 +286,17 @@ abstract class RoutingContext : Closeable {
     //     return removeSession().getNow(false);
     // }
 
-    // bool updateSessionNow(HTTPSession httpSession) {
+    // bool updateSessionNow(HttpSession httpSession) {
     //     return updateSession(httpSession).getNow(false);
     // }
 
-    // CompletableFuture<HTTPSession> getSessionById(string id);
+    // CompletableFuture<HttpSession> getSessionById(string id);
 
-    // CompletableFuture<HTTPSession> getSession();
+    // CompletableFuture<HttpSession> getSession();
 
-    // CompletableFuture<HTTPSession> getSession(bool create);
+    // CompletableFuture<HttpSession> getSession(bool create);
 
-    // CompletableFuture<HTTPSession> getAndCreateSession(int maxAge);
+    // CompletableFuture<HttpSession> getAndCreateSession(int maxAge);
 
     // CompletableFuture<int> getSessionSize();
 
@@ -304,7 +304,7 @@ abstract class RoutingContext : Closeable {
     
     // CompletableFuture<bool> removeSession();
 
-    // CompletableFuture<bool> updateSession(HTTPSession httpSession);
+    // CompletableFuture<bool> updateSession(HttpSession httpSession);
 
     bool isRequestedSessionIdFromURL()  { implementationMissing(false); return false; }
 

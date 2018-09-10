@@ -1,6 +1,6 @@
 module test.http;
 
-import hunt.http.client.http2.SimpleHTTPClient;
+import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.client.http2.SimpleResponse;
 import hunt.http.utils.concurrent.Promise;
 
@@ -8,10 +8,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Phaser;
 
-public class SimpleHTTPClientDemo4 {
+public class SimpleHttpClientDemo4 {
 
     public static void main(string[] args) throws InterruptedException, ExecutionException {
-        SimpleHTTPClient client = new SimpleHTTPClient();
+        SimpleHttpClient client = new SimpleHttpClient();
 
         Phaser phaser = new Phaser(10 + 20 + 1);
         for (int i = 0; i < 10; i++) {

@@ -1,14 +1,14 @@
 module test.http.router.handler;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHTTPClient;
-import hunt.http.client.http2.SimpleHTTPClientConfiguration;
+import hunt.http.client.http2.SimpleHttpClient;
+import hunt.http.client.http2.SimpleHttpClientConfiguration;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2ServerBuilder;
-import hunt.http.server.http.SimpleHTTPServerConfiguration;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2ServerBuilder;
+import hunt.http.server.http.SimpleHttpServerConfiguration;
 import hunt.container.BufferUtils;
 import hunt.util.Assert;
 import hunt.util.Test;
@@ -21,16 +21,16 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestHTTPTrailer extends AbstractHTTPHandlerTest {
+public class TestHTTPTrailer extends AbstractHttpHandlerTest {
 
     
     public void test() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         startHttpServer(httpServer);
 
-        SimpleHTTPClient httpClient = $.createHTTPClient();
+        SimpleHttpClient httpClient = $.createHttpClient();
         testServerResponseTrailer(phaser, httpClient);
         testClientPostTrailer(phaser, httpClient);
 
@@ -43,14 +43,14 @@ public class TestHTTPTrailer extends AbstractHTTPHandlerTest {
     public void testHttp2() {
         Phaser phaser = new Phaser(3);
 
-        SimpleHTTPServerConfiguration serverConfiguration = new SimpleHTTPServerConfiguration();
+        SimpleHttpServerConfiguration serverConfiguration = new SimpleHttpServerConfiguration();
         serverConfiguration.setSecureConnectionEnabled(true);
-        HTTP2ServerBuilder httpsServer = $.httpServer(serverConfiguration);
+        Http2ServerBuilder httpsServer = $.httpServer(serverConfiguration);
         startHttpServer(httpsServer);
 
-        SimpleHTTPClientConfiguration clientConfiguration = new SimpleHTTPClientConfiguration();
+        SimpleHttpClientConfiguration clientConfiguration = new SimpleHttpClientConfiguration();
         clientConfiguration.setSecureConnectionEnabled(true);
-        SimpleHTTPClient httpsClient = new SimpleHTTPClient(clientConfiguration);
+        SimpleHttpClient httpsClient = new SimpleHttpClient(clientConfiguration);
         testServerResponseTrailer(phaser, httpsClient);
         testClientPostTrailer(phaser, httpsClient);
 
@@ -59,7 +59,7 @@ public class TestHTTPTrailer extends AbstractHTTPHandlerTest {
         httpsClient.stop();
     }
 
-    private void testServerResponseTrailer(Phaser phaser, SimpleHTTPClient httpClient) {
+    private void testServerResponseTrailer(Phaser phaser, SimpleHttpClient httpClient) {
         httpClient.get(uri ~ "/trailer").submit()
                   .thenAccept(res -> {
                       Assert.assertThat(res.getStatus(), is(HttpStatus.OK_200));
@@ -77,13 +77,13 @@ public class TestHTTPTrailer extends AbstractHTTPHandlerTest {
                   });
     }
 
-    private void testClientPostTrailer(Phaser phaser, SimpleHTTPClient httpClient) {
+    private void testClientPostTrailer(Phaser phaser, SimpleHttpClient httpClient) {
         httpClient.post(uri ~ "/postTrailer").setTrailerSupplier(() -> {
             HttpFields trailer = new HttpFields();
             trailer.add("ok", "my trailer");
             return trailer;
         }).output(out -> {
-            try (HTTPOutputStream output = out) {
+            try (HttpOutputStream output = out) {
                 output.write(BufferUtils.toBuffer("hello"));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -97,7 +97,7 @@ public class TestHTTPTrailer extends AbstractHTTPHandlerTest {
         });
     }
 
-    private void startHttpServer(HTTP2ServerBuilder httpServer) {
+    private void startHttpServer(Http2ServerBuilder httpServer) {
         httpServer.router().get("/trailer").handler(ctx -> {
             writeln("get request");
             ctx.put(HttpHeader.CONTENT_TYPE, "text/plain");

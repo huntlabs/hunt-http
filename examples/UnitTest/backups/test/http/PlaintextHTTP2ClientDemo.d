@@ -5,9 +5,9 @@ import hunt.http.$;
 /**
  * 
  */
-public class PlaintextHTTP2ClientDemo {
+public class PlaintextHttp2ClientDemo {
     public static void main(string[] args) {
-        $.plaintextHTTP2Client()
+        $.plaintextHttp2Client()
          .post("http://localhost:2242/plaintextHttp2")
          .body("post data")
          .submit().thenAccept(res -> {

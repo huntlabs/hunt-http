@@ -3,10 +3,10 @@ module test.http.router.handler.template;
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.util.concurrent.Phaser;
 
@@ -16,13 +16,13 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestTemplate extends AbstractHTTPHandlerTest {
+public class TestTemplate extends AbstractHttpHandlerTest {
 
     
     public void test() {
         Phaser phaser = new Phaser(2);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().get("/example").handler(ctx -> {
             ctx.put(HttpHeader.CONTENT_TYPE, "text/plain");
             ctx.renderTemplate("template/example.mustache", new Example());

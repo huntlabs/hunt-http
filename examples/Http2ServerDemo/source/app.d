@@ -5,8 +5,8 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.WebSocketHandler;
 
 
@@ -27,13 +27,13 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args)
 {
-    HTTP2Server server = new HTTP2Server("0.0.0.0", 8080, new HTTP2Configuration(), 
-        new class ServerHTTPHandlerAdapter {
+    Http2Server server = new Http2Server("0.0.0.0", 8080, new Http2Configuration(), 
+        new class ServerHttpHandlerAdapter {
 
             override
             bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 return true;
             }
         }, 

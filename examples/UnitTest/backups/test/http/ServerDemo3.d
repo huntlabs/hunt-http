@@ -3,7 +3,7 @@ module test.http;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.codec.http.model.MimeTypes;
-import hunt.http.server.http.SimpleHTTPServer;
+import hunt.http.server.http.SimpleHttpServer;
 import hunt.http.server.http.SimpleResponse;
 
 import java.io.PrintWriter;
@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 public class ServerDemo3 {
 
     public static void main(string[] args) {
-        SimpleHTTPServer server = new SimpleHTTPServer();
+        SimpleHttpServer server = new SimpleHttpServer();
         server.headerComplete(request -> request.messageComplete(req -> {
             SimpleResponse response = req.getResponse();
             string path = req.getRequest().getURI().getPath();

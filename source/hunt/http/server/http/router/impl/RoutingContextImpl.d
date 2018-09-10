@@ -5,7 +5,7 @@ import hunt.http.server.http.router.impl.RouterImpl;
 
 import hunt.http.server.http.SimpleRequest;
 import hunt.http.server.http.SimpleResponse;
-import hunt.http.server.http.router.HTTPSession;
+import hunt.http.server.http.router.HttpSession;
 import hunt.http.server.http.router.RouterManager;
 import hunt.http.server.http.router.RoutingContext;
 
@@ -25,8 +25,8 @@ class RoutingContextImpl : RoutingContext {
     private SimpleRequest request;
     private NavigableSet!(RouterMatchResult) routers;
     private  RouterMatchResult current;
-    private  HTTPBodyHandlerSPI httpBodyHandlerSPI;
-    private  HTTPSessionHandlerSPI httpSessionHandlerSPI;
+    private  HttpBodyHandlerSPI httpBodyHandlerSPI;
+    private  HttpSessionHandlerSPI httpSessionHandlerSPI;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private  bool asynchronousRead;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
@@ -187,7 +187,7 @@ class RoutingContextImpl : RoutingContext {
     override
     Map!(string, List!string) getParameterMap() {
         // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(HTTPBodyHandlerSPI::getParameterMap)
+        //                .map(HttpBodyHandlerSPI::getParameterMap)
         //                .orElse(Collections.emptyMap());
         if(httpBodyHandlerSPI is null)
             return null;
@@ -198,7 +198,7 @@ class RoutingContextImpl : RoutingContext {
     // override
     // Collection!Part getParts() {
     //     // return Optional.ofNullable(httpBodyHandlerSPI)
-    //     //                .map(HTTPBodyHandlerSPI::getParts)
+    //     //                .map(HttpBodyHandlerSPI::getParts)
     //     //                .orElse(Collections.emptyList());
     //     if(httpBodyHandlerSPI is null)
     //         return null;
@@ -220,14 +220,14 @@ class RoutingContextImpl : RoutingContext {
     // override
     // InputStream getInputStream() {
     //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HTTPBodyHandlerSPI::getInputStream)
+    //                    .map(HttpBodyHandlerSPI::getInputStream)
     //                    .orElse(null);
     // }
 
     // override
     // BufferedReader getBufferedReader() {
     //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HTTPBodyHandlerSPI::getBufferedReader)
+    //                    .map(HttpBodyHandlerSPI::getBufferedReader)
     //                    .orElse(null);
     // }
 
@@ -245,7 +245,7 @@ class RoutingContextImpl : RoutingContext {
     override
     string getStringBody() {
         // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(HTTPBodyHandlerSPI::getStringBody)
+        //                .map(HttpBodyHandlerSPI::getStringBody)
         //                .orElseGet(request::getStringBody);
         if(httpBodyHandlerSPI is null)
             return request.getStringBody();
@@ -271,44 +271,44 @@ class RoutingContextImpl : RoutingContext {
     // override
     // JsonObject getJsonObjectBody() {
     //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HTTPBodyHandlerSPI::getJsonObjectBody)
+    //                    .map(HttpBodyHandlerSPI::getJsonObjectBody)
     //                    .orElseGet(request::getJsonObjectBody);
     // }
 
     // override
     // JsonArray getJsonArrayBody() {
     //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HTTPBodyHandlerSPI::getJsonArrayBody)
+    //                    .map(HttpBodyHandlerSPI::getJsonArrayBody)
     //                    .orElseGet(request::getJsonArrayBody);
     // }
     
-    void setHTTPBodyHandlerSPI(HTTPBodyHandlerSPI httpBodyHandlerSPI) {
+    void setHttpBodyHandlerSPI(HttpBodyHandlerSPI httpBodyHandlerSPI) {
         this.httpBodyHandlerSPI = httpBodyHandlerSPI;
     }
 
     // override
-    // CompletableFuture<HTTPSession> getSessionById(string id) {
+    // CompletableFuture<HttpSession> getSessionById(string id) {
     //     return Optional.ofNullable(httpSessionHandlerSPI).map(s -> s.getSessionById(id)).orElse(null);
     // }
 
     // override
-    // CompletableFuture<HTTPSession> getSession() {
-    //     return Optional.ofNullable(httpSessionHandlerSPI).map(HTTPSessionHandlerSPI::getSession).orElse(null);
+    // CompletableFuture<HttpSession> getSession() {
+    //     return Optional.ofNullable(httpSessionHandlerSPI).map(HttpSessionHandlerSPI::getSession).orElse(null);
     // }
 
     // override
-    // CompletableFuture<HTTPSession> getSession(bool create) {
+    // CompletableFuture<HttpSession> getSession(bool create) {
     //     return Optional.ofNullable(httpSessionHandlerSPI).map(s -> s.getSession(create)).orElse(null);
     // }
 
     // override
-    // CompletableFuture<HTTPSession> getAndCreateSession(int maxAge) {
+    // CompletableFuture<HttpSession> getAndCreateSession(int maxAge) {
     //     return Optional.ofNullable(httpSessionHandlerSPI).map(s -> s.getAndCreateSession(maxAge)).orElse(null);
     // }
 
     // override
     // CompletableFuture<Integer> getSessionSize() {
-    //     return Optional.ofNullable(httpSessionHandlerSPI).map(HTTPSessionHandlerSPI::getSessionSize).orElse(null);
+    //     return Optional.ofNullable(httpSessionHandlerSPI).map(HttpSessionHandlerSPI::getSessionSize).orElse(null);
     // }
 
     // override
@@ -319,12 +319,12 @@ class RoutingContextImpl : RoutingContext {
     // override
     // CompletableFuture<bool> removeSession() {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
-    //                    .map(HTTPSessionHandlerSPI::removeSession)
+    //                    .map(HttpSessionHandlerSPI::removeSession)
     //                    .orElse(null);
     // }
 
     // override
-    // CompletableFuture<bool> updateSession(HTTPSession httpSession) {
+    // CompletableFuture<bool> updateSession(HttpSession httpSession) {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
     //                    .map(s -> s.updateSession(httpSession))
     //                    .orElse(null);
@@ -333,32 +333,32 @@ class RoutingContextImpl : RoutingContext {
     // override
     // bool isRequestedSessionIdFromURL() {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
-    //                    .map(HTTPSessionHandlerSPI::isRequestedSessionIdFromURL)
+    //                    .map(HttpSessionHandlerSPI::isRequestedSessionIdFromURL)
     //                    .orElse(false);
     // }
 
     // override
     // bool isRequestedSessionIdFromCookie() {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
-    //                    .map(HTTPSessionHandlerSPI::isRequestedSessionIdFromCookie)
+    //                    .map(HttpSessionHandlerSPI::isRequestedSessionIdFromCookie)
     //                    .orElse(false);
     // }
 
     // override
     // string getRequestedSessionId() {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
-    //                    .map(HTTPSessionHandlerSPI::getRequestedSessionId)
+    //                    .map(HttpSessionHandlerSPI::getRequestedSessionId)
     //                    .orElse(null);
     // }
 
     // override
     // string getSessionIdParameterName() {
     //     return Optional.ofNullable(httpSessionHandlerSPI)
-    //                    .map(HTTPSessionHandlerSPI::getSessionIdParameterName)
+    //                    .map(HttpSessionHandlerSPI::getSessionIdParameterName)
     //                    .orElse(null);
     // }
 
-    // void setHTTPSessionHandlerSPI(HTTPSessionHandlerSPI httpSessionHandlerSPI) {
+    // void setHttpSessionHandlerSPI(HttpSessionHandlerSPI httpSessionHandlerSPI) {
     //     this.httpSessionHandlerSPI = httpSessionHandlerSPI;
     // }
 

@@ -1,8 +1,8 @@
 module hunt.http.server.http.WebSocketHandler;
 
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
@@ -17,8 +17,8 @@ import hunt.logging;
 // interface WebSocketHandler {
 
 //     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
-//                                   HTTPOutputStream output,
-//                                   HTTPConnection connection);
+//                                   HttpOutputStream output,
+//                                   HttpConnection connection);
 
 //     void onConnect(WebSocketConnection webSocketConnection);
 
@@ -42,8 +42,8 @@ class WebSocketHandler {
     }
 
     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
-                                  HTTPOutputStream output,
-                                  HTTPConnection connection) {
+                                  HttpOutputStream output,
+                                  HttpConnection connection) {
         infof("The connection %s will upgrade to WebSocket connection", connection.getSessionId());
         return true;
     }

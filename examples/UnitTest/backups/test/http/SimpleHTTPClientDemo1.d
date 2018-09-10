@@ -7,18 +7,18 @@ import hunt.container.ArrayList;
 import hunt.container.List;
 import java.util.concurrent.Future;
 
-import hunt.http.client.http2.SimpleHTTPClient;
+import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.client.http2.SimpleResponse;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MimeTypes;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.container.BufferUtils;
 
-public class SimpleHTTPClientDemo1 {
+public class SimpleHttpClientDemo1 {
 
     public static void main(string[] args) throws Throwable {
-        SimpleHTTPClient client = new SimpleHTTPClient();
+        SimpleHttpClient client = new SimpleHttpClient();
         final long start = System.currentTimeMillis();
         List!(ByteBuffer) list = new ArrayList<>();
         client.get("http://localhost:6656/index")
@@ -56,7 +56,7 @@ public class SimpleHTTPClientDemo1 {
         long s4 = System.currentTimeMillis();
         byte[] test = "content=hello_hello".getBytes(StandardCharsets.UTF_8);
         future = client.post("http://localhost:6656/add").output((o) -> {
-            try (HTTPOutputStream out = o) {
+            try (HttpOutputStream out = o) {
                 out.write(test);
             } catch (IOException e) {
                 e.printStackTrace();

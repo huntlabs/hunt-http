@@ -5,9 +5,9 @@ import hunt.http.$;
 /**
  * 
  */
-public class PlaintextHTTP2ServerDemo {
+public class PlaintextHttp2ServerDemo {
     public static void main(string[] args) {
-        $.plaintextHTTP2Server().router().post("/plaintextHttp2").handler(ctx -> {
+        $.plaintextHttp2Server().router().post("/plaintextHttp2").handler(ctx -> {
             writeln(ctx.getURI().toString());
             writeln(ctx.getFields());
             writeln(ctx.getStringBody());

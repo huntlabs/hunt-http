@@ -8,33 +8,33 @@ import hunt.container.List;
 
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
 import hunt.container.BufferUtils;
 
-public class HTTP1ServerChunkOutputDemo3 {
+public class Http1ServerChunkOutputDemo3 {
 
 	public static void main(string[] args) {
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(10 * 60 * 1000);
 
-		HTTP2Server server = new HTTP2Server("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
-				new ServerHTTPHandlerAdapter() {
+		Http2Server server = new Http2Server("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
+				new ServerHttpHandlerAdapter() {
 
 					override
-					public void earlyEOF(MetaData.Request request, MetaData.Response response, HTTPOutputStream output,
-										 HTTPConnection connection) {
+					public void earlyEOF(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+										 HttpConnection connection) {
 						writeln("the server connection " ~ connection.getSessionId() ~ " is early EOF");
 					}
 
 					override
 					public void badMessage(int status, string reason, MetaData.Request request,
-										   MetaData.Response response, HTTPOutputStream output, HTTPConnection connection) {
+										   MetaData.Response response, HttpOutputStream output, HttpConnection connection) {
 						writeln("the server received a bad message, " ~ status ~ "|" ~ reason);
 
 						try {
@@ -47,7 +47,7 @@ public class HTTP1ServerChunkOutputDemo3 {
 
 					override
 					public bool messageComplete(MetaData.Request request, MetaData.Response response,
-												   HTTPOutputStream outputStream, HTTPConnection connection) {
+												   HttpOutputStream outputStream, HttpConnection connection) {
 						HttpURI uri = request.getURI();
 						writeln("current path is " ~ uri.getPath());
 						writeln("current http headers are " ~ request.getFields());
@@ -60,7 +60,7 @@ public class HTTP1ServerChunkOutputDemo3 {
 						list.add(BufferUtils.toBuffer("中文的内容，哈哈 ", StandardCharsets.UTF_8));
 						list.add(BufferUtils.toBuffer("靠！！！ ", StandardCharsets.UTF_8));
 
-						try (HTTPOutputStream output = outputStream) {
+						try (HttpOutputStream output = outputStream) {
 							for (ByteBuffer buffer : list) {
 								output.write(buffer);
 							}

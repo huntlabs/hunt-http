@@ -157,7 +157,7 @@ import hunt.http.codec.websocket.utils.HeaderValueGenerator;
 //      * <p>
 //      * Note: Never present on a Client UpgradeRequest.
 //      *
-//      * @return the Servlet HTTPSession on server side UpgradeRequests
+//      * @return the Servlet HttpSession on server side UpgradeRequests
 //      */
 //     override
 //     Object getSession() {

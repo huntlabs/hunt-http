@@ -20,7 +20,7 @@ import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.SettingsFrame;
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.utils.codec.Base64Utils;
 import hunt.container.BufferUtils;
 import hunt.util.TypeUtils;
@@ -29,7 +29,7 @@ public class SettingsGenerateParseTest {
 	
 	
 	public void testSettingsWithBase64() {
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		final Generator http2Generator = new Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map<Integer, Integer> settings = new HashMap<>();

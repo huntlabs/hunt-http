@@ -4,11 +4,11 @@ import hunt.http.$;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.http.server.http.router.handler.file.StaticFileHandler;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -20,13 +20,13 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestStaticFileHandler extends AbstractHTTPHandlerTest {
+public class TestStaticFileHandler extends AbstractHttpHandlerTest {
 
     
     public void test() throws URISyntaxException {
         Phaser phaser = new Phaser(4);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         Path path = Paths.get(TestStaticFileHandler.class.getResource("/").toURI());
         writeln(path.toAbsolutePath());
         StaticFileHandler staticFileHandler = new StaticFileHandler(path.toAbsolutePath().toString());

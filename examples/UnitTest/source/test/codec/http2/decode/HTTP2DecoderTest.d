@@ -1,4 +1,4 @@
-module test.codec.http2.decode.HTTP2DecoderTest;
+module test.codec.http2.decode.Http2DecoderTest;
 
 import hunt.http.codec.http.encode.Generator;
 import hunt.http.codec.http.encode.HeadersGenerator;
@@ -7,13 +7,13 @@ import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
 
-import hunt.http.codec.http.stream.HTTP2Configuration;
+import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.common.CommonEncoder;
 
-import hunt.http.server.http.HTTP2ServerConnection;
-import hunt.http.server.http.HTTP2ServerDecoder;
+import hunt.http.server.http.Http2ServerConnection;
+import hunt.http.server.http.Http2ServerDecoder;
 import hunt.http.server.http.ServerSessionListener;
 
 import hunt.net.Session;
@@ -31,7 +31,7 @@ import std.socket;
 
 
 
-class HTTP2DecoderTest {
+class Http2DecoderTest {
 
     void testData() {
         byte[] smallContent = new byte[22];
@@ -41,9 +41,9 @@ class HTTP2DecoderTest {
         for(size_t i=0; i<bigContent.length; i++ )   bigContent[i] = cast(byte) uniform(byte.min, byte.max, rnd);
 
         MockSessionFactory factory = new MockSessionFactory();
-        HTTP2ServerDecoder decoder = new HTTP2ServerDecoder();
+        Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        HTTP2Configuration http2Configuration = new HTTP2Configuration();
+        Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.setFlowControlStrategy("simple");
 
         Map!(int, int) settings = new HashMap!(int, int)();
@@ -188,7 +188,7 @@ class HTTP2DecoderTest {
             }
         }
 
-        HTTP2ServerConnection http2ServerConnection = new HTTP2ServerConnection(http2Configuration, session, null,
+        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
                 new ServerSessionListenerTester() );
 
         session.attachObject(http2ServerConnection);
@@ -228,10 +228,10 @@ class HTTP2DecoderTest {
     
     void testHeaders() {
         MockSessionFactory factory = new MockSessionFactory();
-        HTTP2ServerDecoder decoder = new HTTP2ServerDecoder();
+        Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        HTTP2Configuration http2Configuration = new HTTP2Configuration();
-        HTTP2ServerConnection http2ServerConnection = new HTTP2ServerConnection(http2Configuration, session, null,
+        Http2Configuration http2Configuration = new Http2Configuration();
+        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
                 new class ServerSessionListener {
 
                     override
@@ -425,7 +425,7 @@ class MockSessionFactory
         }
 
         override
-        void encode(ByteBuffer message) {
+        void encode(Object message) {
             encoder.encode(message, this);
         }
 

@@ -1,12 +1,12 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHTTPClient;
-import hunt.http.client.http2.SimpleHTTPClientConfiguration;
+import hunt.http.client.http2.SimpleHttpClient;
+import hunt.http.client.http2.SimpleHttpClientConfiguration;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MimeTypes;
-import hunt.http.server.http.SimpleHTTPServer;
-import hunt.http.server.http.SimpleHTTPServerConfiguration;
+import hunt.http.server.http.SimpleHttpServer;
+import hunt.http.server.http.SimpleHttpServerConfiguration;
 import hunt.http.server.http.SimpleResponse;
 import hunt.util.Assert;
 import hunt.util.Test;
@@ -29,14 +29,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  */
 
-public class TestHTTPServerAndClient {
+public class TestHttpServerAndClient {
 
     @Parameter
     public Run r;
 
     static class Run {
-        SimpleHTTPClientConfiguration clientConfig;
-        SimpleHTTPServerConfiguration serverConfig;
+        SimpleHttpClientConfiguration clientConfig;
+        SimpleHttpServerConfiguration serverConfig;
         string requestURL;
         string quitURL;
         int port;
@@ -53,8 +53,8 @@ public class TestHTTPServerAndClient {
     public static Collection<Run> data() {
         List<Run> data = new ArrayList<>();
         Run run = new Run();
-        run.clientConfig = new SimpleHTTPClientConfiguration();
-        run.serverConfig = new SimpleHTTPServerConfiguration();
+        run.clientConfig = new SimpleHttpClientConfiguration();
+        run.serverConfig = new SimpleHttpServerConfiguration();
         run.port = 1332;
         run.maxMsg = 5;
         run.requestURL = "http://localhost:" ~ run.port ~ "/";
@@ -63,9 +63,9 @@ public class TestHTTPServerAndClient {
         data.add(run);
 
         run = new Run();
-        run.clientConfig = new SimpleHTTPClientConfiguration();
+        run.clientConfig = new SimpleHttpClientConfiguration();
         run.clientConfig.setSecureConnectionEnabled(true); // enable HTTPs
-        run.serverConfig = new SimpleHTTPServerConfiguration();
+        run.serverConfig = new SimpleHttpServerConfiguration();
         run.serverConfig.setSecureConnectionEnabled(true);
         run.port = 1333;
         run.maxMsg = 15;
@@ -79,8 +79,8 @@ public class TestHTTPServerAndClient {
 
     
     public void test() throws InterruptedException {
-        SimpleHTTPServer server = $.createHTTPServer(r.serverConfig);
-        SimpleHTTPClient client = $.createHTTPClient(r.clientConfig);
+        SimpleHttpServer server = $.createHttpServer(r.serverConfig);
+        SimpleHttpClient client = $.createHttpClient(r.clientConfig);
         int port = r.port;
         int maxMsg = r.maxMsg;
         CountDownLatch countDownLatch = new CountDownLatch(maxMsg + 1);

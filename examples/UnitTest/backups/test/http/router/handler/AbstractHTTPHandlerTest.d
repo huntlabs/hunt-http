@@ -7,7 +7,7 @@ import hunt.util.Before;
 /**
  * 
  */
-abstract public class AbstractHTTPHandlerTest {
+abstract public class AbstractHttpHandlerTest {
     protected final string host = "localhost";
     protected static int port = 8000;
     protected string uri;

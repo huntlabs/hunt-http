@@ -1,8 +1,8 @@
 module test.http.router.handler;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHTTPClient;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.client.http2.SimpleHttpClient;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
 
@@ -13,14 +13,14 @@ import java.util.concurrent.CountDownLatch;
 /**
  * 
  */
-public class TestPlaintextHTTP2ServerAndClient extends AbstractHTTPHandlerTest {
+public class TestPlaintextHttp2ServerAndClient extends AbstractHttpHandlerTest {
 
     
     public void test() throws InterruptedException {
         int times = 10;
         CountDownLatch latch = new CountDownLatch(times);
 
-        HTTP2ServerBuilder server = $.plaintextHTTP2Server();
+        Http2ServerBuilder server = $.plaintextHttp2Server();
         server.router().post("/plaintextHttp2").handler(ctx -> {
             writeln("Server: " ~
                     ctx.getHttpVersion().asString() ~ "\r\n" ~
@@ -30,7 +30,7 @@ public class TestPlaintextHTTP2ServerAndClient extends AbstractHTTPHandlerTest {
             ctx.end("test plaintext http2");
         }).listen(host, port);
 
-        SimpleHTTPClient client = $.plaintextHTTP2Client();
+        SimpleHttpClient client = $.plaintextHttp2Client();
         for (int i = 0; i < times; i++) {
             client.post(uri ~ "/plaintextHttp2").body("post data").submit()
                   .thenAccept(res -> {

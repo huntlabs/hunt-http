@@ -2,10 +2,10 @@ module test.http.router.handler.body;
 
 import hunt.http.$;
 import hunt.http.codec.http.model;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import javax.servlet.http.Part;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestMultiPartContentProvider extends AbstractHTTPHandlerTest {
+public class TestMultiPartContentProvider extends AbstractHttpHandlerTest {
 
     
     public void test() {
@@ -90,7 +90,7 @@ public class TestMultiPartContentProvider extends AbstractHTTPHandlerTest {
     public void testMultiPart() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().post("/upload/string").handler(ctx -> {
             // small multi part data test case
             Assert.assertThat(ctx.getParts().size(), is(2));

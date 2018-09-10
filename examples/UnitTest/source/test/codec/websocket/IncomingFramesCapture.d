@@ -103,7 +103,7 @@ class IncomingFramesCapture : IncomingFrames {
     }
 
     override
-    void incomingError(Throwable e) {
+    void incomingError(Exception e) {
         warning("incoming error: ", e);
         errors ~= (e);
     }

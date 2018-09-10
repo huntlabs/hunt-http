@@ -1,16 +1,16 @@
 module test.http.router.handler.body;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHTTPClient;
+import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.codec.http.encode.UrlEncoded;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.io.IOException;
 import hunt.container.ByteBuffer;
@@ -23,9 +23,9 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
+public class TestHttpBodyHandler extends AbstractHttpHandlerTest {
 
-    public void testPostData(HTTP2ServerBuilder server, SimpleHTTPClient client) {
+    public void testPostData(Http2ServerBuilder server, SimpleHttpClient client) {
         StringBuilder bigData = new StringBuilder();
         int dataSize = 1024 * 1024;
         for (int i = 0; i < dataSize; i++) {
@@ -77,19 +77,19 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
 
     
     public void testPostDataHttp2() {
-        HTTP2ServerBuilder server = $.httpsServer();
-        SimpleHTTPClient client = $.createHTTPsClient();
+        Http2ServerBuilder server = $.httpsServer();
+        SimpleHttpClient client = $.createHttpsClient();
         testPostData(server, client);
     }
 
     
     public void testPostDataHttp1() {
-        HTTP2ServerBuilder server = $.httpServer();
-        SimpleHTTPClient client = $.createHTTPClient();
+        Http2ServerBuilder server = $.httpServer();
+        SimpleHttpClient client = $.createHttpClient();
         testPostData(server, client);
     }
 
-    public void testPostBigDataUsingChunkedEncoding(HTTP2ServerBuilder server, SimpleHTTPClient client) {
+    public void testPostBigDataUsingChunkedEncoding(Http2ServerBuilder server, SimpleHttpClient client) {
         StringBuilder bigData = new StringBuilder();
         int dataSize = 1024 * 1024;
         for (int i = 0; i < dataSize; i++) {
@@ -111,9 +111,9 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
 
         // post big data using chunked encoding
         List!(ByteBuffer) buffers = $.buffer.split(ByteBuffer.wrap(data), 4 * 1024);
-        Promise.Completable<HTTPOutputStream> promise = new Promise.Completable<>();
+        Promise.Completable<HttpOutputStream> promise = new Promise.Completable<>();
         promise.thenAccept(output -> {
-            try (HTTPOutputStream out = output) {
+            try (HttpOutputStream out = output) {
                 for (ByteBuffer buf : buffers) {
                     out.write(buf);
                 }
@@ -135,15 +135,15 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
 
     
     public void testPostBigDataUsingChunkedEncodingHttp2() {
-        HTTP2ServerBuilder server = $.httpsServer();
-        SimpleHTTPClient client = $.createHTTPsClient();
+        Http2ServerBuilder server = $.httpsServer();
+        SimpleHttpClient client = $.createHttpsClient();
         testPostBigDataUsingChunkedEncoding(server, client);
     }
 
     
     public void testPostBigDataUsingChunkedEncodingHttp1() {
-        HTTP2ServerBuilder server = $.httpServer();
-        SimpleHTTPClient client = $.createHTTPClient();
+        Http2ServerBuilder server = $.httpServer();
+        SimpleHttpClient client = $.createHttpClient();
         testPostBigDataUsingChunkedEncoding(server, client);
     }
 
@@ -151,7 +151,7 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
     public void testPostForm() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().post("/content/form").handler(ctx -> {
             Assert.assertThat(ctx.getParameter("name"), is("你的名字"));
             Assert.assertThat(ctx.getParameter("intro"), is("我要送些东西给你 我的孩子 因为我们同是漂泊在世界的溪流中的"));
@@ -178,7 +178,7 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
     public void testQueryParam() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().get("/query").handler(ctx -> {
             Assert.assertThat(ctx.getParameter("name"), is("你的名字"));
             Assert.assertThat(ctx.getParameter("intro"), is("我要送些东西给你 我的孩子 因为我们同是漂泊在世界的溪流中的"));
@@ -206,7 +206,7 @@ public class TestHTTPBodyHandler extends AbstractHTTPHandlerTest {
     public void testGetWithBody() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().get("/queryWithBody").handler(ctx -> {
             string body = ctx.getStringBody();
             writeln(body);

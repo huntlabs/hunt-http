@@ -8,34 +8,34 @@ import hunt.container.List;
 
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
 import hunt.http.utils.collection.MultiMap;
 import hunt.container.BufferUtils;
 
-public class HTTP1ServerDemo3 {
+public class Http1ServerDemo3 {
 
 	public static void main(string[] args) {
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(10 * 60 * 1000);
 
-		HTTP2Server server = new HTTP2Server("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
-				new ServerHTTPHandlerAdapter() {
+		Http2Server server = new Http2Server("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
+				new ServerHttpHandlerAdapter() {
 
 					override
-					public void earlyEOF(MetaData.Request request, MetaData.Response response, HTTPOutputStream output,
-										 HTTPConnection connection) {
+					public void earlyEOF(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+										 HttpConnection connection) {
 						writeln("the server connection " ~ connection.getSessionId() ~ " is early EOF");
 					}
 
 					override
 					public void badMessage(int status, string reason, MetaData.Request request,
-										   MetaData.Response response, HTTPOutputStream output, HTTPConnection connection) {
+										   MetaData.Response response, HttpOutputStream output, HttpConnection connection) {
 						writeln("the server received a bad message, " ~ status ~ "|" ~ reason);
 
 						try {
@@ -48,7 +48,7 @@ public class HTTP1ServerDemo3 {
 
 					override
 					public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
-										   HTTPOutputStream output, HTTPConnection connection) {
+										   HttpOutputStream output, HttpConnection connection) {
 						System.out
 								.println("server received data: " ~ BufferUtils.toString(item, StandardCharsets.UTF_8));
 						return false;
@@ -56,7 +56,7 @@ public class HTTP1ServerDemo3 {
 
 					override
 					public bool accept100Continue(MetaData.Request request, MetaData.Response response,
-													 HTTPOutputStream output, HTTPConnection connection) {
+													 HttpOutputStream output, HttpConnection connection) {
 						writeln(
 								"the server received a 100 continue header, the path is " ~ request.getURI().getPath());
 						return false;
@@ -64,7 +64,7 @@ public class HTTP1ServerDemo3 {
 
 					override
 					public bool messageComplete(MetaData.Request request, MetaData.Response response,
-												   HTTPOutputStream outputStream, HTTPConnection connection) {
+												   HttpOutputStream outputStream, HttpConnection connection) {
 						HttpURI uri = request.getURI();
 						writeln("current path is " ~ uri.getPath());
 						writeln("current parameter string is " ~ uri.getQuery());
@@ -83,14 +83,14 @@ public class HTTP1ServerDemo3 {
 							list.add(BufferUtils.toBuffer("中文的内容，哈哈 ", StandardCharsets.UTF_8));
 							list.add(BufferUtils.toBuffer("靠！！！ ", StandardCharsets.UTF_8));
 
-							try (HTTPOutputStream output = outputStream) {
+							try (HttpOutputStream output = outputStream) {
 								output.writeWithContentLength(list.toArray(BufferUtils.EMPTY_BYTE_BUFFER_ARRAY));
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 						} else if (uri.getPath().equals("/testContinue")) {
 							response.setStatus(200);
-							try (HTTPOutputStream output = outputStream) {
+							try (HttpOutputStream output = outputStream) {
 								output.writeWithContentLength(BufferUtils.toBuffer("receive Continue-100 successfully ",
 										StandardCharsets.UTF_8));
 							} catch (IOException e) {
@@ -98,7 +98,7 @@ public class HTTP1ServerDemo3 {
 							}
 						} else {
 							response.setStatus(404);
-							try (HTTPOutputStream output = outputStream) {
+							try (HttpOutputStream output = outputStream) {
 								output.writeWithContentLength(BufferUtils.toBuffer("找不到页面", StandardCharsets.UTF_8));
 							} catch (IOException e) {
 								e.printStackTrace();

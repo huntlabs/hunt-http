@@ -2,11 +2,11 @@ module test.http.router.handler.chain;
 
 import hunt.http.$;
 import hunt.http.client.http2.SimpleResponse;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,11 +15,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * 
  */
-public class TestRouterChain extends AbstractHTTPHandlerTest {
+public class TestRouterChain extends AbstractHttpHandlerTest {
 
     
     public void testChain() {
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().get("/routerChain").asyncHandler(ctx -> {
             ctx.setAttribute("reqId", 1000);
             ctx.write("enter router 1\r\n")

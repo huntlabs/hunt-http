@@ -4,11 +4,11 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData.Request;
 import hunt.http.codec.http.model.MetaData.Response;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.container.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +19,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HTTP2ServerTLSDemo {
+public class Http2ServerTLSDemo {
 
 	
 
 	public static void main(string[] args) {
 		// System.setProperty("javax.net.debug", "all");
 
-		final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 
@@ -34,22 +34,22 @@ public class HTTP2ServerTLSDemo {
 		settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 		settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-		HTTP2Server server = new HTTP2Server("localhost", 6677, http2Configuration, new ServerHTTPHandlerAdapter() {
+		Http2Server server = new Http2Server("localhost", 6677, http2Configuration, new ServerHttpHandlerAdapter() {
 			override
-			public bool content(ByteBuffer item, Request request, Response response, HTTPOutputStream output,
-					HTTPConnection connection) {
+			public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
+					HttpConnection connection) {
 				info("received data, {}", BufferUtils.toString(item, StandardCharsets.UTF_8));
 				return false;
 			}
 
 			override
-			public bool messageComplete(Request request, Response response, HTTPOutputStream outputStream,
-					HTTPConnection connection) {
+			public bool messageComplete(Request request, Response response, HttpOutputStream outputStream,
+					HttpConnection connection) {
 				info("received end frame, {}, {}", request.getURI(), request.getFields());
 				HttpURI uri = request.getURI();
 				if (uri.getPath().equals("/index")) {
 					response.setStatus(200);
-					try (HTTPOutputStream output = outputStream) {
+					try (HttpOutputStream output = outputStream) {
 						output.writeWithContentLength(
 								BufferUtils.toBuffer("receive initial stream successful", StandardCharsets.UTF_8));
 					} catch (IOException e) {
@@ -57,7 +57,7 @@ public class HTTP2ServerTLSDemo {
 					}
 				} else if (uri.getPath().equals("/data")) {
 					response.setStatus(200);
-					try (HTTPOutputStream output = outputStream) {
+					try (HttpOutputStream output = outputStream) {
 						output.write(
 								BufferUtils.toBuffer("receive data stream successful\r\n", StandardCharsets.UTF_8));
 						output.write(BufferUtils.toBuffer("thank you\r\n", StandardCharsets.UTF_8));
@@ -66,7 +66,7 @@ public class HTTP2ServerTLSDemo {
 					}
 				} else if (uri.getPath().equals("/data2")) {
 					response.setStatus(200);
-					try (HTTPOutputStream output = outputStream) {
+					try (HttpOutputStream output = outputStream) {
 						ByteBuffer[] data = new ByteBuffer[] {
 								BufferUtils.toBuffer("receive data 2 stream successful\r\n", StandardCharsets.UTF_8),
 								BufferUtils.toBuffer("thank you 2 \r\n", StandardCharsets.UTF_8) };
@@ -76,7 +76,7 @@ public class HTTP2ServerTLSDemo {
 					}
 				} else {
 					response.setStatus(404);
-					try (HTTPOutputStream output = outputStream) {
+					try (HttpOutputStream output = outputStream) {
 						output.writeWithContentLength(
 								BufferUtils.toBuffer(uri.getPath() ~ " not found", StandardCharsets.UTF_8));
 					} catch (IOException e) {

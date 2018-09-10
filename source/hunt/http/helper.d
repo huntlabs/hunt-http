@@ -1,13 +1,13 @@
 module hunt.http.helper;
 
-import hunt.http.client.http.SimpleHTTPClient;
-import hunt.http.client.http.SimpleHTTPClientConfiguration;
+import hunt.http.client.http.SimpleHttpClient;
+import hunt.http.client.http.SimpleHttpClientConfiguration;
 import hunt.http.client.http.SimpleResponse;
 
-import hunt.http.server.http.HTTP2ServerBuilder;
-import hunt.http.server.http.SimpleHTTPServer;
-import hunt.http.server.http.SimpleHTTPServerConfiguration;
-import hunt.http.server.http.router.handler.HTTPBodyHandler;
+import hunt.http.server.http.Http2ServerBuilder;
+import hunt.http.server.http.SimpleHttpServer;
+import hunt.http.server.http.SimpleHttpServerConfiguration;
+import hunt.http.server.http.router.handler.HttpBodyHandler;
 
 import hunt.http.codec.http.model.HttpVersion;
 
@@ -17,12 +17,12 @@ import hunt.util.concurrent.CompletableFuture;
 import hunt.net.secure.SecureSessionFactory;
 
 
-private __gshared SimpleHTTPClient _httpClient;
-private __gshared SimpleHTTPClient _httpsClient;
-private __gshared SimpleHTTPClient _plaintextHTTP2Client;
+private __gshared SimpleHttpClient _httpClient;
+private __gshared SimpleHttpClient _httpsClient;
+private __gshared SimpleHttpClient _plaintextHttp2Client;
 
 // shared this() {
-//     _httpClient = new SimpleHTTPClient();
+//     _httpClient = new SimpleHttpClient();
 // }
 
 /**
@@ -32,10 +32,10 @@ private __gshared SimpleHTTPClient _plaintextHTTP2Client;
  *
  * @return HTTP client singleton instance.
  */
-SimpleHTTPClient httpClient() { 
+SimpleHttpClient httpClient() { 
     synchronized {
         if(_httpClient is null)
-            _httpClient = new SimpleHTTPClient();
+            _httpClient = new SimpleHttpClient();
     }
     return _httpClient;
 }
@@ -48,15 +48,15 @@ SimpleHTTPClient httpClient() {
  *
  * @return HTTP client singleton instance.
  */
-SimpleHTTPClient plaintextHTTP2Client() {
+SimpleHttpClient plaintextHttp2Client() {
     synchronized {
-        if(_plaintextHTTP2Client is null) {
-            SimpleHTTPClientConfiguration configuration = new SimpleHTTPClientConfiguration();
+        if(_plaintextHttp2Client is null) {
+            SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
             configuration.setProtocol(HttpVersion.HTTP_2.asString());
-            _plaintextHTTP2Client = new SimpleHTTPClient(configuration);
+            _plaintextHttp2Client = new SimpleHttpClient(configuration);
         }
     }
-    return _plaintextHTTP2Client;
+    return _plaintextHttp2Client;
 }
 
 /**
@@ -66,12 +66,12 @@ SimpleHTTPClient plaintextHTTP2Client() {
  *
  * @return HTTPs client singleton instance.
  */
-SimpleHTTPClient httpsClient() {
+SimpleHttpClient httpsClient() {
     synchronized {
         if(_httpsClient is null) {
-            SimpleHTTPClientConfiguration configuration = new SimpleHTTPClientConfiguration();
+            SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
             configuration.setSecureConnectionEnabled(true);
-            _httpsClient = new SimpleHTTPClient(configuration);
+            _httpsClient = new SimpleHttpClient(configuration);
         }
     }
     return _httpsClient;
@@ -82,8 +82,8 @@ SimpleHTTPClient httpsClient() {
  *
  * @return A new HTTP client instance.
  */
-SimpleHTTPClient createHTTPClient() {
-    return new SimpleHTTPClient();
+SimpleHttpClient createHttpClient() {
+    return new SimpleHttpClient();
 }
 
 /**
@@ -92,8 +92,8 @@ SimpleHTTPClient createHTTPClient() {
  * @param configuration HTTP client configuration.
  * @return A new HTTP client instance.
  */
-SimpleHTTPClient createHTTPClient(SimpleHTTPClientConfiguration configuration) {
-    return new SimpleHTTPClient(configuration);
+SimpleHttpClient createHttpClient(SimpleHttpClientConfiguration configuration) {
+    return new SimpleHttpClient(configuration);
 }
 
 /**
@@ -102,11 +102,11 @@ SimpleHTTPClient createHTTPClient(SimpleHTTPClientConfiguration configuration) {
 * @param secureSessionFactory The secure session factory. We provide JDK or OpenSSL secure session factory.
 * @return A new HTTPs client.
 */
-SimpleHTTPClient createHTTPsClient(SecureSessionFactory secureSessionFactory) {
-    SimpleHTTPClientConfiguration configuration = new SimpleHTTPClientConfiguration();
+SimpleHttpClient createHttpsClient(SecureSessionFactory secureSessionFactory) {
+    SimpleHttpClientConfiguration configuration = new SimpleHttpClientConfiguration();
     configuration.setSecureSessionFactory(secureSessionFactory);
     configuration.setSecureConnectionEnabled(true);
-    return new SimpleHTTPClient(configuration);
+    return new SimpleHttpClient(configuration);
 }
 
 
@@ -115,8 +115,8 @@ SimpleHTTPClient createHTTPsClient(SecureSessionFactory secureSessionFactory) {
  *
  * @return HTTP server builder.
  */
-HTTP2ServerBuilder httpServer() {
-    return new HTTP2ServerBuilder().httpServer();
+Http2ServerBuilder httpServer() {
+    return new Http2ServerBuilder().httpServer();
 }
 
 /**
@@ -124,8 +124,8 @@ HTTP2ServerBuilder httpServer() {
  *
  * @return HTTP server builder.
  */
-HTTP2ServerBuilder plaintextHTTP2Server() {
-    SimpleHTTPServerConfiguration configuration = new SimpleHTTPServerConfiguration();
+Http2ServerBuilder plaintextHttp2Server() {
+    SimpleHttpServerConfiguration configuration = new SimpleHttpServerConfiguration();
     configuration.setProtocol(HttpVersion.HTTP_2.asString());
     return httpServer(configuration);
 }
@@ -136,8 +136,8 @@ HTTP2ServerBuilder plaintextHTTP2Server() {
  * @param serverConfiguration The server configuration.
  * @return HTTP server builder
  */
-HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration) {
-    return httpServer(serverConfiguration, new HTTPBodyConfiguration());
+Http2ServerBuilder httpServer(SimpleHttpServerConfiguration serverConfiguration) {
+    return httpServer(serverConfiguration, new HttpBodyConfiguration());
 }
 
 /**
@@ -147,9 +147,9 @@ HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration)
  * @param httpBodyConfiguration HTTP body process configuration.
  * @return HTTP server builder.
  */
-HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration,
-                                     HTTPBodyConfiguration httpBodyConfiguration) {
-    return new HTTP2ServerBuilder().httpServer(serverConfiguration, httpBodyConfiguration);
+Http2ServerBuilder httpServer(SimpleHttpServerConfiguration serverConfiguration,
+                                     HttpBodyConfiguration httpBodyConfiguration) {
+    return new Http2ServerBuilder().httpServer(serverConfiguration, httpBodyConfiguration);
 }
 
 
@@ -158,8 +158,8 @@ HTTP2ServerBuilder httpServer(SimpleHTTPServerConfiguration serverConfiguration,
  *
  * @return HTTP server builder.
  */
-HTTP2ServerBuilder httpsServer() {
-    return new HTTP2ServerBuilder().httpsServer();
+Http2ServerBuilder httpsServer() {
+    return new Http2ServerBuilder().httpsServer();
 }
 
 /**
@@ -168,8 +168,8 @@ HTTP2ServerBuilder httpsServer() {
  * @param secureSessionFactory The secure session factory. We provide JDK or OpenSSL secure session factory.
  * @return HTTP server builder.
  */
-HTTP2ServerBuilder httpsServer(SecureSessionFactory secureSessionFactory) {
-    return new HTTP2ServerBuilder().httpsServer(secureSessionFactory);
+Http2ServerBuilder httpsServer(SecureSessionFactory secureSessionFactory) {
+    return new Http2ServerBuilder().httpsServer(secureSessionFactory);
 }
 
 /**
@@ -177,8 +177,8 @@ HTTP2ServerBuilder httpsServer(SecureSessionFactory secureSessionFactory) {
  *
  * @return A new HTTP server instance
  */
-SimpleHTTPServer createHTTPServer() {
-    return new SimpleHTTPServer();
+SimpleHttpServer createHttpServer() {
+    return new SimpleHttpServer();
 }
 
 /**
@@ -187,6 +187,6 @@ SimpleHTTPServer createHTTPServer() {
  * @param configuration HTTP server configuration
  * @return A new HTTP server instance
  */
-SimpleHTTPServer createHTTPServer(SimpleHTTPServerConfiguration configuration) {
-    return new SimpleHTTPServer(configuration);
+SimpleHttpServer createHttpServer(SimpleHttpServerConfiguration configuration) {
+    return new SimpleHttpServer(configuration);
 }

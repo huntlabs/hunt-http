@@ -1,13 +1,13 @@
 
 import hunt.http.codec.http.model;
 
-import hunt.http.client.http.ClientHTTPHandler;
-import hunt.http.client.http.HTTP2Client;
-import hunt.http.client.http.HTTPClientConnection;
-import hunt.http.client.http.HTTPClientRequest;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
-import hunt.http.codec.http.stream.HTTPOutputStream;
+import hunt.http.client.http.ClientHttpHandler;
+import hunt.http.client.http.Http2Client;
+import hunt.http.client.http.HttpClientConnection;
+import hunt.http.client.http.HttpClientRequest;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
@@ -32,17 +32,17 @@ sudo apt-get install libssl-dev
 */
 
 void main(string[] args) {
-	HTTP2Client client = new HTTP2Client(new HTTP2Configuration());
-    HTTPClientConnection connection = client.connect("127.0.0.1", 8080).get();
-    HTTPClientRequest request = new HTTPClientRequest("GET", "/index");
+	Http2Client client = new Http2Client(new Http2Configuration());
+    HttpClientConnection connection = client.connect("127.0.0.1", 8080).get();
+    HttpClientRequest request = new HttpClientRequest("GET", "/index");
     FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
     connection.upgradeWebSocket(request, WebSocketPolicy.newClientPolicy(), promise, 
         
-        new class ClientHTTPHandler.Adapter {
+        new class ClientHttpHandler.Adapter {
             override
             public bool messageComplete(MetaData.Request request, MetaData.Response response,
-                                           HTTPOutputStream output,
-                                           HTTPConnection connection) {
+                                           HttpOutputStream output,
+                                           HttpConnection connection) {
                 tracef("upgrade websocket success: " ~ response.toString());
                 return true;
             }

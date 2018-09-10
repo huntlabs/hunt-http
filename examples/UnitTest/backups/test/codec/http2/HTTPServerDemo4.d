@@ -9,14 +9,14 @@ import hunt.container.List;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpURI;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPOutputStream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.utils.collection.MultiMap;
 import hunt.container.BufferUtils;
 
-public class HTTPServerDemo4 {
+public class HttpServerDemo4 {
 
 	public static void main(string[] args) {
 		int length = 2500;
@@ -26,9 +26,9 @@ public class HTTPServerDemo4 {
 		}
 		final string data = s.toString();
 
-		HTTP2Configuration http2Configuration = new HTTP2Configuration();
-		HTTP2Server server = new HTTP2Server("localhost", 7777, http2Configuration,
-				new ServerHTTPHandlerAdapter().messageComplete((request, response, outputStream, connection) -> {
+		Http2Configuration http2Configuration = new Http2Configuration();
+		Http2Server server = new Http2Server("localhost", 7777, http2Configuration,
+				new ServerHttpHandlerAdapter().messageComplete((request, response, outputStream, connection) -> {
 
 					HttpURI uri = request.getURI();
 					// writeln("current path is " ~ uri.getPath());
@@ -45,7 +45,7 @@ public class HTTPServerDemo4 {
 						response.setStatus(200);
 						response.setHttpVersion(request.getHttpVersion());
 						response.getFields().add(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE);
-						try (HTTPOutputStream output = outputStream) {
+						try (HttpOutputStream output = outputStream) {
 							output.writeWithContentLength(BufferUtils.toBuffer(data, StandardCharsets.UTF_8));
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -60,14 +60,14 @@ public class HTTPServerDemo4 {
 						list.add(BufferUtils.toBuffer("中文的内容，哈哈 ", StandardCharsets.UTF_8));
 						list.add(BufferUtils.toBuffer("靠！！！ ", StandardCharsets.UTF_8));
 
-						try (HTTPOutputStream output = outputStream) {
+						try (HttpOutputStream output = outputStream) {
 							output.writeWithContentLength(list.toArray(BufferUtils.EMPTY_BYTE_BUFFER_ARRAY));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					} else if (uri.getPath().equals("/testContinue")) {
 						response.setStatus(200);
-						try (HTTPOutputStream output = outputStream) {
+						try (HttpOutputStream output = outputStream) {
 							output.writeWithContentLength(
 									BufferUtils.toBuffer("receive Continue-100 successfully ", StandardCharsets.UTF_8));
 						} catch (IOException e) {
@@ -75,7 +75,7 @@ public class HTTPServerDemo4 {
 						}
 					} else {
 						response.setStatus(404);
-						try (HTTPOutputStream output = outputStream) {
+						try (HttpOutputStream output = outputStream) {
 							output.writeWithContentLength(BufferUtils.toBuffer("找不到页面", StandardCharsets.UTF_8));
 						} catch (IOException e) {
 							e.printStackTrace();

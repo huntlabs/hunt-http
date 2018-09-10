@@ -5,7 +5,7 @@ import hunt.http.server.http.router.Router;
 
 import hunt.http.server.http.router.RequestAcceptor;
 
-import hunt.http.server.http.router.handler.HTTPBodyHandler;
+import hunt.http.server.http.router.handler.HttpBodyHandler;
 import hunt.http.server.http.router.handler.DefaultErrorResponseHandlerLoader;
 import hunt.http.server.http.router.impl.RouterManagerImpl;
 
@@ -80,12 +80,12 @@ interface RouterManager : RequestAcceptor {
     NavigableSet!(RouterMatchResult) findRouter(string method, string path, string contentType, string accept);
 
     static RouterManager create() {
-        return create(new HTTPBodyConfiguration());
+        return create(new HttpBodyConfiguration());
     }
 
-    static RouterManager create(HTTPBodyConfiguration configuration) {
+    static RouterManager create(HttpBodyConfiguration configuration) {
         RouterManagerImpl routerManager = new RouterManagerImpl();
-        routerManager.register().path("*").handler(new HTTPBodyHandler(configuration));
+        routerManager.register().path("*").handler(new HttpBodyHandler(configuration));
         routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*").handler(DefaultErrorResponseHandlerLoader.getInstance().getHandler());
         return routerManager;
     }

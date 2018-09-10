@@ -3,7 +3,7 @@ module hunt.http.server.http.router.impl.RouterManagerImpl;
 import hunt.http.server.http.router.impl.ContentTypePreciseMatcher;
 import hunt.http.server.http.router.impl.ContentTypePatternMatcher;
 import hunt.http.server.http.router.impl.AcceptHeaderMatcher;
-import hunt.http.server.http.router.impl.HTTPMethodMatcher;
+import hunt.http.server.http.router.impl.HttpMethodMatcher;
 import hunt.http.server.http.router.impl.PatternPathMatcher;
 import hunt.http.server.http.router.impl.PrecisePathMatcher;
 import hunt.http.server.http.router.impl.ParameterPathMatcher;
@@ -49,7 +49,7 @@ class RouterManagerImpl : RouterManager {
         ArrayList!Matcher al = new ArrayList!Matcher([precisePathMather, patternPathMatcher, parameterPathMatcher, regexPathMatcher]);
         matcherMap.put(Matcher.MatchType.PATH, al);
 
-        httpMethodMatcher = new HTTPMethodMatcher();
+        httpMethodMatcher = new HttpMethodMatcher();
         matcherMap.put(Matcher.MatchType.METHOD, Collections.singletonList!(Matcher)(httpMethodMatcher));
 
         contentTypePreciseMatcher = new ContentTypePreciseMatcher();

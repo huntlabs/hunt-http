@@ -6,12 +6,12 @@ import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HTTP2Configuration;
-import hunt.http.codec.http.stream.HTTPConnection;
+import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
-import hunt.http.server.http.HTTP2Server;
-import hunt.http.server.http.ServerHTTPHandler;
+import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
 import hunt.util.functional;
@@ -34,24 +34,24 @@ import hunt.http.utils.io.BufferUtils.toBuffer;
 /**
  * 
  */
-public class TestH2cLowLevelAPI extends AbstractHTTPHandlerTest {
+public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
 
     
     public void testLowLevelAPI() {
         Phaser phaser = new Phaser(2);
-        HTTP2Server server = createServerLowLevelAPI();
-        HTTP2Client client = createClientLowLevelClient(phaser);
+        Http2Server server = createServerLowLevelAPI();
+        Http2Client client = createClientLowLevelClient(phaser);
 
         server.stop();
         client.stop();
     }
 
-    public HTTP2Server createServerLowLevelAPI() {
-        final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+    public Http2Server createServerLowLevelAPI() {
+        final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 
-        HTTP2Server server = new HTTP2Server(host, port, http2Configuration, new ServerSessionListener.Adapter() {
+        Http2Server server = new Http2Server(host, port, http2Configuration, new ServerSessionListener.Adapter() {
 
             override
             public Map<Integer, Integer> onPreface(Session session) {
@@ -112,40 +112,40 @@ public class TestH2cLowLevelAPI extends AbstractHTTPHandlerTest {
             public void onAccept(Session session) {
                 writeln("accept a new session " ~ session);
             }
-        }, new ServerHTTPHandlerAdapter(), new WebSocketHandler() {});
+        }, new ServerHttpHandlerAdapter(), new WebSocketHandler() {});
         server.start();
         return server;
     }
 
-    public HTTP2Client createClientLowLevelClient(Phaser phaser) {
-        final HTTP2Configuration http2Configuration = new HTTP2Configuration();
+    public Http2Client createClientLowLevelClient(Phaser phaser) {
+        final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-        HTTP2Client client = new HTTP2Client(http2Configuration);
+        Http2Client client = new Http2Client(http2Configuration);
 
-        FuturePromise<HTTPClientConnection> promise = new FuturePromise<>();
+        FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect(host, port, promise);
 
-        HTTPConnection connection = promise.get();
+        HttpConnection connection = promise.get();
         Assert.assertThat(connection.getHttpVersion(), is(HttpVersion.HTTP_1_1));
 
-        final HTTP1ClientConnection httpConnection = (HTTP1ClientConnection) connection;
-        HTTPClientRequest request = new HTTPClientRequest("GET", "/index");
+        final Http1ClientConnection httpConnection = (Http1ClientConnection) connection;
+        HttpClientRequest request = new HttpClientRequest("GET", "/index");
 
         Map<Integer, Integer> settings = new HashMap<>();
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
         settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
         SettingsFrame settingsFrame = new SettingsFrame(settings, false);
 
-        FuturePromise<HTTP2ClientConnection> http2promise = new FuturePromise<>();
+        FuturePromise<Http2ClientConnection> http2promise = new FuturePromise<>();
         FuturePromise<Stream> initStream = new FuturePromise<>();
-        httpConnection.upgradeHTTP2(request, settingsFrame, http2promise, initStream, new Stream.Listener.Adapter() {
+        httpConnection.upgradeHttp2(request, settingsFrame, http2promise, initStream, new Stream.Listener.Adapter() {
             override
             public void onHeaders(Stream stream, HeadersFrame frame) {
                 writeln($.string.replace("client stream {} received init headers: {}", stream.getId(), frame.getMetaData()));
             }
 
-        }, new ClientHTTP2SessionListener() {
+        }, new ClientHttp2SessionListener() {
 
             override
             public Map<Integer, Integer> onPreface(Session session) {
@@ -160,9 +160,9 @@ public class TestH2cLowLevelAPI extends AbstractHTTPHandlerTest {
             public void onFailure(Session session, Throwable failure) {
                 failure.printStackTrace();
             }
-        }, new ClientHTTPHandler.Adapter());
+        }, new ClientHttpHandler.Adapter());
 
-        HTTP2ClientConnection clientConnection = http2promise.get();
+        Http2ClientConnection clientConnection = http2promise.get();
         Assert.assertThat(clientConnection.getHttpVersion(), is(HttpVersion.HTTP_2));
 
         for (int i = 0; i < 1; i++) {
@@ -171,7 +171,7 @@ public class TestH2cLowLevelAPI extends AbstractHTTPHandlerTest {
         return client;
     }
 
-    private void testReq(Phaser phaser, HTTP2ClientConnection clientConnection) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private void testReq(Phaser phaser, Http2ClientConnection clientConnection) throws InterruptedException, java.util.concurrent.ExecutionException {
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.ACCEPT, "text/html");
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");

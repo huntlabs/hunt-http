@@ -2,10 +2,10 @@ module test.http.router.handler.error;
 
 import hunt.http.$;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.server.http.HTTP2ServerBuilder;
+import hunt.http.server.http.Http2ServerBuilder;
 import hunt.util.Assert;
 import hunt.util.Test;
-import test.http.router.handler.AbstractHTTPHandlerTest;
+import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.util.concurrent.Phaser;
 
@@ -14,13 +14,13 @@ import java.util.concurrent.Phaser;
 /**
  * 
  */
-public class TestErrorHandler extends AbstractHTTPHandlerTest {
+public class TestErrorHandler extends AbstractHttpHandlerTest {
 
     
     public void test() {
         Phaser phaser = new Phaser(3);
 
-        HTTP2ServerBuilder httpServer = $.httpServer();
+        Http2ServerBuilder httpServer = $.httpServer();
         httpServer.router().get("/").handler(ctx -> ctx.write("hello world! ").next())
                   .router().get("/").handler(ctx -> ctx.end("end message"))
                   .listen(host, port);

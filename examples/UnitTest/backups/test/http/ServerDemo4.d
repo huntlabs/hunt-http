@@ -3,7 +3,7 @@ module test.http;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.codec.http.model.MimeTypes;
-import hunt.http.server.http.SimpleHTTPServer;
+import hunt.http.server.http.SimpleHttpServer;
 import hunt.http.server.http.SimpleResponse;
 import hunt.container.BufferUtils;
 
@@ -15,7 +15,7 @@ import hunt.container.List;
 public class ServerDemo4 {
 
     public static void main(string[] args) {
-        SimpleHTTPServer server = new SimpleHTTPServer();
+        SimpleHttpServer server = new SimpleHttpServer();
         server.headerComplete(req -> {
             List!(ByteBuffer) list = new ArrayList<>();
             req.content(list::add)

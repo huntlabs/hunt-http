@@ -1,7 +1,7 @@
 
 import hunt.http.codec.http.model;
 
-import hunt.http.client.http.SimpleHTTPClient;
+import hunt.http.client.http.SimpleHttpClient;
 import hunt.http.client.http.SimpleResponse;
 
 import hunt.util.concurrent.Promise;
@@ -19,9 +19,9 @@ import std.conv;
 import std.stdio;
 
 void main(string[] args) {
-	SimpleHTTPClient simpleHTTPClient = test(new ConscryptSecureSessionFactory());
-	// simpleHTTPClient = test(new JdkSecureSessionFactory());
-	simpleHTTPClient.stop();
+	SimpleHttpClient simpleHttpClient = test(new ConscryptSecureSessionFactory());
+	// simpleHttpClient = test(new JdkSecureSessionFactory());
+	simpleHttpClient.stop();
 }
 
 
@@ -36,10 +36,10 @@ long getMillisecond(long v)
     return convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(v);
 }
 
-SimpleHTTPClient test(SecureSessionFactory secureSessionFactory) {
+SimpleHttpClient test(SecureSessionFactory secureSessionFactory) {
     long testStart = Clock.currStdTime;
     tracef("The secure session factory is " ~ typeid(secureSessionFactory).name);
-    SimpleHTTPClient client = createHTTPsClient(secureSessionFactory);
+    SimpleHttpClient client = createHttpsClient(secureSessionFactory);
     // for (int i = 0; i < 5; i++) {
     //     CountDownLatch latch = new CountDownLatch(urlList.size());
     foreach(string url; urlList)
