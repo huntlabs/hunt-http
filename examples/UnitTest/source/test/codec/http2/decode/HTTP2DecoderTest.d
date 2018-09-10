@@ -37,8 +37,8 @@ class HTTP2DecoderTest {
         byte[] smallContent = new byte[22];
         byte[] bigContent = new byte[50];
         auto rnd = Random(2018);
-        for(size_t i=0; i<smallContent.length; i++ )   smallContent[i] = cast(byte) uniform(-128, 127, rnd);
-        for(size_t i=0; i<bigContent.length; i++ )   bigContent[i] = cast(byte) uniform(-128, 127, rnd);
+        for(size_t i=0; i<smallContent.length; i++ )   smallContent[i] = cast(byte) uniform(byte.min, byte.max, rnd);
+        for(size_t i=0; i<bigContent.length; i++ )   bigContent[i] = cast(byte) uniform(byte.min, byte.max, rnd);
 
         MockSessionFactory factory = new MockSessionFactory();
         HTTP2ServerDecoder decoder = new HTTP2ServerDecoder();

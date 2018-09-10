@@ -40,7 +40,7 @@ class HTTP2Client  : AbstractLifeCycle {
         }
         http2ClientContext = new HashMap!(int, HTTP2ClientContext)();
 
-        HTTP1ClientDecoder httpClientDecoder = new HTTP1ClientDecoder(new HTTP2ClientDecoder());
+        HTTP1ClientDecoder httpClientDecoder = new HTTP1ClientDecoder(new WebSocketDecoder(), new HTTP2ClientDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
 
         c.getTcpConfiguration().setDecoder(commonDecoder);

@@ -7,9 +7,9 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HTTPConnection;
 import hunt.http.codec.http.stream.HTTPOutputStream;
-// import hunt.http.codec.websocket.model.IncomingFrames;
-// import hunt.http.codec.websocket.stream.WebSocketConnection;
-// import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.codec.websocket.model.IncomingFrames;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.util.concurrent.Promise;
 
 import hunt.container.ByteBuffer;
@@ -37,6 +37,6 @@ interface HTTPClientConnection : HTTPConnection {
     void upgradeHTTP2(Request request, SettingsFrame settings, Promise!(HTTPClientConnection) promise,
                       ClientHTTPHandler upgradeHandler, ClientHTTPHandler http2ResponseHandler);
 
-    // void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
-    //                       ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames);
+    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
+                          ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames);
 }

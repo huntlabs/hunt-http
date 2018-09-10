@@ -12,8 +12,8 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream;
-// import hunt.http.codec.websocket.model.IncomingFrames;
-// import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.codec.websocket.model.IncomingFrames;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.net.ConnectionType;
@@ -213,10 +213,10 @@ class HTTP2ClientConnection : AbstractHTTP2Connection , HTTPClientConnection {
         throw new CommonRuntimeException("The current connection version is http2, it does not need to upgrading.");
     }
 
-    // override
-    // void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
-    //                              ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames) {
-    //     throw new CommonRuntimeException("The current connection version is http2, it can not upgrade WebSocket.");
-    // }
+    override
+    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
+                                 ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames) {
+        throw new CommonRuntimeException("The current connection version is http2, it can not upgrade WebSocket.");
+    }
 
 }

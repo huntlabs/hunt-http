@@ -208,7 +208,6 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
         if(e !is null)
             e.incomingFrame(frame);
-        // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingFrame(frame));
     }
 
     override

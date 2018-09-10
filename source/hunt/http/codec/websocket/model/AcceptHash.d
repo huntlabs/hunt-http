@@ -1,7 +1,6 @@
 module hunt.http.codec.websocket.model.AcceptHash;
 
-
-// import hunt.security.MessageDigest;
+import hunt.util.codec;
 import hunt.util.exception;
 
 import std.base64;
@@ -33,7 +32,13 @@ class AcceptHash {
             hash.put(cast(const(ubyte)[])key);
             hash.put(MAGIC);
             ubyte[20] result = hash.finish();
-            const(char)[] encoded = Base64.encode(result);
+            // const(char)[] encoded;
+            // import hunt.logging;
+            // encoded = Base64.encode(result);
+            // tracef("test01: %(%02X %)", encoded);
+            // const(char)[] 
+            const(char)[] encoded = B64Code.encode(cast(byte[])result);
+            // tracef("test02: %(%02X %)", encoded);
             return cast(string)encoded;
 
         } catch (Exception e) {

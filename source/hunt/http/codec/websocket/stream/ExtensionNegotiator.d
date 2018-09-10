@@ -109,18 +109,6 @@ class ExtensionNegotiator {
             });
 
         return r.array;
-
-        // return parseEnum()
-        //         .stream().filter(c -> factory.isAvailable(c.getName()))
-        //         .map(c -> {
-        //             Extension e = factory.newInstance(c);
-        //             if (e instanceof AbstractExtension) {
-        //                 AbstractExtension abstractExtension = (AbstractExtension) e;
-        //                 abstractExtension.setConfig(c);
-        //             }
-        //             return e;
-        //         })
-        //         .collect(Collectors.toList());
     }
 
     IncomingFrames getNextIncomingFrames() {

@@ -14,11 +14,11 @@ import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
-// import hunt.http.codec.websocket.model.IncomingFrames;
-// import hunt.http.codec.websocket.model.WebSocketBehavior;
-// import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.codec.websocket.model.IncomingFrames;
+import hunt.http.codec.websocket.model.common;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-// import hunt.http.codec.websocket.stream.impl.WebSocketConnectionImpl;
+import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
@@ -51,8 +51,8 @@ alias SessionListener = StreamSession.Listener;
 */
 class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
 
-    // private Promise!(WebSocketConnection) webSocketConnectionPromise;
-    // private IncomingFrames incomingFrames;
+    private Promise!(WebSocketConnection) webSocketConnectionPromise;
+    private IncomingFrames incomingFrames;
     private WebSocketPolicy policy;
     private Promise!(HTTPClientConnection) http2ConnectionPromise;
     private HTTP2ClientConnection http2Connection;
@@ -286,23 +286,19 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
                 }
             }
             case HttpProtocol.WEB_SOCKET: {
-                implementationMissing(false);
-                // TODO: Tasks pending completion -@Administrator at 2018-7-13 18:23:21
-                // 
-                // if (webSocketConnectionPromise !is null && incomingFrames !is null && policy !is null) {
-                //     upgradeWebSocketComplete.compareAndSet(false, true);
-                //     WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
-                //             secureSession, tcpSession,
-                //             incomingFrames, policy,
-                //             request, response, config);
-                //     getTcpSession().attachObject(webSocketConnection);
-                //     webSocketConnectionPromise.succeeded(webSocketConnection);
-                //     return true;
-                // } else {
-                //     resetUpgradeProtocol();
-                //     return false;
-                // }
-                return false;
+                if (webSocketConnectionPromise !is null && incomingFrames !is null && policy !is null) {
+                    upgradeWebSocketComplete = true;
+                    WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
+                            secureSession, tcpSession,
+                            incomingFrames, policy,
+                            request, response, config);
+                    getTcpSession().attachObject(cast(Object)webSocketConnection);
+                    webSocketConnectionPromise.succeeded(webSocketConnection);
+                    return true;
+                } else {
+                    resetUpgradeProtocol();
+                    return false;
+                }
             }
             default:
                 resetUpgradeProtocol();
@@ -317,36 +313,39 @@ class HTTP1ClientConnection : AbstractHTTP1Connection , HTTPClientConnection {
         }
         http2SessionListener = null;
         http2Connection = null;
-        // if (webSocketConnectionPromise !is null) {
-        //     webSocketConnectionPromise.failed(new IllegalStateException("The websocket handshake failed"));
-        //     webSocketConnectionPromise = null;
-        // }
-        // incomingFrames = null;
+        if (webSocketConnectionPromise !is null) {
+            webSocketConnectionPromise.failed(new IllegalStateException("The websocket handshake failed"));
+            webSocketConnectionPromise = null;
+        }
+        incomingFrames = null;
         policy = null;
     }
 
-    // override
-    // void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
-    //                              ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames) {
-    //     Assert.isTrue(HttpMethod.GET == request.getMethod(), "The method of the request MUST be GET in the websocket handshake.");
-    //     Assert.isTrue(policy.getBehavior() == WebSocketBehavior.CLIENT, "The websocket behavior MUST be client");
+    override
+    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
+                                 ClientHTTPHandler upgradeHandler, IncomingFrames incomingFrames) {
+        assert(HttpMethod.GET.asString() == request.getMethod(), 
+            "The method of the request MUST be GET in the websocket handshake.");
 
-    //     request.getFields().put(HttpHeader.SEC_WEBSOCKET_VERSION, string.valueOf(SPEC_VERSION));
-    //     request.getFields().put(HttpHeader.UPGRADE, "websocket");
-    //     request.getFields().put(HttpHeader.CONNECTION, "Upgrade");
-    //     request.getFields().put(HttpHeader.SEC_WEBSOCKET_KEY, genRandomKey());
-    //     webSocketConnectionPromise = promise;
-    //     this.incomingFrames = incomingFrames;
-    //     this.policy = policy;
-    //     send(request, upgradeHandler);
-    // }
+        assert(policy.getBehavior() == WebSocketBehavior.CLIENT, 
+            "The websocket behavior MUST be client");
+
+        request.getFields().put(HttpHeader.SEC_WEBSOCKET_VERSION, WebSocketConstants.SPEC_VERSION.to!string());
+        request.getFields().put(HttpHeader.UPGRADE, "websocket");
+        request.getFields().put(HttpHeader.CONNECTION, "Upgrade");
+        request.getFields().put(HttpHeader.SEC_WEBSOCKET_KEY, genRandomKey());
+        webSocketConnectionPromise = promise;
+        this.incomingFrames = incomingFrames;
+        this.policy = policy;
+        send(request, upgradeHandler);
+    }
 
     private string genRandomKey() {
         byte[] bytes = new byte[16];
         // ThreadLocalRandom.current().nextBytes(bytes);
         auto rnd = Random(2018);
         for(int i; i< bytes.length; i++)
-            bytes[i] = cast(byte) uniform(-128, 127, rnd);
+            bytes[i] = cast(byte) uniform(byte.min, byte.max, rnd);
         return cast(string)(B64Code.encode(bytes));
     }
 

@@ -164,10 +164,12 @@ class Parser {
                 throw new ProtocolException("Server MUST NOT mask any frames (RFC-6455: Section 5.1)");
             }
         }
-
+        
         if (incomingFramesHandler is null) {
+            version(HuntDebugMode) warning("incomingFramesHandler is null");
             return;
         }
+
         try {
             incomingFramesHandler.incomingFrame(f);
         } catch (WebSocketException e) {

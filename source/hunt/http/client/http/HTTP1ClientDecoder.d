@@ -23,12 +23,12 @@ import std.conv;
 
 class HTTP1ClientDecoder : DecoderChain {
 
-    // private WebSocketDecoder webSocketDecoder;
+    private WebSocketDecoder webSocketDecoder;
     private HTTP2ClientDecoder http2ClientDecoder;
 
-    this(HTTP2ClientDecoder http2ClientDecoder) { // WebSocketDecoder webSocketDecoder,
+    this(WebSocketDecoder webSocketDecoder, HTTP2ClientDecoder http2ClientDecoder) {
         super(null);
-        // this.webSocketDecoder = webSocketDecoder;
+        this.webSocketDecoder = webSocketDecoder;
         this.http2ClientDecoder = http2ClientDecoder;
     }
 
@@ -52,23 +52,28 @@ class HTTP1ClientDecoder : DecoderChain {
                     if (http1Connection.getUpgradeHTTP2Complete()) {
                         http2ClientDecoder.decode(buf, session);
                         break;
-                    // } else if (http1Connection.getUpgradeWebSocketComplete()) {
-                    //     webSocketDecoder.decode(buf, session);
-                    //     break;
+                    } else if (http1Connection.getUpgradeWebSocketComplete()) {
+                        webSocketDecoder.decode(buf, session);
+                        break;
                     }
                 }
             }
             break;
+
             case ConnectionType.HTTP2: {
                 http2ClientDecoder.decode(buf, session);
             }
             break;
-            // case ConnectionType.WEB_SOCKET: {
-            //     webSocketDecoder.decode(buf, session);
-            // }
-            // break;
+
+            case ConnectionType.WEB_SOCKET: {
+                webSocketDecoder.decode(buf, session);
+            }
+            break;
+
             default:
-                throw new IllegalStateException("client does not support the protocol " ~ abstractConnection.getConnectionType().to!string());
+                string msg = "client does not support the protocol " ~ abstractConnection.getConnectionType().to!string();
+                error(msg);
+                throw new IllegalStateException(msg);
         }
     }
 
