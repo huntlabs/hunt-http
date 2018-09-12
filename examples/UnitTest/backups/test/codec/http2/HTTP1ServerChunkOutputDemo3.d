@@ -11,10 +11,10 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.HttpServer;
-import hunt.http.server.http.ServerHttpHandler;
-import hunt.http.server.http.ServerSessionListener;
-import hunt.http.server.http.WebSocketHandler;
+import hunt.http.server.HttpServer;
+import hunt.http.server.ServerHttpHandler;
+import hunt.http.server.ServerSessionListener;
+import hunt.http.server.WebSocketHandler;
 import hunt.container.BufferUtils;
 
 public class Http1ServerChunkOutputDemo3 {

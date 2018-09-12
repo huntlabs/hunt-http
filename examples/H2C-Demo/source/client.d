@@ -2,10 +2,10 @@ module client;
 
 import std.stdio;
 
-import hunt.http.client.http.ClientHttp2SessionListener;
-import hunt.http.client.http.HttpClient;
-import hunt.http.client.http.Http2ClientConnection;
-import hunt.http.client.http.HttpClientConnection;
+import hunt.http.client.ClientHttp2SessionListener;
+import hunt.http.client.HttpClient;
+import hunt.http.client.Http2ClientConnection;
+import hunt.http.client.HttpClientConnection;
 
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;

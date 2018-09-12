@@ -1,10 +1,10 @@
 
 import hunt.http.codec.http.model;
 
-import hunt.http.client.http.ClientHttpHandler;
-import hunt.http.client.http.HttpClient;
-import hunt.http.client.http.HttpClientConnection;
-import hunt.http.client.http.HttpClientRequest;
+import hunt.http.client.ClientHttpHandler;
+import hunt.http.client.HttpClient;
+import hunt.http.client.HttpClientConnection;
+import hunt.http.client.HttpClientRequest;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;

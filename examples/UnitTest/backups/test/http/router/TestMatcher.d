@@ -1,9 +1,9 @@
 module test.http.router;
 
-import hunt.http.server.http.router.Matcher;
-import hunt.http.server.http.router.Router;
-import hunt.http.server.http.router.RouterManager;
-import hunt.http.server.http.router.impl.RouterManagerImpl;
+import hunt.http.server.router.Matcher;
+import hunt.http.server.router.Router;
+import hunt.http.server.router.RouterManager;
+import hunt.http.server.router.impl.RouterManagerImpl;
 import hunt.util.Assert;
 import hunt.util.Test;
 

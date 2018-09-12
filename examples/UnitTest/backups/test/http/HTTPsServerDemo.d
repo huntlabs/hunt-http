@@ -1,7 +1,7 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.server.http.router.handler.file.StaticFileHandler;
+import hunt.http.server.router.handler.file.StaticFileHandler;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

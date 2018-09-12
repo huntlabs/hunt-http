@@ -3,8 +3,8 @@ module test.http;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.codec.http.model.MimeTypes;
-import hunt.http.server.http.SimpleHttpServer;
-import hunt.http.server.http.SimpleResponse;
+import hunt.http.server.SimpleHttpServer;
+import hunt.http.server.SimpleResponse;
 
 import java.io.PrintWriter;
 

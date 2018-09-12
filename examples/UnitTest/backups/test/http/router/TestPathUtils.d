@@ -1,6 +1,6 @@
 module test.http.router;
 
-import hunt.http.server.http.router.utils.PathUtils;
+import hunt.http.server.router.utils.PathUtils;
 import hunt.util.Assert;
 import hunt.util.Test;
 

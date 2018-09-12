@@ -11,8 +11,8 @@ import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.HttpServer;
-import hunt.http.server.http.ServerHttpHandler;
+import hunt.http.server.HttpServer;
+import hunt.http.server.ServerHttpHandler;
 import hunt.http.utils.collection.MultiMap;
 import hunt.container.BufferUtils;
 
