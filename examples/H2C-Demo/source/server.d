@@ -6,7 +6,7 @@ import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream;
 
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 // import hunt.http.server.http.WebSocketHandler;
@@ -29,7 +29,7 @@ void main(string[] args)
 	settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 	settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-	Http2Server server = new Http2Server("0.0.0.0", 6677, http2Configuration, new class ServerSessionListener {
+	HttpServer server = new HttpServer("0.0.0.0", 6677, http2Configuration, new class ServerSessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {

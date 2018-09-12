@@ -1,4 +1,4 @@
-module hunt.http.server.http.Http2Server;
+module hunt.http.server.http.HttpServer;
 
 import hunt.http.server.http.Http1ServerDecoder;
 import hunt.http.server.http.Http2ServerDecoder;
@@ -25,7 +25,7 @@ import hunt.util.LifeCycle;
 
 /**
 */
-class Http2Server  : AbstractLifeCycle {
+class HttpServer  : AbstractLifeCycle {
 
     private Server server;
     private Http2Configuration http2Configuration;

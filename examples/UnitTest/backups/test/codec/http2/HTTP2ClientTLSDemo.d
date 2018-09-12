@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import hunt.http.client.http2.ClientHttpHandler;
-import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClient;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.Http2Configuration;
@@ -20,7 +20,7 @@ public class Http2ClientTLSDemo {
         final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
         http2Configuration.setSecureConnectionEnabled(true);
-        Http2Client client = new Http2Client(http2Configuration);
+        HttpClient client = new HttpClient(http2Configuration);
 
         FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect("127.0.0.1", 6677, promise);

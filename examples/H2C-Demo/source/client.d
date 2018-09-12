@@ -3,7 +3,7 @@ module client;
 import std.stdio;
 
 import hunt.http.client.http.ClientHttp2SessionListener;
-import hunt.http.client.http.Http2Client;
+import hunt.http.client.http.HttpClient;
 import hunt.http.client.http.Http2ClientConnection;
 import hunt.http.client.http.HttpClientConnection;
 
@@ -32,7 +32,7 @@ void main(string[] args) {
 	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
 
 	FuturePromise!(HttpClientConnection) promise = new FuturePromise!(HttpClientConnection)();
-	Http2Client client = new Http2Client(http2Configuration);
+	HttpClient client = new HttpClient(http2Configuration);
 
 	client.connect(host, port, promise, new class ClientHttp2SessionListener {
 

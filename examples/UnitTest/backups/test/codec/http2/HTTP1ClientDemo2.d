@@ -7,7 +7,7 @@ import java.util.concurrent.Phaser;
 
 import hunt.http.client.http2.ClientHttpHandler;
 import hunt.http.client.http2.Http1ClientConnection;
-import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClient;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.client.http2.HttpClientRequest;
 import hunt.http.codec.http.model.HttpVersion;
@@ -24,7 +24,7 @@ public class Http1ClientDemo2 {
 	public static void main(string[] args) throws InterruptedException, ExecutionException {
 		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-		Http2Client client = new Http2Client(http2Configuration);
+		HttpClient client = new HttpClient(http2Configuration);
 
 		FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
 		client.connect("localhost", 6655, promise);

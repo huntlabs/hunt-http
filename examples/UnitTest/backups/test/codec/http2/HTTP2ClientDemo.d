@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import hunt.http.client.http2.ClientHttp2SessionListener;
-import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClient;
 import hunt.http.client.http2.Http2ClientConnection;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.frame;
@@ -33,7 +33,7 @@ public class Http2ClientDemo {
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.setFlowControlStrategy("simple");
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-		Http2Client client = new Http2Client(http2Configuration);
+		HttpClient client = new HttpClient(http2Configuration);
 
 		FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
 		client.connect("127.0.0.1", 6677, promise, new ClientHttp2SessionListener() {

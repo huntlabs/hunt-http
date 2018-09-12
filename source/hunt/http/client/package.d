@@ -5,7 +5,7 @@ public import hunt.http.client.http.ClientHttpHandler;
 public import hunt.http.client.http.Http1ClientConnection;
 public import hunt.http.client.http.Http1ClientDecoder;
 public import hunt.http.client.http.Http1ClientResponseHandler;
-public import hunt.http.client.http.Http2Client;
+public import hunt.http.client.http.HttpClient;
 public import hunt.http.client.http.Http2ClientConnection;
 public import hunt.http.client.http.Http2ClientContext;
 public import hunt.http.client.http.Http2ClientDecoder;

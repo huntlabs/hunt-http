@@ -1,4 +1,4 @@
-module hunt.http.client.http.Http2Client;
+module hunt.http.client.http.HttpClient;
 
 import hunt.http.client.http.ClientHttp2SessionListener;
 import hunt.http.client.http.HttpClientConnection;
@@ -27,7 +27,7 @@ import hunt.net;
 
 import hunt.logging;
 
-class Http2Client  : AbstractLifeCycle { 
+class HttpClient  : AbstractLifeCycle { 
 
     private Client client;
     private Map!(int, Http2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();

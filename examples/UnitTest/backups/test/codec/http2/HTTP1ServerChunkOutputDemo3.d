@@ -11,7 +11,7 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
@@ -23,7 +23,7 @@ public class Http1ServerChunkOutputDemo3 {
 		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(10 * 60 * 1000);
 
-		Http2Server server = new Http2Server("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
+		HttpServer server = new HttpServer("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),
 				new ServerHttpHandlerAdapter() {
 
 					override

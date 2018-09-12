@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 
 import hunt.http.client.http2.ClientHttpHandler;
-import hunt.http.client.http2.Http2Client;
+import hunt.http.client.http2.HttpClient;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.model.HostPortHttpField;
 import hunt.http.codec.http.model.HttpFields;
@@ -25,7 +25,7 @@ public class Http2ClientTLSDemo2 {
 		final Http2Configuration http2Configuration = new Http2Configuration();
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 		http2Configuration.setSecureConnectionEnabled(true);
-		Http2Client client = new Http2Client(http2Configuration);
+		HttpClient client = new HttpClient(http2Configuration);
 		HttpClientConnection httpConnection = null;
 		try {
 

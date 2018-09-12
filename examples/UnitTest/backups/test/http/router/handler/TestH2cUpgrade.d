@@ -6,7 +6,7 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.container.BufferUtils;
@@ -37,8 +37,8 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
     
     public void test() {
-        Http2Server server = createServer();
-        Http2Client client = createClient();
+        HttpServer server = createServer();
+        HttpClient client = createClient();
 
         FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect(host, port, promise);
@@ -126,11 +126,11 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
     }
 
-    private Http2Client createClient() {
+    private HttpClient createClient() {
         final Http2Configuration config = new Http2Configuration();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
-        return new Http2Client(config);
+        return new HttpClient(config);
     }
 
     private Http2ClientConnection upgradeHttp2(Http2Configuration http2Configuration, HttpClientConnection httpConnection) {
@@ -249,11 +249,11 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         return true;
     }
 
-    private Http2Server createServer() {
+    private HttpServer createServer() {
         final Http2Configuration config = new Http2Configuration();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
-        Http2Server server = new Http2Server(host, port, config, new ServerHttpHandlerAdapter() {
+        HttpServer server = new HttpServer(host, port, config, new ServerHttpHandlerAdapter() {
 
             override
             public void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,

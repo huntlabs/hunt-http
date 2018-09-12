@@ -11,7 +11,7 @@ import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.utils.collection.MultiMap;
 import hunt.container.BufferUtils;
@@ -27,7 +27,7 @@ public class HttpServerDemo4 {
 		final string data = s.toString();
 
 		Http2Configuration http2Configuration = new Http2Configuration();
-		Http2Server server = new Http2Server("localhost", 7777, http2Configuration,
+		HttpServer server = new HttpServer("localhost", 7777, http2Configuration,
 				new ServerHttpHandlerAdapter().messageComplete((request, response, outputStream, connection) -> {
 
 					HttpURI uri = request.getURI();

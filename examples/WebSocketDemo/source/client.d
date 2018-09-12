@@ -2,7 +2,7 @@
 import hunt.http.codec.http.model;
 
 import hunt.http.client.http.ClientHttpHandler;
-import hunt.http.client.http.Http2Client;
+import hunt.http.client.http.HttpClient;
 import hunt.http.client.http.HttpClientConnection;
 import hunt.http.client.http.HttpClientRequest;
 import hunt.http.codec.http.stream.Http2Configuration;
@@ -31,7 +31,7 @@ sudo apt-get install libssl-dev
 */
 
 void main(string[] args) {
-	Http2Client client = new Http2Client(new Http2Configuration());
+	HttpClient client = new HttpClient(new Http2Configuration());
     HttpClientConnection connection = client.connect("127.0.0.1", 8080).get();
     HttpClientRequest request = new HttpClientRequest("GET", "/index");
     FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();

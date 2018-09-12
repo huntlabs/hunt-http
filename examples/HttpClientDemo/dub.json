@@ -1,10 +1,10 @@
 {
-	"name": "http2serverdemo",
-	"targetName": "server-demo",
+	"name": "httpclientdemo",
+	"targetName": "client-demo",
     "authors": [
         "Hunt Labs"
     ],
-	"description": "A demo for HTTP2 Server in Hunt-http.",
+	"description": "A demo for HTTP Client with Hunt-http.",
 	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
 	"license": "Apache-2.0",
 	"dependencies": {

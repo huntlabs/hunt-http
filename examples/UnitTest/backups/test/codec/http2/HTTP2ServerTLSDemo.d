@@ -7,7 +7,7 @@ import hunt.http.codec.http.model.MetaData.Response;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.container.BufferUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class Http2ServerTLSDemo {
 		settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 		settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-		Http2Server server = new Http2Server("localhost", 6677, http2Configuration, new ServerHttpHandlerAdapter() {
+		HttpServer server = new HttpServer("localhost", 6677, http2Configuration, new ServerHttpHandlerAdapter() {
 			override
 			public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
 					HttpConnection connection) {

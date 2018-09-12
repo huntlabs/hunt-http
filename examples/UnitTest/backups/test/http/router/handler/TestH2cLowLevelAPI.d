@@ -10,7 +10,7 @@ import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
-import hunt.http.server.http.Http2Server;
+import hunt.http.server.http.HttpServer;
 import hunt.http.server.http.ServerHttpHandler;
 import hunt.http.server.http.ServerSessionListener;
 import hunt.http.server.http.WebSocketHandler;
@@ -39,19 +39,19 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
     
     public void testLowLevelAPI() {
         Phaser phaser = new Phaser(2);
-        Http2Server server = createServerLowLevelAPI();
-        Http2Client client = createClientLowLevelClient(phaser);
+        HttpServer server = createServerLowLevelAPI();
+        HttpClient client = createClientLowLevelClient(phaser);
 
         server.stop();
         client.stop();
     }
 
-    public Http2Server createServerLowLevelAPI() {
+    public HttpServer createServerLowLevelAPI() {
         final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 
-        Http2Server server = new Http2Server(host, port, http2Configuration, new ServerSessionListener.Adapter() {
+        HttpServer server = new HttpServer(host, port, http2Configuration, new ServerSessionListener.Adapter() {
 
             override
             public Map<Integer, Integer> onPreface(Session session) {
@@ -117,11 +117,11 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
         return server;
     }
 
-    public Http2Client createClientLowLevelClient(Phaser phaser) {
+    public HttpClient createClientLowLevelClient(Phaser phaser) {
         final Http2Configuration http2Configuration = new Http2Configuration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-        Http2Client client = new Http2Client(http2Configuration);
+        HttpClient client = new HttpClient(http2Configuration);
 
         FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
         client.connect(host, port, promise);
