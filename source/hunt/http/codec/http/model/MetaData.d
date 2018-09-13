@@ -17,6 +17,10 @@ import std.ascii;
 import std.format;
 import std.range;
 
+
+alias HttpRequest = MetaData.Request;
+alias HttpResponse = MetaData.Response;
+
 /**
 */
 class MetaData : Iterable!HttpField {

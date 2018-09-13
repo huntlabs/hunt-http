@@ -18,11 +18,11 @@ interface ServerHttpHandler : HttpHandler {
 
     void acceptConnection(HttpConnection connection);
 
-    bool accept100Continue(MetaData.Request request, MetaData.Response response,
+    bool accept100Continue(HttpRequest request, HttpResponse response,
                               HttpOutputStream output,
                               HttpConnection connection);
 
-    bool acceptHttpTunnelConnection(MetaData.Request request, MetaData.Response response,
+    bool acceptHttpTunnelConnection(HttpRequest request, HttpResponse response,
                                        HttpOutputStream output,
                                        HttpServerConnection connection);
 
@@ -32,41 +32,41 @@ interface ServerHttpHandler : HttpHandler {
 class ServerHttpHandlerAdapter : HttpHandlerAdapter, ServerHttpHandler {
 
     protected Action1!HttpConnection _acceptConnection;
-    protected Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) _accept100Continue;
-    protected Func4!(Request, Response, HttpOutputStream, HttpServerConnection, bool) _acceptHttpTunnelConnection;
+    protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _accept100Continue;
+    protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpServerConnection, bool) _acceptHttpTunnelConnection;
 
     ServerHttpHandlerAdapter headerComplete(
-            Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) h) {
+            Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) h) {
         this._headerComplete = h;
         return this;
     }
 
     ServerHttpHandlerAdapter messageComplete(
-            Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) m) {
+            Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) m) {
         this._messageComplete = m;
         return this;
     }
 
     ServerHttpHandlerAdapter content(
-            Func5!(ByteBuffer, Request, Response, HttpOutputStream, HttpConnection, bool) c) {
+            Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) c) {
         this._content = c;
         return this;
     }
 
     ServerHttpHandlerAdapter contentComplete(
-            Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) c) {
+            Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) c) {
         this._contentComplete = c;
         return this;
     }
 
     ServerHttpHandlerAdapter badMessage(
-            Action6!(int, string, Request, Response, HttpOutputStream, HttpConnection) b) {
+            Action6!(int, string, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) b) {
         this._badMessage = b;
         return this;
     }
 
     ServerHttpHandlerAdapter earlyEOF(
-            Action4!(Request, Response, HttpOutputStream, HttpConnection) e) {
+            Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) e) {
         this._earlyEOF = e;
         return this;
     }
@@ -77,13 +77,13 @@ class ServerHttpHandlerAdapter : HttpHandlerAdapter, ServerHttpHandler {
     }
 
     ServerHttpHandlerAdapter accept100Continue(
-            Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) a) {
+            Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) a) {
         this._accept100Continue = a;
         return this;
     }
 
     ServerHttpHandlerAdapter acceptHttpTunnelConnection(
-            Func4!(Request, Response, HttpOutputStream, HttpServerConnection, bool) a) {
+            Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpServerConnection, bool) a) {
         this._acceptHttpTunnelConnection = a;
         return this;
     }
@@ -96,7 +96,7 @@ class ServerHttpHandlerAdapter : HttpHandlerAdapter, ServerHttpHandler {
     }
 
     override
-    bool accept100Continue(Request request, Response response, HttpOutputStream output,
+    bool accept100Continue(HttpRequest request, HttpResponse response, HttpOutputStream output,
                                         HttpConnection connection) {
         if (_accept100Continue !is null) {
             return _accept100Continue(request, response, output, connection);
@@ -106,7 +106,7 @@ class ServerHttpHandlerAdapter : HttpHandlerAdapter, ServerHttpHandler {
     }
 
     override
-    bool acceptHttpTunnelConnection(MetaData.Request request, MetaData.Response response,
+    bool acceptHttpTunnelConnection(HttpRequest request, HttpResponse response,
                                                 HttpOutputStream output,
                                                 HttpServerConnection connection) {
         if (_acceptHttpTunnelConnection != null) {

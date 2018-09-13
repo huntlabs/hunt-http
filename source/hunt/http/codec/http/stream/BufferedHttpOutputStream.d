@@ -7,7 +7,7 @@ import hunt.io;
 /**
  * 
  */
-class BufferedHttpOutputStream :BufferedNetOutputStream {
+class BufferedHttpOutputStream : BufferedNetOutputStream {
 
     this(HttpOutputStream output, int bufferSize) {
         super(output, bufferSize);

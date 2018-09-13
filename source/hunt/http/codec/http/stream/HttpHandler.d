@@ -8,31 +8,31 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.util.functional;
 import hunt.container.ByteBuffer;
 
-alias Request = MetaData.Request;
-alias Response = MetaData.Response;
+// alias HttpRequest = HttpRequest;
+// alias HttpResponse = HttpResponse;
 
 interface HttpHandler {
 
-    bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
+    bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
                     HttpOutputStream output,
                     HttpConnection connection);
 
-    bool contentComplete(MetaData.Request request, MetaData.Response response,
+    bool contentComplete(HttpRequest request, HttpResponse response,
                             HttpOutputStream output,
                             HttpConnection connection);
 
-    bool headerComplete(MetaData.Request request, MetaData.Response response,
+    bool headerComplete(HttpRequest request, HttpResponse response,
                            HttpOutputStream output,
                            HttpConnection connection);
 
-    bool messageComplete(MetaData.Request request, MetaData.Response response,
+    bool messageComplete(HttpRequest request, HttpResponse response,
                             HttpOutputStream output,
                             HttpConnection connection);
 
-    void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,
+    void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
                     HttpOutputStream output, HttpConnection connection);
 
-    void earlyEOF(MetaData.Request request, MetaData.Response response,
+    void earlyEOF(HttpRequest request, HttpResponse response,
                   HttpOutputStream output,
                   HttpConnection connection);
 
@@ -41,15 +41,15 @@ interface HttpHandler {
 
 class HttpHandlerAdapter : HttpHandler {
 
-    protected Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) _headerComplete;
-    protected Func5!(ByteBuffer, Request, Response, HttpOutputStream, HttpConnection, bool) _content;
-    protected Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) _contentComplete;
-    protected Func4!(Request, Response, HttpOutputStream, HttpConnection, bool) _messageComplete;
-    protected Action6!(int, string, Request, Response, HttpOutputStream, HttpConnection) _badMessage;
-    protected Action4!(Request, Response, HttpOutputStream, HttpConnection) _earlyEOF;
+    protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _headerComplete;
+    protected Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _content;
+    protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _contentComplete;
+    protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _messageComplete;
+    protected Action6!(int, string, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) _badMessage;
+    protected Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) _earlyEOF;
 
     override
-    bool headerComplete(Request request, Response response,
+    bool headerComplete(HttpRequest request, HttpResponse response,
                                     HttpOutputStream output,
                                     HttpConnection connection) {
         if (_headerComplete !is null) {
@@ -60,7 +60,7 @@ class HttpHandlerAdapter : HttpHandler {
     }
 
     override
-    bool content(ByteBuffer item, Request request, Response response,
+    bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
                             HttpOutputStream output,
                             HttpConnection connection) {
         if (_content !is null) {
@@ -71,7 +71,7 @@ class HttpHandlerAdapter : HttpHandler {
     }
 
     override
-    bool contentComplete(MetaData.Request request, MetaData.Response response,
+    bool contentComplete(HttpRequest request, HttpResponse response,
                                     HttpOutputStream output,
                                     HttpConnection connection) {
         if (_contentComplete !is null) {
@@ -83,7 +83,7 @@ class HttpHandlerAdapter : HttpHandler {
 
 
     override
-    bool messageComplete(Request request, Response response,
+    bool messageComplete(HttpRequest request, HttpResponse response,
                                     HttpOutputStream output,
                                     HttpConnection connection) {
         if (_messageComplete !is null) {
@@ -94,7 +94,7 @@ class HttpHandlerAdapter : HttpHandler {
     }
 
     override
-    void badMessage(int status, string reason, Request request, Response response,
+    void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
                             HttpOutputStream output,
                             HttpConnection connection) {
         if (_badMessage !is null) {
@@ -103,7 +103,7 @@ class HttpHandlerAdapter : HttpHandler {
     }
 
     override
-    void earlyEOF(Request request, Response response, HttpOutputStream output, HttpConnection connection) {
+    void earlyEOF(HttpRequest request, HttpResponse response, HttpOutputStream output, HttpConnection connection) {
         if (_earlyEOF !is null) {
             _earlyEOF(request, response, output, connection);
         }

@@ -246,12 +246,12 @@ class HttpFields : Iterable!HttpField {
 	 * @param header
 	 *            the header
 	 */
-	List!string getValuesList(HttpHeader header) {
-		List!string list = new ArrayList!string();
+	string[] getValuesList(HttpHeader header) {
+		Array!(string) list;
 		foreach (HttpField f ; this)
 			if (f.getHeader() == header)
-				list.add(f.getValue());
-		return list;
+				list.insertBack(f.getValue());
+		return list[];
 	}
 
 	/**
@@ -261,12 +261,12 @@ class HttpFields : Iterable!HttpField {
 	 * @param name
 	 *            the case-insensitive field name
 	 */
-	List!string getValuesList(string name) {
-		List!string list = new ArrayList!string();
+	string[] getValuesList(string name) {
+		Array!(string) list;
 		foreach (HttpField f ; this)
 			if (f.getName().equalsIgnoreCase(name))
-				list.add(f.getValue());
-		return list;
+				list.insertBack(f.getValue());
+		return list[];
 	}
 
 	/**
