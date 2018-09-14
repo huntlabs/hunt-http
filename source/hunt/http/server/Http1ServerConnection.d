@@ -159,37 +159,37 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
 
         override
         protected void generateHttpMessageSuccessfully() {
+            version(HuntDebugMode)
             tracef("server session %s generates the HTTP message completely", connection.getSessionId());
 
-             MetaData.Response response = connection.getResponse();
-             MetaData.Request request = connection.getRequest();
+            MetaData.Response response = connection.getResponse();
+            MetaData.Request request = connection.getRequest();
 
             string requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);
             string responseConnectionValue = response.getFields().get(HttpHeader.CONNECTION);
             HttpVersion ver = request.getHttpVersion();
 
-            // switch () {
-                if(ver == HttpVersion.HTTP_1_0){
-                    if ("keep-alive".equalsIgnoreCase(requestConnectionValue)
-                            && "keep-alive".equalsIgnoreCase(responseConnectionValue)) {
-                        tracef("the server %s connection %s is persistent", response.getHttpVersion(), connection.getSessionId());
-                    } else {
-                        connection.close();
-                    }
+            if(ver == HttpVersion.HTTP_1_0) {
+                if ("keep-alive".equalsIgnoreCase(requestConnectionValue)
+                        && "keep-alive".equalsIgnoreCase(responseConnectionValue)) {
+                    tracef("the server %s connection %s is persistent", 
+                        response.getHttpVersion(), connection.getSessionId());
+                } else {
+                    connection.close();
                 }
-                else if(ver == HttpVersion.HTTP_1_1) { // the persistent connection is default in HTTP 1.1
-                    if ("close".equalsIgnoreCase(requestConnectionValue)
-                            || "close".equalsIgnoreCase(responseConnectionValue)) {
-                        connection.close();
-                    } else {
-                        tracef("the server %s connection %s is persistent", response.getHttpVersion(),
-                                connection.getSessionId());
-                    }
+            }
+            else if(ver == HttpVersion.HTTP_1_1) { // the persistent connection is default in HTTP 1.1
+                if ("close".equalsIgnoreCase(requestConnectionValue)
+                        || "close".equalsIgnoreCase(responseConnectionValue)) {
+                    connection.close();
+                } else {
+                    tracef("the server %s connection %s is persistent", response.getHttpVersion(),
+                            connection.getSessionId());
                 }
-                else
-                    throw new IllegalStateException("server response does not support the http version " ~ connection.getHttpVersion().toString());
-            // }
-
+            } else {
+                throw new IllegalStateException("server response does not support the http version " ~ 
+                    connection.getHttpVersion().toString());
+            }
         }
 
         override
@@ -197,7 +197,8 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
                                                         HttpGenerator.State actualState,
                                                         HttpGenerator.Result expectedResult,
                                                         HttpGenerator.State expectedState) {
-            errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]", actualResult, actualState, expectedResult, expectedState);
+            errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]", 
+                actualResult, actualState, expectedResult, expectedState);
             throw new IllegalStateException("server generates http message exception.");
         }
 
@@ -224,9 +225,13 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
     }
 
     bool directUpgradeHttp2(MetaData.Request request) {
+        version(HuntDebugMode) {
+            info("Upgrading to Http2");
+        }
+
         if (HttpMethod.PRI.isSame(request.getMethod())) {
-            Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config, tcpSession, secureSession,
-                    serverSessionListener);
+            Http2ServerConnection http2ServerConnection = 
+                new Http2ServerConnection(config, tcpSession, secureSession, serverSessionListener);
             tcpSession.attachObject(http2ServerConnection);
             http2ServerConnection.getParser().directUpgrade();
             upgradeHttp2Complete = true;

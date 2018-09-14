@@ -7,7 +7,7 @@ public import hunt.http.codec.http.stream.AbstractHttp2Connection;
 public import hunt.http.codec.http.stream.AbstractHttp2OutputStream;
 public import hunt.http.codec.http.stream.AbstractHttpConnection;
 public import hunt.http.codec.http.stream.AbstractHttpHandler;
-public import hunt.http.codec.http.stream.BufferedHttpOutputStream;
+// public import hunt.http.codec.http.stream.BufferedHttpOutputStream;
 public import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 public import hunt.http.codec.http.stream.CloseState;
 public import hunt.http.codec.http.stream.DataFrameHandler;

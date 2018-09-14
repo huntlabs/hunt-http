@@ -251,7 +251,7 @@ class HttpFields : Iterable!HttpField {
 		foreach (HttpField f ; this)
 			if (f.getHeader() == header)
 				list.insertBack(f.getValue());
-		return list[];
+		return list.array();
 	}
 
 	/**
@@ -266,7 +266,7 @@ class HttpFields : Iterable!HttpField {
 		foreach (HttpField f ; this)
 			if (f.getName().equalsIgnoreCase(name))
 				list.insertBack(f.getValue());
-		return list[];
+		return list.array();
 	}
 
 	/**

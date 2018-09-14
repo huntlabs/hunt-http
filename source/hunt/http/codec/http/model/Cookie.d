@@ -67,13 +67,20 @@ class Cookie {
 	 * @see #setValue
 	 * @see #setVersion
 	 */
-	this(string name, string value) {
+	this(string name, string value, int expires=0, 
+		string path = "/", string domain = null, 
+		bool secure = false, bool httpOnly = true) {
 		if (name.empty) {
 			throw new IllegalArgumentException("the cookie name is empty");
 		}
 
 		this.name = name;
 		this.value = value;
+		this.maxAge = expires;
+		this.path = path;
+		this.secure = secure;
+		this.domain = domain;
+		this._isHttpOnly = httpOnly;
 	}
 
 	/**

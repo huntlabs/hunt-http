@@ -10,31 +10,12 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
 
-
-/**
- * 
- */
-// interface WebSocketHandler {
-
-//     bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
-//                                   HttpOutputStream output,
-//                                   HttpConnection connection);
-
-//     void onConnect(WebSocketConnection webSocketConnection);
-
-//     WebSocketPolicy getWebSocketPolicy();
-
-//     void onFrame(Frame frame, WebSocketConnection connection);
-
-//     void onError(Exception t, WebSocketConnection connection);
-
-// }
-
 /**
 */
 class WebSocketHandler {
 
     protected WebSocketPolicy defaultWebSocketPolicy;
+    protected WebSocketPolicy _webSocketPolicy;
 
     this()
     {
@@ -53,7 +34,15 @@ class WebSocketHandler {
     }
 
     WebSocketPolicy getWebSocketPolicy() {
-        return defaultWebSocketPolicy;
+        if (_webSocketPolicy is null) {
+            return defaultWebSocketPolicy;
+        } else {
+            return _webSocketPolicy;
+        }
+    }
+
+    void setWebSocketPolicy(WebSocketPolicy w) {
+        this._webSocketPolicy = w;
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
