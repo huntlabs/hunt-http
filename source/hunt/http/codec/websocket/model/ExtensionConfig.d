@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.model.ExtensionConfig;
 
-import hunt.http.codec.websocket.utils.QuoteUtil;
+import hunt.util.string.QuoteUtil;
 
 import hunt.container;
 import hunt.util.exception;
