@@ -102,7 +102,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             return;
 
         try {
-            tracef("http1 output stream is closing");
+            version(HuntDebugMode) trace("http1 output stream is closing");
             HttpGenerator generator = getHttpGenerator();
             Session tcpSession = getSession();
             HttpGenerator.Result generatorResult;

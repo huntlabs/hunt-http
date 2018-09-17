@@ -19,6 +19,7 @@ import hunt.container.ByteBuffer;
 import hunt.net.AsynchronousTcpSession;
 import hunt.net;
 
+import hunt.event.EventLoop;
 import hunt.logging;
 import hunt.util.exception;
 import hunt.util.LifeCycle;
@@ -27,7 +28,7 @@ import hunt.util.LifeCycle;
 */
 class HttpServer  : AbstractLifeCycle {
 
-    private Server server;
+    private NetServer _server;
     private Http2Configuration http2Configuration;
     private string host;
     private int port;
@@ -65,11 +66,10 @@ class HttpServer  : AbstractLifeCycle {
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(http2ServerHandler);
 
-        NetServer server = Net.createNetServer();
-        this.server = server;
-        server.setConfig(c.getTcpConfiguration());
+        _server = NetUtil.createNetServer();
+        _server.setConfig(c.getTcpConfiguration());
 
-        server.connectHandler((NetSocket sock){
+        _server.connectHandler((NetSocket sock){
             info("server have accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( (in ubyte[] data) {     
@@ -107,19 +107,21 @@ class HttpServer  : AbstractLifeCycle {
         return port;
     }
 
+    EventLoop eventLoop() { return _server.eventLoop(); }
+
     // ExecutorService getNetExecutorService() {
-    //     return server.getNetExecutorService();
+    //     return _server.getNetExecutorService();
     // }
 
     override
     protected void initilize() {
-        server.listen(host, port);
+        _server.listen(host, port);
     }
 
     override
     protected void destroy() {
-        if (server !is null) {
-            server.stop();
+        if (_server !is null) {
+            _server.stop();
         }
     }
 

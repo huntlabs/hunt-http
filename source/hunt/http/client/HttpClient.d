@@ -47,7 +47,7 @@ class HttpClient  : AbstractLifeCycle {
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(new Http2ClientHandler(c, http2ClientContext));
 
-        NetClient client = Net.createNetClient();
+        NetClient client = NetUtil.createNetClient();
         this.client = client;
         // this.client = new AsynchronousTcpClient(c.getTcpConfiguration());
         client.setConfig(c.getTcpConfiguration());
