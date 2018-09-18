@@ -1,4 +1,4 @@
-module hunt.http.codec.common.CommonDecoder;
+module hunt.http.codec.CommonDecoder;
 
 import hunt.net.DecoderChain;
 // import hunt.net.secure.SecureSession;

@@ -817,13 +817,13 @@ class HttpParser {
 
     private void parsedHeader() {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
-        if (_headerString != null || _valueString != null) {
+        if (!_headerString.empty() || !_valueString.empty()) {
             // Handle known headers
             version(HuntDebugMode) 
-                tracef("parsing header:%s,  raw: %s ", _header.toString(), _headerString);
+                tracef("parsing header:%s,  raw value: %s ", _header.toString(), _headerString);
 
             if (_header != HttpHeader.Null) {
-                bool add_to_connection_trie = false;
+                bool canAddToConnectionTrie = false;
                 if(_header == HttpHeader.CONTENT_LENGTH) {
                     if (_endOfContent == EndOfContent.CONTENT_LENGTH) {
                         throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Duplicate Content-Length");
@@ -854,7 +854,7 @@ class HttpParser {
                         string headerStr = _compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE) ? 
                                     _header.asString() : _headerString;
                         _field = new HostPortHttpField(_header, headerStr, _valueString);
-                        add_to_connection_trie = _fieldCache != null;
+                        canAddToConnectionTrie = _fieldCache != null;
                     }
                 }
                 else if(_header == HttpHeader.CONNECTION){
@@ -868,12 +868,12 @@ class HttpParser {
                 _header == HttpHeader.ACCEPT_CHARSET || _header ==  HttpHeader.ACCEPT_ENCODING ||
                 _header == HttpHeader.ACCEPT_LANGUAGE || _header == HttpHeader.COOKIE || 
                 _header == HttpHeader.CACHE_CONTROL || _header == HttpHeader.USER_AGENT) {
-                    add_to_connection_trie = _fieldCache !is null && _field is null;
+                    canAddToConnectionTrie = _fieldCache !is null && _field is null;
                 }
 
                 //  && !_fieldCache.isFull()
 
-                if (add_to_connection_trie && _header != HttpHeader.Null && !_valueString.empty()) {
+                if (canAddToConnectionTrie && _header != HttpHeader.Null && !_valueString.empty()) {
                     if (_field is null)
                         _field = new HttpField(_header, caseInsensitiveHeader(_headerString, _header.asString()), _valueString);
                     // _fieldCache.put(_field);

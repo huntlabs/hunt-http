@@ -5,11 +5,13 @@ import hunt.http.codec.http.model.Cookie;
 import hunt.util.exception;
 import hunt.util.string;
 
-import hunt.container.ArrayList;
-import hunt.container.List;
+// import hunt.container.ArrayList;
+// import hunt.container.List;
 
-import std.string;
+import std.array;
+import std.container.array;
 import std.conv;
+import std.string;
 
 abstract class CookieParser {
 
@@ -64,10 +66,10 @@ abstract class CookieParser {
         return cookie;
     }
 
-    static List!(Cookie) parseCookie(string cookieStr) {
-        List!(Cookie) list = new ArrayList!(Cookie)();
-        parseCookies(cookieStr, (name, value) { list.add(new Cookie(name, value)); });
-        return list;
+    static Cookie[] parseCookie(string cookieStr) {
+        Array!(Cookie) list;
+        parseCookies(cookieStr, (name, value) { list.insertBack(new Cookie(name, value)); });
+        return list.array();
     }
 
     // static List<javax.servlet.http.Cookie> parserServletCookie(string cookieStr) {

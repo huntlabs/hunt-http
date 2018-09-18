@@ -7,8 +7,8 @@ import hunt.http.client.Http2ClientContext;
 import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.Http2ClientHandler;
 
-import hunt.http.codec.common.CommonDecoder;
-import hunt.http.codec.common.CommonEncoder;
+import hunt.http.codec.CommonDecoder;
+import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 

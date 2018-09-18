@@ -1,4 +1,4 @@
-module hunt.http.codec.common.CommonEncoder;
+module hunt.http.codec.CommonEncoder;
 
 import hunt.net.OutputEntry;
 import hunt.net.AbstractConnection;

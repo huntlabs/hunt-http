@@ -38,8 +38,8 @@ import std.range;
  *
  */
 class HttpFields : Iterable!HttpField { 
-	deprecated("")
-	static string __separators = ", \t";
+	// deprecated("")
+	// static string __separators = ", \t";
 
 	
 
@@ -603,10 +603,6 @@ class HttpFields : Iterable!HttpField {
 	 *            the value of the field.
 	 */
 	void add(string name, string value) {
-		// FIXME: Needing refactor or cleanup -@zxp at 6/25/2018, 11:17:23 AM
-		// if (value == null)
-		// 	return;
-
 		HttpField field = new HttpField(name, value);
 		add(field);
 	}
@@ -796,29 +792,6 @@ class HttpFields : Iterable!HttpField {
 		return hash;
 	}
 
-	// override
-	// bool equals(Object o) {
-	// 	if (this is o)
-	// 		return true;
-	// 	if (typeid(o) != typeid(HttpFields))
-	// 		return false;
-
-	// 	HttpFields that = cast(HttpFields) o;
-
-	// 	// Order is not important, so we cannot rely on List.equals().
-	// 	if (size() != that.size())
-	// 		return false;
-
-	// 	loop: foreach (HttpField fi ; this) {
-	// 		foreach (HttpField fa ; that) {
-	// 			if (fi.equals(fa))
-	// 				continue loop;
-	// 		}
-	// 		return false;
-	// 	}
-	// 	return true;
-	// }
-
 	override bool opEquals(Object o)
 	{
 		if(o is this) return true;
@@ -826,6 +799,8 @@ class HttpFields : Iterable!HttpField {
 		if(!object.opEquals(this, o))
 			return false;
 		HttpFields that = cast(HttpFields) o;
+		if(that is null)
+			return false;
 		
 		// Order is not important, so we cannot rely on List.equals().
 		if (size() != that.size())
@@ -834,8 +809,7 @@ class HttpFields : Iterable!HttpField {
 		foreach (HttpField fi ; this) {
 			bool isContinue = false;
 			foreach (HttpField fa ; that) {
-				if (fi == fa)
-				{
+				if (fi == fa) {
 					isContinue = true;
 					break;
 				}
@@ -876,7 +850,7 @@ class HttpFields : Iterable!HttpField {
 	void add(HttpField field) {
 		if (field !is null) {
 			if (_size == _fields.length)
-				_fields = _fields.dup ~ new HttpField[_size];  // Arrays.copyOf(_fields, _size * 2);
+				_fields = _fields.dup ~ new HttpField[_size];
 			_fields[_size++] = field;
 		}
 	}
@@ -957,7 +931,7 @@ class HttpFields : Iterable!HttpField {
 	 * @return The value.
 	 */
 	static string valueParameters(string value, Map!(string, string) parameters) {
-		if (value == null)
+		if (value is null)
 			return null;
 
 		int i = cast(int)value.indexOf(';');

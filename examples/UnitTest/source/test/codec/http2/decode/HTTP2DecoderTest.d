@@ -10,7 +10,7 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
-import hunt.http.codec.common.CommonEncoder;
+import hunt.http.codec.CommonEncoder;
 
 import hunt.http.server.Http2ServerConnection;
 import hunt.http.server.Http2ServerDecoder;

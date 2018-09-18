@@ -8,8 +8,8 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 
-import hunt.http.codec.common.CommonDecoder;
-import hunt.http.codec.common.CommonEncoder;
+import hunt.http.codec.CommonDecoder;
+import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
