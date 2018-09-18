@@ -1,14 +1,11 @@
 module hunt.http.codec.http.stream.HttpConnection;
 
 import hunt.http.codec.http.model.HttpVersion;
-
-import hunt.net.ConnectionExtInfo;
 import hunt.net.Connection;
-
 import hunt.util.functional;
 
 
-interface HttpConnection : Connection, ConnectionExtInfo {
+interface HttpConnection : Connection {
 
     HttpVersion getHttpVersion();
 

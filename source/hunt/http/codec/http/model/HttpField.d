@@ -40,8 +40,8 @@ class HttpField {
 	}
 
 	this(string name, string value) {
-        version(HuntDebugMode)
-			tracef("Field: name=%s, value=%s", name, value);
+        // version(HuntDebugMode)
+		// 	tracef("Field: name=%s, value=%s", name, value);
 		HttpHeader h = HttpHeader.get(name);
 		this(h, name, value);
 	}

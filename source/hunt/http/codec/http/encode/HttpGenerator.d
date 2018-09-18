@@ -549,10 +549,10 @@ class HttpGenerator {
         MetaData.Request request = (typeid(info) == typeid(MetaData.Request)) ? cast(MetaData.Request) info : null;
         MetaData.Response response = (typeid(info) == typeid(MetaData.Response)) ? cast(MetaData.Response) info : null;
 
-        version(HuntDebugMode) {
-            tracef("Header fields:\n%s", info.getFields().toString());
-            tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
-        }
+        // version(HuntDebugMode) {
+        //     tracef("Header fields:\n%s", info.getFields().toString());
+        //     tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
+        // }
 
         // default field values
         int send = _send;
