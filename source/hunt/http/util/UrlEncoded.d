@@ -36,7 +36,7 @@ import std.array;
  *
  * @see java.net.URLEncoder
  */
-class UrlEncoded  : MultiMap!string //, Cloneable
+class UrlEncoded  : MultiMap!string
 { 
     
     enum string ENCODING = StandardCharsets.UTF_8;
@@ -145,14 +145,9 @@ class UrlEncoded  : MultiMap!string //, Cloneable
      * @param map     the MultiMap to put parsed query parameters into
      * @param charset the charset to use for decoding
      */
-    static void decodeTo(string content, MultiMap!string map, string charset) {
-        if (charset is null)
+    static void decodeTo(string content, MultiMap!string map, string charset = ENCODING) {
+        if (charset.empty)
             charset = ENCODING;
-
-        // if (charset == StandardCharsets.UTF_8) {
-        //     decodeUtf8To(content, 0, content.length, map);
-        //     return;
-        // }
 
         synchronized (map) {
             string key = null;
@@ -165,7 +160,7 @@ class UrlEncoded  : MultiMap!string //, Cloneable
                     case '&':
                         int l = i - mark - 1;
                         value = l == 0 ? "" :
-                                (encoded ? decodeString(content, mark + 1, l, charset) : content.substring(mark + 1, i));
+                                (encoded ? decodeString(content, mark + 1, l) : content.substring(mark + 1, i));
                         mark = i;
                         encoded = false;
                         if (key != null) {
@@ -179,7 +174,7 @@ class UrlEncoded  : MultiMap!string //, Cloneable
                     case '=':
                         if (key != null)
                             break;
-                        key = encoded ? decodeString(content, mark + 1, i - mark - 1, charset) : content.substring(mark + 1, i);
+                        key = encoded ? decodeString(content, mark + 1, i - mark - 1) : content.substring(mark + 1, i);
                         mark = i;
                         encoded = false;
                         break;
@@ -197,7 +192,7 @@ class UrlEncoded  : MultiMap!string //, Cloneable
 
             if (key != null) {
                 int l =  contentLen - mark - 1;
-                value = l == 0 ? "" : (encoded ? decodeString(content, mark + 1, l, charset) : content.substring(mark + 1));
+                value = l == 0 ? "" : (encoded ? decodeString(content, mark + 1, l) : content.substring(mark + 1));
                 version(HuntDebugMode) tracef("key=%s, value=%s", key, value);
                 map.add(key, value);
             } else if (mark < contentLen) {
@@ -208,9 +203,7 @@ class UrlEncoded  : MultiMap!string //, Cloneable
                 if (!key.empty) {
                     map.add(key, "");
                 }
-            }
-            else
-            {
+            } else {
                 warningf("No key found.");
             }
         }

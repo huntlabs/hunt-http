@@ -67,7 +67,7 @@ class Cookie {
 	 * @see #setValue
 	 * @see #setVersion
 	 */
-	this(string name, string value, int expires=0, 
+	this(string name, string value, int expires=-1, 
 		string path = "/", string domain = null, 
 		bool secure = false, bool httpOnly = true) {
 		if (name.empty) {
