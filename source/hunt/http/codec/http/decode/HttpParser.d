@@ -1,7 +1,6 @@
 module hunt.http.codec.http.decode.HttpParser;
 
 import hunt.http.codec.http.model;
-
 import hunt.http.codec.http.hpack.HpackEncoder;
 
 import hunt.util.exception;
@@ -9,7 +8,6 @@ import hunt.util.TypeUtils;
 import hunt.util.string;
 
 import hunt.container;
-
 import hunt.logging;
 
 import std.algorithm;
@@ -19,8 +17,7 @@ import std.conv;
 import std.string;
 
 
-private bool contains(T)(T[] items, T item)
-{
+private bool contains(T)(T[] items, T item) {
     return items.canFind(item);
 }
 
@@ -88,7 +85,7 @@ class HttpParser {
      * determine the header name even if the name:value combination is not cached
      * </ul>
      */
-    __gshared HttpField[string] CACHE;
+    __gshared Trie!HttpField CACHE;
 
     // States
     enum FieldState {
@@ -159,12 +156,13 @@ class HttpParser {
     private bool _headResponse;
     private bool _cr;
     private ByteBuffer _contentChunk;
-    private HttpField[string] _fieldCache;
+    private Trie!HttpField _fieldCache;
 
     private int _length;
     private StringBuilder _string; // = new StringBuilder();
 
     shared static this() {
+        CACHE = new ArrayTrie!HttpField(2048);
         cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE));
         cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE));
         cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.UPGRADE));
@@ -218,11 +216,12 @@ class HttpParser {
 
     private static bool cacheHttpField(HttpField f)
     {
-        CACHE[f.toString] = f;
-        if(CACHE.length<2000)
-            return true;
-        else
-            return false;
+        CACHE.put(f);
+        return true;
+        // if(CACHE.<2000)
+        //     return true;
+        // else
+        //     return false;
     }
 
     private static HttpCompliance getCompliance() {
@@ -777,10 +776,12 @@ class HttpParser {
                             throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Unknown Version");
 
                         // Should we try to cache header fields?
-                        // if (_fieldCache == null && _version.getVersion() >= HttpVersion.HTTP_1_1.getVersion() && _handler.getHeaderCacheSize() > 0) {
-                        //     int header_cache = _handler.getHeaderCacheSize();
-                        //     _fieldCache = new ArrayTernaryTrie<>(header_cache);
-                        // }
+                        if (_fieldCache is null && 
+                            _version.getVersion() >= HttpVersion.HTTP_1_1.getVersion() && 
+                            _handler.getHeaderCacheSize() > 0) {
+                            int header_cache = _handler.getHeaderCacheSize();
+                            _fieldCache = new ArrayTernaryTrie!HttpField(header_cache);
+                        }
 
                         setState(State.HEADER);
 
@@ -819,8 +820,10 @@ class HttpParser {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
         if (!_headerString.empty() || !_valueString.empty()) {
             // Handle known headers
-            version(HuntDebugMode) 
-                tracef("parsing header:%s,  raw value: %s ", _header.toString(), _headerString);
+            version(HuntDebugMode) {
+                tracef("parsing header: %s, original name: %s, value: %s ", 
+                    _header.toString(), _headerString, _valueString);
+            }
 
             if (_header != HttpHeader.Null) {
                 bool canAddToConnectionTrie = false;
@@ -854,7 +857,7 @@ class HttpParser {
                         string headerStr = _compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE) ? 
                                     _header.asString() : _headerString;
                         _field = new HostPortHttpField(_header, headerStr, _valueString);
-                        canAddToConnectionTrie = _fieldCache != null;
+                        canAddToConnectionTrie = _fieldCache !is null;
                     }
                 }
                 else if(_header == HttpHeader.CONNECTION){
@@ -876,8 +879,8 @@ class HttpParser {
                 if (canAddToConnectionTrie && _header != HttpHeader.Null && !_valueString.empty()) {
                     if (_field is null)
                         _field = new HttpField(_header, caseInsensitiveHeader(_headerString, _header.asString()), _valueString);
-                    // _fieldCache.put(_field);
-                    _fieldCache[_field.toString] = _field;
+                    _fieldCache.put(_field);
+                    // _fieldCache[_field.toString] = _field;
                 }
             }
             _handler.parsedHeader(_field !is null ? _field : new HttpField(_header, _headerString, _valueString));
@@ -1027,13 +1030,19 @@ class HttpParser {
                                 // TODO: Tasks pending completion -@zxp at 7/9/2018, 3:14:48 PM
                                 // 
                                 // Try a look ahead for the known header name and value.
-                                // HttpField cached_field = _fieldCache == null ? null : _fieldCache.getBest(buffer, -1, buffer.remaining());
+                                HttpField cached_field = null;
+                                if(_fieldCache !is null)
+                                    cached_field = _fieldCache.getBest(buffer, -1, buffer.remaining());
+                                
+                                if (cached_field is null)
+                                    cached_field = CACHE.getBest(buffer, -1, buffer.remaining());
+
                                 // trace(_fieldCache);
                                 // trace(CACHE);
-                                HttpField cached_field = HttpField.getBest(_fieldCache, buffer, -1, buffer.remaining());
+                                // HttpField cached_field = HttpField.getBest(_fieldCache, buffer, -1, buffer.remaining());
 
-                                if (cached_field is null)
-                                    cached_field = HttpField.getBest(CACHE, buffer, -1, buffer.remaining());
+                                // if (cached_field is null)
+                                //     cached_field = HttpField.getBest(CACHE, buffer, -1, buffer.remaining());
 
                                 if (cached_field !is null) {
                                     string n = cached_field.getName();
@@ -1381,7 +1390,7 @@ class HttpParser {
         while (_state < State.TRAILER && remaining > 0) {
             switch (_state) {
                 case State.EOF_CONTENT:
-                    _contentChunk = buffer.asReadOnlyBuffer();
+                    _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
                     _contentPosition += remaining;
                     buffer.position(buffer.position() + remaining);
                     if (_handler.content(_contentChunk))
@@ -1394,7 +1403,7 @@ class HttpParser {
                         setState(State.END);
                         return handleContentMessage();
                     } else {
-                        _contentChunk = buffer.asReadOnlyBuffer();
+                        _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
 
                         // limit content by expected size
                         if (remaining > content) {
@@ -1464,7 +1473,7 @@ class HttpParser {
                     if (chunk == 0) {
                         setState(State.CHUNKED_CONTENT);
                     } else {
-                        _contentChunk = buffer.asReadOnlyBuffer();
+                        _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
 
                         if (remaining > chunk)
                             _contentChunk.limit(_contentChunk.position() + chunk);
@@ -1558,13 +1567,13 @@ class HttpParser {
     }
 
     /* ------------------------------------------------------------------------------- */
-    ref HttpField[string] getFieldCache() {
+    Trie!HttpField getFieldCache() {
         return _fieldCache;
     }
 
     HttpField getCachedField(string name)
     {
-        return _fieldCache.get(name, null);
+        return _fieldCache.get(name);
     }
     
 

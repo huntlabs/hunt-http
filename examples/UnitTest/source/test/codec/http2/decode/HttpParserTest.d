@@ -100,6 +100,7 @@ class HttpParserTest {
 
     
     void testLineParse_Mock_IP() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer("POST /mock/127.0.0.1 HTTP/1.1\r\n" ~ "\r\n");
 
         HttpParser.RequestHandler handler = new Handler();
@@ -113,6 +114,7 @@ class HttpParserTest {
 
     
     void testLineParse0() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer("POST /foo HTTP/1.0\r\n" ~ "\r\n");
 
         HttpParser.RequestHandler handler = new Handler();
@@ -124,16 +126,15 @@ class HttpParserTest {
         Assert.assertEquals(-1, _headers);
     }
 
-    // FIXME: Needing refactor or cleanup -@zxp at 7/1/2018, 4:07:07 PM
-    // 
     void testLineParse1_RFC2616() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer("GET /999\r\n");
 
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, HttpCompliance.RFC2616_LEGACY);
         parseAll(parser, buffer);
 
-        // Assert.assertNull(_bad);  
+        Assert.assertNull(_bad);  
         Assert.assertEquals("GET", _methodOrVersion);
         Assert.assertEquals("/999", _uriOrStatus);
         Assert.assertEquals("HTTP/0.9", _versionOrReason);
@@ -143,6 +144,7 @@ class HttpParserTest {
 
     
     void testLineParse1() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer("GET /999\r\n");
 
         HttpParser.RequestHandler handler = new Handler();
@@ -154,6 +156,7 @@ class HttpParserTest {
 
     
     void testLineParse2_RFC2616() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer("POST /222  \r\n");
 
         HttpParser.RequestHandler handler = new Handler();
@@ -628,7 +631,7 @@ class HttpParserTest {
 
     
     void testEncodedHeader() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.allocate(4096);
         BufferUtils.flipToFill(buffer);
         BufferUtils.put(BufferUtils.toBuffer("GET "), buffer);
@@ -734,6 +737,7 @@ class HttpParserTest {
 
     
     void testCaseSensitiveMethod() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "gEt / http/1.0\r\n" ~
                         "Host: localhost\r\n" ~
@@ -742,15 +746,14 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, -1, HttpCompliance.RFC7230_LEGACY);
         parseAll(parser, buffer);
-        // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-10 10:40:02
-        // 
-        // Assert.assertNull(_bad);
-        // Assert.assertEquals("GET", _methodOrVersion);
+        Assert.assertNull(_bad);
+        Assert.assertEquals("GET", _methodOrVersion);
         // Assert.assertTrue(_complianceViolation.contains(HttpComplianceSection.METHOD_CASE_SENSITIVE));
     }
 
     
     void testCaseSensitiveMethodLegacy() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "gEt / http/1.0\r\n" ~
                         "Host: localhost\r\n" ~
@@ -759,13 +762,14 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, -1, HttpCompliance.LEGACY);
         parseAll(parser, buffer);
-        // Assert.assertNull(_bad);
+        Assert.assertNull(_bad);
         Assert.assertEquals("gEt", _methodOrVersion);
         Assert.assertTrue(_complianceViolation.isEmpty());
     }
 
     
     void testCaseInsensitiveHeader() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / http/1.0\r\n" ~
                         "HOST: localhost\r\n" ~
@@ -774,20 +778,21 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, -1, HttpCompliance.RFC7230_LEGACY);
         parseAll(parser, buffer);
-        // Assert.assertNull(_bad);
+        Assert.assertNull(_bad);
         Assert.assertEquals("GET", _methodOrVersion);
         Assert.assertEquals("/", _uriOrStatus);
         Assert.assertEquals("HTTP/1.0", _versionOrReason);
-        // Assert.assertEquals("Host", _hdr[0]);
+        Assert.assertEquals("Host", _hdr[0]);
         Assert.assertEquals("localhost", _val[0]);
-        // Assert.assertEquals("Connection", _hdr[1]);
-        // Assert.assertEquals("close", _val[1]);
+        Assert.assertEquals("Connection", _hdr[1]);
+        Assert.assertEquals("close", _val[1]);
         Assert.assertEquals(1, _headers);
         Assert.assertTrue(_complianceViolation.isEmpty());
     }
 
     
     void testCaseInSensitiveHeaderLegacy() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / http/1.0\r\n" ~
                         "HOST: localhost\r\n" ~
@@ -887,8 +892,6 @@ class HttpParserTest {
         Assert.assertTrue(_messageCompleted);
     }
 
-
-    
     void testBadChunkParse() {
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET /chunk HTTP/1.0\r\n"
@@ -910,7 +913,6 @@ class HttpParserTest {
         Assert.assertEquals("HTTP/1.0", _versionOrReason);
         Assert.assertContain(_bad, "Bad chunking");
     }
-
     
     void testChunkParseTrailer() {
         ByteBuffer buffer = BufferUtils.toBuffer(
@@ -935,8 +937,6 @@ class HttpParserTest {
         Assert.assertEquals(1, _headers);
         Assert.assertEquals("Header1", _hdr[0]);
         Assert.assertEquals("value1", _val[0]);
-        // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-9 17:42:08
-        // 
         Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
         Assert.assertEquals(1, _trailers.size());
         HttpField trailer1 = _trailers.get(0);
@@ -971,8 +971,7 @@ class HttpParserTest {
         Assert.assertEquals(0, _headers);
         Assert.assertEquals("Transfer-Encoding", _hdr[0]);
         Assert.assertEquals("chunked", _val[0]);
-        // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-9 17:43:39
-        // 
+
         Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
         Assert.assertEquals(2, _trailers.size());
         HttpField trailer1 = _trailers.get(0);
@@ -1050,7 +1049,7 @@ class HttpParserTest {
 
     
     void testStartEOF() {
-        init();
+        initialize();
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
         parser.atEOF();
@@ -1146,7 +1145,7 @@ class HttpParserTest {
         // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         parser.reset();
-        init();
+        initialize();
         parser.parseNext(buffer);
         Assert.assertEquals("POST", _methodOrVersion);
         Assert.assertEquals("/foo", _uriOrStatus);
@@ -1157,7 +1156,7 @@ class HttpParserTest {
         Assert.assertEquals(null, _content);
 
         parser.reset();
-        init();
+        initialize();
         parser.parseNext(buffer);
         parser.atEOF();
         Assert.assertEquals("PUT", _methodOrVersion);
@@ -1213,7 +1212,7 @@ class HttpParserTest {
         Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         parser.reset();
-        init();
+        initialize();
         parser.parseNext(buffer1);
         Assert.assertEquals("POST", _methodOrVersion);
         Assert.assertEquals("/foo", _uriOrStatus);
@@ -1224,7 +1223,7 @@ class HttpParserTest {
         Assert.assertEquals(null, _content);
 
         parser.reset();
-        init();
+        initialize();
         parser.parseNext(buffer1);
         Assert.assertEquals("PUT", _methodOrVersion);
         Assert.assertEquals("/doodle", _uriOrStatus);
@@ -1237,7 +1236,7 @@ class HttpParserTest {
 
     
     void testResponseParse0() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "HTTP/1.1 200 Correct\r\n"
                         ~ "Content-Length: 10\r\n"
@@ -1296,7 +1295,7 @@ class HttpParserTest {
         Assert.assertTrue(_messageCompleted);
 
         parser.reset();
-        init();
+        initialize();
 
         parser.parseNext(buffer);
         parser.atEOF();
@@ -1454,6 +1453,7 @@ class HttpParserTest {
 
     
     void testNoURI() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET\r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1464,9 +1464,8 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-10 10:46:59
-        // 
-        // Assert.assertEquals(null, _methodOrVersion);
+
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("No URI", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1958,7 +1957,7 @@ class HttpParserTest {
     }
     
     void testEmptyHostPort() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n"
                         ~ "Host:\r\n"
@@ -1973,7 +1972,7 @@ class HttpParserTest {
     }
     
     void testCachedField() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n" ~
                         "Host: www.smh.com.au\r\n" ~
@@ -1994,7 +1993,7 @@ class HttpParserTest {
 
     
     void testParseRequest() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n" ~
                         "Host: localhost\r\n" ~
@@ -2023,7 +2022,7 @@ class HttpParserTest {
 
     
     void testHTTP2Preface() {
-        init();
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "PRI * HTTP/2.0\r\n" ~
                         "\r\n" ~
@@ -2044,7 +2043,7 @@ class HttpParserTest {
     }
 
     
-    void init() {
+    void initialize() {
         _bad = null;
         _host = null;
         _content = null;
