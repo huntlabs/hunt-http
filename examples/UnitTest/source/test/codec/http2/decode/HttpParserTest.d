@@ -32,15 +32,15 @@ class HttpParserTest {
     private string _methodOrVersion;
     private string _uriOrStatus;
     private string _versionOrReason;
-    private List!HttpField _fields; // = new ArrayList!HttpField();
-    private List!HttpField _trailers; // = new ArrayList!HttpField();
+    private List!HttpField _fields;
+    private List!HttpField _trailers;
     private string[] _hdr;
     private string[] _val;
     private int _headers;
     private bool _early;
     private bool _headerCompleted;
     private bool _messageCompleted;
-    private List!HttpComplianceSection _complianceViolation; // = new ArrayList!HttpComplianceSection();
+    private List!HttpComplianceSection _complianceViolation;
 
     this()
     {
@@ -80,7 +80,8 @@ class HttpParserTest {
                 break;
         }
     }
- 
+
+
     void HttpMethodTest() {
         Assert.assertNull(HttpMethod.lookAheadGet(BufferUtils.toBuffer("Wibble ")));
         Assert.assertNull(HttpMethod.lookAheadGet(BufferUtils.toBuffer("GET")));
@@ -880,9 +881,7 @@ class HttpParserTest {
         Assert.assertEquals(1, _headers);
         Assert.assertEquals("Header1", _hdr[0]);
         Assert.assertEquals("value1", _val[0]);
-        // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-9 17:40:26
-        // 
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         Assert.assertTrue(_headerCompleted);
         Assert.assertTrue(_messageCompleted);
@@ -909,7 +908,7 @@ class HttpParserTest {
         Assert.assertEquals("GET", _methodOrVersion);
         Assert.assertEquals("/chunk", _uriOrStatus);
         Assert.assertEquals("HTTP/1.0", _versionOrReason);
-        // Assert.assertContain(_bad, "Bad chunking");
+        Assert.assertContain(_bad, "Bad chunking");
     }
 
     
@@ -938,11 +937,11 @@ class HttpParserTest {
         Assert.assertEquals("value1", _val[0]);
         // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-9 17:42:08
         // 
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
-        // Assert.assertEquals(1, _trailers.size());
-        // HttpField trailer1 = _trailers.get(0);
-        // Assert.assertEquals("Trailer", trailer1.getName());
-        // Assert.assertEquals("value", trailer1.getValue());
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals(1, _trailers.size());
+        HttpField trailer1 = _trailers.get(0);
+        Assert.assertEquals("Trailer", trailer1.getName());
+        Assert.assertEquals("value", trailer1.getValue());
 
         Assert.assertTrue(_headerCompleted);
         Assert.assertTrue(_messageCompleted);
@@ -974,14 +973,14 @@ class HttpParserTest {
         Assert.assertEquals("chunked", _val[0]);
         // FIXME: Needing refactor or cleanup -@Administrator at 2018-7-9 17:43:39
         // 
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
-        // Assert.assertEquals(2, _trailers.size());
-        // HttpField trailer1 = _trailers.get(0);
-        // Assert.assertEquals("Trailer", trailer1.getName());
-        // Assert.assertEquals("value", trailer1.getValue());
-        // HttpField trailer2 = _trailers.get(1);
-        // Assert.assertEquals("Foo", trailer2.getName());
-        // Assert.assertEquals("bar", trailer2.getValue());
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals(2, _trailers.size());
+        HttpField trailer1 = _trailers.get(0);
+        Assert.assertEquals("Trailer", trailer1.getName());
+        Assert.assertEquals("value", trailer1.getValue());
+        HttpField trailer2 = _trailers.get(1);
+        Assert.assertEquals("Foo", trailer2.getName());
+        Assert.assertEquals("bar", trailer2.getValue());
 
         Assert.assertTrue(_headerCompleted);
         Assert.assertTrue(_messageCompleted);
@@ -1012,10 +1011,10 @@ class HttpParserTest {
         Assert.assertEquals(1, _headers);
         Assert.assertEquals("Header1", _hdr[0]);
         Assert.assertEquals("value1", _val[0]);
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         Assert.assertTrue(_headerCompleted);
-        // Assert.assertTrue(_early);
+        Assert.assertTrue(_early);
     }
 
 
@@ -1043,7 +1042,7 @@ class HttpParserTest {
         Assert.assertEquals(1, _headers);
         Assert.assertEquals("Header1", _hdr[0]);
         Assert.assertEquals("value1", _val[0]);
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         Assert.assertTrue(_headerCompleted);
         Assert.assertTrue(_messageCompleted);
@@ -1076,165 +1075,165 @@ class HttpParserTest {
         Assert.assertEquals("GET", _methodOrVersion);
         Assert.assertEquals("/uri", _uriOrStatus);
         Assert.assertEquals("HTTP/1.0", _versionOrReason);
-        // Assert.assertEquals("0123456789", _content);
+        Assert.assertEquals("0123456789", _content);
 
-        // Assert.assertTrue(_early);
+        Assert.assertTrue(_early);
     }
 
     
-    // void testChunkEarlyEOF() {
-    //     ByteBuffer buffer = BufferUtils.toBuffer(
-    //             "GET /chunk HTTP/1.0\r\n"
-    //                     ~ "Header1: value1\r\n"
-    //                     ~ "Transfer-Encoding: chunked\r\n"
-    //                     ~ "\r\n"
-    //                     ~ "a;\r\n"
-    //                     ~ "0123456789\r\n");
-    //     HttpParser.RequestHandler handler = new Handler();
-    //     HttpParser parser = new HttpParser(handler);
-    //     parser.atEOF();
-    //     parseAll(parser, buffer);
+    void testChunkEarlyEOF() {
+        ByteBuffer buffer = BufferUtils.toBuffer(
+                "GET /chunk HTTP/1.0\r\n"
+                        ~ "Header1: value1\r\n"
+                        ~ "Transfer-Encoding: chunked\r\n"
+                        ~ "\r\n"
+                        ~ "a;\r\n"
+                        ~ "0123456789\r\n");
+        HttpParser.RequestHandler handler = new Handler();
+        HttpParser parser = new HttpParser(handler);
+        parser.atEOF();
+        parseAll(parser, buffer);
 
-    //     Assert.assertEquals("GET", _methodOrVersion);
-    //     Assert.assertEquals("/chunk", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(1, _headers);
-    //     Assert.assertEquals("Header1", _hdr[0]);
-    //     Assert.assertEquals("value1", _val[0]);
-    //     Assert.assertEquals("0123456789", _content);
+        Assert.assertEquals("GET", _methodOrVersion);
+        Assert.assertEquals("/chunk", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(1, _headers);
+        Assert.assertEquals("Header1", _hdr[0]);
+        Assert.assertEquals("value1", _val[0]);
+        Assert.assertEquals("0123456789", _content);
 
-    //     Assert.assertTrue(_early);
-    // }
-
-    
-    // void testMultiParse() {
-    //     ByteBuffer buffer = BufferUtils.toBuffer(
-    //             "GET /mp HTTP/1.0\r\n"
-    //                     ~ "Connection: Keep-Alive\r\n"
-    //                     ~ "Header1: value1\r\n"
-    //                     ~ "Transfer-Encoding: chunked\r\n"
-    //                     ~ "\r\n"
-    //                     ~ "a;\r\n"
-    //                     ~ "0123456789\r\n"
-    //                     ~ "1a\r\n"
-    //                     ~ "ABCDEFGHIJKLMNOPQRSTUVWXYZ\r\n"
-    //                     ~ "0\r\n"
-
-    //                     ~ "\r\n"
-
-    //                     ~ "POST /foo HTTP/1.0\r\n"
-    //                     ~ "Connection: Keep-Alive\r\n"
-    //                     ~ "Header2: value2\r\n"
-    //                     ~ "Content-Length: 0\r\n"
-    //                     ~ "\r\n"
-
-    //                     ~ "PUT /doodle HTTP/1.0\r\n"
-    //                     ~ "Connection: close\r\n"
-    //                     ~ "Header3: value3\r\n"
-    //                     ~ "Content-Length: 10\r\n"
-    //                     ~ "\r\n"
-    //                     ~ "0123456789\r\n");
-
-    //     HttpParser.RequestHandler handler = new Handler();
-    //     HttpParser parser = new HttpParser(handler);
-    //     parser.parseNext(buffer);
-    //     Assert.assertEquals("GET", _methodOrVersion);
-    //     Assert.assertEquals("/mp", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header1", _hdr[1]);
-    //     Assert.assertEquals("value1", _val[1]);
-    //     // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
-
-    //     parser.reset();
-    //     init();
-    //     parser.parseNext(buffer);
-    //     Assert.assertEquals("POST", _methodOrVersion);
-    //     Assert.assertEquals("/foo", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header2", _hdr[1]);
-    //     Assert.assertEquals("value2", _val[1]);
-    //     Assert.assertEquals(null, _content);
-
-    //     parser.reset();
-    //     init();
-    //     parser.parseNext(buffer);
-    //     parser.atEOF();
-    //     Assert.assertEquals("PUT", _methodOrVersion);
-    //     Assert.assertEquals("/doodle", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header3", _hdr[1]);
-    //     Assert.assertEquals("value3", _val[1]);
-    //     Assert.assertEquals("0123456789", _content);
-    // }
+        Assert.assertTrue(_early);
+    }
 
     
-    // void testMultiParseEarlyEOF() {
-    //     ByteBuffer buffer0 = BufferUtils.toBuffer(
-    //             "GET /mp HTTP/1.0\r\n"
-    //                     ~ "Connection: Keep-Alive\r\n");
+    void testMultiParse() {
+        ByteBuffer buffer = BufferUtils.toBuffer(
+                "GET /mp HTTP/1.0\r\n"
+                        ~ "Connection: Keep-Alive\r\n"
+                        ~ "Header1: value1\r\n"
+                        ~ "Transfer-Encoding: chunked\r\n"
+                        ~ "\r\n"
+                        ~ "a;\r\n"
+                        ~ "0123456789\r\n"
+                        ~ "1a\r\n"
+                        ~ "ABCDEFGHIJKLMNOPQRSTUVWXYZ\r\n"
+                        ~ "0\r\n"
 
-    //     ByteBuffer buffer1 = BufferUtils.toBuffer("Header1: value1\r\n"
-    //             ~ "Transfer-Encoding: chunked\r\n"
-    //             ~ "\r\n"
-    //             ~ "a;\r\n"
-    //             ~ "0123456789\r\n"
-    //             ~ "1a\r\n"
-    //             ~ "ABCDEFGHIJKLMNOPQRSTUVWXYZ\r\n"
-    //             ~ "0\r\n"
+                        ~ "\r\n"
 
-    //             ~ "\r\n"
+                        ~ "POST /foo HTTP/1.0\r\n"
+                        ~ "Connection: Keep-Alive\r\n"
+                        ~ "Header2: value2\r\n"
+                        ~ "Content-Length: 0\r\n"
+                        ~ "\r\n"
 
-    //             ~ "POST /foo HTTP/1.0\r\n"
-    //             ~ "Connection: Keep-Alive\r\n"
-    //             ~ "Header2: value2\r\n"
-    //             ~ "Content-Length: 0\r\n"
-    //             ~ "\r\n"
+                        ~ "PUT /doodle HTTP/1.0\r\n"
+                        ~ "Connection: close\r\n"
+                        ~ "Header3: value3\r\n"
+                        ~ "Content-Length: 10\r\n"
+                        ~ "\r\n"
+                        ~ "0123456789\r\n");
 
-    //             ~ "PUT /doodle HTTP/1.0\r\n"
-    //             ~ "Connection: close\r\n"
-    //             ~ "Header3: value3\r\n"
-    //             ~ "Content-Length: 10\r\n"
-    //             ~ "\r\n"
-    //             ~ "0123456789\r\n");
+        HttpParser.RequestHandler handler = new Handler();
+        HttpParser parser = new HttpParser(handler);
+        parser.parseNext(buffer);
+        Assert.assertEquals("GET", _methodOrVersion);
+        Assert.assertEquals("/mp", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header1", _hdr[1]);
+        Assert.assertEquals("value1", _val[1]);
+        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
-    //     HttpParser.RequestHandler handler = new Handler();
-    //     HttpParser parser = new HttpParser(handler);
-    //     parser.parseNext(buffer0);
-    //     parser.atEOF();
-    //     parser.parseNext(buffer1);
-    //     Assert.assertEquals("GET", _methodOrVersion);
-    //     Assert.assertEquals("/mp", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header1", _hdr[1]);
-    //     Assert.assertEquals("value1", _val[1]);
-    //     Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        parser.reset();
+        init();
+        parser.parseNext(buffer);
+        Assert.assertEquals("POST", _methodOrVersion);
+        Assert.assertEquals("/foo", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header2", _hdr[1]);
+        Assert.assertEquals("value2", _val[1]);
+        Assert.assertEquals(null, _content);
 
-    //     parser.reset();
-    //     init();
-    //     parser.parseNext(buffer1);
-    //     Assert.assertEquals("POST", _methodOrVersion);
-    //     Assert.assertEquals("/foo", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header2", _hdr[1]);
-    //     Assert.assertEquals("value2", _val[1]);
-    //     Assert.assertEquals(null, _content);
+        parser.reset();
+        init();
+        parser.parseNext(buffer);
+        parser.atEOF();
+        Assert.assertEquals("PUT", _methodOrVersion);
+        Assert.assertEquals("/doodle", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header3", _hdr[1]);
+        Assert.assertEquals("value3", _val[1]);
+        Assert.assertEquals("0123456789", _content);
+    }
 
-    //     parser.reset();
-    //     init();
-    //     parser.parseNext(buffer1);
-    //     Assert.assertEquals("PUT", _methodOrVersion);
-    //     Assert.assertEquals("/doodle", _uriOrStatus);
-    //     Assert.assertEquals("HTTP/1.0", _versionOrReason);
-    //     Assert.assertEquals(2, _headers);
-    //     Assert.assertEquals("Header3", _hdr[1]);
-    //     Assert.assertEquals("value3", _val[1]);
-    //     Assert.assertEquals("0123456789", _content);
-    // }
+    
+    void testMultiParseEarlyEOF() {
+        ByteBuffer buffer0 = BufferUtils.toBuffer(
+                "GET /mp HTTP/1.0\r\n"
+                        ~ "Connection: Keep-Alive\r\n");
+
+        ByteBuffer buffer1 = BufferUtils.toBuffer("Header1: value1\r\n"
+                ~ "Transfer-Encoding: chunked\r\n"
+                ~ "\r\n"
+                ~ "a;\r\n"
+                ~ "0123456789\r\n"
+                ~ "1a\r\n"
+                ~ "ABCDEFGHIJKLMNOPQRSTUVWXYZ\r\n"
+                ~ "0\r\n"
+
+                ~ "\r\n"
+
+                ~ "POST /foo HTTP/1.0\r\n"
+                ~ "Connection: Keep-Alive\r\n"
+                ~ "Header2: value2\r\n"
+                ~ "Content-Length: 0\r\n"
+                ~ "\r\n"
+
+                ~ "PUT /doodle HTTP/1.0\r\n"
+                ~ "Connection: close\r\n"
+                ~ "Header3: value3\r\n"
+                ~ "Content-Length: 10\r\n"
+                ~ "\r\n"
+                ~ "0123456789\r\n");
+
+        HttpParser.RequestHandler handler = new Handler();
+        HttpParser parser = new HttpParser(handler);
+        parser.parseNext(buffer0);
+        parser.atEOF();
+        parser.parseNext(buffer1);
+        Assert.assertEquals("GET", _methodOrVersion);
+        Assert.assertEquals("/mp", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header1", _hdr[1]);
+        Assert.assertEquals("value1", _val[1]);
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+
+        parser.reset();
+        init();
+        parser.parseNext(buffer1);
+        Assert.assertEquals("POST", _methodOrVersion);
+        Assert.assertEquals("/foo", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header2", _hdr[1]);
+        Assert.assertEquals("value2", _val[1]);
+        Assert.assertEquals(null, _content);
+
+        parser.reset();
+        init();
+        parser.parseNext(buffer1);
+        Assert.assertEquals("PUT", _methodOrVersion);
+        Assert.assertEquals("/doodle", _uriOrStatus);
+        Assert.assertEquals("HTTP/1.0", _versionOrReason);
+        Assert.assertEquals(2, _headers);
+        Assert.assertEquals("Header3", _hdr[1]);
+        Assert.assertEquals("value3", _val[1]);
+        Assert.assertEquals("0123456789", _content);
+    }
 
     
     void testResponseParse0() {

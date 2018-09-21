@@ -1,8 +1,7 @@
 module test.codec.websocket.utils.QuoteUtilTest;
 
-import hunt.http.codec.websocket.utils.QuoteUtil;
+import hunt.util.string.QuoteUtil;
 
-// import java.util.Iterator;
 import hunt.container;
 import hunt.util.Assert;
 import hunt.util.exception;

@@ -10,7 +10,7 @@
 			"path": "examples/Http2ClientDemo"
 		},
 		{
-			"path": "examples/Http2ServerDemo"
+			"path": "examples/HttpServerDemo"
 		}
 	],
 	"settings": {}

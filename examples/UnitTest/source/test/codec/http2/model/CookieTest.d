@@ -40,10 +40,10 @@ class CookieTest {
 		Cookie cookie = new Cookie("test21", "hello");
 		string cookieString = CookieGenerator.generateCookie(cookie);
 		
-		List!Cookie list = CookieParser.parseCookie(cookieString);
-		Assert.assertThat(list.size(), (1));
-		Assert.assertThat(list.get(0).getName(), ("test21"));
-		Assert.assertThat(list.get(0).getValue(), ("hello"));
+		Cookie[] list = CookieParser.parseCookie(cookieString);
+		Assert.assertThat(cast(int)list.length, (1));
+		Assert.assertThat(list[0].getName(), ("test21"));
+		Assert.assertThat(list[0].getValue(), ("hello"));
 	}
 	
 	
@@ -54,11 +54,11 @@ class CookieTest {
 		}
 		string cookieString = CookieGenerator.generateCookies(list);
 		
-		List!Cookie ret = CookieParser.parseCookie(cookieString);
-		Assert.assertThat(ret.size(), (10));
+		Cookie[] ret = CookieParser.parseCookie(cookieString);
+		Assert.assertThat(cast(int)ret.length, (10));
 		for (int i = 0; i < 10; i++) {
-			Assert.assertThat(ret.get(i).getName(), ("test" ~ i.to!string()));
-			Assert.assertThat(ret.get(i).getValue(), ("hello" ~ i.to!string()));
+			Assert.assertThat(ret[i].getName(), ("test" ~ i.to!string()));
+			Assert.assertThat(ret[i].getValue(), ("hello" ~ i.to!string()));
 		}
 	}
 }
