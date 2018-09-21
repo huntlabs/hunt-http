@@ -260,6 +260,7 @@ class HttpParserTest {
 
     
     void testFoldedField2616() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.0\r\n" ~
                         "Host: localhost\r\n" ~
@@ -273,7 +274,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler, HttpCompliance.RFC2616_LEGACY);
         parseAll(parser, buffer);
 
-        // Assert.assertTrue(_bad.empty);
+        Assert.assertTrue(_bad.empty);
         Assert.assertEquals("Host", _hdr[0]);
         Assert.assertEquals("localhost", _val[0]);
         Assert.assertEquals(2, _headers);

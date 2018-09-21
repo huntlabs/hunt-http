@@ -843,15 +843,20 @@ class HttpParser {
                         _endOfContent = EndOfContent.CHUNKED_CONTENT;
                         _contentLength = -1;
                     } else {
-                        // List<string> values = new QuotedCSV(_valueString).getValues();
-                        // if (values.size() > 0 && HttpHeaderValue.CHUNKED.isSame(values.get(values.size() - 1))) {
-                        //     _endOfContent = EndOfContent.CHUNKED_CONTENT;
-                        //     _contentLength = -1;
-                        // } else if (values.stream().anyMatch(HttpHeaderValue.CHUNKED::is))
-                            throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bad chunking");
+                        string[] values = new QuotedCSV(_valueString).getValues();
+                        if (values.length > 0 && HttpHeaderValue.CHUNKED.isSame(values[$ - 1])) {
+                            _endOfContent = EndOfContent.CHUNKED_CONTENT;
+                            _contentLength = -1;
+                        } else {
+                            foreach(string v; values) {
+                                if(HttpHeaderValue.CHUNKED.isSame(v)) {
+                                    throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bad chunking");
+                                }
+                            }
+                        } 
                     }
                 }                    
-                else if(_header == HttpHeader.HOST){
+                else if(_header == HttpHeader.HOST) {
                     _host = true;
                     if ((_field is null) && !_valueString.empty()) {
                         string headerStr = _compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE) ? 
@@ -860,12 +865,19 @@ class HttpParser {
                         canAddToConnectionTrie = _fieldCache !is null;
                     }
                 }
-                else if(_header == HttpHeader.CONNECTION){
-                // FIXME: Needing refactor or cleanup -@zxp at 6/27/2018, 3:01:11 PM
-                // 
+                else if(_header == HttpHeader.CONNECTION) {
                     // Don't cache headers if not persistent
-                    if (HttpHeaderValue.CLOSE.isSame(_valueString)) // || new QuotedCSV(_valueString).getValues().stream().anyMatch(HttpHeaderValue.CLOSE::is))
+                    if (HttpHeaderValue.CLOSE.isSame(_valueString)) 
                         _fieldCache = null;
+                    else {
+                        string[] values = new QuotedCSV(_valueString).getValues();
+                        foreach(string v; values) {
+                            if(HttpHeaderValue.CLOSE.isSame(v)) {
+                                _fieldCache = null;
+                                break;
+                            }
+                        }
+                    }
                 }
                 else if(_header == HttpHeader.AUTHORIZATION || _header == HttpHeader.ACCEPT ||
                 _header == HttpHeader.ACCEPT_CHARSET || _header ==  HttpHeader.ACCEPT_ENCODING ||
@@ -874,13 +886,11 @@ class HttpParser {
                     canAddToConnectionTrie = _fieldCache !is null && _field is null;
                 }
 
-                //  && !_fieldCache.isFull()
-
-                if (canAddToConnectionTrie && _header != HttpHeader.Null && !_valueString.empty()) {
+                if (canAddToConnectionTrie && !_fieldCache.isFull() 
+                    && _header != HttpHeader.Null && !_valueString.empty()) {
                     if (_field is null)
                         _field = new HttpField(_header, caseInsensitiveHeader(_headerString, _header.asString()), _valueString);
                     _fieldCache.put(_field);
-                    // _fieldCache[_field.toString] = _field;
                 }
             }
             _handler.parsedHeader(_field !is null ? _field : new HttpField(_header, _headerString, _valueString));
@@ -1027,8 +1037,6 @@ class HttpParser {
 
                             // handle new header
                             if (buffer.hasRemaining()) {
-                                // TODO: Tasks pending completion -@zxp at 7/9/2018, 3:14:48 PM
-                                // 
                                 // Try a look ahead for the known header name and value.
                                 HttpField cached_field = null;
                                 if(_fieldCache !is null)
@@ -1036,13 +1044,6 @@ class HttpParser {
                                 
                                 if (cached_field is null)
                                     cached_field = CACHE.getBest(buffer, -1, buffer.remaining());
-
-                                // trace(_fieldCache);
-                                // trace(CACHE);
-                                // HttpField cached_field = HttpField.getBest(_fieldCache, buffer, -1, buffer.remaining());
-
-                                // if (cached_field is null)
-                                //     cached_field = HttpField.getBest(CACHE, buffer, -1, buffer.remaining());
 
                                 if (cached_field !is null) {
                                     string n = cached_field.getName();

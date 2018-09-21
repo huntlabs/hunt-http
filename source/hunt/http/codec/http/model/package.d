@@ -23,4 +23,5 @@ public import hunt.http.codec.http.model.MetaData;
 public import hunt.http.codec.http.model.MimeTypes;
 public import hunt.http.codec.http.model.MultiPartContentProvider;
 public import hunt.http.codec.http.model.Protocol;
+public import hunt.http.codec.http.model.QuotedCSV;
 public import hunt.http.codec.http.model.StaticTableHttpField;
