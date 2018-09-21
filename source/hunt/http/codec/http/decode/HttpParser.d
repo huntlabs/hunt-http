@@ -1381,7 +1381,7 @@ class HttpParser {
         while (_state < State.TRAILER && remaining > 0) {
             switch (_state) {
                 case State.EOF_CONTENT:
-                    _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
+                    _contentChunk = buffer.asReadOnlyBuffer();
                     _contentPosition += remaining;
                     buffer.position(buffer.position() + remaining);
                     if (_handler.content(_contentChunk))
@@ -1394,7 +1394,7 @@ class HttpParser {
                         setState(State.END);
                         return handleContentMessage();
                     } else {
-                        _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
+                        _contentChunk = buffer.asReadOnlyBuffer();
 
                         // limit content by expected size
                         if (remaining > content) {
@@ -1464,7 +1464,7 @@ class HttpParser {
                     if (chunk == 0) {
                         setState(State.CHUNKED_CONTENT);
                     } else {
-                        _contentChunk = buffer.slice(); // buffer.asReadOnlyBuffer();
+                        _contentChunk = buffer.asReadOnlyBuffer();
 
                         if (remaining > chunk)
                             _contentChunk.limit(_contentChunk.position() + chunk);
