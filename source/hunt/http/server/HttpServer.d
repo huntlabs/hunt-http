@@ -69,7 +69,7 @@ class HttpServer  : AbstractLifeCycle {
         _server = NetUtil.createNetServer();
         _server.setConfig(c.getTcpConfiguration());
 
-        _server.connectHandler((NetSocket sock){
+        _server.connectHandler((NetSocket sock) {
             info("server have accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( (in ubyte[] data) {     

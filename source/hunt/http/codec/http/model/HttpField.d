@@ -18,7 +18,7 @@ import std.string;
 import hunt.logging;
 
 class HttpField {
-	private __gshared string __zeroquality = "q=0";
+	private enum string __zeroquality = "q=0";
 	private HttpHeader _header;
 	private string _name;
 	private string _value;
@@ -27,7 +27,7 @@ class HttpField {
 
 	this(HttpHeader header, string name, string value) {
 		_header = header;
-		_name = name; //std.string.toLower(name);
+		_name = name; 
 		_value = value;
 	}
 
@@ -132,7 +132,7 @@ class HttpField {
 					break;
 
 				default: // character
-					match = std.ascii.toLower(c) == search.charAt(0) ? 1 : -1;
+					match = std.ascii.toLower(c) == search[0] ? 1 : -1;
 					state = 1;
 					break;
 				}
@@ -155,7 +155,7 @@ class HttpField {
 				default:
 					if (match > 0) {
 						if (match < search.length)
-							match = std.ascii.toLower(c) == search.charAt(match) ? (match + 1) : -1;
+							match = std.ascii.toLower(c) == search[match] ? (match + 1) : -1;
 						else if (c != ' ' && c != '\t')
 							match = -1;
 					}
@@ -177,7 +177,7 @@ class HttpField {
 				default:
 					if (match >= 0) {
 						if (match < search.length)
-							match = std.ascii.toLower(c) == search.charAt(match) ? (match + 1) : -1;
+							match = std.ascii.toLower(c) == search[match] ? (match + 1) : -1;
 						else
 							match = -1;
 					}
@@ -187,7 +187,7 @@ class HttpField {
 			case 3: // In Quoted character in quoted token
 				if (match >= 0) {
 					if (match < search.length)
-						match = std.ascii.toLower(c) == search.charAt(match) ? (match + 1) : -1;
+						match = std.ascii.toLower(c) == search[match] ? (match + 1) : -1;
 					else
 						match = -1;
 				}
@@ -234,7 +234,7 @@ class HttpField {
 				default:
 					if (param >= 0) {
 						if (param < __zeroquality.length)
-							param = std.ascii.toLower(c) == __zeroquality.charAt(param) ? (param + 1) : -1;
+							param = std.ascii.toLower(c) == __zeroquality[param] ? (param + 1) : -1;
 						else if (c != '0' && c != '.')
 							param = -1;
 					}

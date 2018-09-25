@@ -96,6 +96,8 @@ class HttpParserTest {
 
         BufferUtils.append(b, BufferUtils.toBuffer(" "));
         Assert.assertEquals(HttpMethod.GET, HttpMethod.lookAheadGet(b));
+
+        assert(false);
     }
 
     
@@ -163,7 +165,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler, HttpCompliance.RFC2616_LEGACY);
         parseAll(parser, buffer);
 
-        // Assert.assertNull(_bad);
+        Assert.assertNull(_bad);
         Assert.assertEquals("POST", _methodOrVersion);
         Assert.assertEquals("/222", _uriOrStatus);
         Assert.assertEquals("HTTP/0.9", _versionOrReason);
@@ -802,7 +804,7 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler, -1, HttpCompliance.LEGACY);
         parseAll(parser, buffer);
-        // Assert.assertNull(_bad);
+        Assert.assertNull(_bad);
         Assert.assertEquals("GET", _methodOrVersion);
         Assert.assertEquals("/", _uriOrStatus);
         Assert.assertEquals("HTTP/1.0", _versionOrReason);
@@ -1107,6 +1109,7 @@ class HttpParserTest {
 
     
     void testMultiParse() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET /mp HTTP/1.0\r\n"
                         ~ "Connection: Keep-Alive\r\n"
@@ -1143,7 +1146,7 @@ class HttpParserTest {
         Assert.assertEquals(2, _headers);
         Assert.assertEquals("Header1", _hdr[1]);
         Assert.assertEquals("value1", _val[1]);
-        // Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
+        Assert.assertEquals("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", _content);
 
         parser.reset();
         initialize();
@@ -1477,6 +1480,7 @@ class HttpParserTest {
 
     
     void testNoURI2() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET \r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1487,7 +1491,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("No URI", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1498,6 +1502,7 @@ class HttpParserTest {
 
     
     void testUnknownReponseVersion() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "HPPT/7.7 200 OK\r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1508,7 +1513,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("Unknown Version", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1520,6 +1525,7 @@ class HttpParserTest {
 
     
     void testNoStatus() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "HTTP/1.1\r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1530,7 +1536,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("No Status", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1541,6 +1547,7 @@ class HttpParserTest {
 
     
     void testNoStatus2() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "HTTP/1.1 \r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1551,7 +1558,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("No Status", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1562,6 +1569,7 @@ class HttpParserTest {
 
     
     void testBadRequestVersion() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HPPT/7.7\r\n"
                         ~ "Content-Length: 0\r\n"
@@ -1572,7 +1580,7 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("Unknown Version", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1590,7 +1598,7 @@ class HttpParserTest {
         parser = new HttpParser(handler);
 
         parser.parseNext(buffer);
-        // Assert.assertEquals(null, _methodOrVersion);
+        Assert.assertEquals(null, _methodOrVersion);
         Assert.assertEquals("Unknown Version", _bad);
         Assert.assertFalse(buffer.hasRemaining());
         Assert.assertEquals(HttpParser.State.CLOSE, parser.getState());
@@ -1601,6 +1609,7 @@ class HttpParserTest {
 
     
     void testBadCR() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.0\r\n"
                         ~ "Content-Length: 0\r"
@@ -1638,6 +1647,7 @@ class HttpParserTest {
 
     
     void testBadContentLength0() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.0\r\n"
                         ~ "Content-Length: abc\r\n"
@@ -1829,6 +1839,7 @@ class HttpParserTest {
 
     
     void testUriHost10() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET http://host/ HTTP/1.0\r\n"
                         ~ "\r\n");
@@ -1836,13 +1847,14 @@ class HttpParserTest {
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
         parser.parseNext(buffer);
-        // Assert.assertNull(_bad);
+        Assert.assertNull(_bad);
         Assert.assertEquals("http://host/", _uriOrStatus);
         Assert.assertEquals(0, _port);
     }
 
     
     void testNoHost() {
+        initialize();
         ByteBuffer buffer = BufferUtils.toBuffer(
                 "GET / HTTP/1.1\r\n"
                         ~ "Connection: close\r\n"
@@ -1983,8 +1995,8 @@ class HttpParserTest {
         HttpParser parser = new HttpParser(handler);
         parseAll(parser, buffer);
         HttpField field = parser.getCachedField("Host: www.smh.com.au");
-        // assert(field !is null);
-        // Assert.assertEquals("www.smh.com.au", field.getValue());
+        assert(field !is null);
+        Assert.assertEquals("www.smh.com.au", field.getValue());
         field = _fields.get(0);
 
         buffer.position(0);

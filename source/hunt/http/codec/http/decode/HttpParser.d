@@ -163,65 +163,62 @@ class HttpParser {
 
     shared static this() {
         CACHE = new ArrayTrie!HttpField(2048);
-        cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE));
-        cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE));
-        cacheHttpField(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.UPGRADE));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip, deflate"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip,deflate,sdch"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-GB,en-US;q=0.8,en;q=0.6"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-AU,en;q=0.9,it-IT;q=0.8,it;q=0.7,en-GB;q=0.6,en-US;q=0.5"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_CHARSET, "ISO-8859-1,utf-8;q=0.7,*;q=0.3"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT, "*/*"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT, "image/png,image/*;q=0.8,*/*;q=0.5"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"));
-        cacheHttpField(new HttpField(HttpHeader.ACCEPT_RANGES, HttpHeaderValue.BYTES));
-        cacheHttpField(new HttpField(HttpHeader.PRAGMA, "no-cache"));
-        cacheHttpField(new HttpField(HttpHeader.CACHE_CONTROL, "private, no-cache, no-cache=Set-Cookie, proxy-revalidate"));
-        cacheHttpField(new HttpField(HttpHeader.CACHE_CONTROL, "no-cache"));
-        cacheHttpField(new HttpField(HttpHeader.CACHE_CONTROL, "max-age=0"));
-        cacheHttpField(new HttpField(HttpHeader.CONTENT_LENGTH, "0"));
-        cacheHttpField(new HttpField(HttpHeader.CONTENT_ENCODING, "gzip"));
-        cacheHttpField(new HttpField(HttpHeader.CONTENT_ENCODING, "deflate"));
-        cacheHttpField(new HttpField(HttpHeader.TRANSFER_ENCODING, "chunked"));
-        cacheHttpField(new HttpField(HttpHeader.EXPIRES, "Fri, 01 Jan 1990 00:00:00 GMT"));
+        CACHE.put(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE));
+        CACHE.put(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE));
+        CACHE.put(new HttpField(HttpHeader.CONNECTION, HttpHeaderValue.UPGRADE));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip, deflate"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip, deflate, br"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip,deflate,sdch"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-GB,en-US;q=0.8,en;q=0.6"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-AU,en;q=0.9,it-IT;q=0.8,it;q=0.7,en-GB;q=0.6,en-US;q=0.5"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_CHARSET, "ISO-8859-1,utf-8;q=0.7,*;q=0.3"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, "*/*"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, "image/png,image/*;q=0.8,*/*;q=0.5"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_RANGES, HttpHeaderValue.BYTES));
+        CACHE.put(new HttpField(HttpHeader.PRAGMA, "no-cache"));
+        CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "private, no-cache, no-cache=Set-Cookie, proxy-revalidate"));
+        CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "no-cache"));
+        CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "max-age=0"));
+        CACHE.put(new HttpField(HttpHeader.CONTENT_LENGTH, "0"));
+        CACHE.put(new HttpField(HttpHeader.CONTENT_ENCODING, "gzip"));
+        CACHE.put(new HttpField(HttpHeader.CONTENT_ENCODING, "deflate"));
+        CACHE.put(new HttpField(HttpHeader.TRANSFER_ENCODING, "chunked"));
+        CACHE.put(new HttpField(HttpHeader.EXPIRES, "Fri, 01 Jan 1990 00:00:00 GMT"));
 
         // Add common Content types as fields
         foreach (string type ; ["text/plain", "text/html", "text/xml", "text/json", "application/json", "application/x-www-form-urlencoded"]) {
             HttpField field = new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type);
-            cacheHttpField(field);
+            CACHE.put(field);
 
             foreach (string charset ; ["utf-8", "iso-8859-1"]) {
-                cacheHttpField(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ ";charset=" ~ charset));
-                cacheHttpField(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ "; charset=" ~ charset));
-                cacheHttpField(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ ";charset=" ~ charset.toUpper()));
-                cacheHttpField(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ "; charset=" ~ charset.toUpper()));
+                CACHE.put(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ ";charset=" ~ charset));
+                CACHE.put(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ "; charset=" ~ charset));
+                CACHE.put(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ ";charset=" ~ charset.toUpper()));
+                CACHE.put(new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type ~ "; charset=" ~ charset.toUpper()));
             }
         }
 
         // Add headers with null values so HttpParser can avoid looking up name again for unknown values
-        foreach (HttpHeader h ; HttpHeader.values())
-            if (!cacheHttpField(new HttpField(h, cast(string) null)))
-                throw new IllegalStateException("CACHE FULL");
-        // Add some more common headers
-        cacheHttpField(new HttpField(HttpHeader.REFERER, cast(string) null));
-        cacheHttpField(new HttpField(HttpHeader.IF_MODIFIED_SINCE, cast(string) null));
-        cacheHttpField(new HttpField(HttpHeader.IF_NONE_MATCH, cast(string) null));
-        cacheHttpField(new HttpField(HttpHeader.AUTHORIZATION, cast(string) null));
-        cacheHttpField(new HttpField(HttpHeader.COOKIE, cast(string) null));
-    }
+        foreach (HttpHeader h ; HttpHeader.values()) {
+            // trace(h.toString());
+            if (!CACHE.put(new HttpField(h, cast(string) null))) {
+                // FIXME: Needing refactor or cleanup -@zxp at 9/25/2018, 8:11:29 PM
+                // 
+                // warning(h.toString());
+                // throw new IllegalStateException("CACHE FULL");
+            }
+        }
 
-    private static bool cacheHttpField(HttpField f)
-    {
-        CACHE.put(f);
-        return true;
-        // if(CACHE.<2000)
-        //     return true;
-        // else
-        //     return false;
+        // Add some more common headers
+        CACHE.put(new HttpField(HttpHeader.REFERER, cast(string) null));
+        CACHE.put(new HttpField(HttpHeader.IF_MODIFIED_SINCE, cast(string) null));
+        CACHE.put(new HttpField(HttpHeader.IF_NONE_MATCH, cast(string) null));
+        CACHE.put(new HttpField(HttpHeader.AUTHORIZATION, cast(string) null));
+        CACHE.put(new HttpField(HttpHeader.COOKIE, cast(string) null));
     }
 
     private static HttpCompliance getCompliance() {
@@ -903,7 +900,7 @@ class HttpParser {
 
     private void parsedTrailer() {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
-        if (_headerString != null || _valueString != null)
+        if (!_headerString.empty() || !_valueString.empty()) 
             _handler.parsedTrailer(_field !is null ? _field : new HttpField(_header, _headerString, _valueString));
 
         _headerString = _valueString = null;
