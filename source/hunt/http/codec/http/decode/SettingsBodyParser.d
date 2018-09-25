@@ -86,7 +86,7 @@ class SettingsBodyParser :BodyParser {
 			case State.SETTING_VALUE: {
 				if (buffer.remaining() >= 4) {
 					settingValue = buffer.get!int();
-					version(HuntDebugMode)
+					version(HUNT_DEBUG)
 						tracef(format("setting %d=%d", settingId, settingValue));
 					settings.put(settingId, settingValue);
 					state = State.SETTING_ID;
@@ -108,7 +108,7 @@ class SettingsBodyParser :BodyParser {
 				if (cursor > 0 && length <= 0)
 					return connectionFailure(buffer, cast(int)ErrorCode.FRAME_SIZE_ERROR, "invalid_settings_frame");
 				if (cursor == 0) {
-					version(HuntDebugMode)
+					version(HUNT_DEBUG)
 						tracef(format("setting %d=%d", settingId, settingValue));
 					settings.put(settingId, settingValue);
 					state = State.SETTING_ID;

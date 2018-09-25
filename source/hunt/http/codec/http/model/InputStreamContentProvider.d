@@ -134,7 +134,7 @@ module hunt.http.codec.http.model.InputStreamContentProvider;
 
 //                 byte[] bytes = new byte[bufferSize];
 //                 int read = stream.read(bytes);
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("Read %s bytes from %s", read, stream);
 //                 if (read > 0) {
 //                     hasNext = bool.TRUE;
@@ -151,7 +151,7 @@ module hunt.http.codec.http.model.InputStreamContentProvider;
 //                     return true;
 //                 }
 //             } catch (Exception x) {
-//                 version(HuntDebugMode) {
+//                 version(HUNT_DEBUG) {
 //                     tracef("input stream exception", x);
 //                 }
 //                 if (failure == null) {

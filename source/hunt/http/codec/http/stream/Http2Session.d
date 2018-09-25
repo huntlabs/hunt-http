@@ -151,7 +151,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     override
     void onData(DataFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         int streamId = frame.getStreamId();
@@ -190,7 +190,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                 stream.process(frame, new DataCallback() );
             }
         } else {
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Ignoring %s, stream #%s not found", frame.toString(), streamId);
             }
             // We must enlarge the session flow control window,
@@ -204,14 +204,14 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     override
     void onPriority(PriorityFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
     }
 
     override
     void onReset(ResetFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         StreamSPI stream = cast(StreamSPI)getStream(frame.getStreamId());
@@ -228,7 +228,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     void onSettings(SettingsFrame frame, bool reply) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         if (frame.isReply())
@@ -242,7 +242,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             // int value = entry.getValue();
             switch (key) {
                 case SettingsFrame.HEADER_TABLE_SIZE: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Update HPACK header table size to %s for %s", value, this.toString());
                     }
                     generator.setHeaderTableSize(value);
@@ -255,27 +255,27 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                         return;
                     }
                     pushEnabled = value == 1;
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("%s push for %s", pushEnabled ? "Enable" : "Disable", this.toString());
                     }
                     break;
                 }
                 case SettingsFrame.MAX_CONCURRENT_STREAMS: {
                     maxLocalStreams = value;
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Update max local concurrent streams to %s for %s", maxLocalStreams, this.toString());
                     }
                     break;
                 }
                 case SettingsFrame.INITIAL_WINDOW_SIZE: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Update initial window size to %s for %s", value, this.toString());
                     }
                     flowControl.updateInitialStreamWindow(this, value, false);
                     break;
                 }
                 case SettingsFrame.MAX_FRAME_SIZE: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Update max frame size to %s for %s", value, this.toString());
                     }
                     // SPEC: check the max frame size is sane.
@@ -287,14 +287,14 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                     break;
                 }
                 case SettingsFrame.MAX_HEADER_LIST_SIZE: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Update max header list size to %s for %s", value, this.toString());
                     }
                     generator.setMaxHeaderListSize(value);
                     break;
                 }
                 default: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Unknown setting %s:%s for %s", key, value, this.toString());
                     }
                     break;
@@ -311,7 +311,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     override
     void onPing(PingFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         if (frame.isReply()) {
@@ -342,7 +342,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
      */
     override
     void onGoAway(GoAwayFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         while (true) {
@@ -359,7 +359,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                     break;
                 }
                 default: {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("Ignored %s, already closed", frame.toString());
                     }
                     return;
@@ -370,7 +370,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     override
     void onWindowUpdate(WindowUpdateFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         int streamId = frame.getStreamId();
@@ -507,7 +507,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                     break;
                 }
                 default: {
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         tracef("Ignoring close %s/%s, already closed", error, reason);
                     callback.succeeded();
                     return false;
@@ -560,7 +560,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     private void onFrame(Http2Flusher.Entry entry, bool flush) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("%s %s", flush ? "Sending" : "Queueing", entry.frame.toString());
         }
         // Ping frames are prepended to process them as soon as possible.
@@ -594,7 +594,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             streams[streamId] = stream;
             // stream.setIdleTimeout(getStreamIdleTimeout());
             flowControl.onStreamCreated(stream);
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Created local %s", stream.toString());
             }
             return stream;
@@ -633,7 +633,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             updateLastStreamId(streamId);
             // stream.setIdleTimeout(getStreamIdleTimeout());
             flowControl.onStreamCreated(stream);
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Created remote %s", stream.toString());
             }
             return stream;
@@ -663,7 +663,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         if (removed) {
             onStreamClosed(stream);
             flowControl.onStreamDestroyed(stream);
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Removed %s %s", stream.isLocal() ? "local" : "remote", stream);
             }
         }
@@ -747,13 +747,13 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
      */
     override
     void onShutdown() {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Shutting down %s", this.toString());
         }
         switch (closed) {
             case CloseState.NOT_CLOSED: {
                 // The other peer did not send a GO_AWAY, no need to be gentle.
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Abrupt close for %s", this.toString());
                 }
                 abort(new ClosedChannelException(""));
@@ -801,7 +801,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         switch (closed) {
             case CloseState.NOT_CLOSED: {
                 long elapsed = convertToMillisecond(Clock.currStdTime) - idleTime;
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("HTTP2 session on idle timeout. The elapsed time is %s - %s", elapsed, endPoint.getMaxIdleTimeout());
                 }
                 return elapsed >= endPoint.getMaxIdleTimeout() && notifyIdleTimeout(this);
@@ -833,7 +833,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     void disconnect() {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Disconnecting %s", this.toString());
         }
         endPoint.close();
@@ -979,7 +979,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             List!(ByteBuffer) controlFrame = generator.control(frame);
             bytes = cast(int) BufferUtils.remaining(controlFrame);
             buffers.addAll(controlFrame);
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Generated %s", frame.toString());
             }
             beforeSend();
@@ -1114,7 +1114,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             bytes = pair[0];
             buffers.addAll(pair[1]);
             int written = bytes - Frame.HEADER_LENGTH;
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Generated %s, length/window/data=%s/%s/%s", dataFrame, written, window, remaining);
             }
             this.dataWritten = written;

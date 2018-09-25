@@ -72,7 +72,7 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
         foreach (Stream stream ; session.getStreams()) {
             if (local) {
                 (cast(StreamSPI) stream).updateRecvWindow(delta);
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     tracef("Updated initial stream recv window %s -> %s for %s", previousInitialStreamWindow, initialStreamWindow, stream);
             } else {
                 session.onWindowUpdate(cast(StreamSPI) stream, new WindowUpdateFrame(stream.getId(), delta));
@@ -87,14 +87,14 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
             // The stream may have been removed concurrently.
             if (stream !is null) {
                 int oldSize = stream.updateSendWindow(delta);
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     tracef("Updated stream send window %s -> %s for %s", oldSize, oldSize + delta, stream);
                 if (oldSize <= 0)
                     onStreamUnstalled(stream);
             }
         } else {
             int oldSize = session.updateSendWindow(delta);
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef("Updated session send window %s -> %s for %s", oldSize, oldSize + delta, session);
             if (oldSize <= 0)
                 onSessionUnstalled(session);
@@ -104,12 +104,12 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
     override
     void onDataReceived(SessionSPI session, StreamSPI stream, int length) {
         int oldSize = session.updateRecvWindow(-length);
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Data received, %s bytes, updated session recv window %s -> %s for %s", length, oldSize, oldSize - length, session);
 
         if (stream !is null) {
             oldSize = stream.updateRecvWindow(-length);
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef("Data received, %s bytes, updated stream recv window %s -> %s for %s", length, oldSize, oldSize - length, stream);
         }
     }
@@ -126,14 +126,14 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
         SessionSPI session = stream.getSession();
         int oldSessionWindow = session.updateSendWindow(-length);
         int newSessionWindow = oldSessionWindow - length;
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Sending, session send window %s -> %s for %s", oldSessionWindow, newSessionWindow, session);
         if (newSessionWindow <= 0)
             onSessionStalled(session);
 
         int oldStreamWindow = stream.updateSendWindow(-length);
         int newStreamWindow = oldStreamWindow - length;
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Sending, stream send window %s -> %s for %s", oldStreamWindow, newStreamWindow, stream);
         if (newStreamWindow <= 0)
             onStreamStalled(stream);
@@ -145,20 +145,20 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
 
     protected void onSessionStalled(SessionSPI session) {
         sessionStall = Clock.currStdTime;
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Session stalled %s", session);
     }
 
     protected void onStreamStalled(StreamSPI stream) {
         streamsStalls[stream] = Clock.currStdTime;
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Stream stalled %s", stream);
     }
 
     protected void onSessionUnstalled(SessionSPI session) {
         sessionStallTime += (Clock.currStdTime - sessionStall);
         sessionStall = 0;
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Session unstalled %s", session);
     }
 
@@ -172,7 +172,7 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
             streamsStallTime += (Clock.currStdTime - time);
 
         }
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Stream unstalled %s", stream);
     }
 

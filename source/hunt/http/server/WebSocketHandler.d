@@ -46,7 +46,7 @@ class WebSocketHandler {
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("The WebSocket connection %s received a frame: %s", 
                 connection.getSessionId(), (cast(Object)frame).toString());
         }

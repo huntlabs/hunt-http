@@ -71,7 +71,7 @@ import hunt.logging;
 //             try {
 //                 if (channel == null) {
 //                     channel = Files.newByteChannel(filePath, StandardOpenOption.READ);
-//                     version(HuntDebugMode)
+//                     version(HUNT_DEBUG)
 //                         tracef("Opened file %s", filePath);
 //                 }
 
@@ -80,7 +80,7 @@ import hunt.logging;
 //                 if (read < 0)
 //                     throw new NoSuchElementException();
 
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("Read %s bytes from %s", read, filePath);
 
 //                 position += read;

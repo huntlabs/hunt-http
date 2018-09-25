@@ -39,7 +39,7 @@ class Http2ClientSession : Http2Session {
 
     override
     void onHeaders(HeadersFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Client received %s", frame);
         }
 
@@ -59,7 +59,7 @@ class Http2ClientSession : Http2Session {
 
     // override
     void onPushPromise(PushPromiseFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Client received %s", frame);
         }
 
@@ -67,7 +67,7 @@ class Http2ClientSession : Http2Session {
         int pushStreamId = frame.getPromisedStreamId();
         StreamSPI stream = getStream(streamId);
         if (stream is null) {
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef("Ignoring %s, stream #%s not found", frame, streamId);
         } else {
             StreamSPI pushStream = createRemoteStream(pushStreamId);

@@ -51,7 +51,7 @@ class Http2ServerSession : Http2Session , ServerParser.Listener {
 
     override
     void onHeaders(HeadersFrame frame) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Server received %s", frame);
         }
 

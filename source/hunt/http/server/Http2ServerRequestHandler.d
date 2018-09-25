@@ -64,7 +64,7 @@ class Http2ServerRequestHandler : ServerSessionListener.Adapter {
             throw new IllegalArgumentException("the stream " ~ stream.getId().to!string() ~ " received meta data that is not request type");
         }
 
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Server received stream: %s, %s", stream.getId(), headersFrame.toString());
         }
 
@@ -93,7 +93,7 @@ class Http2ServerRequestHandler : ServerSessionListener.Adapter {
         return new class StreamListener.Adapter {
             override
             void onHeaders(Stream stream, HeadersFrame trailerFrame) {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Server received trailer frame: %s, %s", stream.toString(), trailerFrame);
                 }
 

@@ -193,10 +193,10 @@ class UrlEncoded  : MultiMap!string
             if (key != null) {
                 int l =  contentLen - mark - 1;
                 value = l == 0 ? "" : (encoded ? decodeString(content, mark + 1, l) : content.substring(mark + 1));
-                version(HuntDebugMode) tracef("key=%s, value=%s", key, value);
+                version(HUNT_DEBUG) tracef("key=%s, value=%s", key, value);
                 map.add(key, value);
             } else if (mark < contentLen) {
-                version(HuntDebugMode) tracef("empty value: content=%s, key=%s", content, key);
+                version(HUNT_DEBUG) tracef("empty value: content=%s, key=%s", content, key);
                 key = encoded
                         ? decodeString(content, mark + 1, contentLen - mark - 1, charset)
                         : content.substring(mark + 1);

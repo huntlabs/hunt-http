@@ -10,7 +10,7 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HuntDebugMode"
+		"HUNT_DEBUG"
 	],
 	"configurations": [
 		{

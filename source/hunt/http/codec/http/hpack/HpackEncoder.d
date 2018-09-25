@@ -134,7 +134,7 @@ class HpackEncoder {
     }
 
     void encode(ByteBuffer buffer, MetaData metadata) {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("CtxTbl[%x] encoding", _context.toHash());
 
         _headerListSize = 0;
@@ -171,11 +171,11 @@ class HpackEncoder {
         // Check size
         if (_maxHeaderListSize > 0 && _headerListSize > _maxHeaderListSize) {
             warningf("Header list size too large %s > %s for %s", _headerListSize, _maxHeaderListSize);
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef("metadata=%s", metadata);
         }
 
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("CtxTbl[%x] encoded %d octets", _context.toHash(), buffer.position() - pos);
     }
 
@@ -206,13 +206,13 @@ class HpackEncoder {
             // Known field entry, so encode it as indexed
             if (entry.isStatic()) {
                 buffer.put((cast(StaticEntry) entry).getEncodedField());
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     encoding = "IdxFieldS1";
             } else {
                 int index = _context.index(entry);
                 buffer.put(cast(byte) 0x80);
                 NBitInteger.encode(buffer, 7, index);
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     encoding = "IdxField" ~ (entry.isStatic() ? "S" : "") ~ to!string(1 + NBitInteger.octectsNeeded(7, index));
             }
         } else {
@@ -232,7 +232,7 @@ class HpackEncoder {
                     (cast(PreEncodedHttpField) field).putTo(buffer, HttpVersion.HTTP_2);
                     byte b = buffer.get(i);
                     indexed = b < 0 || b >= 0x40;
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         encoding = indexed ? "PreEncodedIdx" : "PreEncoded";
                 }
                 // has the custom header name been seen before?
@@ -243,7 +243,7 @@ class HpackEncoder {
                     indexed = true;
                     encodeName(buffer, cast(byte) 0x40, 6, field.getName(), null);
                     encodeValue(buffer, true, field.getValue());
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         encoding = "LitHuffNHuffVIdx";
                 } else {
                     // known custom name, but unknown value.
@@ -251,7 +251,7 @@ class HpackEncoder {
                     indexed = false;
                     encodeName(buffer, cast(byte) 0x00, 4, field.getName(), null);
                     encodeValue(buffer, true, field.getValue());
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         encoding = "LitHuffNHuffV!Idx";
                 }
             } else {
@@ -268,7 +268,7 @@ class HpackEncoder {
                     (cast(PreEncodedHttpField) field).putTo(buffer, HttpVersion.HTTP_2);
                     byte b = buffer.get(i);
                     indexed = b < 0 || b >= 0x40;
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         encoding = indexed ? "PreEncodedIdx" : "PreEncoded";
                 } else if (__DO_NOT_INDEX.contains(header)) {
                     // Non indexed field
@@ -278,7 +278,7 @@ class HpackEncoder {
                     encodeName(buffer, never_index ? cast(byte) 0x10 : cast(byte) 0x00, 4, header.asString(), name);
                     encodeValue(buffer, huffman, field.getValue());
 
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                     {
                         encoding = "Lit" ~ ((name is null) ? "HuffN" : ("IdxN" ~ (name.isStatic() ? "S" : "") ~ 
                                 to!string(1 + NBitInteger.octectsNeeded(4, _context.index(name))))) ~
@@ -292,7 +292,7 @@ class HpackEncoder {
                     indexed = false;
                     encodeName(buffer, cast(byte) 0x00, 4, header.asString(), name);
                     encodeValue(buffer, true, field.getValue());
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         encoding = "LitIdxNS" ~ to!string(1 + NBitInteger.octectsNeeded(4, _context.index(name))) ~ "HuffV!Idx";
                 } else {
                     // indexed
@@ -300,7 +300,7 @@ class HpackEncoder {
                     bool huffman = !__DO_NOT_HUFFMAN.contains(header);
                     encodeName(buffer, cast(byte) 0x40, 6, header.asString(), name);
                     encodeValue(buffer, huffman, field.getValue());
-                    version(HuntDebugMode){
+                    version(HUNT_DEBUG){
                         encoding = ((name is null) ? "LitHuffN" : ("LitIdxN" ~ (name.isStatic() ? "S" : "") ~ 
                         to!string(1 + NBitInteger.octectsNeeded(6, _context.index(name))))) ~
                                 (huffman ? "HuffVIdx" : "LitVIdx");
@@ -315,7 +315,7 @@ class HpackEncoder {
                     throw new IllegalStateException("");
         }
 
-        // version(HuntDebugMode) 
+        // version(HUNT_DEBUG) 
         {
             int e = buffer.position();
             tracef("encode %s:'%s' to '%s'", encoding, field, TypeUtils.toHexString(buffer.array(), buffer.arrayOffset() + p, e - p));

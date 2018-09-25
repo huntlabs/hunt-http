@@ -42,18 +42,18 @@ class Http2ServerHandler : AbstractHttpHandler {
     }
 
     override void sessionOpened(Session session) {
-        version(HuntDebugMode) trace("New http session...", typeid(session));
+        version(HUNT_DEBUG) trace("New http session...", typeid(session));
         
         if (config.isSecureConnectionEnabled()) {
             SecureSessionFactory factory = config.getSecureSessionFactory();
             SecureSession secureSession = factory.create(session, false, (SecureSession sslSession)  {
-                version(HuntDebugMode) info("Secure session created...");
+                version(HUNT_DEBUG) info("Secure session created...");
                 HttpConnection httpConnection;
                 string protocol = sslSession.getApplicationProtocol();
                 if(protocol.empty)
                     protocol = "http/1.1";
 
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("server session %s SSL handshake finished. Application protocol: %s", 
                         session.getSessionId(), protocol);
                 }

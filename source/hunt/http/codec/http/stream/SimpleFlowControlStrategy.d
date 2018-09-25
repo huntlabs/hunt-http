@@ -34,20 +34,20 @@ class SimpleFlowControlStrategy :AbstractFlowControlStrategy {
 
         WindowUpdateFrame sessionFrame = new WindowUpdateFrame(0, length);
         session.updateRecvWindow(length);
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("Data consumed, increased session recv window by %s for %s", length, session);
 
         Frame[] streamFrame = Frame.EMPTY_ARRAY;
         if (stream !is null) {
             if (stream.isRemotelyClosed()) {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Data consumed, ignoring update stream recv window by %s for remotely closed %s", length, stream);
                 }
             } else {
                 streamFrame = new Frame[1];
                 streamFrame[0] = new WindowUpdateFrame(stream.getId(), length);
                 stream.updateRecvWindow(length);
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     tracef("Data consumed, increased stream recv window by %s for %s", length, stream);
             }
         }

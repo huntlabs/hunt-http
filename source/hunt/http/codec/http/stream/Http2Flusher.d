@@ -60,7 +60,7 @@ class Http2Flusher : IteratingCallback {
             e = terminated;
             if (e is null) {
                 frames.offerFirst(entry);
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Prepended %s, frames=%s", entry.toString(), frames.size());
                 }
             }
@@ -77,7 +77,7 @@ class Http2Flusher : IteratingCallback {
             closed = terminated;
             if (closed is null) {
                 frames.offer(entry);
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Appended %s, frames=%s", entry.toString(), frames.size());
                 }
             }
@@ -99,7 +99,7 @@ class Http2Flusher : IteratingCallback {
 
     override
     protected Action process() {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Flushing %s", session.toString());
         }
         synchronized (this) {
@@ -121,7 +121,7 @@ class Http2Flusher : IteratingCallback {
 
 
         if (entries.isEmpty()) {
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Flushed %s", session.toString());
             }
             return Action.IDLE;
@@ -129,12 +129,12 @@ class Http2Flusher : IteratingCallback {
 
         while (!entries.isEmpty()) {
             Entry entry = entries.poll();
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Processing %s", entry.toString());
             }
             // If the stream has been reset or removed, don't send the frame.
             if (entry.isStale()) {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Stale %s", entry.toString());
                 }
                 continue;
@@ -150,7 +150,7 @@ class Http2Flusher : IteratingCallback {
                 }
             } catch (Exception failure) {
                 // Failure to generate the entry is catastrophic.
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     trace("Failure generating frame " ~ entry.frame.toString(), failure.toString());
                 }
                 failed(failure);
@@ -163,7 +163,7 @@ class Http2Flusher : IteratingCallback {
             return Action.IDLE;
         }
 
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Writing %s buffers (%s bytes) for %s frames %s",
                     buffers.size(), BufferUtils.remaining(buffers), actives.size(), actives.toString());
         }
@@ -176,7 +176,7 @@ class Http2Flusher : IteratingCallback {
 
     override
     void succeeded() {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Written %s frames for %s", actives.size(), actives.toString());
         }
         complete();
@@ -226,7 +226,7 @@ class Http2Flusher : IteratingCallback {
         synchronized (this) {
             closed = terminated;
             terminated = x;
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("%s, active/queued=%s/%s", closed !is null ? "Closing" : "Failing", actives.size(), frames.size());
             }
             actives.addAll(frames);
@@ -248,7 +248,7 @@ class Http2Flusher : IteratingCallback {
         synchronized (this) {
             closed = terminated;
             terminated = cause;
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("%s", closed !is null ? "Terminated" : "Terminating");
             }
         }

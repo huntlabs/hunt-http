@@ -197,12 +197,12 @@ class HpackContext {
         _maxDynamicTableSizeInBytes = maxDynamicTableSize;
         int guesstimateEntries = 10 + maxDynamicTableSize / (32 + 10 + 10);
         _dynamicTable = new DynamicTable(guesstimateEntries);
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef(format("HdrTbl[%x] created max=%d", toHash(), maxDynamicTableSize));
     }
 
     void resize(int newMaxDynamicTableSize) {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef(format("HdrTbl[%x] resized max=%d->%d", toHash(), _maxDynamicTableSizeInBytes, newMaxDynamicTableSize));
         _maxDynamicTableSizeInBytes = newMaxDynamicTableSize;
         _dynamicTable.evict();
@@ -261,7 +261,7 @@ class HpackContext {
         Entry entry = new Entry(field);
         int size = entry.getSize();
         if (size > _maxDynamicTableSizeInBytes) {
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef(format("HdrTbl[%x] !added size %d>%d", toHash(), size, _maxDynamicTableSizeInBytes));
             return null;
         }
@@ -270,7 +270,7 @@ class HpackContext {
         _fieldMap.put(field, entry);
         _nameMap.put(std.uni.toLower(field.getName()), entry);
 
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef(format("HdrTbl[%x] added %s", toHash(), entry));
         _dynamicTable.evict();
         return entry;
@@ -372,7 +372,7 @@ class HpackContext {
                 _entries[_offset] = null;
                 _offset = (_offset + 1) % cast(int)_entries.length;
                 _size--;
-                version(HuntDebugMode)
+                version(HUNT_DEBUG)
                     tracef(format("HdrTbl[%x] evict %s", toHash(), entry));
                 _dynamicTableSizeInBytes -= entry.getSize();
                 entry._slot = -1;
@@ -382,7 +382,7 @@ class HpackContext {
                     _nameMap.remove(lc);
 
             }
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef(format("HdrTbl[%x] entries=%d, size=%d, max=%d", toHash(), _dynamicTable.size(), 
                     _dynamicTableSizeInBytes, _maxDynamicTableSizeInBytes));
         }

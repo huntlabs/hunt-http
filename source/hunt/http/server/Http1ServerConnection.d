@@ -159,7 +159,7 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
 
         override
         protected void generateHttpMessageSuccessfully() {
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
             tracef("server session %s generates the HTTP message completely", connection.getSessionId());
 
             MetaData.Response response = connection.getResponse();
@@ -225,7 +225,7 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
     }
 
     bool directUpgradeHttp2(MetaData.Request request) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             info("Upgrading to Http2");
         }
 
@@ -254,7 +254,7 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
 
                 // byte[] settings = Base64Utils.decodeFromUrlSafeString(settingsField.getValue());
                 byte[] settings = cast(byte[])Base64.decode(settingsField.getValue());
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("the server received settings %s", TypeUtils.toHexString(settings));
                 }
 

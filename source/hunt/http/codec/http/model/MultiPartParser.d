@@ -270,12 +270,12 @@ module hunt.http.codec.http.model.MultiPartParser;
 //             if (_state == State.EPILOGUE) {
 //                 _state = State.END;
 
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("messageComplete %s", this);
 
 //                 return _handler.messageComplete();
 //             } else {
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("earlyEOF %s", this);
 
 //                 _handler.earlyEOF();
@@ -329,7 +329,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //             if (b == '\n') {
 //                 setState(State.BODY_PART);
 
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("startPart %s", this);
 
 //                 _handler.startPart();
@@ -405,7 +405,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //                             setState(State.FIRST_OCTETS);
 //                             _partialBoundary = 2; // CRLF is option for empty parts
 
-//                             version(HuntDebugMode)
+//                             version(HUNT_DEBUG)
 //                                 tracef("headerComplete %s", this);
 
 //                             if (_handler.headerComplete())
@@ -440,7 +440,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //                             break;
 
 //                         case LINE_FEED: {
-//                             version(HuntDebugMode)
+//                             version(HUNT_DEBUG)
 //                                 tracef("Line Feed in Name %s", this);
 
 //                             handleField();
@@ -533,7 +533,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 
 //     /* ------------------------------------------------------------------------------- */
 //     private void handleField() {
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("parsedField:  _fieldName=%s _fieldValue=%s %s", _fieldName, _fieldValue, this);
 
 //         if (_fieldName != null && _fieldValue != null)
@@ -554,7 +554,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //                     setState(State.DELIMITER);
 //                     _partialBoundary = 0;
 
-//                     version(HuntDebugMode)
+//                     version(HUNT_DEBUG)
 //                         tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(BufferUtils.EMPTY_BUFFER), true, this);
 
 //                     return _handler.content(BufferUtils.EMPTY_BUFFER, true);
@@ -573,7 +573,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //                 content.limit(_partialBoundary);
 //                 _partialBoundary = 0;
 
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
 
 //                 if (_handler.content(content, false))
@@ -590,7 +590,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //             buffer.position(delimiter - buffer.arrayOffset() + _delimiterSearch.getLength());
 //             setState(State.DELIMITER);
 
-//             version(HuntDebugMode)
+//             version(HUNT_DEBUG)
 //                 tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), true, this);
 
 //             return _handler.content(content, true);
@@ -602,7 +602,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //             ByteBuffer content = buffer.slice();
 //             content.limit(content.limit() - _partialBoundary);
 
-//             version(HuntDebugMode)
+//             version(HUNT_DEBUG)
 //                 tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
 
 //             BufferUtils.clear(buffer);
@@ -612,7 +612,7 @@ module hunt.http.codec.http.model.MultiPartParser;
 //         // There is normal content with no delimiter
 //         ByteBuffer content = buffer.slice();
 
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
 
 //         BufferUtils.clear(buffer);
@@ -621,14 +621,14 @@ module hunt.http.codec.http.model.MultiPartParser;
 
 //     /* ------------------------------------------------------------------------------- */
 //     private void setState(State state) {
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("%s --> %s", _state, state);
 //         _state = state;
 //     }
 
 //     /* ------------------------------------------------------------------------------- */
 //     private void setState(FieldState state) {
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("%s:%s --> %s", _state, _fieldState, state);
 //         _fieldState = state;
 //     }

@@ -42,7 +42,7 @@ class UnitGenerator : Generator {
         }
 
         BufferUtils.flipToFlush(completeBuf, 0);
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("generate(%s frames) - %s", frames.length, BufferUtils.toDetailString(completeBuf));
         }
         return completeBuf;
@@ -80,7 +80,7 @@ class UnitGenerator : Generator {
         }
 
         BufferUtils.flipToFlush(completeBuf, 0);
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("generate(%s frames) - %s", frames.size(), BufferUtils.toDetailString(completeBuf));
         }
         return completeBuf;

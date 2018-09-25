@@ -47,7 +47,7 @@ import hunt.container;
 //         }
 
 //         FrameEntry entry = new FrameEntry(frame, callback);
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("Queuing %s", entry);
 //         offerEntry(entry);
 //         flusher.iterate();
@@ -132,7 +132,7 @@ import hunt.container;
 //             ByteBuffer payloadFragment = payload.slice();
 //             payload.limit(limit);
 //             fragment.setPayload(payloadFragment);
-//             version(HuntDebugMode)
+//             version(HUNT_DEBUG)
 //                 tracef("Fragmented %s->%s", frame, fragment);
 //             payload.position(newLimit);
 
@@ -175,7 +175,7 @@ import hunt.container;
 //                 if (callback !is null)
 //                     callback.succeeded();
 //             } catch (Throwable x) {
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("Exception while notifying success of callback " ~ callback, x);
 //             }
 //         }
@@ -185,7 +185,7 @@ import hunt.container;
 //                 if (callback !is null)
 //                     callback.failed(failure);
 //             } catch (Throwable x) {
-//                 version(HuntDebugMode)
+//                 version(HUNT_DEBUG)
 //                     tracef("Exception while notifying failure of callback " ~ callback, x);
 //             }
 //         }

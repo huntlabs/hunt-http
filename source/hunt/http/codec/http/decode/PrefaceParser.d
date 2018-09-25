@@ -51,7 +51,7 @@ class PrefaceParser {
 			++cursor;
 			if (cursor == PrefaceFrame.PREFACE_BYTES.length) {
 				cursor = 0;
-				version(HuntDebugMode)
+				version(HUNT_DEBUG)
 					tracef("Parsed preface bytes");
 				return true;
 			}

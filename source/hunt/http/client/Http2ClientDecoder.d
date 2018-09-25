@@ -21,7 +21,7 @@ class Http2ClientDecoder : DecoderChain {
         if (!buffer.hasRemaining())
             return;
 
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("the client session %s received the %s bytes", session.getSessionId(), buffer.remaining());
         }
 

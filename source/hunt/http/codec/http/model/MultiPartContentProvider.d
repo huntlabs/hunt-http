@@ -86,7 +86,7 @@ import hunt.container.ByteBuffer;
 
 //     private void addPart(Part part) {
 //         parts.add(part);
-//         version(HuntDebugMode)
+//         version(HUNT_DEBUG)
 //             tracef("Added %s", part);
 //     }
 

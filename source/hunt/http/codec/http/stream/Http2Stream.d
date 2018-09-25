@@ -130,7 +130,7 @@ class Http2Stream : StreamSPI { // IdleTimeout,
 
     // override
     protected void onIdleExpired(TimeoutException timeout) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Idle timeout %sms expired on %s", 0, this.toString()); // getIdleTimeout()
         }
 
@@ -245,7 +245,7 @@ class Http2Stream : StreamSPI { // IdleTimeout,
 
     override
     bool updateClose(bool update, CloseStateEvent event) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("Update close for %s update=%s event=%s", this, update, event);
         }
 

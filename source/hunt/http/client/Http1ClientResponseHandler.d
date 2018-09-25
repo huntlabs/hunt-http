@@ -33,13 +33,13 @@ class Http1ClientResponseHandler : ResponseHandler {
 
     override
     final bool startResponse(HttpVersion ver, int status, string reason) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("client received the response line, %s, %s, %s", ver, status, reason);
         }
 
         if (status == HttpStatus.CONTINUE_100 && HttpStatus.Code.CONTINUE.getMessage().equalsIgnoreCase(reason)) {
             clientHttpHandler.continueToSendData(request, response, outputStream, connection);
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("client received 100 continue, current parser state is %s", connection.getParser().getState());
             }
             return true;

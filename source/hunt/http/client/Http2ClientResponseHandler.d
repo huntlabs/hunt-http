@@ -207,7 +207,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
         }
 
         void succeeded(Stream stream) {
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("create a new stream %s", stream.getId());
             }
 

@@ -61,7 +61,7 @@ class Parser {
     }
 
     private void assertSanePayloadLength(long len) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("%s Payload Length: %s - %s", policy.getBehavior(), 
                 len.to!string(), this.toString());
         }
@@ -141,7 +141,7 @@ class Parser {
     }
 
     protected void notifyFrame(Frame f) {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
 
         if (policy.getBehavior() == WebSocketBehavior.SERVER) {
@@ -166,7 +166,7 @@ class Parser {
         }
         
         if (incomingFramesHandler is null) {
-            version(HuntDebugMode) warning("incomingFramesHandler is null");
+            version(HUNT_DEBUG) warning("incomingFramesHandler is null");
             return;
         }
 
@@ -186,7 +186,7 @@ class Parser {
         try {
             // parse through all the frames in the buffer
             while (parseFrame(buffer)) {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("%s Parsed Frame: %s", policy.getBehavior(), frame);
                 }
                 notifyFrame(frame);
@@ -226,7 +226,7 @@ class Parser {
      * @return true if done parsing base framing protocol and ready for parsing of the payload. false if incomplete parsing of base framing protocol.
      */
     private bool parseFrame(ByteBuffer buffer) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("%s Parsing %s bytes", policy.getBehavior(), buffer.remaining());
         }
         while (buffer.hasRemaining()) {
@@ -242,7 +242,7 @@ class Parser {
                         throw new ProtocolException("Unknown opcode: " ~ opcode);
                     }
 
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         tracef("%s OpCode %s, fin=%s rsv=%s%s%s",
                                 policy.getBehavior(),
                                 OpCode.name(opcode),
@@ -320,7 +320,7 @@ class Parser {
                                 frame.setRsv1(true);
                             else {
                                 string err = "RSV1 not allowed to be set";
-                                version(HuntDebugMode) {
+                                version(HUNT_DEBUG) {
                                     tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
@@ -331,7 +331,7 @@ class Parser {
                                 frame.setRsv2(true);
                             else {
                                 string err = "RSV2 not allowed to be set";
-                                version(HuntDebugMode) {
+                                version(HUNT_DEBUG) {
                                     tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
@@ -342,7 +342,7 @@ class Parser {
                                 frame.setRsv3(true);
                             else {
                                 string err = "RSV3 not allowed to be set";
-                                version(HuntDebugMode) {
+                                version(HUNT_DEBUG) {
                                     tracef(err ~ ": Remaining buffer: %s", BufferUtils.toDetailString(buffer));
                                 }
                                 throw new ProtocolException(err);
@@ -498,7 +498,7 @@ class Parser {
             buffer.limit(limit);
             buffer.position(buffer.position() + window.remaining());
 
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("%s Window: %s", policy.getBehavior(), BufferUtils.toDetailString(window));
             }
 

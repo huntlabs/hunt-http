@@ -68,7 +68,7 @@ class HpackDecoder {
                 to!string(buffer.remaining()) ~ ">" ~ to!string(_builder.getMaxSize()));
 
         while (buffer.hasRemaining()) {
-            // version(HuntDebugMode)
+            // version(HUNT_DEBUG)
             {
                 if (buffer.hasArray()) {
                     int l = std.algorithm.min(buffer.remaining(), 32);
@@ -85,7 +85,7 @@ class HpackDecoder {
                 if (entry is null) {
                     throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Unknown index " ~ to!string(index));
                 } else if (entry.isStatic()) {
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         tracef("decode IdxStatic %s", entry.toString());
                     // emit field
                     _builder.emit(entry.getHttpField());
@@ -93,7 +93,7 @@ class HpackDecoder {
                     // TODO copy and add to reference set if there is room
                     // _context.add(entry.getHttpField());
                 } else {
-                    version(HuntDebugMode)
+                    version(HUNT_DEBUG)
                         tracef("decode Idx %s", entry.toString());
                     // emit
                     _builder.emit(entry.getHttpField());
@@ -113,7 +113,7 @@ class HpackDecoder {
                     case 3: // 7.3
                         // change table size
                         int size = NBitInteger.decode(buffer, 5);
-                        version(HuntDebugMode)
+                        version(HUNT_DEBUG)
                             tracef("decode resize=" ~ size.to!string());
                         if (size > _localMaxDynamicTableSize)
                             throw new IllegalArgumentException("");
@@ -206,7 +206,7 @@ class HpackDecoder {
                     
                 }
 
-                // version(HuntDebugMode) 
+                // version(HUNT_DEBUG) 
                 {
                     tracef("decoded '%s' by %s/%s/%s",
                             field,

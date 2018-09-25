@@ -820,7 +820,7 @@ class HttpParser {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
         if (!_headerString.empty() || !_valueString.empty()) {
             // Handle known headers
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("parsing header: %s, original name: %s, value: %s ", 
                     _header.toString(), _headerString, _valueString);
             }
@@ -1244,7 +1244,7 @@ class HttpParser {
      * @return True if an {@link RequestHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
             // tracef("buffer: %s", BufferUtils.toHexString(buffer));
         }
@@ -1342,7 +1342,7 @@ class HttpParser {
                         break;
 
                     default:
-                        version(HuntDebugMode)
+                        version(HUNT_DEBUG)
                             tracef("%s EOF in %s", this, _state);
                         setState(State.CLOSED);
                         _handler.badMessage(new BadMessageException(HttpStatus.BAD_REQUEST_400));
@@ -1361,9 +1361,9 @@ class HttpParser {
     }
 
     protected void badMessage(BadMessageException x) {
-        // version(HuntDebugMode)
+        // version(HUNT_DEBUG)
             warning("Parse exception: " ~ this.toString() ~ " for " ~ _handler.toString(), x.toString());
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             Throwable t = x;
             while((t = t.next) !is null) {
                 error(t.msg);
@@ -1517,7 +1517,7 @@ class HttpParser {
      * Signal that the associated data source is at EOF
      */
     void atEOF() {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("atEOF %s", this);
         _eof = true;
     }
@@ -1528,14 +1528,14 @@ class HttpParser {
      * Request that the associated data source be closed
      */
     void close() {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("close %s", this);
         setState(State.CLOSE);
     }
 
     /* ------------------------------------------------------------------------------- */
     void reset() {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("reset %s", this);
 
         // reset state
@@ -1555,14 +1555,14 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        version(HuntDebugMode)
+        version(HUNT_DEBUG)
             tracef("%s --> %s", _state, state);
         _state = state;
     }
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(FieldState state) {
-        // version(HuntDebugMode)
+        // version(HUNT_DEBUG)
         //     tracef("%s:%s --> %s", _state, _field, state);
         _fieldState = state;
     }

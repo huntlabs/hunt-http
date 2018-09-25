@@ -33,7 +33,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         if (committed)
             return;
         
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             infof("committing data: %s", data.toString());
         }
 
@@ -102,7 +102,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             return;
 
         try {
-            version(HuntDebugMode) trace("http1 output stream is closing");
+            version(HUNT_DEBUG) trace("http1 output stream is closing");
             HttpGenerator generator = getHttpGenerator();
             Session tcpSession = getSession();
             HttpGenerator.Result generatorResult;

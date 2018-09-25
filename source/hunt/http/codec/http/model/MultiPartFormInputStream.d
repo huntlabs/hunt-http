@@ -522,7 +522,7 @@ module hunt.http.codec.http.model.MultiPartFormInputStream;
 //                     _err = new IOException("Incomplete Multipart");
 //             }
 
-//             version(HuntDebugMode) {
+//             version(HUNT_DEBUG) {
 //                 tracef("Parsing Complete %s err=%s", parser, _err);
 //             }
 
@@ -560,7 +560,7 @@ module hunt.http.codec.http.model.MultiPartFormInputStream;
 
 //         override
 //         bool headerComplete() {
-//             version(HuntDebugMode) {
+//             version(HUNT_DEBUG) {
 //                 tracef("headerComplete %s", this);
 //             }
 
@@ -651,7 +651,7 @@ module hunt.http.codec.http.model.MultiPartFormInputStream;
 
 //         override
 //         void earlyEOF() {
-//             version(HuntDebugMode)
+//             version(HUNT_DEBUG)
 //                 tracef("Early EOF %s", MultiPartFormInputStream.this);
 //         }
 

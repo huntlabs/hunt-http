@@ -34,7 +34,7 @@ class Http1ServerRequestHandler : RequestHandler {
 
     override
     bool startRequest(string method, string uri, HttpVersion ver) {
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("server received the request line, %s, %s, %s", method, uri, ver);
         }
 

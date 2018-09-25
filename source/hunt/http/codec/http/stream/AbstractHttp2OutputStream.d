@@ -50,7 +50,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
         }
 
         HeadersFrame headersFrame = new HeadersFrame(getStream().getId(), info, null, noContent);
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             tracef("http2 output stream %s commits the header frame %s", getStream().toString(), headersFrame.toString());
         }
         writeFrame(headersFrame);

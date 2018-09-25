@@ -267,7 +267,7 @@ class HttpGenerator {
 
             case State.END:
                 if (BufferUtils.hasContent(content)) {
-                    version(HuntDebugMode) 
+                    version(HUNT_DEBUG) 
                     {
                         tracef("discarding content in COMPLETING");
                     }
@@ -304,7 +304,7 @@ class HttpGenerator {
 
     private Result completing(ByteBuffer chunk, ByteBuffer content) {
         if (BufferUtils.hasContent(content)) {
-            version(HuntDebugMode)
+            version(HUNT_DEBUG)
                 tracef("discarding content in COMPLETING");
             BufferUtils.clear(content);
         }
@@ -440,7 +440,7 @@ class HttpGenerator {
 
             case State.END:
                 if (BufferUtils.hasContent(content)) {
-                    version(HuntDebugMode) {
+                    version(HUNT_DEBUG) {
                         tracef("discarding content in COMPLETING");
                     }
                     BufferUtils.clear(content);
@@ -549,7 +549,7 @@ class HttpGenerator {
         MetaData.Request request = (typeid(info) == typeid(MetaData.Request)) ? cast(MetaData.Request) info : null;
         MetaData.Response response = (typeid(info) == typeid(MetaData.Response)) ? cast(MetaData.Response) info : null;
 
-        // version(HuntDebugMode) {
+        // version(HUNT_DEBUG) {
         //     tracef("Header fields:\n%s", info.getFields().toString());
         //     tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
         // }
@@ -694,7 +694,7 @@ class HttpGenerator {
             throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, "Unknown content length for request");
         }
 
-        version(HuntDebugMode) {
+        version(HUNT_DEBUG) {
             trace("End Of Content: ", _endOfContent.to!string());
         }
         // Add transfer encoding if it is not chunking

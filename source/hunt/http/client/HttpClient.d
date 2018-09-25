@@ -58,7 +58,7 @@ class HttpClient  : AbstractLifeCycle {
 
             session.handler( (const ubyte[] data) {    
                 infof("data received (%d bytes): ", data.length);                 
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     if(data.length<=64)
                         infof("%(%02X %)", data[0 .. $]);
                     else
@@ -98,7 +98,7 @@ class HttpClient  : AbstractLifeCycle {
         clientContext.setPromise(promise);
         clientContext.setListener(listener);
         int id = sessionId++;
-        version(HuntDebugMode) tracef("Client sessionId = %d", id);
+        version(HUNT_DEBUG) tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);
     }

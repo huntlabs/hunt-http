@@ -109,18 +109,18 @@ class BufferingFlowControlStrategy :AbstractFlowControlStrategy {
             {
                 sessionLevel = 0;
                 session.updateRecvWindow(level);
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Data consumed, %s bytes, updated session recv window by %s/%s for %s", length, level,
                             maxLevel, session);
                 }
                 windowFrame = new WindowUpdateFrame(0, level);
             } else {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Data consumed, %s bytes, concurrent session recv window level %s/%s for %s", length, sessionLevel, maxLevel, session);
                 }
             }
         } else {
-            version(HuntDebugMode) {
+            version(HUNT_DEBUG) {
                 tracef("Data consumed, %s bytes, session recv window level %s/%s for %s", length, level, maxLevel, session);
             }
         }
@@ -128,7 +128,7 @@ class BufferingFlowControlStrategy :AbstractFlowControlStrategy {
         Frame[] windowFrames = Frame.EMPTY_ARRAY;
         if (stream !is null) {
             if (stream.isRemotelyClosed()) {
-                version(HuntDebugMode) {
+                version(HUNT_DEBUG) {
                     tracef("Data consumed, %s bytes, ignoring update stream recv window for remotely closed %s", length, stream);
                 }
             } else {
@@ -140,7 +140,7 @@ class BufferingFlowControlStrategy :AbstractFlowControlStrategy {
                     if (level > maxLevel) {
                         level = streamLevel; streamLevel = 0;
                         stream.updateRecvWindow(level);
-                        version(HuntDebugMode) {
+                        version(HUNT_DEBUG) {
                             tracef("Data consumed, %s bytes, updated stream recv window by %s/%s for %s", length, level, maxLevel, stream);
                         }
                         WindowUpdateFrame frame = new WindowUpdateFrame(stream.getId(), level);
@@ -150,7 +150,7 @@ class BufferingFlowControlStrategy :AbstractFlowControlStrategy {
                             windowFrames = [frame];
                         }
                     } else {
-                        version(HuntDebugMode) {
+                        version(HUNT_DEBUG) {
                             tracef("Data consumed, %s bytes, stream recv window level %s/%s for %s", length, level, maxLevel, stream);
                         }
                     }

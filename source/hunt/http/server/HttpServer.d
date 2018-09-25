@@ -73,7 +73,7 @@ class HttpServer  : AbstractLifeCycle {
             info("server have accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( (in ubyte[] data) {     
-                    version(HuntDebugMode) { 
+                    version(HUNT_DEBUG) { 
                         infof("data received (%d bytes): ", data.length); 
                         if(data.length<=64)
                             infof("%(%02X %)", data[0 .. $]);
