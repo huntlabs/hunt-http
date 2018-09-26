@@ -1,14 +1,6 @@
 module test.codec.http2.model.HttpURITest;
 
 import hunt.http.codec.http.model.HttpURI;
-// import hunt.http.utils.collection.MultiMap;
-// import hunt.util.Test;
-
-// import java.net.URLEncoder;
-// import java.nio.charset.StandardCharsets;
-
-// import org.hamcrest.Matchers.;
-// import org.hamcrest.Matchers.nullValue;
 
 import hunt.util.Assert;
 import hunt.util.exception;

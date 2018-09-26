@@ -5,6 +5,7 @@ import hunt.util.UnitTest;
 import test.codec.http2.model.HttpFieldsTest;
 import test.codec.http2.model.HttpURIParseTest;
 import test.codec.http2.model.HttpURITest;
+import test.codec.http2.model.MimeTypesTest;
 import test.codec.http2.model.QuotedCSVTest;
 import test.codec.http2.model.TestHttpField;
 import test.codec.http2.model.CookieTest;
@@ -47,12 +48,13 @@ void main()
 	// test.codec.http2.model
 	// **********************
 
-	// testUnits!TestHttpField();
+	// testUnits!CookieTest(); 
 	// testUnits!HttpFieldsTest();
-	// testUnits!QuotedCSVTest();
 	// testUnits!HttpURIParseTest();
 	// testUnits!HttpURITest();
-	// testUnits!CookieTest(); 
+	testUnits!MimeTypesTest();
+	// testUnits!QuotedCSVTest();
+	// testUnits!TestHttpField();
 	
 
 	// **********************
@@ -69,7 +71,7 @@ void main()
 	// test.codec.http2.decode.*
 	// **********************
 	
-	testUnits!HttpParserTest(); 
+	// testUnits!HttpParserTest(); 
 	// testUnits!Http2DecoderTest();
 
 	// **********************
