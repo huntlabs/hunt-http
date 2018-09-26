@@ -6,34 +6,32 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
 import hunt.container;
+import hunt.logging;
 
 import hunt.util.Charset;
 import hunt.util.exception;
 import hunt.util.string;
 import hunt.util.traits;
 
-import hunt.logging;
-
 import std.algorithm;
 import std.array;
 import std.container.array;
 import std.conv;
+import std.file;
+import std.path;
+import std.stdio;
 import std.string;
 import std.uni;
 
-// import hunt.http.utils.collection.ArrayTrie;
-// import hunt.http.utils.collection.Trie;
 
-
-
-
-
+/**
+*/
 class MimeTypes {
 
     // private __gshared static ByteBuffer[string] TYPES; // = new ArrayTrie<>(512);
-    private __gshared static Map!(string, string) __dftMimeMap; // = new HashMap!(string, string)();
-    private __gshared static Map!(string, string) __inferredEncodings; // = new HashMap!(string, string)();
-    private __gshared static Map!(string, string) __assumedEncodings; // = new HashMap!(string, string)();
+    private __gshared static Map!(string, string) __dftMimeMap; 
+    private __gshared static Map!(string, string) __inferredEncodings;
+    private __gshared static Map!(string, string) __assumedEncodings;
 
     static class Type {
         __gshared Type FORM_ENCODED ;
@@ -209,67 +207,88 @@ class MimeTypes {
                 __assumedEncodings.put(type.asString(), type.getCharsetString());
         }
 
-        // TODO: Tasks pending completion -@zxp at 6/19/2018, 4:15:11 PM
-        // load mime.properties and encoding.properties;
+        string resourcePath = dirName(thisExePath()) ~ "/resources";
 
-        // string resourceName = "com/hunt/codec/http2/model/mime.properties";
-        // try (InputStream stream = MimeTypes.class.getClassLoader().getResourceAsStream(resourceName)) {
-        //     if (stream == null) {
-        //         warningf("Missing mime-type resource: %s", resourceName);
-        //     } else {
-        //         try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-        //             Properties props = new Properties();
-        //             props.load(reader);
-        //             props.stringPropertyNames().stream()
-        //                  .filter(Objects::nonNull)
-        //                  .forEach(x ->
-        //                          __dftMimeMap.put(std.uni.toLower(x), normalizeMimeType(props.getProperty(x))));
+        string resourceName = buildPath(resourcePath, "mime.properties");
+        loadMimeProperties(resourceName);
 
-        //             if (__dftMimeMap.size() == 0) {
-        //                 warningf("Empty mime types at %s", resourceName);
-        //             } else if (__dftMimeMap.size() < props.keySet().size()) {
-        //                 warningf("Duplicate or null mime-type extension in resource: %s", resourceName);
-        //             }
-        //         } catch (IOException e) {
-        //             warningf(e.toString());
-        //         }
+        resourceName = buildPath(resourcePath, "encoding.properties");
+        loadEncodingProperties(resourceName);
+        
+    }
 
-        //     }
-        // } catch (IOException e) {
-        //     warningf(e.toString());
-        // }
+    private static void loadMimeProperties(string fileName) {
+        if(!exists(fileName)) {
+            warningf("File does not exist: %s", fileName);
+            return;
+        }
 
-        // resourceName = "com/hunt/codec/http2/model/encoding.properties";
-        // try (InputStream stream = MimeTypes.class.getClassLoader().getResourceAsStream(resourceName)) {
-        //     if (stream == null)
-        //         warningf("Missing encoding resource: %s", resourceName);
-        //     else {
-        //         try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-        //             Properties props = new Properties();
-        //             props.load(reader);
-        //             props.stringPropertyNames().stream()
-        //                  .filter(Objects::nonNull)
-        //                  .forEach(t ->
-        //                  {
-        //                      string charset = props.getProperty(t);
-        //                      if (charset.startsWith("-"))
-        //                          __assumedEncodings.put(t, charset.substring(1));
-        //                      else
-        //                          __inferredEncodings.put(t, props.getProperty(t));
-        //                  });
+        void doLoad() {
+            version(HUNT_DEBUG) tracef("loading MIME properties from: %s", fileName);
+            try {
+                File f = File(fileName, "r");
+                string line;
+                int count = 0;
+                while((line = f.readln()) !is null) {
+                    string[] parts = split(line, "=");
+                    if(parts.length < 2) continue;
 
-        //             if (__inferredEncodings.size() == 0) {
-        //                 warningf("Empty encodings at %s", resourceName);
-        //             } else if ((__inferredEncodings.size() + __assumedEncodings.size()) < props.keySet().size()) {
-        //                 warningf("Null or duplicate encodings in resource: %s", resourceName);
-        //             }
-        //         } catch (IOException e) {
-        //             warningf(e.toString());
-        //         }
-        //     }
-        // } catch (IOException e) {
-        //     warningf(e.toString());
-        // }
+                    count++;
+                    string key = parts[0].strip().toLower();
+                    string value = normalizeMimeType(parts[1].strip());
+                    // trace(key, " = ", value);
+                    __dftMimeMap.put(key, value);
+                }
+
+                if (__dftMimeMap.size() == 0) {
+                    warningf("Empty mime types at %s", fileName);
+                } else if (__dftMimeMap.size() < count) {
+                    warningf("Duplicate or null mime-type extension in resource: %s", fileName);
+                }            
+            } catch(Exception ex) {
+                warningf(ex.toString());
+            }
+        }
+
+        doLoad();
+        // import std.parallelism;
+        // auto t = task(&doLoad);
+        // t.executeInNewThread();
+    }
+
+    private static void loadEncodingProperties(string fileName) {
+        if(!exists(fileName)) {
+            warningf("File does not exist: %s", fileName);
+            return;
+        }
+        
+        version(HUNT_DEBUG) tracef("loading MIME properties from: %s", fileName);
+        try {
+            File f = File(fileName, "r");
+            string line;
+            int count = 0;
+            while((line = f.readln()) !is null) {
+                string[] parts = split(line, "=");
+                if(parts.length < 2) continue;
+
+                count++;
+                string t = parts[0].strip();
+                string charset = parts[1].strip();
+                trace(t, " = ", charset);
+                if(charset.startsWith("-"))
+                    __assumedEncodings.put(t, charset[1..$]);
+                else
+                    __inferredEncodings.put(t, charset);
+            }
+
+            if (__inferredEncodings.size() == 0) {
+                warningf("Empty encodings at %s", fileName);
+            } else if (__inferredEncodings.size() + __inferredEncodings.size() < count) {
+                warningf("Null or duplicate encodings in resource: %s", fileName);
+            }            
+        } catch(Exception ex) {
+            warningf(ex.toString());
+        }
     }
 
     /**

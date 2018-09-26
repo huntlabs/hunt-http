@@ -96,8 +96,6 @@ class HttpParserTest {
 
         BufferUtils.append(b, BufferUtils.toBuffer(" "));
         Assert.assertEquals(HttpMethod.GET, HttpMethod.lookAheadGet(b));
-
-        assert(false);
     }
 
     
