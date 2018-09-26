@@ -1,11 +1,11 @@
-module hunt.http.codec.http.model.AcceptMIMEType;
+module hunt.http.codec.http.model.AcceptMimeType;
 
 import hunt.util.common;
 
 /**
  * 
  */
-enum AcceptMIMEMatchType {
+enum AcceptMimeMatchType {
     PARENT, CHILD, ALL, EXACT
 }
 
@@ -13,11 +13,11 @@ enum AcceptMIMEMatchType {
 /**
  * 
  */
-class AcceptMIMEType {
+class AcceptMimeType {
     private string parentType;
     private string childType;
     private float quality = 1.0f;
-    private AcceptMIMEMatchType matchType;
+    private AcceptMimeMatchType matchType;
 
     string getParentType() {
         return parentType;
@@ -43,17 +43,17 @@ class AcceptMIMEType {
         this.quality = quality;
     }
 
-    AcceptMIMEMatchType getMatchType() {
+    AcceptMimeMatchType getMatchType() {
         return matchType;
     }
 
-    void setMatchType(AcceptMIMEMatchType matchType) {
+    void setMatchType(AcceptMimeMatchType matchType) {
         this.matchType = matchType;
     }
 
     override bool opEquals(Object o) {
         if (this is o) return true;
-        AcceptMIMEType that = cast(AcceptMIMEType) o;
+        AcceptMimeType that = cast(AcceptMimeType) o;
         if(that is null)  return false;
 
         return parentType == that.parentType &&

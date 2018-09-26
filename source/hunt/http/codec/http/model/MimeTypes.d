@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.MimeTypes;
 
-import hunt.http.codec.http.model.AcceptMIMEType;
+import hunt.http.codec.http.model.AcceptMimeType;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.hpack.HpackEncoder;
@@ -672,7 +672,7 @@ class MimeTypes {
         return list;
     }
 
-    static AcceptMIMEType[] parseAcceptMIMETypes(string accept) {
+    static AcceptMimeType[] parseAcceptMIMETypes(string accept) {
 
         if(accept.empty) 
             return [];
@@ -681,15 +681,15 @@ class MimeTypes {
         return apply(arr);
     }
 
-    private static AcceptMIMEType[] apply(string[] stream) {
+    private static AcceptMimeType[] apply(string[] stream) {
 
-        Array!AcceptMIMEType arr;
+        Array!AcceptMimeType arr;
 
         foreach(string s; stream) {
             string type = strip(s);
             if(type.empty) continue;
             string[] mimeTypeAndQuality = StringUtils.split(type, ';');
-            AcceptMIMEType acceptMIMEType = new AcceptMIMEType();
+            AcceptMimeType acceptMIMEType = new AcceptMimeType();
             
             // parse the MIME type
             string[] mimeType = StringUtils.split(mimeTypeAndQuality[0].strip(), '/');
@@ -699,15 +699,15 @@ class MimeTypes {
             acceptMIMEType.setChildType(childType);
             if (parentType == "*") {
                 if (childType == "*") {
-                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.ALL);
+                    acceptMIMEType.setMatchType(AcceptMimeMatchType.ALL);
                 } else {
-                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.CHILD);
+                    acceptMIMEType.setMatchType(AcceptMimeMatchType.CHILD);
                 }
             } else {
                 if (childType == "*") {
-                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.PARENT);
+                    acceptMIMEType.setMatchType(AcceptMimeMatchType.PARENT);
                 } else {
-                    acceptMIMEType.setMatchType(AcceptMIMEMatchType.EXACT);
+                    acceptMIMEType.setMatchType(AcceptMimeMatchType.EXACT);
                 }
             }
 
@@ -722,8 +722,8 @@ class MimeTypes {
 
         for(size_t i=0; i<arr.length-1; i++) {
             for(size_t j=i+1; j<arr.length; j++) {
-                AcceptMIMEType a = arr[i];
-                AcceptMIMEType b = arr[j];
+                AcceptMimeType a = arr[i];
+                AcceptMimeType b = arr[j];
                 if(b.getQuality() > a.getQuality()) {   // The greater quality is first.
                     arr[i] = b; arr[j] = a;
                 }

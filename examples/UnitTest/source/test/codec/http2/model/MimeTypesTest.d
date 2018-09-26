@@ -1,6 +1,6 @@
 module test.codec.http2.model.MimeTypesTest;
 
-import hunt.http.codec.http.model.AcceptMIMEType;
+import hunt.http.codec.http.model.AcceptMimeType;
 import hunt.http.codec.http.model.MimeTypes;
 
 
@@ -107,7 +107,7 @@ class MimeTypesTest {
 
     
     void testAcceptMimeTypes() {
-        AcceptMIMEType[] list = MimeTypes.parseAcceptMIMETypes("text/plain; q=0.9, text/html");
+        AcceptMimeType[] list = MimeTypes.parseAcceptMIMETypes("text/plain; q=0.9, text/html");
         Assert.assertThat(list.length, 2);
         Assert.assertThat(list[0].getParentType(), "text");
         Assert.assertThat(list[0].getChildType(), "html");
@@ -132,27 +132,27 @@ class MimeTypesTest {
         Assert.assertThat(list.length, 4);
         
         // import hunt.logging;
-        // foreach(AcceptMIMEType t; list) 
+        // foreach(AcceptMimeType t; list) 
         //     tracef("%s, %f", t.getParentType(), t.getQuality());
 
         Assert.assertThat(list[0].getParentType(), "text");
         Assert.assertThat(list[0].getChildType(), "html");
         Assert.assertThat(list[0].getQuality(), 1.0f);
-        Assert.assertThat(list[0].getMatchType(), AcceptMIMEMatchType.EXACT);
+        Assert.assertThat(list[0].getMatchType(), AcceptMimeMatchType.EXACT);
 
         Assert.assertThat(list[1].getParentType(), "*");
         Assert.assertThat(list[1].getChildType(), "json");
         Assert.assertThat(list[1].getQuality(), 1.0f);
-        Assert.assertThat(list[1].getMatchType(), AcceptMIMEMatchType.CHILD);
+        Assert.assertThat(list[1].getMatchType(), AcceptMimeMatchType.CHILD);
 
         Assert.assertThat(list[2].getParentType(), "text");
         Assert.assertThat(list[2].getChildType(), "plain");
         Assert.assertThat(list[2].getQuality(), 0.9f);
-        Assert.assertThat(list[2].getMatchType(), AcceptMIMEMatchType.EXACT);
+        Assert.assertThat(list[2].getMatchType(), AcceptMimeMatchType.EXACT);
 
         Assert.assertThat(list[3].getParentType(), "*");
         Assert.assertThat(list[3].getChildType(), "*");
         Assert.assertThat(list[3].getQuality(), 0.8f);
-        Assert.assertThat(list[3].getMatchType(), AcceptMIMEMatchType.ALL);
+        Assert.assertThat(list[3].getMatchType(), AcceptMimeMatchType.ALL);
     }
 }
