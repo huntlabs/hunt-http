@@ -4,7 +4,7 @@ import hunt.container.MultiMap;
 
 import hunt.util.exception;
 import hunt.util.Charset;
-import hunt.util.string;
+import hunt.string;
 import hunt.util.TypeUtils;
 import hunt.http.util.UrlEncoded;
 

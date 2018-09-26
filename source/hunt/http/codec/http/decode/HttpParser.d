@@ -5,7 +5,7 @@ import hunt.http.codec.http.hpack.HpackEncoder;
 
 import hunt.util.exception;
 import hunt.util.TypeUtils;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.container;
 import hunt.logging;

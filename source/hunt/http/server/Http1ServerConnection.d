@@ -38,7 +38,7 @@ import hunt.util.Assert;
 import hunt.util.exception;
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.CompletableFuture;
-import hunt.util.string;
+import hunt.string;
 import hunt.util.TypeUtils;
 
 import hunt.logging;

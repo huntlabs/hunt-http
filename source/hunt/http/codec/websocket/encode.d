@@ -9,7 +9,7 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.container;
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 /**
  * Generating a frame in WebSocket land.

@@ -4,7 +4,7 @@ module test.codec.http2.encode.URLEncodedTest;
 import hunt.container;
 
 import hunt.util.Assert;
-import hunt.util.string;
+import hunt.string;
 import hunt.util.TypeUtils;
 
 import hunt.http.util.UrlEncoded;

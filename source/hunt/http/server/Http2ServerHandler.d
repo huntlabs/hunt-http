@@ -18,7 +18,7 @@ import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.logging;
 

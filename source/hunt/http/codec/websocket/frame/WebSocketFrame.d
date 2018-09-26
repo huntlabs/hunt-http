@@ -4,7 +4,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.container;
-import hunt.util.string;
+import hunt.string;
 
 /**
  * A Base Frame as seen in <a href="https://tools.ietf.org/html/rfc6455#section-5.2">RFC 6455. Sec 5.2</a>

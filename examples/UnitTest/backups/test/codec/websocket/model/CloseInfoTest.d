@@ -3,7 +3,7 @@ module test.codec.websocket.model;
 import hunt.http.codec.websocket.frame.CloseFrame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.common;
-import hunt.util.string;
+import hunt.string;
 import hunt.container.BufferUtils;
 import hunt.util.Test;
 

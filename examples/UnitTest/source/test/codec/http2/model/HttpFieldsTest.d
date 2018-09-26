@@ -2,7 +2,7 @@ module test.codec.http2.model.HttpFieldsTest;
 
 import hunt.util.Assert;
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.HttpField;

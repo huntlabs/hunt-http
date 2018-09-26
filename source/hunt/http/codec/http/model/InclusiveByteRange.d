@@ -22,7 +22,7 @@ module hunt.http.codec.http.model.InclusiveByteRange;
 import hunt.logging;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.container.List;
 import hunt.container.ArrayList;

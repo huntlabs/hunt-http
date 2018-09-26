@@ -11,7 +11,7 @@ import hunt.http.codec.http.hpack.Huffman;
 import hunt.http.codec.http.hpack.NBitInteger;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 import hunt.container;
 
 import hunt.logging;

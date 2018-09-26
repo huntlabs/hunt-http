@@ -7,7 +7,7 @@ import hunt.http.codec.websocket.model.extension.AbstractExtension;
 
 import hunt.util.exception;
 import hunt.util.functional;
-import hunt.util.string;
+import hunt.string;
 
 import std.conv;
 

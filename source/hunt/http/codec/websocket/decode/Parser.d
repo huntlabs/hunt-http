@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
 import hunt.container;
-import hunt.util.string;
+import hunt.string;
 
 import std.algorithm;
 import std.conv;

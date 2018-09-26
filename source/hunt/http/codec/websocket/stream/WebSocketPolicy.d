@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import std.conv;
 import std.format;

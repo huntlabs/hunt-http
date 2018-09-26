@@ -1,11 +1,11 @@
 module test.codec.websocket.utils.QuoteUtilTest;
 
-import hunt.util.string.QuoteUtil;
+import hunt.string.QuoteUtil;
 
 import hunt.container;
 import hunt.util.Assert;
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import std.conv;
 import std.exception;

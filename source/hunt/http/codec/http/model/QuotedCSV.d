@@ -6,7 +6,7 @@ import std.container.array;
 
 import hunt.container.Iterable;
 import hunt.container.StringBuffer;
-import hunt.util.string;
+import hunt.string;
 
 /**
  * Implements a quoted comma separated list of values

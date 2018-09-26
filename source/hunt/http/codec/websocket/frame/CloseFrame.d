@@ -4,7 +4,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.model.common;
 
-import hunt.util.string;
+import hunt.string;
 
 class CloseFrame : ControlFrame {
     this() {

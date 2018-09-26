@@ -10,7 +10,7 @@ import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import test.codec.websocket.utils.Hex;
-import hunt.util.string;
+import hunt.string;
 import hunt.util.Assert;
 import hunt.util.Rule;
 import hunt.util.Test;

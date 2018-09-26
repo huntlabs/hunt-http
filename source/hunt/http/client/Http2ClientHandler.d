@@ -13,7 +13,7 @@ import hunt.net.Session;
 
 import hunt.util.concurrent.Promise;
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.container.Map;
 

@@ -10,7 +10,7 @@ import hunt.http.codec.http.hpack.NBitInteger;
 
 import hunt.http.codec.http.model;
 
-import hunt.util.string;
+import hunt.string;
 import hunt.util.TypeUtils;
 import hunt.util.exception;
 

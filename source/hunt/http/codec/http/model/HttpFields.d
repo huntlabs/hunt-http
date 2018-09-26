@@ -9,7 +9,7 @@ import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.QuotedCSV;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 import hunt.container;
 
 import hunt.logging;

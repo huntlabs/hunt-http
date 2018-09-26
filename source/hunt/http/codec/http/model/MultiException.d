@@ -21,7 +21,7 @@ module hunt.http.codec.http.model.MultiException;
 import hunt.container;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 /** 
  * Wraps multiple exceptions.

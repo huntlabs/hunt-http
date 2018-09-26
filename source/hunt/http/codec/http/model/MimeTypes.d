@@ -10,7 +10,7 @@ import hunt.logging;
 
 import hunt.util.Charset;
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 import hunt.util.traits;
 
 import std.algorithm;
@@ -220,7 +220,7 @@ class MimeTypes {
 
     private static void loadMimeProperties(string fileName) {
         if(!exists(fileName)) {
-            warningf("File does not exist: %s", fileName);
+            version(HUNT_DEBUG) warningf("File does not exist: %s", fileName);
             return;
         }
 
@@ -260,7 +260,7 @@ class MimeTypes {
 
     private static void loadEncodingProperties(string fileName) {
         if(!exists(fileName)) {
-            warningf("File does not exist: %s", fileName);
+            version(HUNT_DEBUG) warningf("File does not exist: %s", fileName);
             return;
         }
 

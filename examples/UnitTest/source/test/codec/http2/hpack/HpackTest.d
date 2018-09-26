@@ -8,7 +8,7 @@ import hunt.http.codec.http.model;
 import hunt.container.BufferUtils;
 
 import hunt.util.Assert;
-import hunt.util.string;
+import hunt.string;
 
 import hunt.container.ByteBuffer;
 

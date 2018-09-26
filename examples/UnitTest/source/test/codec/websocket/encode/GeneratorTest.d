@@ -11,7 +11,7 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.container;
 import hunt.logging;
 import hunt.util.Assert;
-import hunt.util.string;
+import hunt.string;
 
 import test.codec.websocket.utils.Hex;
 import test.codec.websocket.IncomingFramesCapture;

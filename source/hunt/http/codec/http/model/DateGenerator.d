@@ -1,7 +1,7 @@
 module hunt.http.codec.http.model.DateGenerator;
 
 import hunt.util.exception;
-import hunt.util.string;
+import hunt.string;
 
 import std.datetime;
 import std.format;

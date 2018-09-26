@@ -9,7 +9,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
-import hunt.util.string;
+import hunt.string;
 import hunt.io;
 import hunt.logging;
 
