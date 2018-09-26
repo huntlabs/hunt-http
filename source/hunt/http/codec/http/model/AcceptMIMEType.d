@@ -51,10 +51,8 @@ class AcceptMIMEType {
         this.matchType = matchType;
     }
 
-    override
-    bool opEquals(Object o) {
+    override bool opEquals(Object o) {
         if (this is o) return true;
-        // if (o is null || typeid(this) !is typeid(o)) return false;
         AcceptMIMEType that = cast(AcceptMIMEType) o;
         if(that is null)  return false;
 
@@ -62,8 +60,15 @@ class AcceptMIMEType {
                 childType == that.childType;
     }
 
-    override
-    size_t toHash() @trusted nothrow {
+    override size_t toHash() @trusted nothrow {
         return hashCode(parentType, childType);
+    }
+
+    override string toString() {
+        import std.format;
+        string s = parentType ~ "/" ~ childType;
+        if(quality != 1.0f) 
+            s = s ~ format("; q=%0.1f", quality);
+        return s;
     }
 }

@@ -12,6 +12,7 @@ import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.util.functional;
 import hunt.util.string.common;
+import hunt.util.string.StringBuilder;
 
 import std.ascii;
 import std.format;

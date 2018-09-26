@@ -19,6 +19,7 @@ import std.container.array;
 import std.conv;
 import std.file;
 import std.path;
+import std.range;
 import std.stdio;
 import std.string;
 import std.uni;
@@ -227,6 +228,7 @@ class MimeTypes {
             version(HUNT_DEBUG) tracef("loading MIME properties from: %s", fileName);
             try {
                 File f = File(fileName, "r");
+                scope(exit) f.close();
                 string line;
                 int count = 0;
                 while((line = f.readln()) !is null) {
@@ -261,10 +263,11 @@ class MimeTypes {
             warningf("File does not exist: %s", fileName);
             return;
         }
-        
+
         version(HUNT_DEBUG) tracef("loading MIME properties from: %s", fileName);
         try {
             File f = File(fileName, "r");
+            scope(exit) f.close();
             string line;
             int count = 0;
             while((line = f.readln()) !is null) {
@@ -669,57 +672,16 @@ class MimeTypes {
         return list;
     }
 
-    static Array!AcceptMIMEType parseAcceptMIMETypes(string accept) {
+    static AcceptMIMEType[] parseAcceptMIMETypes(string accept) {
 
         if(accept.empty) 
-            return Array!(AcceptMIMEType).init;
-            // return new EmptyList!(AcceptMIMEType)();
+            return [];
 
         string[] arr = StringUtils.split(accept, ",");
         return apply(arr);
     }
 
-    private static Array!AcceptMIMEType apply(string[] stream) {
-
-import std.range;
-// import std.string;
-
-//         auto r = map!(a => strip(a))(stream)
-//             .filter!(s => !s.empty)
-//             .map!( delegate AcceptMIMEType (string type) { 
-//                 string[] mimeTypeAndQuality = StringUtils.split(type, ';');
-//                 AcceptMIMEType acceptMIMEType = new AcceptMIMEType();
-                
-//                 // parse the MIME type
-//                 string[] mimeType = StringUtils.split(mimeTypeAndQuality[0].strip(), '/');
-//                 string parentType = mimeType[0].strip();
-//                 string childType = mimeType[1].strip();
-//                 acceptMIMEType.setParentType(parentType);
-//                 acceptMIMEType.setChildType(childType);
-//                 if (parentType == "*") {
-//                     if (childType == "*") {
-//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.ALL);
-//                     } else {
-//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.CHILD);
-//                     }
-//                 } else {
-//                     if (childType == "*") {
-//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.PARENT);
-//                     } else {
-//                         acceptMIMEType.setMatchType(AcceptMIMEMatchType.EXACT);
-//                     }
-//                 }
-
-//                 // parse the quality
-//                 if (mimeTypeAndQuality.length > 1) {
-//                     string q = mimeTypeAndQuality[1];
-//                     string[] qualityKV = StringUtils.split(q, '=');
-//                     acceptMIMEType.setQuality(to!float(qualityKV[1].strip()));
-//                 }
-//                 return acceptMIMEType;
-//             });
-
-            // .sort!("a.getQuality() < b.getQuality()").release;
+    private static AcceptMIMEType[] apply(string[] stream) {
 
         Array!AcceptMIMEType arr;
 
@@ -755,13 +717,12 @@ import std.range;
                 string[] qualityKV = StringUtils.split(q, '=');
                 acceptMIMEType.setQuality(to!float(qualityKV[1].strip()));
             }
-
             arr.insertBack(acceptMIMEType);
         }
 
         for(size_t i=0; i<arr.length-1; i++) {
-            AcceptMIMEType a = arr[i];
             for(size_t j=i+1; j<arr.length; j++) {
+                AcceptMIMEType a = arr[i];
                 AcceptMIMEType b = arr[j];
                 if(b.getQuality() > a.getQuality()) {   // The greater quality is first.
                     arr[i] = b; arr[j] = a;
@@ -769,7 +730,6 @@ import std.range;
             }
         }
 
-        return arr;
-
+        return arr.array();
     }
 }
