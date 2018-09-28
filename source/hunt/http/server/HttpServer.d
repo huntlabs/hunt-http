@@ -14,13 +14,9 @@ import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.container.ByteBuffer;
-// import hunt.container.BufferUtils;
-
-import hunt.net.AsynchronousTcpSession;
-import hunt.net;
-
 import hunt.event.EventLoop;
 import hunt.logging;
+import hunt.net;
 import hunt.util.exception;
 import hunt.util.LifeCycle;
 
@@ -43,7 +39,9 @@ class HttpServer  : AbstractLifeCycle {
 
     this(string host, int port, Http2Configuration http2Configuration,
                        ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
-        this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler), serverHttpHandler, webSocketHandler);
+        this(host, port, http2Configuration, 
+            new Http2ServerRequestHandler(serverHttpHandler), 
+            serverHttpHandler, webSocketHandler);
     }
 
     this(string host, int port, Http2Configuration c,

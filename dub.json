@@ -7,9 +7,32 @@
     ],
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net":"~>0.0.3"
+        "hunt-net": "~>0.0.3"
     },
-	"subConfigurations": {
-		"hunt-net" : "boringssl"
-	}
+    "configurations": [
+        {
+            "name": "default",
+            "subConfigurations": {
+                "hunt-net": "default"
+            }
+        },
+        {
+            "name": "boringssl",
+            "subConfigurations": {
+                "hunt-net": "boringssl"
+            }
+        },
+        {
+            "name": "openssl",
+            "subConfigurations": {
+                "hunt-net": "openssl"
+            }
+        },
+        {
+            "name": "opensslv11",
+            "subConfigurations": {
+                "hunt-net": "opensslv11"
+            }
+        }
+    ]
 }
