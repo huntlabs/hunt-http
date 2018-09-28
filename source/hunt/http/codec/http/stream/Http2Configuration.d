@@ -40,10 +40,12 @@ class Http2Configuration {
 
     this()
     {
-        secureSessionFactory = new ConscryptSecureSessionFactory(
-            new NoCheckConscryptSSLContextFactory(),
-            new DefaultCredentialConscryptSSLContextFactory()
-        );
+        version(WithTLS) {
+            secureSessionFactory = new ConscryptSecureSessionFactory(
+                new NoCheckConscryptSSLContextFactory(),
+                new DefaultCredentialConscryptSSLContextFactory()
+            );
+        }
         tcpConfiguration = new hunt.net.Config.Config();
         protocol = HttpVersion.HTTP_1_1.asString();
     }
