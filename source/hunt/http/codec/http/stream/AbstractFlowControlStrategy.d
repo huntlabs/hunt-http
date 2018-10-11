@@ -181,7 +181,7 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
         long currentStallTime = sessionStall;
         if (currentStallTime != 0)
             currentStallTime = Clock.currStdTime - currentStallTime;
-        return convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(pastStallTime + currentStallTime);
+        return convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(pastStallTime + currentStallTime);
     }
 
     long getStreamsStallTime() {
@@ -194,7 +194,7 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
             currentStallTime =  now - v;           
         }
 
-        return convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(pastStallTime + currentStallTime);
+        return convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(pastStallTime + currentStallTime);
     }
 
     void reset() {

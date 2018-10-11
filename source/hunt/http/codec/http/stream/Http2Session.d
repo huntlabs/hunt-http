@@ -79,7 +79,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     private bool pushEnabled;
     private long idleTime;
 
-    alias convertToMillisecond = convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond);
+    alias convertToMillisecond = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond);
 
     this(Scheduler scheduler, TcpSession endPoint, Generator generator,
                         StreamSession.Listener listener, FlowControlStrategy flowControl,

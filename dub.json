@@ -7,7 +7,7 @@
     ],
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net":"~>0.0.3"
+        "hunt-net":"~>0.0.4"
     },
     "configurations": [
         {

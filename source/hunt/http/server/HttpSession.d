@@ -79,12 +79,12 @@ class HttpSession  {
     }
 
     bool isInvalid() {
-        long currentTime = convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(Clock.currStdTime);
+        long currentTime = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(Clock.currStdTime);
         return (currentTime - lastAccessedTime) > (maxInactiveInterval * 1000);
     }
 
     static HttpSession create(string id, int maxInactiveInterval) {
-        long currentTime = convert!(TimeUnits.HectoNanosecond, TimeUnits.Millisecond)(Clock.currStdTime);
+        long currentTime = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(Clock.currStdTime);
         HttpSession session = new HttpSession();
         session.setId(id);
         session.setMaxInactiveInterval(maxInactiveInterval);
