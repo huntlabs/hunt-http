@@ -9,7 +9,7 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
 
-import hunt.util.common;
+import hunt.lang.common;
 import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.LifeCycle;

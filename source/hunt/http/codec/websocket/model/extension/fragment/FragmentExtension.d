@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
-import hunt.util.functional;
+import hunt.lang.common;
 // import hunt.http.utils.concurrent.IteratingCallback;
 import hunt.logging;
 import hunt.container;

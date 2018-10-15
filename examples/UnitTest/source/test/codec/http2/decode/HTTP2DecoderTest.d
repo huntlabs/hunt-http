@@ -19,7 +19,7 @@ import hunt.http.server.ServerSessionListener;
 import hunt.net.Session;
 
 import hunt.util.exception;
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.util.Assert;
 
 import hunt.container;

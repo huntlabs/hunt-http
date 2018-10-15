@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.InputStreamContentProvider;
 
-// import hunt.util.functional;
+// import hunt.lang.common;
 // import hunt.container.BufferUtils;
 // import hunt.io;
 // import hunt.logging;

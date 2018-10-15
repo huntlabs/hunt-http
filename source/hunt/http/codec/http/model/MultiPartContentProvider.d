@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.MultiPartContentProvider;
 
-// import hunt.util.functional;
+// import hunt.lang.common;
 // import hunt.http.utils.exception.CommonRuntimeException;
 import hunt.logging;
 

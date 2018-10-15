@@ -11,7 +11,7 @@ import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Session.Listener;
 import hunt.http.codec.http.stream.Stream;
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.container.BufferUtils;
 import org.slf4j.Logger;

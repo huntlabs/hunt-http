@@ -6,7 +6,7 @@ import hunt.http.codec.http.model;
 
 import hunt.util.Assert;
 import hunt.util.exception;
-import hunt.util.Charset;
+import hunt.lang.Charset;
 
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;

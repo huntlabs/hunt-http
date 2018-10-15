@@ -4,7 +4,7 @@ module hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExten
 // import hunt.http.codec.websocket.frame.Frame;
 // import hunt.http.codec.websocket.model.ExtensionConfig;
 // import hunt.http.codec.websocket.model.common;
-// import hunt.util.functional;
+// import hunt.lang.common;
 // import hunt.logging;
 
 

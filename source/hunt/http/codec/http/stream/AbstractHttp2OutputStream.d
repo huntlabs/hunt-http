@@ -12,8 +12,9 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.container.ByteBuffer;
 import hunt.container.LinkedList;
 
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.util.exception;
+import hunt.util.functional;
 
 import hunt.logging;
 

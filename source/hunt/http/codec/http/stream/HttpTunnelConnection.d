@@ -3,6 +3,7 @@ module hunt.http.codec.http.stream.HttpTunnelConnection;
 import hunt.http.codec.http.stream.HttpConnection;
 
 // import hunt.net.buffer.FileRegion;
+import hunt.lang.common;
 import hunt.util.functional;
 
 import hunt.container.ByteBuffer;

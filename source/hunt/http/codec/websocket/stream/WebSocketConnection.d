@@ -8,7 +8,7 @@ import hunt.net.Connection;
 
 
 import hunt.container.ByteBuffer;
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.util.concurrent.CompletableFuture;
 
 interface WebSocketConnection : OutgoingFrames, Connection {

@@ -8,7 +8,7 @@ import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
-import hunt.util.functional;
+import hunt.lang.common;
 
 import hunt.container.ByteBuffer;
 

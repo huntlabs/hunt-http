@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.AcceptMimeType;
 
-import hunt.util.common;
+import hunt.lang.common;
 
 /**
  * 

@@ -13,11 +13,11 @@ import hunt.http.codec.http.stream.Stream;
 
 import hunt.container.LinkedList;
 
-import hunt.util.common;
+import hunt.logging;
+import hunt.lang.common;
 import hunt.util.exception;
 import hunt.util.functional;
 import hunt.util.concurrent.Promise;
-import hunt.logging;
 
 import std.conv;
 import std.string;

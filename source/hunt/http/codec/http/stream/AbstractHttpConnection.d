@@ -9,7 +9,7 @@ import hunt.net.ConnectionEvent;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
-import hunt.util.functional;
+import hunt.lang.common;
 
 abstract class AbstractHttpConnection :AbstractConnection, HttpConnection {
 

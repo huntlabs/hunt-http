@@ -8,7 +8,7 @@ import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.container;
 import hunt.logging;
 
-import hunt.util.Charset;
+import hunt.lang.Charset;
 import hunt.util.exception;
 import hunt.string;
 import hunt.util.traits;

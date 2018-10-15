@@ -16,7 +16,7 @@ import hunt.http.environment;
 import hunt.container;
 
 import hunt.util.exception;
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.string;
 
 import hunt.logging;

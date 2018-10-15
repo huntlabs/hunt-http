@@ -14,7 +14,7 @@ import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.container.BufferUtils;
 import hunt.util.Assert;

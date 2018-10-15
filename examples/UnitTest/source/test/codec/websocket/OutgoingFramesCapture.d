@@ -7,7 +7,7 @@ import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.container;
 import hunt.logging;
 
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.util.Assert;
 
 

@@ -11,7 +11,7 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 // import hunt.http.server.WebSocketHandler;
 
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.container;
 
 import hunt.logging;

@@ -1,13 +1,13 @@
 module hunt.http.codec.http.stream.StreamSPI;
 
-import hunt.http.codec.http.frame.Frame;
-import hunt.util.functional;
-
 import hunt.http.codec.http.stream.CloseState;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.SessionSPI;
 
-import hunt.util.common;
+import hunt.http.codec.http.frame.Frame;
+import hunt.lang.common;
+import hunt.util.functional;
+
 
 /**
  * <p>The SPI interface for implementing a HTTP/2 stream.</p>

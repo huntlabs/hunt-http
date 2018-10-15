@@ -10,7 +10,7 @@ import hunt.http.codec.http.model.HttpScheme;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpVersion;
 
-import hunt.util.functional;
+import hunt.lang.common;
 import hunt.string.common;
 import hunt.string.StringBuilder;
 
