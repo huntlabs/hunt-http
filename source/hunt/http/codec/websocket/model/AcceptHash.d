@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.model.AcceptHash;
 
 import hunt.util.codec;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.base64;
 import std.digest.sha;

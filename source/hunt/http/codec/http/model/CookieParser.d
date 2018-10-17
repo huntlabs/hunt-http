@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.CookieParser;
 
 import hunt.http.codec.http.model.Cookie;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 // import hunt.container.ArrayList;

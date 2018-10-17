@@ -14,7 +14,7 @@ import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.DataFrameHandler;
 import hunt.http.environment;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.functional;
 import hunt.string;
 

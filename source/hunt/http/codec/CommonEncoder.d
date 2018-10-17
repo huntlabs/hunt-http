@@ -5,7 +5,7 @@ import hunt.net.AbstractConnection;
 import hunt.net.EncoderChain;
 import hunt.net.Session;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.functional;
 
 import hunt.container.ByteBuffer;

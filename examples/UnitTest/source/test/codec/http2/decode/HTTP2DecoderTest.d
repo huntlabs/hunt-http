@@ -18,7 +18,7 @@ import hunt.http.server.ServerSessionListener;
 
 import hunt.net.Session;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.lang.common;
 import hunt.util.Assert;
 

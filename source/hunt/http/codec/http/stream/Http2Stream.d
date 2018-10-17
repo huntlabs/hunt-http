@@ -13,7 +13,7 @@ import hunt.util.concurrent.Promise;
 
 import hunt.util.concurrent.Scheduler;
 import hunt.util.functional;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 import std.format;

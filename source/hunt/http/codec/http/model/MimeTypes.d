@@ -9,7 +9,7 @@ import hunt.container;
 import hunt.logging;
 
 import hunt.lang.Charset;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 import hunt.util.traits;
 
@@ -24,6 +24,8 @@ import std.stdio;
 import std.string;
 import std.uni;
 
+
+alias MimeType = MimeTypes.Type;
 
 /**
 */
@@ -44,6 +46,7 @@ class MimeTypes {
         __gshared Type TEXT_XML ;
         __gshared Type TEXT_JSON ;
         __gshared Type APPLICATION_JSON ;
+        __gshared Type APPLICATION_XML ;
 
         __gshared Type TEXT_HTML_8859_1 ;
         __gshared Type TEXT_HTML_UTF_8 ;
@@ -72,6 +75,7 @@ class MimeTypes {
             TEXT_XML = new Type("text/xml");
             TEXT_JSON = new Type("text/json", StandardCharsets.UTF_8);
             APPLICATION_JSON = new Type("application/json", StandardCharsets.UTF_8);
+            APPLICATION_XML = new Type("application/xml", StandardCharsets.UTF_8);
 
             TEXT_HTML_8859_1 = new Type("text/html;charset=iso-8859-1", TEXT_HTML);
             TEXT_HTML_UTF_8 = new Type("text/html;charset=utf-8", TEXT_HTML);
@@ -95,6 +99,7 @@ class MimeTypes {
             values.insertBack(TEXT_XML);
             values.insertBack(TEXT_JSON);
             values.insertBack(APPLICATION_JSON);
+            values.insertBack(APPLICATION_XML);
             values.insertBack(TEXT_HTML_8859_1);
             values.insertBack(TEXT_HTML_UTF_8);
             values.insertBack(TEXT_PLAIN_8859_1);
@@ -137,12 +142,12 @@ class MimeTypes {
             _field = new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, _string);
         }
 
-        this(string s, string cs) {
+        this(string s, string charset) {
             _string = s;
             _base = this;
             _buffer = BufferUtils.toBuffer(s);
-            // _charset = cs;
-            _charsetString = cs.toLower(); // _charset == null ? null : _charset.toString().toLower();
+            // _charset = charset;
+            _charsetString = charset.toLower(); // _charset == null ? null : _charset.toString().toLower();
             _assumedCharset = true;
             _field = new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, _string);
         }

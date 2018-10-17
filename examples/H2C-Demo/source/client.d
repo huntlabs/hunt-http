@@ -11,7 +11,7 @@ import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.lang.common;
 import hunt.util.concurrent.FuturePromise;
 

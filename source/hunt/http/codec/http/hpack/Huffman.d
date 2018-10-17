@@ -1,6 +1,6 @@
 module hunt.http.codec.http.hpack.Huffman;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 import hunt.container.ByteBuffer;

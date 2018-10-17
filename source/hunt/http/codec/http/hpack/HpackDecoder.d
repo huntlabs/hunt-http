@@ -12,7 +12,7 @@ import hunt.http.codec.http.model;
 
 import hunt.string;
 import hunt.util.TypeUtils;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 

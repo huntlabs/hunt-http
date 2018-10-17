@@ -12,7 +12,7 @@ import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.algorithm;
 

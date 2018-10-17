@@ -16,7 +16,7 @@ import hunt.net.Session;
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 import std.conv;

@@ -9,7 +9,7 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.ResetFrame;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 /**
 */

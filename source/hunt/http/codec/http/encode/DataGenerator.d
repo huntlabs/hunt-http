@@ -8,7 +8,7 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 
 import hunt.container;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.algorithm;
 import std.conv;

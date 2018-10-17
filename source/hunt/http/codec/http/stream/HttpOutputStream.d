@@ -6,7 +6,7 @@ import hunt.http.codec.http.model.MetaData;
 
 import hunt.container;
 import hunt.io;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 import std.conv;

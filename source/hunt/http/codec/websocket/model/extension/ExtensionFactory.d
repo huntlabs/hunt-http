@@ -13,7 +13,7 @@ import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 import hunt.container.Map;
 import hunt.container.HashMap;
 import hunt.logging;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 
 abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>

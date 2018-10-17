@@ -11,7 +11,7 @@ import hunt.net.ConnectionType;
 import hunt.net.DecoderChain;
 import hunt.net.Session;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.container.ByteBuffer;
 

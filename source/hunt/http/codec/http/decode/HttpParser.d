@@ -3,7 +3,7 @@ module hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.TypeUtils;
 import hunt.string;
 

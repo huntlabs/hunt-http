@@ -15,7 +15,7 @@ public import hunt.http.codec.websocket.frame.WebSocketFrame;
 
 import hunt.http.codec.websocket.model.common;
 import hunt.container;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.conv;
 

@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 // import hunt.http.utils.lang.QuotedStringTokenizer;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.functional;
 import hunt.string;
 

@@ -15,7 +15,7 @@ import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.environment;
 import hunt.container;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.lang.common;
 import hunt.string;
 

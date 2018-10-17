@@ -4,7 +4,7 @@ import hunt.container.ByteBuffer;
 
 import hunt.http.codec.http.frame.Frame;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 /**
  * <p>

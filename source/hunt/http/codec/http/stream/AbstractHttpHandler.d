@@ -7,7 +7,7 @@ import hunt.http.codec.http.stream.AbstractHttpConnection;
 import hunt.net.Handler;
 import hunt.net.Session;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.logging;
 
 import std.exception;

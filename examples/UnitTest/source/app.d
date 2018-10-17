@@ -30,7 +30,7 @@ import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.logging;
 import hunt.http.codec.http.model.HttpHeader;
 

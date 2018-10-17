@@ -5,7 +5,7 @@ import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.HttpComplianceSection;
 
 import hunt.util.Assert;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.lang.Charset;
 
 import hunt.container.BufferUtils;

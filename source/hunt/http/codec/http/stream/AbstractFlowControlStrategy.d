@@ -11,7 +11,7 @@ import hunt.logging;
 import std.datetime;
 import core.time;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.datetime;
 import hunt.container.Map;
 

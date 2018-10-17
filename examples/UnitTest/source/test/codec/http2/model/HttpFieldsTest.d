@@ -1,7 +1,7 @@
 module test.codec.http2.model.HttpFieldsTest;
 
 import hunt.util.Assert;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 import hunt.http.codec.http.encode.HttpGenerator;

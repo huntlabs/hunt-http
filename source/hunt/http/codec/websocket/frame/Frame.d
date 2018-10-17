@@ -2,7 +2,7 @@ module hunt.http.codec.websocket.frame.Frame;
 
 import hunt.container.ByteBuffer;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.conv;
 

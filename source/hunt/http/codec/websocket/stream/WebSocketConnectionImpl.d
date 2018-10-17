@@ -28,7 +28,7 @@ import hunt.container;
 import hunt.lang.common;
 import hunt.logging;
 import hunt.util.concurrent.CompletableFuture;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.functional;
 
 import std.random; 

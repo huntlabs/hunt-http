@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.HttpURI;
 
 import hunt.container.MultiMap;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.lang.Charset;
 import hunt.string;
 import hunt.util.TypeUtils;

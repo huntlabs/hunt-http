@@ -21,7 +21,7 @@ import hunt.http.codec.http.decode.WindowUpdateBodyParser;
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 

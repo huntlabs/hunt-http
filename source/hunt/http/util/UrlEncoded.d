@@ -3,7 +3,7 @@ module hunt.http.util.UrlEncoded;
 import hunt.container;
 
 import hunt.lang.Charset;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 import hunt.util.TypeUtils;
 

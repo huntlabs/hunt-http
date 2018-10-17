@@ -6,7 +6,7 @@ import hunt.http.codec.http.model.QuotedCSV;
 
 import hunt.container;
 import hunt.string;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.array;
 import std.ascii;

@@ -8,7 +8,7 @@ import hunt.container.BufferUtils;
 import hunt.http.codec.http.hpack.Huffman;
 
 import hunt.util.Assert;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.TypeUtils;
 
 import hunt.logging;

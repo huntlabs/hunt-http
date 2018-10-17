@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.WindowUpdateFrame;
 
 import hunt.util.concurrent.Locker;
 import hunt.util.concurrent.IteratingCallback;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.functional;
 
 import hunt.container;

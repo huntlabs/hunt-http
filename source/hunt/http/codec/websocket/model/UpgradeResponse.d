@@ -3,7 +3,7 @@ module hunt.http.codec.websocket.model.UpgradeResponse;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 
 import hunt.container;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 /**
  * The HTTP Upgrade to WebSocket Response

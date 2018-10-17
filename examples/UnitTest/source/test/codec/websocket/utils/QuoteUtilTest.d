@@ -4,7 +4,7 @@ import hunt.string.QuoteUtil;
 
 import hunt.container;
 import hunt.util.Assert;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 import std.conv;

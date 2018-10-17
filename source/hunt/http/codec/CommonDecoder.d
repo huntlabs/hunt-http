@@ -9,7 +9,7 @@ import hunt.net.DecoderChain;
 import hunt.net.Session;
 import hunt.net.secure.SecureSession;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.logging;
 import hunt.container.ByteBuffer;

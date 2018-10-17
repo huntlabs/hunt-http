@@ -26,7 +26,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 // import hunt.http.codec.http.model.HttpHeader;
 // import hunt.http.codec.http.model.HttpVersion;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.TypeUtils;
 
 

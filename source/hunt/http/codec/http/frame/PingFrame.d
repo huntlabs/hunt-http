@@ -3,7 +3,7 @@ module hunt.http.codec.http.frame.PingFrame;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 class PingFrame :Frame {
 	static int PING_LENGTH = 8;

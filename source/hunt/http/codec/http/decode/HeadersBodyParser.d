@@ -15,7 +15,7 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.algorithm;
 

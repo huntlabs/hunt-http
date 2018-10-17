@@ -6,7 +6,7 @@ import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.MetaData;
 
 import hunt.net.Session;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;

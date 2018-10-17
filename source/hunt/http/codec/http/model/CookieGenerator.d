@@ -4,7 +4,7 @@ import hunt.http.codec.http.model.Cookie;
 
 import hunt.container.List;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 import std.array;

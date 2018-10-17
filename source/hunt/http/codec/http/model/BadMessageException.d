@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.BadMessageException;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import std.conv;
 
 /**

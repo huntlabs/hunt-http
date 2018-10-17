@@ -20,7 +20,7 @@ module hunt.http.codec.http.model.MultiException;
 
 import hunt.container;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 /** 

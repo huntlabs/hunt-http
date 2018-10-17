@@ -13,7 +13,7 @@ import hunt.container.ByteBuffer;
 import hunt.container.HashMap;
 import hunt.container.Map;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.logging;
 import std.format;
 

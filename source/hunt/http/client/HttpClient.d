@@ -13,7 +13,7 @@ import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.util.LifeCycle;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.concurrent.CompletableFuture;;
 import hunt.util.concurrent.Promise;
 

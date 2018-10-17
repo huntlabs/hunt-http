@@ -14,7 +14,7 @@ import hunt.http.codec.http.frame.HeadersFrame;
 
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 /**
 */

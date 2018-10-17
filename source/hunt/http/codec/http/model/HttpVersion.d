@@ -4,7 +4,7 @@ import hunt.container.ByteBuffer;
 // import java.nio.charset.StandardCharsets;
 
 import hunt.util.traits;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 import std.ascii;
 import std.string;

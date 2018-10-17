@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.PingFrame;
 import hunt.http.codec.http.encode.FrameGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 import std.conv;
 
 /**

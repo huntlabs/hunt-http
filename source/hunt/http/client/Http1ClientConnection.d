@@ -28,7 +28,7 @@ import hunt.util.Assert;
 import hunt.io;
 import hunt.util.codec;
 import hunt.util.concurrent.Promise;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 import hunt.container;

@@ -17,7 +17,7 @@ import hunt.container.ByteBuffer;
 import hunt.event.EventLoop;
 import hunt.logging;
 import hunt.net;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.util.LifeCycle;
 
 /**

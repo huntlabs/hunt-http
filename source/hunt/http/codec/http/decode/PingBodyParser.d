@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.PingFrame;
 
-import hunt.util.exception;
+import hunt.lang.exception;
 
 /**
 */

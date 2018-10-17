@@ -7,7 +7,7 @@ import hunt.http.codec.http.model.MimeTypes;
 import hunt.container.List;
 
 import hunt.util.Assert;
-import hunt.util.exception;
+import hunt.lang.exception;
 
 alias assertTrue = Assert.assertTrue;
 alias assertFalse = Assert.assertFalse;

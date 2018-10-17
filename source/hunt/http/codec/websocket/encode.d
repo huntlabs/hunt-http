@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.container;
-import hunt.util.exception;
+import hunt.lang.exception;
 import hunt.string;
 
 /**
