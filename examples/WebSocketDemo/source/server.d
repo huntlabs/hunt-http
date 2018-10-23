@@ -59,7 +59,7 @@ void main(string[] args)
                     }
 
                     default: 
-                        warningf("Can't handle the frame of ", type);
+                        warningf("Can't handle the frame of %s", type);
                         break;
                 }
 

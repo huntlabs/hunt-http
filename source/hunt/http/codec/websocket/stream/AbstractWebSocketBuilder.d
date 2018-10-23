@@ -13,37 +13,35 @@ import hunt.container.ByteBuffer;
  */
 abstract class AbstractWebSocketBuilder {
 
-    protected Action2!(string, WebSocketConnection) _onText;
-    protected Action2!(ByteBuffer, WebSocketConnection) _onData;
-    protected Action2!(Throwable, WebSocketConnection) _onError;
+    protected Action2!(string, WebSocketConnection) _textHandler;
+    protected Action2!(ByteBuffer, WebSocketConnection) _dataHandler;
+    protected Action2!(Throwable, WebSocketConnection) _errorHandler;
 
-    AbstractWebSocketBuilder onText(Action2!(string, WebSocketConnection) onText) {
-        this._onText = onText;
+    AbstractWebSocketBuilder onText(Action2!(string, WebSocketConnection) handler) {
+        this._textHandler = handler;
         return this;
     }
 
-    AbstractWebSocketBuilder onData(Action2!(ByteBuffer, WebSocketConnection) onData) {
-        this._onData = onData;
+    AbstractWebSocketBuilder onData(Action2!(ByteBuffer, WebSocketConnection) handler) {
+        this._dataHandler = handler;
         return this;
     }
 
-    AbstractWebSocketBuilder onError(Action2!(Throwable, WebSocketConnection) onError) {
-        this._onError = onError;
+    AbstractWebSocketBuilder onError(Action2!(Throwable, WebSocketConnection) handler) {
+        this._errorHandler = handler;
         return this;
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
         switch (frame.getType()) {
             case FrameType.TEXT:
-                if(_onText !is null)
-                    _onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
-                // Optional.ofNullable(onText).ifPresent(t -> t.call(((DataFrame) frame).getPayloadAsUTF8(), connection));
+                if(_textHandler !is null)
+                    _textHandler((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
                 break;
             case FrameType.CONTINUATION:
             case FrameType.BINARY:
-                if(_onData !is null)
-                    _onData(frame.getPayload(), connection);
-                // Optional.ofNullable(onData).ifPresent(d -> d.call(frame.getPayload(), connection));
+                if(_dataHandler !is null)
+                    _dataHandler(frame.getPayload(), connection);
                 break;
 
             default: break;
@@ -51,8 +49,7 @@ abstract class AbstractWebSocketBuilder {
     }
 
     void onError(Throwable t, WebSocketConnection connection) {
-        if(_onError !is null)
-            _onError(t, connection);
-        // Optional.ofNullable(onError).ifPresent(e -> e.call(t, connection));
+        if(_errorHandler !is null)
+            _errorHandler(t, connection);
     }
 }
