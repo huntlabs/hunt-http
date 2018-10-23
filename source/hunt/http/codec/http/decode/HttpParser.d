@@ -1038,9 +1038,10 @@ class HttpParser {
                                 HttpField cached_field = null;
                                 if(_fieldCache !is null)
                                     cached_field = _fieldCache.getBest(buffer, -1, buffer.remaining());
-                                
-                                if (cached_field is null)
-                                    cached_field = CACHE.getBest(buffer, -1, buffer.remaining());
+                                // TODO: Tasks pending completion -@zxp at 10/23/2018, 8:03:47 PM
+                                // Can't handle Sec-WebSocket-Key
+                                // if (cached_field is null)
+                                //     cached_field = CACHE.getBest(buffer, -1, buffer.remaining());
 
                                 if (cached_field !is null) {
                                     string n = cached_field.getName();
