@@ -4,7 +4,6 @@ import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.HttpClientResponse;
 
-
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -12,6 +11,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.string;
 import hunt.io;
 import hunt.logging;
+import std.string : icmp;
 
 import hunt.container.ByteBuffer;
 
@@ -95,15 +95,15 @@ class Http1ClientResponseHandler : ResponseHandler {
             HttpVersion httpVersion = response.getHttpVersion();
 
                 if(httpVersion == HttpVersion.HTTP_1_0) {
-                    if ("keep-alive".equalsIgnoreCase(requestConnectionValue)
-                            && "keep-alive".equalsIgnoreCase(responseConnectionValue)) {
+                    if (icmp("keep-alive", requestConnectionValue)
+                            && icmp("keep-alive", responseConnectionValue)) {
                         tracef("the client %s connection is persistent", response.getHttpVersion());
                     } else {
                         IO.close(connection);
-                    }
+                    } 
                 } else if (httpVersion == HttpVersion.HTTP_1_1){ // the persistent connection is default in HTTP 1.1
-                    if ("close".equalsIgnoreCase(requestConnectionValue)
-                            || "close".equalsIgnoreCase(responseConnectionValue)) {
+                    if (icmp("close", requestConnectionValue)
+                            || icmp("close", responseConnectionValue)) {
                         IO.close(connection);
                     } else {
                         tracef("the client %s connection is persistent", response.getHttpVersion());

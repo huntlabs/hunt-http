@@ -41,7 +41,7 @@ void main(string[] args)
         new class WebSocketHandler {
             override
             void onConnect(WebSocketConnection webSocketConnection) {
-                webSocketConnection.sendText("Say hi from Hunt.HTTP.").thenAccept( 
+                webSocketConnection.sendText("Say hello from Hunt.HTTP.").thenAccept( 
                     (r) { tracef("Server sends text frame success."); }
                 );
             }

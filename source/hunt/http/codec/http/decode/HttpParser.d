@@ -147,7 +147,7 @@ class HttpParser {
     private HttpMethod _method;
     private string _methodString;
     private HttpVersion _version;
-    private StringBuilder _uri; // = new StringBuilder(INITIAL_URI_LENGTH); // Tune?
+    private StringBuilder _uri;
     private EndOfContent _endOfContent;
     private long _contentLength = -1;
     private long _contentPosition;
@@ -159,7 +159,7 @@ class HttpParser {
     private Trie!HttpField _fieldCache;
 
     private int _length;
-    private StringBuilder _string; // = new StringBuilder();
+    private StringBuilder _string; 
 
     shared static this() {
         CACHE = new ArrayTrie!HttpField(2048);
@@ -172,15 +172,25 @@ class HttpParser {
         CACHE.put(new HttpField(HttpHeader.ACCEPT_ENCODING, "gzip,deflate,sdch"));
         CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.5"));
         CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-GB,en-US;q=0.8,en;q=0.6"));
-        CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, "en-AU,en;q=0.9,it-IT;q=0.8,it;q=0.7,en-GB;q=0.6,en-US;q=0.5"));
+
+        CACHE.put(new HttpField(HttpHeader.ACCEPT_LANGUAGE, 
+            "en-AU,en;q=0.9,it-IT;q=0.8,it;q=0.7,en-GB;q=0.6,en-US;q=0.5"));
+            
         CACHE.put(new HttpField(HttpHeader.ACCEPT_CHARSET, "ISO-8859-1,utf-8;q=0.7,*;q=0.3"));
         CACHE.put(new HttpField(HttpHeader.ACCEPT, "*/*"));
         CACHE.put(new HttpField(HttpHeader.ACCEPT, "image/png,image/*;q=0.8,*/*;q=0.5"));
-        CACHE.put(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
-        CACHE.put(new HttpField(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"));
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, 
+            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"));
+
+        CACHE.put(new HttpField(HttpHeader.ACCEPT, 
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"));
+
         CACHE.put(new HttpField(HttpHeader.ACCEPT_RANGES, HttpHeaderValue.BYTES));
         CACHE.put(new HttpField(HttpHeader.PRAGMA, "no-cache"));
-        CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "private, no-cache, no-cache=Set-Cookie, proxy-revalidate"));
+
+        CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, 
+            "private, no-cache, no-cache=Set-Cookie, proxy-revalidate"));
+
         CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "no-cache"));
         CACHE.put(new HttpField(HttpHeader.CACHE_CONTROL, "max-age=0"));
         CACHE.put(new HttpField(HttpHeader.CONTENT_LENGTH, "0"));
@@ -190,7 +200,8 @@ class HttpParser {
         CACHE.put(new HttpField(HttpHeader.EXPIRES, "Fri, 01 Jan 1990 00:00:00 GMT"));
 
         // Add common Content types as fields
-        foreach (string type ; ["text/plain", "text/html", "text/xml", "text/json", "application/json", "application/x-www-form-urlencoded"]) {
+        foreach (string type ; ["text/plain", "text/html", "text/xml", "text/json", 
+            "application/json", "application/x-www-form-urlencoded"]) {
             HttpField field = new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, type);
             CACHE.put(field);
 
@@ -245,18 +256,6 @@ class HttpParser {
         this(handler, maxHeaderBytes, getCompliance());
     }
 
-    // /* ------------------------------------------------------------------------------- */
-    // deprecated("")
-    // this(RequestHandler handler, int maxHeaderBytes, bool strict) {
-    //     this(handler, maxHeaderBytes, strict ? HttpCompliance.LEGACY : getCompliance());
-    // }
-
-    // /* ------------------------------------------------------------------------------- */
-    // deprecated("")
-    // this(ResponseHandler handler, int maxHeaderBytes, bool strict) {
-    //     this(handler, maxHeaderBytes, strict ? HttpCompliance.LEGACY : getCompliance());
-    // }
-
     /* ------------------------------------------------------------------------------- */
     this(RequestHandler handler, HttpCompliance compliance) {
         this(handler, -1, compliance);
@@ -273,7 +272,8 @@ class HttpParser {
     }
 
     /* ------------------------------------------------------------------------------- */
-    private this(RequestHandler requestHandler, ResponseHandler responseHandler, int maxHeaderBytes, HttpCompliance compliance) {
+    private this(RequestHandler requestHandler, ResponseHandler responseHandler, 
+        int maxHeaderBytes, HttpCompliance compliance) {
         _string = new StringBuilder();
         _uri = new StringBuilder(INITIAL_URI_LENGTH);
         _handler = requestHandler !is null ? cast(HttpHandler)requestHandler : cast(HttpHandler)responseHandler;
@@ -282,7 +282,7 @@ class HttpParser {
         _maxHeaderBytes = maxHeaderBytes;
         _compliance = compliance;
         _compliances = compliance.sections();
-        _complianceHandler = cast(ComplianceHandler) (typeid(_handler) == typeid(ComplianceHandler) ? _handler : null);
+        _complianceHandler = cast(ComplianceHandler)_handler;
     }
 
     /* ------------------------------------------------------------------------------- */
@@ -1690,7 +1690,7 @@ class HttpParser {
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
-    interface ComplianceHandler :HttpHandler {
+    interface ComplianceHandler : HttpHandler {
         // deprecated("")
         // default void onComplianceViolation(HttpCompliance compliance, HttpCompliance required, string reason) {
         // }
