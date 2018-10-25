@@ -17,15 +17,16 @@ class WebSocketHandler {
     protected WebSocketPolicy defaultWebSocketPolicy;
     protected WebSocketPolicy _webSocketPolicy;
 
-    this()
-    {
+    this() {
         defaultWebSocketPolicy = WebSocketPolicy.newServerPolicy();
     }
 
-    bool acceptUpgrade(MetaData.Request request, MetaData.Response response,
-                                  HttpOutputStream output,
-                                  HttpConnection connection) {
-        infof("The connection %s will upgrade to WebSocket connection", connection.getSessionId());
+    bool acceptUpgrade(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
+        version (HUNT_DEBUG) {
+            infof("The connection %s will upgrade to WebSocket connection",
+                    connection.getSessionId());
+        }
         return true;
     }
 
@@ -36,7 +37,8 @@ class WebSocketHandler {
     WebSocketPolicy getWebSocketPolicy() {
         if (_webSocketPolicy is null) {
             return defaultWebSocketPolicy;
-        } else {
+        }
+        else {
             return _webSocketPolicy;
         }
     }
@@ -46,9 +48,9 @@ class WebSocketHandler {
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
-        version(HUNT_DEBUG) {
-            tracef("The WebSocket connection %s received a frame: %s", 
-                connection.getSessionId(), (cast(Object)frame).toString());
+        version (HUNT_DEBUG) {
+            tracef("The WebSocket connection %s received a frame: %s",
+                    connection.getSessionId(), (cast(Object) frame).toString());
         }
     }
 
