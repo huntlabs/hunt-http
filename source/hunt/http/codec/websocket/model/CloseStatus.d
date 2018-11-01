@@ -9,6 +9,12 @@ class CloseStatus {
     private enum int MAX_CONTROL_PAYLOAD = 125;
     enum int MAX_REASON_PHRASE = MAX_CONTROL_PAYLOAD - 2;
 
+    __gshared CloseStatus NO_STATUS_CODE;
+
+    shared static this() {
+        NO_STATUS_CODE = new CloseStatus(1005);
+    }
+
     /**
      * Convenience method for trimming a long reason phrase at the maximum reason phrase length of 123 UTF-8 bytes (per WebSocket spec).
      *
@@ -42,7 +48,7 @@ class CloseStatus {
      * @param reasonPhrase the reason phrase
      * @see StatusCode
      */
-    this(int closeCode, string reasonPhrase) {
+    this(int closeCode, string reasonPhrase = null) {
         this.code = closeCode;
         this.phrase = reasonPhrase;
         if (reasonPhrase.length > MAX_REASON_PHRASE) {

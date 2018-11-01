@@ -65,8 +65,7 @@ class MimeTypes {
 
         __gshared Array!Type values;
 
-        shared static this()
-        {
+        shared static this() {
             MESSAGE_HTTP = new Type("message/http");
             MULTIPART_BYTERANGES = new Type("multipart/byteranges");
 
@@ -137,8 +136,13 @@ class MimeTypes {
             _base = base;
             ptrdiff_t i = s.indexOf(";charset=");
             // _charset = Charset.forName(s.substring(i + 9));
-            _charsetString = s[i + 9 .. $].toLower();
-            _assumedCharset = false;
+            if(i == -1) {
+                _charsetString = null;
+                _assumedCharset = true;
+            } else {
+                _charsetString = s[i + 9 .. $].toLower();
+                _assumedCharset = false;
+            }
             _field = new PreEncodedHttpField(HttpHeader.CONTENT_TYPE, _string);
         }
 
@@ -185,9 +189,9 @@ class MimeTypes {
             return _field;
         }
 
-        // Type getBaseType() {
-        //     return _base;
-        // }
+        Type getBaseType() {
+            return _base;
+        }
     }
 
     __gshared MimeTypes.Type[string] CACHE; 
@@ -282,7 +286,7 @@ class MimeTypes {
                 count++;
                 string t = parts[0].strip();
                 string charset = parts[1].strip();
-                trace(t, " = ", charset);
+                version(HUNT_DEBUG) trace(t, " = ", charset);
                 if(charset.startsWith("-"))
                     __assumedEncodings.put(t, charset[1..$]);
                 else
@@ -319,8 +323,9 @@ class MimeTypes {
     void setMimeMap(Map!(string, string) mimeMap) {
         _mimeMap.clear();
         if (mimeMap !is null) {
-            foreach (string k, string v ; mimeMap)
+            foreach (string k, string v ; mimeMap) {
                 _mimeMap.put(std.uni.toLower(k), normalizeMimeType(v));
+            }
         }
     }
 
@@ -406,7 +411,7 @@ class MimeTypes {
 
     static Set!string getKnownMimeTypes() {
         auto hs = new HashSet!(string)();
-        foreach(v ; __dftMimeMap.values())
+        foreach(v ; __dftMimeMap.byValue())
             hs.add(v);
         return hs;
     }
