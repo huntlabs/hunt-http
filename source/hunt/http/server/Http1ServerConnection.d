@@ -325,9 +325,8 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
                     if(!r.empty) {
                         r.front.getParameters().clear();
                     }
-                    // negotiatedExtensions.stream().filter(e -> e.getName().equals("permessage-deflate"))
-                    //                     .findFirst().ifPresent(e -> e.getParameters().clear());
-                    response.getFields().add(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString(), ExtensionConfig.toHeaderValue(negotiatedExtensions));
+                    response.getFields().add(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString(), 
+                        ExtensionConfig.toHeaderValue(negotiatedExtensions));
                 }
 
                 IO.close(output);

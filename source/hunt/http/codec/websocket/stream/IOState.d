@@ -369,8 +369,7 @@ class IOState {
      * A websocket connection has finished its upgrade handshake, and is now open.
      */
     void onOpened() {
-        version(HUNT_DEBUG)
-            tracef("onOpened()");
+        version(HUNT_DEBUG) trace("onOpened()");
 
         ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
@@ -380,7 +379,7 @@ class IOState {
             }
 
             if (this.state != ConnectionState.CONNECTED) {
-                tracef("Unable to open, not in CONNECTED state: %s", this.state);
+                warningf("Unable to open, not in CONNECTED state: %s", this.state);
                 return;
             }
 

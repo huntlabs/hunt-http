@@ -9,6 +9,7 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
+import std.conv;
 
 /**
 */
@@ -50,7 +51,7 @@ class WebSocketHandler {
     void onFrame(Frame frame, WebSocketConnection connection) {
         version (HUNT_DEBUG) {
             tracef("The WebSocket connection %s received a frame: %s",
-                    connection.getSessionId(), (cast(Object) frame).toString());
+                    connection.getSessionId(), frame.to!string());
         }
     }
 

@@ -98,7 +98,11 @@ class Http1ServerRequestHandler : RequestHandler {
                 bool success = connection.upgradeProtocol(request, response, outputStream, connection);
                 return success || serverHttpHandler.messageComplete(request, response, outputStream, connection);
             }
-        } finally {
+        } catch(Exception ex) {
+            error("Upgrade failed: ", ex.msg);
+            return true;
+        }
+        finally {
             connection.getParser().reset();
         }
     }

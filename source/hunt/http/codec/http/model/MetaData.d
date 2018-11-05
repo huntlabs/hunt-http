@@ -136,7 +136,7 @@ class MetaData : Iterable!HttpField {
     static class Request : MetaData {
         private string _method;
         private HttpURI _uri;
-        private  Object attachment;
+        private Object attachment;
 
         this(HttpFields fields) {
             this("", null, HttpVersion.Null, fields);

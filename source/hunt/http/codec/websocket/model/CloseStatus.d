@@ -1,5 +1,7 @@
 module hunt.http.codec.websocket.model.CloseStatus;
 
+import hunt.http.codec.websocket.model.StatusCode;
+
 import hunt.lang.exception;
 
 import std.conv;
@@ -9,10 +11,14 @@ class CloseStatus {
     private enum int MAX_CONTROL_PAYLOAD = 125;
     enum int MAX_REASON_PHRASE = MAX_CONTROL_PAYLOAD - 2;
 
+    __gshared CloseStatus NORMAL;
     __gshared CloseStatus NO_STATUS_CODE;
+    __gshared CloseStatus PROTOCOL_ERROR;
 
     shared static this() {
-        NO_STATUS_CODE = new CloseStatus(1005);
+        NORMAL = new CloseStatus(StatusCode.NORMAL);
+        NO_STATUS_CODE = new CloseStatus(StatusCode.NO_CODE);
+        PROTOCOL_ERROR = new CloseStatus(StatusCode.PROTOCOL);
     }
 
     /**
