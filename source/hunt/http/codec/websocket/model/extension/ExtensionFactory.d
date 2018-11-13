@@ -21,7 +21,9 @@ abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
 
     this() {
         availableExtensions = new HashMap!(string, AbstractExtension)();
-        implementationMissing(false);
+        // implementationMissing(false);
+        // TODO: Tasks pending completion -@zxp at 11/13/2018, 3:18:21 PM
+        // 
         // for (Extension ext : extensionLoader) {
         //     if (ext !is null) {
         //         availableExtensions.put(ext.getName(), ext.getClass());

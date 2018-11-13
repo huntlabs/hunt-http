@@ -369,11 +369,12 @@ class IOState {
      * A websocket connection has finished its upgrade handshake, and is now open.
      */
     void onOpened() {
-        version(HUNT_DEBUG) trace("onOpened()");
+        version(HUNT_DEBUG) tracef("state: %s", this.state);
 
         ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.OPEN) {
+            if (this.state == ConnectionState.OPEN || 
+                this.state == ConnectionState.CONNECTING) {
                 // already opened
                 return;
             }
