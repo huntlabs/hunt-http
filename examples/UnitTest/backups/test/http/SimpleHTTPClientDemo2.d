@@ -4,7 +4,7 @@ import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.client.http2.SimpleHttpClientConfiguration;
 import hunt.http.client.http2.SimpleResponse;
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MimeTypes;
+import hunt.util.MimeType;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
 import java.io.IOException;

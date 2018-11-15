@@ -1,8 +1,7 @@
 module test.codec.http2.model.MimeTypesTest;
 
-import hunt.http.codec.http.model.AcceptMimeType;
-import hunt.http.codec.http.model.MimeTypes;
-
+import hunt.util.AcceptMimeType;
+import hunt.util.MimeType;
 
 import hunt.container.List;
 

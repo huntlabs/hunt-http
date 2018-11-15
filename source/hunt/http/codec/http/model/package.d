@@ -20,7 +20,6 @@ public import hunt.http.codec.http.model.HttpTokens;
 public import hunt.http.codec.http.model.HttpURI;
 public import hunt.http.codec.http.model.HttpVersion;
 public import hunt.http.codec.http.model.MetaData;
-public import hunt.http.codec.http.model.MimeTypes;
 public import hunt.http.codec.http.model.MultiPartContentProvider;
 public import hunt.http.codec.http.model.Protocol;
 public import hunt.http.codec.http.model.QuotedCSV;
