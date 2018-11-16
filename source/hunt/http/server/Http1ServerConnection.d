@@ -183,7 +183,7 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
                         || "close".equalsIgnoreCase(responseConnectionValue)) {
                     connection.close();
                 } else {
-                    tracef("the server %s connection %s is persistent", response.getHttpVersion(),
+                    version(HUNT_DEBUG) tracef("the server %s connection %s is persistent", response.getHttpVersion(),
                             connection.getSessionId());
                 }
             } else {

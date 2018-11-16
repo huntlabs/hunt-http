@@ -1271,7 +1271,7 @@ class HttpParser {
             if (_state == State.HEADER) {
                 if (parseFields(buffer))
                 {
-                    tracef("after parseFields =>%s", buffer.toString());
+                    version(HUNT_DEBUG) tracef("after parseFields =>%s", buffer.toString());
                     return true;
                 }
             }

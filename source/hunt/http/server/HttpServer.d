@@ -15,14 +15,14 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.container.ByteBuffer;
 import hunt.event.EventLoop;
+import hunt.lang.exception;
 import hunt.logging;
 import hunt.net;
-import hunt.lang.exception;
 import hunt.util.Lifecycle;
 
 /**
 */
-class HttpServer  : AbstractLifecycle {
+class HttpServer : AbstractLifecycle {
 
     private NetServer _server;
     private Http2Configuration http2Configuration;
@@ -68,7 +68,7 @@ class HttpServer  : AbstractLifecycle {
         _server.setConfig(c.getTcpConfiguration());
 
         _server.connectHandler((NetSocket sock) {
-            info("server have accepted a connection...");
+            version(HUNT_DEBUG) info("server accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( (in ubyte[] data) {     
                     version(HUNT_DEBUG) { 
@@ -85,10 +85,13 @@ class HttpServer  : AbstractLifecycle {
             );
         });
         this.http2Configuration = c;
-        if(c.isSecureConnectionEnabled)
-            tracef("Listing at: https://%s:%d", host, port);
-        else
-            tracef("Listing at: http://%s:%d", host, port);
+
+        version (HUNT_DEBUG) {
+            if(c.isSecureConnectionEnabled)
+                tracef("Listing at: https://%s:%d", host, port);
+            else
+                tracef("Listing at: http://%s:%d", host, port);
+        }
     }
 
     private Http2ServerHandler http2ServerHandler;

@@ -121,7 +121,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
                 committed = true;
             } else {
                 if (generator.isChunking()) {
-                    tracef("http1 output stream is generating chunk");
+                    version (HUNT_DEBUG) tracef("http1 output stream is generating chunk");
                     generatorResult = generate(null, null, null, null, true);
                     if (generatorResult == HttpGenerator.Result.CONTINUE && 
                         generator.getState() == HttpGenerator.State.COMPLETING) {
@@ -150,7 +150,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             }
         } finally {
             closed = true;
-            tracef("http1 output stream closed");
+            version(HUNT_DEBUG) tracef("http1 output stream closed");
         }
     }
 
