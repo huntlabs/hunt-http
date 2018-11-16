@@ -7,5 +7,5 @@
 - [x] Implement WebSocket server/client
 - [x] H2C Demo
 - [x] WebSocket Demo
-- [ ] Improve some modules's names
-- [ ] Implement more unit tests
+- [ ] Reorganize modules
+- [ ] More unit tests
