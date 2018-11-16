@@ -12,7 +12,7 @@ import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-import hunt.util.LifeCycle;
+import hunt.util.Lifecycle;
 import hunt.lang.exception;
 import hunt.util.concurrent.CompletableFuture;;
 import hunt.util.concurrent.Promise;
@@ -27,9 +27,9 @@ import hunt.net;
 
 import hunt.logging;
 
-class HttpClient  : AbstractLifeCycle { 
+class HttpClient : AbstractLifecycle { 
 
-    private Client client;
+    private AbstractClient client;
     private Map!(int, Http2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
     private __gshared static int sessionId = 0; // new int(0);
     private Http2Configuration http2Configuration;

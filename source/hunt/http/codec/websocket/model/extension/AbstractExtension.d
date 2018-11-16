@@ -12,13 +12,13 @@ import hunt.logging;
 import hunt.lang.common;
 import hunt.lang.exception;
 import hunt.util.functional;
-import hunt.util.LifeCycle;
+import hunt.util.Lifecycle;
 
 import std.format;
 
 /**
 */
-abstract class AbstractExtension : AbstractLifeCycle , Extension {
+abstract class AbstractExtension : AbstractLifecycle , Extension {
     
     private WebSocketPolicy policy;
     private ExtensionConfig config;

@@ -18,11 +18,11 @@ import hunt.event.EventLoop;
 import hunt.logging;
 import hunt.net;
 import hunt.lang.exception;
-import hunt.util.LifeCycle;
+import hunt.util.Lifecycle;
 
 /**
 */
-class HttpServer  : AbstractLifeCycle {
+class HttpServer  : AbstractLifecycle {
 
     private NetServer _server;
     private Http2Configuration http2Configuration;
