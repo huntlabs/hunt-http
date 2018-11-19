@@ -7,7 +7,7 @@
 			"path": "examples/UnitTest"
 		},
 		{
-			"path": "examples/WebSocketDemo"
+			"path": "examples/HttpServerDemo"
 		}
 	],
 	"settings": {}
