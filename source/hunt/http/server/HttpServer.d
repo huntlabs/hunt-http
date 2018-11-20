@@ -67,10 +67,10 @@ class HttpServer : AbstractLifecycle {
         _server = NetUtil.createNetServer();
         _server.setConfig(c.getTcpConfiguration());
 
-        _server.connectHandler((NetSocket sock) {
+        _server.connectionHandler((NetSocket sock) {
             version(HUNT_DEBUG) info("server accepted a connection...");
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
-            session.handler( (in ubyte[] data) {     
+            session.handler( (in ubyte[] data) {   
                     version(HUNT_DEBUG) { 
                         infof("data received (%d bytes): ", data.length); 
                         if(data.length<=64)
@@ -107,8 +107,6 @@ class HttpServer : AbstractLifecycle {
     int getPort() {
         return port;
     }
-
-    EventLoop eventLoop() { return _server.eventLoop(); }
 
     // ExecutorService getNetExecutorService() {
     //     return _server.getNetExecutorService();
