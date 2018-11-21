@@ -1,141 +1,144 @@
-module test.codec.http2.model;
+module test.codec.http2.model.MultiPartParserTest;
 
 import hunt.http.codec.http.model.BadMessageException;
 import hunt.http.codec.http.model.MultiPartParser;
+
 import hunt.container.BufferUtils;
-
-import hunt.util.Test;
-
 import hunt.container.ByteBuffer;
 import hunt.container.ArrayList;
 import hunt.container.List;
-import java.util.concurrent.ThreadLocalRandom;
-
-import hunt.http.codec.http.model.MultiPartParser.State;
-
+import hunt.logging;
+import hunt.string;
 import hunt.util.Assert;
 
-public class MultiPartParserTest {
+import std.algorithm;
+import std.conv;
+// import java.util.concurrent.ThreadLocalRandom;
 
+alias State = MultiPartParser.State;
+
+alias assertTrue = Assert.assertTrue;
+alias assertFalse = Assert.assertFalse;
+alias assertThat = Assert.assertThat;
+alias assertEquals = Assert.assertEquals;
+alias assertNull = Assert.assertNull;
+alias assertContain = Assert.assertContain;
+
+
+class MultiPartParserTest {
     
-    public void testEmptyPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testEmptyPreamble() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
+        assertThat(parser.getState(), State.PREAMBLE);
     }
 
     
-    public void testNoPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testNoPreamble() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         data = BufferUtils.toBuffer("--BOUNDARY   \r\n");
         parser.parse(data, false);
         assertTrue(parser.isState(State.BODY_PART));
-        assertThat(data.remaining(), is(0));
+        assertThat(data.remaining(), 0);
     }
 
     
-    public void testPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testPreamble() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
 
         data = BufferUtils.toBuffer("More data that almost includes \n--BOUNDARY but no CR before.");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
 
         data = BufferUtils.toBuffer("Could be a boundary \r\n--BOUNDAR");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
 
         data = BufferUtils.toBuffer("but not it isn't \r\n--BOUN");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
 
         data = BufferUtils.toBuffer("DARX nor is this");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
     }
 
     
-    public void testPreambleCompleteBoundary() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testPreambleCompleteBoundary() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n--BOUNDARY  \r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.BODY_PART));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.BODY_PART);
+        assertThat(data.remaining(), 0);
     }
 
     
-    public void testPreambleSplitBoundary() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testPreambleSplitBoundary() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("-");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("-");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("B");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.PREAMBLE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.PREAMBLE);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("OUNDARY-");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER_CLOSE));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.DELIMITER_CLOSE);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("ignore\r");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER_PADDING));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.DELIMITER_PADDING);
+        assertThat(data.remaining(), 0);
         data = BufferUtils.toBuffer("\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.BODY_PART));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.BODY_PART);
+        assertThat(data.remaining(), 0);
     }
 
     
-    public void testFirstPartNoFields() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParser.Handler() {
-        }, "BOUNDARY");
+    void testFirstPartNoFields() {
+        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         data = BufferUtils.toBuffer("--BOUNDARY\r\n\r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.FIRST_OCTETS));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.FIRST_OCTETS);
+        assertThat(data.remaining(), 0);
     }
 
     
-    public void testFirstPartFields() {
-        TestHandler handler = new TestHandler() {
+    void testFirstPartFields() {
+        TestHandler handler = new class TestHandler {
             override
-            public bool headerComplete() {
+            bool headerComplete() {
                 super.headerComplete();
                 return true;
             }
@@ -152,13 +155,13 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "Content");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.FIRST_OCTETS));
-        assertThat(data.remaining(), is(7));
-        assertThat(handler.fields, Matchers.contains("name0: value0", "name1: value1", "name2: value 2", "<<COMPLETE>>"));
+        assertThat(parser.getState(), State.FIRST_OCTETS);
+        assertThat(data.remaining(), 7);
+        assertThat(handler.fields.toArray(), Matchers.contains("name0: value0", "name1: value1", "name2: value 2", "<<COMPLETE>>"));
     }
 
     
-    public void testFirstPartNoContent() {
+    void testFirstPartNoContent() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -170,14 +173,14 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "--BOUNDARY");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), ["<<LAST>>"]);
     }
 
     
-    public void testFirstPartNoContentNoCRLF() {
+    void testFirstPartNoContentNoCRLF() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -188,15 +191,15 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "--BOUNDARY");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), ["<<LAST>>"]);
 
     }
 
     
-    public void testFirstPartContentLookingLikeNoCRLF() {
+    void testFirstPartContentLookingLikeNoCRLF() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -211,14 +214,14 @@ public class MultiPartParserTest {
         parser.parse(data, false);
 
 
-        assertThat(parser.getState(), is(State.OCTETS));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("-", "Content!"));
+        assertThat(parser.getState(), State.OCTETS);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("-", "Content!"));
     }
 
     
-    public void testFirstPartPartialContent() {
+    void testFirstPartPartialContent() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -229,10 +232,13 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "Hello\r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.OCTETS));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello"));
+        assertThat(parser.getState(), State.OCTETS);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        // FIXME: Needing refactor or cleanup -@zxp at 11/21/2018, 12:33:36 PM
+        // 
+        // assertThat(handler.getContent(), Matchers.contains("Hello"));
+        assertThat(handler.getContent(), ["Hello"]);
 
         data = BufferUtils.toBuffer(
                 "Now is the time for all good ment to come to the aid of the party.\r\n"
@@ -240,17 +246,17 @@ public class MultiPartParserTest {
                         ~ "The quick brown fox jumped over the lazy dog.\r\n"
                         ~ "this is not a --BOUNDARY\r\n");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.OCTETS));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello", "\r\n", "Now is the time for all good ment to come to the aid of the party.\r\n"
+        assertThat(parser.getState(), State.OCTETS);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Hello", "\r\n", "Now is the time for all good ment to come to the aid of the party.\r\n"
                 ~ "How now brown cow.\r\n"
                 ~ "The quick brown fox jumped over the lazy dog.\r\n"
                 ~ "this is not a --BOUNDARY"));
     }
 
     
-    public void testFirstPartShortContent() {
+    void testFirstPartShortContent() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -262,15 +268,15 @@ public class MultiPartParserTest {
                 ~ "Hello\r\n"
                 ~ "--BOUNDARY");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello", "<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Hello", "<<LAST>>"));
     }
 
 
     
-    public void testFirstPartLongContent() {
+    void testFirstPartLongContent() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -285,16 +291,16 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "--BOUNDARY");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Now is the time for all good ment to come to the aid of the party.\r\n"
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Now is the time for all good ment to come to the aid of the party.\r\n"
                 ~ "How now brown cow.\r\n"
                 ~ "The quick brown fox jumped over the lazy dog.\r\n", "<<LAST>>"));
     }
 
     
-    public void testFirstPartLongContentNoCarriageReturn() {
+    void testFirstPartLongContentNoCarriageReturn() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -310,25 +316,28 @@ public class MultiPartParserTest {
                 ~ "\r\n"
                 ~ "--BOUNDARY");
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(0));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Now is the time for all good men to come to the aid of the party.\n"
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 0);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Now is the time for all good men to come to the aid of the party.\n"
                 ~ "How now brown cow.\n"
                 ~ "The quick brown fox jumped over the lazy dog.\n", "<<LAST>>"));
     }
 
 
     
-    public void testBinaryPart() {
+    void testBinaryPart() {
         byte[] random = new byte[8192];
-        final ByteBuffer bytes = BufferUtils.allocate(random.length);
-        ThreadLocalRandom.current().nextBytes(random);
-        // Arrays.fill(random,cast(byte)'X');
+        import std.random;
+        auto rnd = Random(2018);
+        for(int i; i< random.length; i++)
+            random[i] = cast(byte) uniform(byte.min, byte.max, rnd);
+        // ThreadLocalRandom.current().nextBytes(random);
+        ByteBuffer bytes = BufferUtils.allocate(cast(int)random.length);
 
-        TestHandler handler = new TestHandler() {
+        TestHandler handler = new class TestHandler {
             override
-            public bool content(ByteBuffer buffer, bool last) {
+            bool content(ByteBuffer buffer, bool last) {
                 BufferUtils.append(bytes, buffer);
                 return last;
             }
@@ -344,13 +353,13 @@ public class MultiPartParserTest {
         BufferUtils.append(data, BufferUtils.toBuffer(epilogue));
 
         parser.parse(data, true);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(data.remaining(), is(19));
-        assertThat(bytes.array(), is(random));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(data.remaining(), 19);
+        assertThat(bytes.array(), random);
     }
 
     
-    public void testEpilogue() {
+    void testEpilogue() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -368,17 +377,17 @@ public class MultiPartParserTest {
 
 
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello", "<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Hello", "<<LAST>>"));
 
         parser.parse(data, true);
-        assertThat(parser.getState(), is(State.END));
+        assertThat(parser.getState(), State.END);
     }
 
 
     
-    public void testMultipleContent() {
+    void testMultipleContent() {
         TestHandler handler = new TestHandler();
         MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
 
@@ -399,33 +408,33 @@ public class MultiPartParserTest {
 
         /* Test First Content Section */
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello", "<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Hello", "<<LAST>>"));
 
         /* Test Second Content Section */
         parser.parse(data, false);
-        assertThat(parser.getState(), is(State.DELIMITER));
-        assertThat(handler.fields, Matchers.contains("name: value", "<<COMPLETE>>", "powerLevel: 9001", "<<COMPLETE>>"));
-        assertThat(handler.content, Matchers.contains("Hello", "<<LAST>>", "secondary\r\ncontent", "<<LAST>>"));
+        assertThat(parser.getState(), State.DELIMITER);
+        assertThat(handler.fields.toArray(), Matchers.contains("name: value", "<<COMPLETE>>", "powerLevel: 9001", "<<COMPLETE>>"));
+        assertThat(handler.getContent(), Matchers.contains("Hello", "<<LAST>>", "secondary\r\ncontent", "<<LAST>>"));
 
         /* Test Progression to END State */
         parser.parse(data, true);
-        assertThat(parser.getState(), is(State.END));
-        assertThat(data.remaining(), is(0));
+        assertThat(parser.getState(), State.END);
+        assertThat(data.remaining(), 0);
     }
 
 
     
-    public void testCrAsLineTermination() {
-        TestHandler handler = new TestHandler() {
+    void testCrAsLineTermination() {
+        TestHandler handler = new class TestHandler {
             override
-            public bool messageComplete() {
+            bool messageComplete() {
                 return true;
             }
 
             override
-            public bool content(ByteBuffer buffer, bool last) {
+            bool content(ByteBuffer buffer, bool last) {
                 super.content(buffer, last);
                 return false;
             }
@@ -442,23 +451,23 @@ public class MultiPartParserTest {
 
         try {
             parser.parse(data, true);
-            fail("Invalid End of Line");
+            Assert.fail("Invalid End of Line");
         } catch (BadMessageException e) {
-            assertTrue(e.getMessage().contains("Bad EOL"));
+            assertTrue(e.msg.canFind("Bad EOL"));
         }
     }
 
 
     
-    public void splitTest() {
-        TestHandler handler = new TestHandler() {
+    void splitTest() {
+        TestHandler handler = new class TestHandler {
             override
-            public bool messageComplete() {
+            bool messageComplete() {
                 return true;
             }
 
             override
-            public bool content(ByteBuffer buffer, bool last) {
+            bool content(ByteBuffer buffer, bool last) {
                 super.content(buffer, last);
                 return false;
             }
@@ -531,21 +540,21 @@ public class MultiPartParserTest {
             ByteBuffer dataSeg = data.slice();
             dataSeg.position(0);
             dataSeg.limit(i);
-            assertThat("First " ~ i, parser.parse(dataSeg, false), is(false));
+            assertThat("First " ~ i.to!string(), parser.parse(dataSeg, false), false);
 
             //partition i
             dataSeg = data.slice();
             dataSeg.position(i);
             dataSeg.limit(i + 1);
-            assertThat("Second " ~ i, parser.parse(dataSeg, false), is(false));
+            assertThat("Second " ~ i.to!string(), parser.parse(dataSeg, false), false);
 
             //partition i to length
             dataSeg = data.slice();
             dataSeg.position(i + 1);
             dataSeg.limit(length);
-            assertThat("Third " ~ i, parser.parse(dataSeg, true), is(true));
+            assertThat("Third " ~ i.to!string(), parser.parse(dataSeg, true), true);
 
-            assertThat(handler.fields, Matchers.contains("Content-Disposition: form-data; name=\"text\"", "<<COMPLETE>>"
+            assertThat(handler.fields.toArray(), Matchers.contains("Content-Disposition: form-data; name=\"text\"", "<<COMPLETE>>"
                     , "Content-Disposition: form-data; name=\"file1\"; filename=\"a.txt\""
                     , "Content-Type: text/plain", "<<COMPLETE>>"
                     , "Content-Disposition: form-data; name=\"file2\"; filename=\"a.html\""
@@ -556,7 +565,7 @@ public class MultiPartParserTest {
                     , "Field1: value1", "<<COMPLETE>>"));
 
 
-            assertThat(handler.contentString(), is(new string("text default" ~ "<<LAST>>"
+            assertThat(handler.contentString(), "text default" ~ "<<LAST>>"
                     ~ "Content of a.txt.\n" ~ "<<LAST>>"
                     ~ "<!DOCTYPE html><title>Content of a.html.</title>\n" ~ "<<LAST>>"
                     ~ "<<LAST>>"
@@ -571,7 +580,7 @@ public class MultiPartParserTest {
                     "in height; for the gentle slope of the lava-streams,\n" ~
                     "due to their formerly liquid state, showed at a glance\n" ~
                     "how far the hard, rocky beds had once extended into\n" ~
-                    "the open ocean.\n" ~ "<<LAST>>")));
+                    "the open ocean.\n" ~ "<<LAST>>");
 
             handler.clear();
             parser.reset();
@@ -580,21 +589,21 @@ public class MultiPartParserTest {
 
 
     
-    public void testGeneratedForm() {
-        TestHandler handler = new TestHandler() {
+    void testGeneratedForm() {
+        TestHandler handler = new class TestHandler {
             override
-            public bool messageComplete() {
+            bool messageComplete() {
                 return true;
             }
 
             override
-            public bool content(ByteBuffer buffer, bool last) {
+            bool content(ByteBuffer buffer, bool last) {
                 super.content(buffer, last);
                 return false;
             }
 
             override
-            public bool headerComplete() {
+            bool headerComplete() {
                 return false;
             }
         };
@@ -614,47 +623,59 @@ public class MultiPartParserTest {
                 "--WebKitFormBoundary7MA4YWf7OaKlSxkTrZu0gW--");
 
         parser.parse(data, true);
-        assertThat(parser.getState(), is(State.END));
-        assertThat(handler.fields.size(), is(2));
+        assertThat(parser.getState(), State.END);
+        assertThat(handler.fields.size(), 2);
 
     }
 
+}
 
-    static class TestHandler : MultiPartParser.Handler {
-        List<string> fields = new ArrayList<>();
-        List<string> content = new ArrayList<>();
 
-        override
-        public void parsedField(string name, string value) {
-            fields.add(name ~ ": " ~ value);
-        }
 
-        public string contentString() {
-            StringBuilder sb = new StringBuilder();
-            for (string s : content) sb.append(s);
-            return sb.toString();
-        }
 
-        override
-        public bool headerComplete() {
-            fields.add("<<COMPLETE>>");
-            return false;
-        }
 
-        override
-        public bool content(ByteBuffer buffer, bool last) {
-            if (BufferUtils.hasContent(buffer))
-                content.add(BufferUtils.toString(buffer));
-            if (last)
-                content.add("<<LAST>>");
-            return last;
-        }
+class TestHandler : MultiPartParserHandler {
+    List!(string) fields;
+    List!(string) _content;
 
-        public void clear() {
-            fields.clear();
-            content.clear();
-        }
+    this() {
+        fields = new ArrayList!(string)();
+        _content = new ArrayList!(string)();
+    }
 
+    string[] getContent() {
+        return _content.toArray();
+    }
+
+    override
+    void parsedField(string name, string value) {
+        fields.add(name ~ ": " ~ value);
+    }
+
+    string contentString() {
+        StringBuilder sb = new StringBuilder();
+        foreach (string s ; _content) sb.append(s);
+        return sb.toString();
+    }
+
+    override
+    bool headerComplete() {
+        fields.add("<<COMPLETE>>");
+        return false;
+    }
+
+    override
+    bool content(ByteBuffer buffer, bool last) {
+        if (BufferUtils.hasContent(buffer))
+            _content.add(BufferUtils.toString(buffer));
+        if (last)
+            _content.add("<<LAST>>");
+        return last;
+    }
+
+    void clear() {
+        fields.clear();
+        _content.clear();
     }
 
 }
