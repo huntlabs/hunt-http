@@ -9,6 +9,7 @@ import hunt.logging;
 
 import hunt.lang.common;
 import hunt.util.Assert;
+import hunt.util.functional;
 
 
 class OutgoingFramesCapture : OutgoingFrames {

@@ -1,8 +1,9 @@
 module test.codec.http2.model.HttpFieldsTest;
 
-import hunt.util.Assert;
+import hunt.container;
 import hunt.lang.exception;
 import hunt.string;
+import hunt.util.Assert;
 
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.HttpField;
@@ -11,8 +12,6 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.QuotedCSV;
 
-import hunt.container;
-
 import std.conv;
 
 alias assertTrue = Assert.assertTrue;
@@ -20,7 +19,6 @@ alias assertFalse = Assert.assertFalse;
 alias assertThat = Assert.assertThat;
 alias assertEquals = Assert.assertEquals;
 alias assertNull = Assert.assertNull;
-
 alias assertContain = Assert.assertContain;
 
 

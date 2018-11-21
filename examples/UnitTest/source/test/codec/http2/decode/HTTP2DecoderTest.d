@@ -21,6 +21,7 @@ import hunt.net.Session;
 import hunt.lang.exception;
 import hunt.lang.common;
 import hunt.util.Assert;
+import hunt.util.functional;
 
 import hunt.container;
 

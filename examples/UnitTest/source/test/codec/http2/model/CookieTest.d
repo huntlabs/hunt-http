@@ -1,9 +1,7 @@
 module test.codec.http2.model.CookieTest;
 
-
 import hunt.container.ArrayList;
 import hunt.container.List;
-
 import hunt.util.Assert;
 
 import hunt.http.codec.http.model.Cookie;
