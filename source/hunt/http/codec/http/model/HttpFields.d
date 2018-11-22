@@ -70,7 +70,7 @@ class HttpFields : Iterable!HttpField {
 	 *            the fields to copy data from
 	 */
 	this(HttpFields fields) {
-		_fields = fields._fields.dup ~ new HttpField[10]; // Arrays.copyOf(fields._fields, fields._fields.length + 10);
+		_fields = fields._fields.dup ~ new HttpField[10];
 		_size = fields.size();
 	}
 

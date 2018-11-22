@@ -4,7 +4,7 @@ module hunt.http.codec.websocket.model.StatusCode;
  * The <a href="https://tools.ietf.org/html/rfc6455#section-7.4">RFC 6455 specified status codes</a> and <a
  * href="https://www.iana.org/assignments/websocket/websocket.xml#close-code-number-rules">IANA: WebSocket Close Code Number Registry</a>
  */
-final class StatusCode {
+struct StatusCode {
     /**
      * 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.
      * <p>
