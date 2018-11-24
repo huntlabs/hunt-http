@@ -36,8 +36,7 @@ import std.array;
  *
  * @see java.net.URLEncoder
  */
-class UrlEncoded  : MultiMap!string
-{ 
+class UrlEncoded  : MultiMap!string { 
     
     enum string ENCODING = StandardCharsets.UTF_8;
 

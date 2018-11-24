@@ -673,6 +673,11 @@ private class IllegalCharacterException : IllegalArgumentException {
  * sufficient for the caller to process the events only once.
  */
 class MultiPartParserHandler {
+
+    this() {
+
+    }
+    
     void startPart() {
     }
 
