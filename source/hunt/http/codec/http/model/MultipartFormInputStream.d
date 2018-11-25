@@ -736,8 +736,6 @@ class MultipartFormInputStream {
             return QuotedStringTokenizer.unquoteOnly(value, true);
     }
 
-    // private auto pattern = ctRegex!(".??[a-z,A-Z]\\:\\\\[^\\\\].*");
-
 }
 
 

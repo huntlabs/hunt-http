@@ -173,7 +173,7 @@ class MultipartFormInputStreamTest {
     
     void testNonMultiPartRequest() {
         MultipartConfig config = new MultipartConfig(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 "Content-type: text/plain",
                 config,
                 _tmpDir);
@@ -341,7 +341,7 @@ class MultipartFormInputStreamTest {
 
     void testNoLimits() {
         MultipartConfig config = new MultipartConfig(_dirname);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -352,7 +352,7 @@ class MultipartFormInputStreamTest {
     
     void testRequestTooBig() {
         MultipartConfig config = new MultipartConfig(_dirname, 60, 100, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -368,7 +368,7 @@ class MultipartFormInputStreamTest {
 
     void testRequestTooBigThrowsErrorOnGetParts() {
         MultipartConfig config = new MultipartConfig(_dirname, 60, 100, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -395,7 +395,7 @@ class MultipartFormInputStreamTest {
     
     void testFileTooBig() {
         MultipartConfig config = new MultipartConfig(_dirname, 40, 1024, 30);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -412,7 +412,7 @@ class MultipartFormInputStreamTest {
     
     void testFileTooBigThrowsErrorOnGetParts() {
         MultipartConfig config = new MultipartConfig(_dirname, 40, 1024, 30);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi.dup),
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
