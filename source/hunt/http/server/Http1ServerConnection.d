@@ -329,7 +329,7 @@ class Http1ServerConnection : AbstractHttp1Connection , HttpServerConnection {
                         ExtensionConfig.toHeaderValue(negotiatedExtensions));
                 }
 
-                IO.close(output);
+                IOUtils.close(output);
                 output.close();
                 tcpSession.attachObject(webSocketConnection);
                 upgradeWebSocketComplete = true;

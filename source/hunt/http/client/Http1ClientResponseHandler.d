@@ -99,12 +99,12 @@ class Http1ClientResponseHandler : ResponseHandler {
                             && icmp("keep-alive", responseConnectionValue)) {
                         tracef("the client %s connection is persistent", response.getHttpVersion());
                     } else {
-                        IO.close(connection);
+                        IOUtils.close(connection);
                     } 
                 } else if (httpVersion == HttpVersion.HTTP_1_1){ // the persistent connection is default in HTTP 1.1
                     if (icmp("close", requestConnectionValue)
                             || icmp("close", responseConnectionValue)) {
-                        IO.close(connection);
+                        IOUtils.close(connection);
                     } else {
                         tracef("the client %s connection is persistent", response.getHttpVersion());
                     }

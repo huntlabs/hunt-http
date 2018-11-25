@@ -78,7 +78,7 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
             if (h !is null) {
                 h.earlyEOF();
             } else {
-                IO.close(connection);
+                IOUtils.close(connection);
             }
 
             writing = null;
@@ -130,7 +130,7 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
             if (h !is null) {
                 h.badMessage(status, reason);
             } else {
-                IO.close(connection);
+                IOUtils.close(connection);
             }
         }
 

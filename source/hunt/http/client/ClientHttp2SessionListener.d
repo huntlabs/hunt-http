@@ -35,18 +35,18 @@ class ClientHttp2SessionListener : Session.Listener.Adapter {
     override
     void onClose(Session session, GoAwayFrame frame) {
         warningf("Client received the GoAwayFrame -> %s", frame.toString());
-        IO.close(connection);
+        IOUtils.close(connection);
     }
 
     override
     void onFailure(Session session, Exception failure) {
         errorf("Client failure: " ~ session.toString(), failure);
-        IO.close(connection);
+        IOUtils.close(connection);
     }
 
     override
     void onReset(Session session, ResetFrame frame) {
         warningf("Client received ResetFrame %s", frame.toString());
-        IO.close(connection);
+        IOUtils.close(connection);
     }
 }
