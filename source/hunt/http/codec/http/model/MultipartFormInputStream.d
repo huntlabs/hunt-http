@@ -1,8 +1,8 @@
-module hunt.http.codec.http.model.MultiPartFormInputStream;
+module hunt.http.codec.http.model.MultipartFormInputStream;
 
-// import hunt.http.utils.lang.QuotedStringTokenizer;
 import hunt.http.codec.http.model.MultiException;
-import hunt.http.codec.http.model.MultiPartParser;
+import hunt.http.codec.http.model.MultipartConfig;
+import hunt.http.codec.http.model.MultipartParser;
 
 import hunt.container;
 import hunt.io;
@@ -35,13 +35,13 @@ void deleteOnExit(string file) {
  *
  * @see <a href="https://tools.ietf.org/html/rfc7578">https://tools.ietf.org/html/rfc7578</a>
  */
-class MultiPartFormInputStream {
+class MultipartFormInputStream {
     
     private int _bufferSize = 16 * 1024;
-    __gshared MultipartConfigElement __DEFAULT_MULTIPART_CONFIG;
+    __gshared MultipartConfig __DEFAULT_MULTIPART_CONFIG;
     __gshared MultiMap!(Part) EMPTY_MAP;
     protected InputStream _in;
-    protected MultipartConfigElement _config;
+    protected MultipartConfig _config;
     protected string _contentType;
     protected MultiMap!(Part) _parts;
     protected Exception _err;
@@ -52,7 +52,7 @@ class MultiPartFormInputStream {
     protected bool _parsed;
 
     shared static this() {
-        __DEFAULT_MULTIPART_CONFIG = new MultipartConfigElement(tempDir());
+        __DEFAULT_MULTIPART_CONFIG = new MultipartConfig(tempDir());
         EMPTY_MAP = new MultiMap!(Part)(Collections.emptyMap!(string, List!(Part))());
     }
 
@@ -313,10 +313,10 @@ class MultiPartFormInputStream {
     /**
      * @param input            Request input stream
      * @param contentType   Content-Type header
-     * @param config        MultipartConfigElement
+     * @param config        MultipartConfig
      * @param contextTmpDir javax.servlet.context.tempdir
      */
-    this(InputStream input, string contentType, MultipartConfigElement config, string contextTmpDir) {
+    this(InputStream input, string contentType, MultipartConfig config, string contextTmpDir) {
         _contentType = contentType;
         _config = config;
         if (contextTmpDir.empty)
@@ -325,7 +325,7 @@ class MultiPartFormInputStream {
             _contextTmpDir = contextTmpDir;
 
         if (_config is null)
-            _config = new MultipartConfigElement(_contextTmpDir.asAbsolutePath().array);
+            _config = new MultipartConfig(_contextTmpDir.asAbsolutePath().array);
 
         // if (input instanceof ServletInputStream) {
         //     if (((ServletInputStream) input).isFinished()) {
@@ -496,14 +496,14 @@ class MultiPartFormInputStream {
         }
 
         Handler handler = new Handler();
-        MultiPartParser parser = new MultiPartParser(handler, contentTypeBoundary);
+        MultipartParser parser = new MultipartParser(handler, contentTypeBoundary);
 
         // Create a buffer to store data from stream //
         byte[] data = new byte[_bufferSize];
         int len = 0;
 
         /*
-            * keep running total of size of bytes read from input and throw an exception if exceeds MultipartConfigElement._maxRequestSize
+            * keep running total of size of bytes read from input and throw an exception if exceeds MultipartConfig._maxRequestSize
             */
         long total = 0;
 
@@ -540,8 +540,8 @@ class MultiPartFormInputStream {
         }
 
         // check we read to the end of the message
-        if (parser.getState() != MultiPartParser.State.END) {
-            if (parser.getState() == MultiPartParser.State.PREAMBLE)
+        if (parser.getState() != MultipartParser.State.END) {
+            if (parser.getState() == MultipartParser.State.PREAMBLE)
                 _err = new IOException("Missing initial multi part boundary");
             else
                 _err = new IOException("Incomplete Multipart");
@@ -552,7 +552,7 @@ class MultiPartFormInputStream {
         }
     }
 
-    class Handler : MultiPartParserHandler {
+    class Handler : MultipartParserHandler {
         private MultiPart _part = null;
         private string contentDisposition = null;
         private string contentType = null;
@@ -738,106 +738,6 @@ class MultiPartFormInputStream {
 
     // private auto pattern = ctRegex!(".??[a-z,A-Z]\\:\\\\[^\\\\].*");
 
-}
-
-
-/**
- * Java Class represntation of an {@link MultipartConfig} annotation value.
- *
- * @since Servlet 3.0
- */
-class MultipartConfigElement {
-
-    private string location;
-    private long maxFileSize;
-    private long maxRequestSize;
-    private int fileSizeThreshold;
-
-    /**
-     * Constructs an instance with defaults for all but location.
-     *
-     * @param location defualts to "" if values is null.
-     */
-    this(string location) {
-        if (location is null) {
-            this.location = "";
-        } else {
-            this.location = location;
-        }
-        this.maxFileSize = -1L;
-        this.maxRequestSize = -1L;
-        this.fileSizeThreshold = 0;
-    }
-
-    /**
-     * Constructs an instance with all values specified.
-     *
-     * @param location the directory location where files will be stored
-     * @param maxFileSize the maximum size allowed for uploaded files
-     * @param maxRequestSize the maximum size allowed for
-     * multipart/form-data requests
-     * @param fileSizeThreshold the size threshold after which files will
-     * be written to disk
-     */
-    this(string location, long maxFileSize,
-            long maxRequestSize, int fileSizeThreshold) {
-        if (location is null) {
-            this.location = "";
-        } else {
-            this.location = location;
-        }
-        this.maxFileSize = maxFileSize;
-        this.maxRequestSize = maxRequestSize;
-        this.fileSizeThreshold = fileSizeThreshold;
-    }
-
-    /**
-     * Constructs an instance from a {@link MultipartConfig} annotation value.
-     *
-     * @param annotation the annotation value
-     */
-    // this(MultipartConfig annotation) {
-    //     this.location = annotation.location();
-    //     this.fileSizeThreshold = annotation.fileSizeThreshold();
-    //     this.maxFileSize = annotation.maxFileSize();
-    //     this.maxRequestSize = annotation.maxRequestSize();
-    // }
-
-    /**
-     * Gets the directory location where files will be stored.
-     *
-     * @return the directory location where files will be stored
-     */
-    string getLocation() {
-        return this.location;
-    }
-
-    /**
-     * Gets the maximum size allowed for uploaded files.
-     *
-     * @return the maximum size allowed for uploaded files
-     */
-    long getMaxFileSize() {
-        return this.maxFileSize;
-    }
-
-    /**
-     * Gets the maximum size allowed for multipart/form-data requests.
-     *
-     * @return the maximum size allowed for multipart/form-data requests
-     */
-    long getMaxRequestSize() {
-        return this.maxRequestSize;
-    }
-
-    /**
-     * Gets the size threshold after which files will be written to disk.
-     *
-     * @return the size threshold after which files will be written to disk
-     */
-    int getFileSizeThreshold() {
-        return this.fileSizeThreshold;
-    }
 }
 
 

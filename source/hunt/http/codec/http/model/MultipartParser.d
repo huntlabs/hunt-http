@@ -1,4 +1,4 @@
-module hunt.http.codec.http.model.MultiPartParser;
+module hunt.http.codec.http.model.MultipartParser;
 
 import hunt.http.codec.http.model.BadMessageException;
 
@@ -22,7 +22,7 @@ import std.format;
  * @see <a href="https://tools.ietf.org/html/rfc2046#section-5.1">https://tools.ietf.org/html/rfc2046#section-5.1</a>
  * @see <a href="https://tools.ietf.org/html/rfc2045">https://tools.ietf.org/html/rfc2045</a>
  */
-class MultiPartParser {
+class MultipartParser {
     enum byte COLON = ':';
     enum byte TAB = 0x09;
     enum byte LINE_FEED = 0x0A;
@@ -55,7 +55,7 @@ class MultiPartParser {
 
     private enum State[] __delimiterStates = [State.DELIMITER, State.DELIMITER_CLOSE, State.DELIMITER_PADDING];
 
-    private MultiPartParserHandler _handler;
+    private MultipartParserHandler _handler;
     private SearchPattern _delimiterSearch;
 
     private string _fieldName;
@@ -74,7 +74,7 @@ class MultiPartParser {
     private int _maxHeaderLineLength = 998;
 
     /* ------------------------------------------------------------------------------- */
-    this(MultiPartParserHandler handler, string boundary) {
+    this(MultipartParserHandler handler, string boundary) {
         _handler = handler;
         _string = new StringBuilder();
 
@@ -91,7 +91,7 @@ class MultiPartParser {
     }
 
     /* ------------------------------------------------------------------------------- */
-    MultiPartParserHandler getHandler() {
+    MultipartParserHandler getHandler() {
         return _handler;
     }
 
@@ -656,7 +656,7 @@ class MultiPartParser {
 /* ------------------------------------------------------------------------------- */
 
 private class IllegalCharacterException : IllegalArgumentException {
-    private this(MultiPartParser.State state, byte ch, ByteBuffer buffer) {
+    private this(MultipartParser.State state, byte ch, ByteBuffer buffer) {
         super(format("Illegal character 0x%X", ch));
         // Bug #460642 - don't reveal buffers to end user
         warningf(format("Illegal character 0x%X in state=%s for buffer %s", 
@@ -672,7 +672,7 @@ private class IllegalCharacterException : IllegalArgumentException {
  * HttpChannel.handle). If multiple callbacks are called in sequence (eg headerComplete then messageComplete) from the same point in the parsing then it is
  * sufficient for the caller to process the events only once.
  */
-class MultiPartParserHandler {
+class MultipartParserHandler {
 
     this() {
 

@@ -1,7 +1,7 @@
-module test.codec.http2.model.MultiPartParserTest;
+module test.codec.http2.model.MultipartParserTest;
 
 import hunt.http.codec.http.model.BadMessageException;
-import hunt.http.codec.http.model.MultiPartParser;
+import hunt.http.codec.http.model.MultipartParser;
 
 import hunt.container.BufferUtils;
 import hunt.container.ByteBuffer;
@@ -14,7 +14,7 @@ import hunt.util.Assert;
 import std.algorithm;
 import std.conv;
 
-alias State = MultiPartParser.State;
+alias State = MultipartParser.State;
 
 alias assertTrue = Assert.assertTrue;
 alias assertFalse = Assert.assertFalse;
@@ -24,10 +24,10 @@ alias assertNull = Assert.assertNull;
 alias assertContain = Assert.assertContain;
 
 
-class MultiPartParserTest {
+class MultipartParserTest {
     
     void testEmptyPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         parser.parse(data, false);
@@ -36,7 +36,7 @@ class MultiPartParserTest {
 
     
     void testNoPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         data = BufferUtils.toBuffer("--BOUNDARY   \r\n");
@@ -47,7 +47,7 @@ class MultiPartParserTest {
 
     
     void testPreamble() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n");
@@ -78,7 +78,7 @@ class MultiPartParserTest {
 
     
     void testPreambleCompleteBoundary() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n--BOUNDARY  \r\n");
@@ -89,7 +89,7 @@ class MultiPartParserTest {
 
     
     void testPreambleSplitBoundary() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data;
 
         data = BufferUtils.toBuffer("This is not part of a part\r\n");
@@ -124,7 +124,7 @@ class MultiPartParserTest {
 
     
     void testFirstPartNoFields() {
-        MultiPartParser parser = new MultiPartParser(new MultiPartParserHandler(), "BOUNDARY");
+        MultipartParser parser = new MultipartParser(new MultipartParserHandler(), "BOUNDARY");
         ByteBuffer data = BufferUtils.toBuffer("");
 
         data = BufferUtils.toBuffer("--BOUNDARY\r\n\r\n");
@@ -142,7 +142,7 @@ class MultiPartParserTest {
                 return true;
             }
         };
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -162,7 +162,7 @@ class MultiPartParserTest {
     
     void testFirstPartNoContent() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -181,7 +181,7 @@ class MultiPartParserTest {
     
     void testFirstPartNoContentNoCRLF() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -200,7 +200,7 @@ class MultiPartParserTest {
     
     void testFirstPartContentLookingLikeNoCRLF() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -222,7 +222,7 @@ class MultiPartParserTest {
     
     void testFirstPartPartialContent() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -257,7 +257,7 @@ class MultiPartParserTest {
     
     void testFirstPartShortContent() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -277,7 +277,7 @@ class MultiPartParserTest {
     
     void testFirstPartLongContent() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -301,7 +301,7 @@ class MultiPartParserTest {
     
     void testFirstPartLongContentNoCarriageReturn() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer("");
 
@@ -341,7 +341,7 @@ class MultiPartParserTest {
                 return last;
             }
         };
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         string preamble = "Blah blah blah\r\n--BOUNDARY\r\n\r\n";
         string epilogue = "\r\n--BOUNDARY\r\nBlah blah blah!\r\n";
@@ -360,7 +360,7 @@ class MultiPartParserTest {
     
     void testEpilogue() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer(""
                 ~ "--BOUNDARY\r\n"
@@ -388,7 +388,7 @@ class MultiPartParserTest {
     
     void testMultipleContent() {
         TestHandler handler = new TestHandler();
-        MultiPartParser parser = new MultiPartParser(handler, "BOUNDARY");
+        MultipartParser parser = new MultipartParser(handler, "BOUNDARY");
 
         ByteBuffer data = BufferUtils.toBuffer(""
                 ~ "--BOUNDARY\r\n"
@@ -438,7 +438,7 @@ class MultiPartParserTest {
                 return false;
             }
         };
-        MultiPartParser parser = new MultiPartParser(handler, "AaB03x");
+        MultipartParser parser = new MultipartParser(handler, "AaB03x");
 
         ByteBuffer data = BufferUtils.toBuffer(
                 "--AaB03x\r\n" ~
@@ -472,7 +472,7 @@ class MultiPartParserTest {
             }
         };
 
-        MultiPartParser parser = new MultiPartParser(handler, "---------------------------9051914041544843365972754266");
+        MultipartParser parser = new MultipartParser(handler, "---------------------------9051914041544843365972754266");
         ByteBuffer data = BufferUtils.toBuffer("" ~
                 "POST / HTTP/1.1\n" ~
                 "Host: localhost:8000\n" ~
@@ -607,7 +607,7 @@ class MultiPartParserTest {
             }
         };
 
-        MultiPartParser parser = new MultiPartParser(handler, "WebKitFormBoundary7MA4YWf7OaKlSxkTrZu0gW");
+        MultipartParser parser = new MultipartParser(handler, "WebKitFormBoundary7MA4YWf7OaKlSxkTrZu0gW");
         ByteBuffer data = BufferUtils.toBuffer(""
                 ~ "Content-Type: multipart/form-data; boundary=WebKitFormBoundary7MA4YWf7OaKlSxkTrZu0gW\r\n" ~
                 "\r\n" ~
@@ -633,7 +633,7 @@ class MultiPartParserTest {
 
 
 
-class TestHandler : MultiPartParserHandler {
+class TestHandler : MultipartParserHandler {
     List!(string) fields;
     List!(string) _content;
 
