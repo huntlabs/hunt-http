@@ -10,11 +10,6 @@ import hunt.lang.exception;
 import hunt.logging;
 import hunt.string;
 
-// import javax.servlet.ServletInputStream;
-// import javax.servlet.http.Part;
-// import java.nio.file.StandardCopyOption;
-
-
 import std.array;
 import std.conv;
 import std.file;
@@ -22,6 +17,16 @@ import std.path;
 import std.regex;
 import std.string;
 import std.uni;
+
+
+void deleteOnExit(string file) {
+    if(file.exists) {
+        version(HUNT_DEBUG) infof("File removed: %s", file);
+        file.remove();
+    } else {
+        warningf("File not exists: %s", file);
+    }
+}
 
 /**
  * MultiPartInputStream
@@ -33,7 +38,7 @@ import std.uni;
 class MultiPartFormInputStream {
     
     private int _bufferSize = 16 * 1024;
-    // static MultipartConfigElement __DEFAULT_MULTIPART_CONFIG = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
+    __gshared MultipartConfigElement __DEFAULT_MULTIPART_CONFIG;
     __gshared MultiMap!(Part) EMPTY_MAP;
     protected InputStream _in;
     protected MultipartConfigElement _config;
@@ -47,6 +52,7 @@ class MultiPartFormInputStream {
     protected bool _parsed;
 
     shared static this() {
+        __DEFAULT_MULTIPART_CONFIG = new MultipartConfigElement(tempDir());
         EMPTY_MAP = new MultiMap!(Part)(Collections.emptyMap!(string, List!(Part))());
     }
 
@@ -257,13 +263,10 @@ class MultiPartFormInputStream {
                 }
             } else {
                 // the part data is already written to a temporary file, just rename it
-
-                implementationMissing(false);
-
-                // Path src = _file.toPath();
-                // Path target = src.resolveSibling(fileName);
-                // Files.move(src, target, StandardCopyOption.REPLACE_EXISTING);
-                // _file = target.toFile();
+                string target = dirName(_file) ~ dirSeparator ~ fileName;
+                version(HUNT_DEBUG) tracef("src: %s, target: %s", _file, target);
+                rename(_file, target);
+                _file = target;
             }
         }
 
@@ -459,93 +462,94 @@ class MultiPartFormInputStream {
         _parsed = true;
 
         try {
+            doParse();
+        } catch (Exception e) {
+            warningf("Error occurred while parsing: %s", e.msg);
+            _err = e;
+        }
+    }
 
-            // initialize
-            _parts = new MultiMap!Part();
+    private void doParse() {
+        // initialize
+        _parts = new MultiMap!Part();
 
-            // if its not a multipart request, don't parse it
-            if (_contentType is null || !_contentType.startsWith("multipart/form-data"))
-                return;
+        // if its not a multipart request, don't parse it
+        if (_contentType is null || !_contentType.startsWith("multipart/form-data"))
+            return;
 
-            // sort out the location to which to write the files
-            string location = _config.getLocation();
-            if (location.empty())
-                _tmpDir = _contextTmpDir;
-            else 
-                 _tmpDir = buildPath(_contextTmpDir, location);
+        // sort out the location to which to write the files
+        string location = _config.getLocation();
+        if (location.empty())
+            _tmpDir = _contextTmpDir;
+        else 
+                _tmpDir = buildPath(_contextTmpDir, location);
 
-            if (!_tmpDir.exists())
-                _tmpDir.mkdirRecurse();
+        if (!_tmpDir.exists())
+            _tmpDir.mkdirRecurse();
 
-            string contentTypeBoundary = "";
-            int bstart = cast(int)_contentType.indexOf("boundary=");
-            if (bstart >= 0) {
-                ptrdiff_t bend = _contentType.indexOf(";", bstart);
-                bend = (bend < 0 ? _contentType.length : bend);
-                contentTypeBoundary = QuotedStringTokenizer.unquote(value(_contentType[bstart .. bend]).strip());
-            }
+        string contentTypeBoundary = "";
+        int bstart = cast(int)_contentType.indexOf("boundary=");
+        if (bstart >= 0) {
+            ptrdiff_t bend = _contentType.indexOf(";", bstart);
+            bend = (bend < 0 ? _contentType.length : bend);
+            contentTypeBoundary = QuotedStringTokenizer.unquote(value(_contentType[bstart .. bend]).strip());
+        }
 
-            Handler handler = new Handler();
-            MultiPartParser parser = new MultiPartParser(handler, contentTypeBoundary);
+        Handler handler = new Handler();
+        MultiPartParser parser = new MultiPartParser(handler, contentTypeBoundary);
 
-            // Create a buffer to store data from stream //
-            byte[] data = new byte[_bufferSize];
-            int len = 0;
+        // Create a buffer to store data from stream //
+        byte[] data = new byte[_bufferSize];
+        int len = 0;
 
-            /*
-             * keep running total of size of bytes read from input and throw an exception if exceeds MultipartConfigElement._maxRequestSize
-             */
-            long total = 0;
+        /*
+            * keep running total of size of bytes read from input and throw an exception if exceeds MultipartConfigElement._maxRequestSize
+            */
+        long total = 0;
 
-            while (true) {
+        while (true) {
 
-                len = _in.read(data);
+            len = _in.read(data);
 
-                if (len > 0) {
-                    total += len;
-                    if (_config.getMaxRequestSize() > 0 && total > _config.getMaxRequestSize()) {
-                        _err = new IllegalStateException("Request exceeds maxRequestSize (" ~ 
-                            _config.getMaxRequestSize().to!string() ~ ")");
-                        return;
-                    }
-
-                    ByteBuffer buffer = BufferUtils.toBuffer(data);
-                    buffer.limit(len);
-                    if (parser.parse(buffer, false))
-                        break;
-
-                    if (buffer.hasRemaining())
-                        throw new IllegalStateException("Buffer did not fully consume");
-
-                } else if (len == -1) {
-                    parser.parse(BufferUtils.EMPTY_BUFFER, true);
-                    break;
+            if (len > 0) {
+                total += len;
+                if (_config.getMaxRequestSize() > 0 && total > _config.getMaxRequestSize()) {
+                    _err = new IllegalStateException("Request exceeds maxRequestSize (" ~ 
+                        _config.getMaxRequestSize().to!string() ~ ")");
+                    return;
                 }
 
+                ByteBuffer buffer = BufferUtils.toBuffer(data);
+                buffer.limit(len);
+                if (parser.parse(buffer, false))
+                    break;
+
+                if (buffer.hasRemaining())
+                    throw new IllegalStateException("Buffer did not fully consume");
+
+            } else if (len == -1) {
+                parser.parse(BufferUtils.EMPTY_BUFFER, true);
+                break;
             }
 
-            // check for exceptions
-            if (_err !is null) {
-                return;
-            }
+        }
 
-            // check we read to the end of the message
-            if (parser.getState() != MultiPartParser.State.END) {
-                if (parser.getState() == MultiPartParser.State.PREAMBLE)
-                    _err = new IOException("Missing initial multi part boundary");
-                else
-                    _err = new IOException("Incomplete Multipart");
-            }
-
-            version(HUNT_DEBUG) {
-                tracef("Parsing Complete %s err=%s", parser, _err);
-            }
-
-        } catch (Exception e) {
-            _err = e;
+        // check for exceptions
+        if (_err !is null) {
             return;
         }
 
+        // check we read to the end of the message
+        if (parser.getState() != MultiPartParser.State.END) {
+            if (parser.getState() == MultiPartParser.State.PREAMBLE)
+                _err = new IOException("Missing initial multi part boundary");
+            else
+                _err = new IOException("Incomplete Multipart");
+        }
+
+        version(HUNT_DEBUG) {
+            tracef("Parsing Complete %s err=%s", parser, _err);
+        }
     }
 
     class Handler : MultiPartParserHandler {

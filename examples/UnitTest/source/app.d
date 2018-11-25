@@ -5,6 +5,7 @@ import hunt.util.UnitTest;
 import test.codec.http2.model.HttpFieldsTest;
 import test.codec.http2.model.HttpURIParseTest;
 import test.codec.http2.model.HttpURITest;
+import test.codec.http2.model.MultiPartFormInputStreamTest;
 import test.codec.http2.model.MultiPartParserTest;
 import test.codec.http2.model.QuotedCSVTest;
 import test.codec.http2.model.TestHttpField;
@@ -52,7 +53,8 @@ void main()
 	// testUnits!HttpFieldsTest();
 	// testUnits!HttpURIParseTest();
 	// testUnits!HttpURITest();
-	testUnits!MultiPartParserTest(); 
+	testUnits!MultiPartFormInputStreamTest(); 
+	// testUnits!MultiPartParserTest(); 
 	// testUnits!QuotedCSVTest();
 	// testUnits!TestHttpField();
 	
