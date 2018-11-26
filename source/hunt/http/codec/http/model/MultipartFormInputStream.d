@@ -130,13 +130,8 @@ class MultipartFormInputStream {
              */
             // bool USER = true;
             // bool WORLD = false;
-            import std.ascii : letters;
-            import std.conv : to;
-            import std.random : randomSample;
-            import std.utf : byCodeUnit;
-            auto id = letters.byCodeUnit.randomSample(20).to!string;
-            _file= buildPath(this.outer._tmpDir, "MultiPart-" ~ id);
-            // _file = new File(tempFile, "w");
+            _file= buildPath(this.outer._tmpDir, "MultiPart-" ~ StringUtils.randomId());
+            version(HUNT_DEBUG) trace("Creating temp file: ", _file);
 
             // _file = File.createTempFile("MultiPart", "", this.outer._tmpDir);
             // _file.setReadable(false, WORLD); // (reset) disable it for everyone first
@@ -245,9 +240,13 @@ class MultipartFormInputStream {
          */
         override
         void write(string fileName) {
+            version(HUNT_DEBUG) infof("writing file: _file=%s, target=%s", _file, fileName);
+            if(fileName.empty) {
+                warning("Target file name can't be empty.");
+                return;
+            }
             _temporary = false;
             if (_file.empty) {
-
                 // part data is only in the ByteArrayOutputStream and never been written to disk
                 _file = buildPath(_tmpDir, fileName);
 
