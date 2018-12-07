@@ -24,7 +24,7 @@ import hunt.util.Lifecycle;
 */
 class HttpServer : AbstractLifecycle {
 
-    private NetServer _server;
+    private AbstractServer _server;
     private Http2Configuration http2Configuration;
     private string host;
     private int port;
@@ -64,7 +64,7 @@ class HttpServer : AbstractLifecycle {
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(http2ServerHandler);
 
-        _server = NetUtil.createNetServer();
+        _server = NetUtil.createNetServer!(ServerThreadMode.Single)();
         _server.setConfig(c.getTcpConfiguration());
 
         _server.connectionHandler((NetSocket sock) {

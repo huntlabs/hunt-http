@@ -8,6 +8,7 @@ import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.WebSocketHandler;
 
+import hunt.datetime;
 import hunt.logging;
 import hunt.util.MimeType;
 
@@ -39,10 +40,9 @@ void main(string[] args) {
                     debug trace(request.toString()); 
                     // trace(request.getFields()); 
 
-                    string currentTime = Clock.currTime.toString();
                     HttpFields responsFields = response.getFields();
                     responsFields.put(HttpHeader.SERVER, "Hunt-HTTP/1.0");
-                    responsFields.put(HttpHeader.DATE, currentTime);
+                    responsFields.put(HttpHeader.DATE, DateTimeHelper.getTimeAsGMT());
                         
                     switch (path) {
                         case "/plaintext": {
@@ -67,7 +67,6 @@ void main(string[] args) {
                         }
 
                         default:
-                            responsFields.put(HttpHeader.DATE, currentTime);
                             response.setStatus(HttpStatus.NOT_FOUND_404);
                             outputStream.write("resource not found");
                             break;
