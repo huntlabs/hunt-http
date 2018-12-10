@@ -5,7 +5,7 @@ import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
-class HttpClientRequest : MetaData.Request {
+class HttpClientRequest : HttpRequest {
 
 	this(string method, string uri) {
 		super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, new HttpFields());
@@ -23,7 +23,7 @@ class HttpClientRequest : MetaData.Request {
 		super(method, uri, ver, new HttpFields(), contentLength);
 	}
 
-	this(MetaData.Request request) {
+	this(HttpRequest request) {
 		super(request);
 	}
 }

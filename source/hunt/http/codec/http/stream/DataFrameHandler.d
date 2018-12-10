@@ -14,7 +14,7 @@ import hunt.util.functional;
 abstract class DataFrameHandler {
 
     static void handleDataFrame(DataFrame dataFrame, Callback callback,
-                                 MetaData.Request request, MetaData.Response response,
+                                 HttpRequest request, HttpResponse response,
                                  HttpOutputStream output, HttpConnection connection,
                                  HttpHandler httpHandler) {
         try {

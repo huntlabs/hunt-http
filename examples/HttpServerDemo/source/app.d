@@ -26,6 +26,7 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 */
 
 void main(string[] args) {
+    DateTimeHelper.startClock();
     HttpServer server = new HttpServer("0.0.0.0", 8080,
             new Http2Configuration(), 
 
@@ -36,8 +37,8 @@ void main(string[] args) {
                     scope(exit) outputStream.close();
 
                     string path = request.getURI().getPath(); 
-                    debug trace(" request path: ", path);
-                    debug trace(request.toString()); 
+                    // debug trace(" request path: ", path);
+                    // debug trace(request.toString()); 
                     // trace(request.getFields()); 
 
                     HttpFields responsFields = response.getFields();

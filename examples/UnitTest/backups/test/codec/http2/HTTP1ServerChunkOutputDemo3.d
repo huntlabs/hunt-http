@@ -27,14 +27,14 @@ public class Http1ServerChunkOutputDemo3 {
 				new ServerHttpHandlerAdapter() {
 
 					override
-					public void earlyEOF(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+					public void earlyEOF(HttpRequest request, HttpResponse response, HttpOutputStream output,
 										 HttpConnection connection) {
 						writeln("the server connection " ~ connection.getSessionId() ~ " is early EOF");
 					}
 
 					override
-					public void badMessage(int status, string reason, MetaData.Request request,
-										   MetaData.Response response, HttpOutputStream output, HttpConnection connection) {
+					public void badMessage(int status, string reason, HttpRequest request,
+										   HttpResponse response, HttpOutputStream output, HttpConnection connection) {
 						writeln("the server received a bad message, " ~ status ~ "|" ~ reason);
 
 						try {
@@ -46,7 +46,7 @@ public class Http1ServerChunkOutputDemo3 {
 					}
 
 					override
-					public bool messageComplete(MetaData.Request request, MetaData.Response response,
+					public bool messageComplete(HttpRequest request, HttpResponse response,
 												   HttpOutputStream outputStream, HttpConnection connection) {
 						HttpURI uri = request.getURI();
 						writeln("current path is " ~ uri.getPath());

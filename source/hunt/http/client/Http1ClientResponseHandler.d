@@ -21,8 +21,8 @@ alias ResponseHandler = HttpParser.ResponseHandler;
 */
 class Http1ClientResponseHandler : ResponseHandler {
     package(hunt.http.client)  Http1ClientConnection connection;
-    package(hunt.http.client)  MetaData.Response response;
-    package(hunt.http.client)  MetaData.Request request;
+    package(hunt.http.client)  HttpResponse response;
+    package(hunt.http.client)  HttpRequest request;
     package(hunt.http.client) HttpOutputStream outputStream;
     protected ClientHttpHandler clientHttpHandler;
     protected HttpFields trailer;

@@ -137,10 +137,10 @@ class MetaDataBuilder {
 			_fields = new HttpFields(std.algorithm.max(10, fields.size() + 5));
 
 			if (!_method.empty)
-				return new MetaData.Request(_method, _scheme, _authority, _path, HttpVersion.HTTP_2, fields,
+				return new HttpRequest(_method, _scheme, _authority, _path, HttpVersion.HTTP_2, fields,
 						_contentLength);
 			if (_status != 0)
-				return new MetaData.Response(HttpVersion.HTTP_2, _status, fields, _contentLength);
+				return new HttpResponse(HttpVersion.HTTP_2, _status, fields, _contentLength);
 			return new MetaData(HttpVersion.HTTP_2, fields, _contentLength);
 		} finally {
 			_status = 0;

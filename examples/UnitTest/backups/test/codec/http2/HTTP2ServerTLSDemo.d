@@ -2,8 +2,8 @@ module test.codec.http2;
 
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model.HttpURI;
-import hunt.http.codec.http.model.MetaData.Request;
-import hunt.http.codec.http.model.MetaData.Response;
+import hunt.http.codec.http.model.HttpRequest;
+import hunt.http.codec.http.model.HttpResponse;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;

@@ -1,7 +1,6 @@
 module hunt.http.codec.http.encode.HttpGenerator;
 
 import hunt.http.codec.http.model;
-
 // import hunt.http.codec.http.model.HttpField;
 // import hunt.http.codec.http.model.HttpFields;
 // import hunt.http.codec.http.model.HttpMethod;
@@ -11,16 +10,15 @@ import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
-
 import hunt.http.environment;
 import hunt.container;
-
+import hunt.datetime;
 import hunt.lang.exception;
 import hunt.lang.common;
+import hunt.logging;
 import hunt.string;
 
-import hunt.logging;
-
+import core.time;
 import std.conv;
 import std.format;
 import std.string;
@@ -36,14 +34,12 @@ import std.string;
  * methods/headers
  */
 class HttpGenerator {
-    
-
     // static bool __STRICT = bool.getBoolean("hunt.http.codec.http.encode.HttpGenerator.STRICT");
 
     private enum byte[] __colon_space = [':', ' '];
-    __gshared MetaData.Response CONTINUE_100_INFO;
-    __gshared MetaData.Response PROGRESS_102_INFO;
-    __gshared MetaData.Response RESPONSE_500_INFO;
+    __gshared HttpResponse CONTINUE_100_INFO;
+    __gshared HttpResponse PROGRESS_102_INFO;
+    __gshared HttpResponse RESPONSE_500_INFO;
 
 
     // states
@@ -81,12 +77,12 @@ class HttpGenerator {
     shared static this() {
         __assumedContentMethods[HttpMethod.POST.asString()] = true;
         __assumedContentMethods[HttpMethod.PUT.asString()] = true;
-        CONTINUE_100_INFO = new MetaData.Response(HttpVersion.HTTP_1_1, 100, null, null, -1);
-        PROGRESS_102_INFO = new MetaData.Response(HttpVersion.HTTP_1_1, 102, null, null, -1);
+        CONTINUE_100_INFO = new HttpResponse(HttpVersion.HTTP_1_1, 100, null, null, -1);
+        PROGRESS_102_INFO = new HttpResponse(HttpVersion.HTTP_1_1, 102, null, null, -1);
         HttpFields hf = new HttpFields();
         hf.put(HttpHeader.CONNECTION, HttpHeaderValue.CLOSE);
 
-        RESPONSE_500_INFO = new MetaData.Response(HttpVersion.HTTP_1_1, HttpStatus.INTERNAL_SERVER_ERROR_500, null, hf, 0);
+        RESPONSE_500_INFO = new HttpResponse(HttpVersion.HTTP_1_1, HttpStatus.INTERNAL_SERVER_ERROR_500, null, hf, 0);
     }
 
     /* ------------------------------------------------------------------------------- */
@@ -100,6 +96,7 @@ class HttpGenerator {
     /* ------------------------------------------------------------------------------- */
     // data
     private bool _needCRLF = false;
+    private MonoTime startTime;
 
     /* ------------------------------------------------------------------------------- */
     this() {
@@ -121,18 +118,6 @@ class HttpGenerator {
         _needCRLF = false;
         _trailers = null;
     }
-
-    /* ------------------------------------------------------------ */
-    // deprecated("")
-    // bool getSendServerVersion() {
-    //     return (_send & SEND_SERVER) != 0;
-    // }
-
-    /* ------------------------------------------------------------ */
-    // deprecated("")
-    // void setSendServerVersion(bool sendServerVersion) {
-    //     throw new UnsupportedOperationException();
-    // }
 
     /* ------------------------------------------------------------ */
     State getState() {
@@ -201,10 +186,12 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------ */
-    Result generateRequest(MetaData.Request info, ByteBuffer header, ByteBuffer chunk, ByteBuffer content, bool last) {
+    Result generateRequest(HttpRequest metaData, ByteBuffer header, 
+        ByteBuffer chunk, ByteBuffer content, bool last) {
+
         switch (_state) {
             case State.START: {
-                if (info is null)
+                if (metaData is null)
                     return Result.NEED_INFO;
 
                 if (header is null)
@@ -214,8 +201,8 @@ class HttpGenerator {
                 // if (_persistent == null) 
                 {
                     // HttpVersion v = HttpVersion.HTTP_1_0;
-                    _persistent = info.getHttpVersion() >  HttpVersion.HTTP_1_0;
-                    if (!_persistent && HttpMethod.CONNECT.isSame(info.getMethod()))
+                    _persistent = metaData.getHttpVersion() >  HttpVersion.HTTP_1_0;
+                    if (!_persistent && HttpMethod.CONNECT.isSame(metaData.getMethod()))
                         _persistent = true;
                 }
 
@@ -223,14 +210,14 @@ class HttpGenerator {
                 int pos = BufferUtils.flipToFill(header);
                 try {
                     // generate ResponseLine
-                    generateRequestLine(info, header);
+                    generateRequestLine(metaData, header);
 
-                    if (info.getHttpVersion() == HttpVersion.HTTP_0_9)
+                    if (metaData.getHttpVersion() == HttpVersion.HTTP_0_9)
                         throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, "HTTP/0.9 not supported");
 
-                    generateHeaders(info, header, content, last);
+                    generateHeaders(metaData, header, content, last);
 
-                    bool expect100 = info.getFields().contains(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE.asString());
+                    bool expect100 = metaData.getFields().contains(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE.asString());
 
                     if (expect100) {
                         _state = State.COMMITTED;
@@ -267,8 +254,7 @@ class HttpGenerator {
 
             case State.END:
                 if (BufferUtils.hasContent(content)) {
-                    version(HUNT_DEBUG) 
-                    {
+                    version(HUNT_DEBUG) {
                         tracef("discarding content in COMPLETING");
                     }
                     BufferUtils.clear(content);
@@ -303,6 +289,13 @@ class HttpGenerator {
     }
 
     private Result completing(ByteBuffer chunk, ByteBuffer content) {
+        version(HUNT_METRIC) {
+            scope(exit) {
+                Duration timeElapsed = MonoTime.currTime - startTime;
+                warningf("generating completed with cost: %d microseconds", 
+                    timeElapsed.total!(TimeUnit.Microsecond)());
+            }
+        }
         if (BufferUtils.hasContent(content)) {
             version(HUNT_DEBUG)
                 tracef("discarding content in COMPLETING");
@@ -344,22 +337,22 @@ class HttpGenerator {
 
     }
 
-
     /* ------------------------------------------------------------ */
-    // deprecated("")
-    // Result generateResponse(MetaData.Response info, ByteBuffer header, ByteBuffer chunk, ByteBuffer content, bool last) throws IOException {
-    //     return generateResponse(info, false, header, chunk, content, last);
-    // }
-
-    /* ------------------------------------------------------------ */
-    Result generateResponse(MetaData.Response info, bool head, ByteBuffer header, ByteBuffer chunk, ByteBuffer content, bool last){
+    Result generateResponse(HttpResponse metaData, bool head, ByteBuffer header, 
+        ByteBuffer chunk, ByteBuffer content, bool last){
         switch (_state) {
             case State.START: {
-                if (info is null)
+                if (metaData is null)
                     return Result.NEED_INFO;
-                HttpVersion ver = info.getHttpVersion();
-                if (ver == HttpVersion.Null)
+                HttpVersion ver = metaData.getHttpVersion();
+                if (ver == HttpVersion.Null) {
                     throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, "No version");
+                }
+                
+                version(HUNT_METRIC) {
+                    startTime = MonoTime.currTime;
+                    debug info("generating response...");
+                }
                 switch (ver.getVersion()) {
                     case HttpVersion.HTTP_1_0.getVersion():
                         _persistent = false;
@@ -386,10 +379,10 @@ class HttpGenerator {
                 int pos = BufferUtils.flipToFill(header);
                 try {
                     // generate ResponseLine
-                    generateResponseLine(info, header);
+                    generateResponseLine(metaData, header);
 
                     // Handle 1xx and no content responses
-                    int status = info.getStatus();
+                    int status = metaData.getStatus();
                     if (status >= 100 && status < 200) {
                         _noContentResponse = true;
 
@@ -402,7 +395,7 @@ class HttpGenerator {
                         _noContentResponse = true;
                     }
 
-                    generateHeaders(info, header, content, last);
+                    generateHeaders(metaData, header, content, last);
 
                     // handle the content.
                     int len = BufferUtils.length(content);
@@ -422,6 +415,14 @@ class HttpGenerator {
                     BufferUtils.flipToFlush(header, pos);
                 }
 
+                version(HUNT_METRIC) {
+                    // debug infof("_state: %s", _state);
+                    if(_state == State.COMMITTED) {
+                        Duration timeElapsed = MonoTime.currTime - startTime;
+                        warningf("comitted with cost: %d microseconds", 
+                            timeElapsed.total!(TimeUnit.Microsecond)());
+                    }
+                }
                 return Result.FLUSH;
             }
 
@@ -439,6 +440,7 @@ class HttpGenerator {
             }
 
             case State.END:
+                info("444444");
                 if (BufferUtils.hasContent(content)) {
                     version(HUNT_DEBUG) {
                         tracef("discarding content in COMPLETING");
@@ -447,8 +449,11 @@ class HttpGenerator {
                 }
                 return Result.DONE;
 
-            default:
-                throw new IllegalStateException("");
+            default: {
+                string msg = format("bad generator state: %s", _state);
+                warning(msg);
+                throw new IllegalStateException(msg);
+            }
         }
     }
 
@@ -492,7 +497,7 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------ */
-    private void generateRequestLine(MetaData.Request request, ByteBuffer header) {
+    private void generateRequestLine(HttpRequest request, ByteBuffer header) {
         header.put(StringUtils.getBytes(request.getMethod()));
         header.put(cast(byte) ' ');
         header.put(StringUtils.getBytes(request.getURIString()));
@@ -502,7 +507,7 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------ */
-    private void generateResponseLine(MetaData.Response response, ByteBuffer header) {
+    private void generateResponseLine(HttpResponse response, ByteBuffer header) {
         // Look for prepared response line
         int status = response.getStatus();
         PreparedResponse preprepared = status < __preprepared.length ? __preprepared[status] : null;
@@ -545,45 +550,48 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------ */
-    private void generateHeaders(MetaData info, ByteBuffer header, ByteBuffer content, bool last) {
-        MetaData.Request request = (typeid(info) == typeid(MetaData.Request)) ? cast(MetaData.Request) info : null;
-        MetaData.Response response = (typeid(info) == typeid(MetaData.Response)) ? cast(MetaData.Response) info : null;
+    private void generateHeaders(MetaData metaData, ByteBuffer header, ByteBuffer content, bool last) {
+        HttpRequest request = cast(HttpRequest) metaData;
+        HttpResponse response = cast(HttpResponse) metaData;
 
         // version(HUNT_DEBUG) {
-        //     tracef("Header fields:\n%s", info.getFields().toString());
-        //     tracef("generateHeaders %s last=%s content=%s", info.toString(), last, BufferUtils.toDetailString(content));
+        //     tracef("Header fields:\n%s", metaData.getFields().toString());
+        //     tracef("generateHeaders %s last=%s content=%s", metaData.toString(), last, BufferUtils.toDetailString(content));
         // }
 
         // default field values
         int send = _send;
         HttpField transfer_encoding = null;
-        bool http11 = info.getHttpVersion() == HttpVersion.HTTP_1_1;
+        bool http11 = metaData.getHttpVersion() == HttpVersion.HTTP_1_1;
         bool close = false;
-        _trailers = http11 ? info.getTrailerSupplier() : null;
+        _trailers = http11 ? metaData.getTrailerSupplier() : null;
         bool chunked_hint = _trailers != null;
         bool content_type = false;
-        long content_length = info.getContentLength();
+        long content_length = metaData.getContentLength();
         bool content_length_field = false;
 
         // Generate fields
-        HttpFields fields = info.getFields();
+        HttpFields fields = metaData.getFields();
         if (fields !is null) {
-            int n = fields.size();
-            for (int f = 0; f < n; f++) {
+            for (int f = 0; f < fields.size(); f++) {
                 HttpField field = fields.getField(f);
                 string v = field.getValue();
                 if (v == null || v.length == 0)
                     continue; // rfc7230 does not allow no value
 
                 HttpHeader h = field.getHeader();
-                if (h == HttpHeader.Null)
+                if (h == HttpHeader.Null) {
                     putTo(field, header);
+                }
                 else {
                         if(h == HttpHeader.CONTENT_LENGTH) {
                             if (content_length < 0)
                                 content_length = field.getLongValue();
-                            else if (content_length != field.getLongValue())
-                                throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, format("Incorrect Content-Length %d!=%d", content_length, field.getLongValue()));
+                            else if (content_length != field.getLongValue()) {
+                                throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, 
+                                    format("Incorrect Content-Length %d!=%d", 
+                                        content_length, field.getLongValue()));
+                            }
                             content_length_field = true;
                         }
                         else if(h == HttpHeader.CONTENT_TYPE) {
@@ -694,9 +702,9 @@ class HttpGenerator {
             throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, "Unknown content length for request");
         }
 
-        version(HUNT_DEBUG) {
-            trace("End Of Content: ", _endOfContent.to!string());
-        }
+        // version(HUNT_DEBUG) {
+        //     trace("End Of Content: ", _endOfContent.to!string());
+        // }
         // Add transfer encoding if it is not chunking
         if (transfer_encoding !is null) {
             if (chunked_hint) {

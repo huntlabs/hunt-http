@@ -68,11 +68,11 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
 
                 MetaData metaData = frame.getMetaData();
                 Assert.assertTrue(metaData.isRequest());
-                final MetaData.Request request = (MetaData.Request) metaData;
+                final HttpRequest request = (HttpRequest) metaData;
 
                 if (frame.isEndStream()) {
                     if (request.getURI().getPath().equals("/index")) {
-                        MetaData.Response response = new MetaData.Response(HttpVersion.HTTP_2, 200, new HttpFields());
+                        HttpResponse response = new HttpResponse(HttpVersion.HTTP_2, 200, new HttpFields());
                         HeadersFrame headersFrame = new HeadersFrame(stream.getId(), response, null, true);
                         stream.headers(headersFrame, Callback.NOOP);
                     }
@@ -92,7 +92,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
                         writeln("Server stream on data: " ~ frame);
                         contentList.add(frame.getData());
                         if (frame.isEndStream()) {
-                            MetaData.Response response = new MetaData.Response(HttpVersion.HTTP_2, 200, new HttpFields());
+                            HttpResponse response = new HttpResponse(HttpVersion.HTTP_2, 200, new HttpFields());
                             HeadersFrame responseFrame = new HeadersFrame(stream.getId(), response, null, false);
                             writeln("Server session on data end: " ~ BufferUtils.toString(contentList));
                             stream.headers(responseFrame, new Callback() {
@@ -176,7 +176,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
         fields.put(HttpHeader.ACCEPT, "text/html");
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
         fields.put(HttpHeader.CONTENT_LENGTH, "28");
-        MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
+        HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
                 new HostPortHttpField(host ~ ":" ~ port), "/data", HttpVersion.HTTP_2, fields);
 
         FuturePromise<Stream> streamPromise = new FuturePromise<>();

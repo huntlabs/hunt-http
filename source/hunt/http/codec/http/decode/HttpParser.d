@@ -3,12 +3,14 @@ module hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
-import hunt.lang.exception;
-import hunt.util.TypeUtils;
-import hunt.string;
-
 import hunt.container;
+import hunt.datetime;
+import hunt.lang.exception;
 import hunt.logging;
+import hunt.string;
+import hunt.util.TypeUtils;
+
+import core.time;
 
 import std.algorithm;
 import std.array;
@@ -72,6 +74,7 @@ private bool contains(T)(T[] items, T item) {
 class HttpParser {
 
     enum INITIAL_URI_LENGTH = 256;
+    private MonoTime startTime;
 
     /**
      * Cache of common {@link HttpField}s including: <UL>
@@ -274,6 +277,9 @@ class HttpParser {
     /* ------------------------------------------------------------------------------- */
     private this(RequestHandler requestHandler, ResponseHandler responseHandler, 
         int maxHeaderBytes, HttpCompliance compliance) {
+        version (HUNT_DEBUG) {
+            warning("create http parser");
+        }
         _string = new StringBuilder();
         _uri = new StringBuilder(INITIAL_URI_LENGTH);
         _handler = requestHandler !is null ? cast(HttpHandler)requestHandler : cast(HttpHandler)responseHandler;
@@ -720,10 +726,11 @@ class HttpParser {
 
                             // try quick look ahead for HTTP Version
                             HttpVersion ver;
-                            if (buffer.position() > 0 && buffer.hasArray())
-                                ver = HttpVersion.lookAheadGet(buffer.array(), buffer.arrayOffset() + buffer.position() - 1, buffer.arrayOffset() + buffer.limit());
-                            else
-                            {
+                            if (buffer.position() > 0 && buffer.hasArray()) {
+                                ver = HttpVersion.lookAheadGet(buffer.array(), 
+                                    buffer.arrayOffset() + buffer.position() - 1, 
+                                    buffer.arrayOffset() + buffer.limit());
+                            } else {
                                 string key = buffer.getString(0, buffer.remaining());
                                 ver = HttpVersion.fromString(key);
                             }
@@ -1249,6 +1256,10 @@ class HttpParser {
         try {
             // Start a request/response
             if (_state == State.START) {
+                version(HUNT_METRIC) {
+                    startTime = MonoTime.currTime;
+                    info("start a new parsing process...");
+                }                
                 _version = HttpVersion.Null;
                 _method = HttpMethod.Null;
                 _methodString = null;
@@ -1260,8 +1271,7 @@ class HttpParser {
 
             // Request/response line
             if (_state >= State.START && _state < State.HEADER) {
-                if (parseLine(buffer))
-                {
+                if (parseLine(buffer)) {
                     tracef("after parseLine =>%s", buffer.toString());
                     // return true;
                 }
@@ -1269,8 +1279,7 @@ class HttpParser {
 
             // parse headers
             if (_state == State.HEADER) {
-                if (parseFields(buffer))
-                {
+                if (parseFields(buffer)) {
                     version(HUNT_DEBUG) tracef("after parseFields =>%s", buffer.toString());
                     return true;
                 }
@@ -1556,6 +1565,13 @@ class HttpParser {
         version(HUNT_DEBUG)
             tracef("%s --> %s", _state, state);
         _state = state;
+    
+        version(HUNT_METRIC) {
+            if(state == State.END) {
+                Duration timeElapsed = MonoTime.currTime - startTime;
+                warningf("parsing ended with cost: %d microseconds", timeElapsed.total!(TimeUnit.Microsecond)());
+            }
+        }
     }
 
     /* ------------------------------------------------------------------------------- */
@@ -1570,8 +1586,7 @@ class HttpParser {
         return _fieldCache;
     }
 
-    HttpField getCachedField(string name)
-    {
+    HttpField getCachedField(string name) {
         return _fieldCache.get(name);
     }
     

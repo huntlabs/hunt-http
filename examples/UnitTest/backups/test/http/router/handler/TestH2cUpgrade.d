@@ -86,7 +86,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         }
 
         override
-        public void continueToSendData(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+        public void continueToSendData(HttpRequest request, HttpResponse response, HttpOutputStream output,
                                        HttpConnection connection) {
             writeln("client received 100 continue");
             if (buffers != null) {
@@ -103,7 +103,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         }
 
         override
-        public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
+        public bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
                                HttpOutputStream output,
                                HttpConnection connection) {
             writeln("client received data: " ~ BufferUtils.toUTF8String(item));
@@ -112,13 +112,13 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         }
 
         override
-        public void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,
+        public void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
                                HttpOutputStream output, HttpConnection connection) {
             writeln("Client received the bad message. " ~ reason);
         }
 
         override
-        public void earlyEOF(MetaData.Request request, MetaData.Response response,
+        public void earlyEOF(HttpRequest request, HttpResponse response,
                              HttpOutputStream output,
                              HttpConnection connection) {
             writeln("Client is early EOF. ");
@@ -145,7 +145,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
         ClientHttpHandler upgradeHandler = new TestH2cHandler() {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 printResponse(request, response, BufferUtils.toString(contentList));
@@ -157,7 +157,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
         ClientHttpHandler h2ResponseHandler = new TestH2cHandler() {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 writeln("Client received init status: " ~ response.getStatus());
@@ -176,12 +176,12 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
 
     private void test404(Phaser phaser, Http2ClientConnection clientConnection) {
         writeln("Client test 404.");
-        MetaData.Request get = new MetaData.Request("GET", HttpScheme.HTTP,
+        HttpRequest get = new HttpRequest("GET", HttpScheme.HTTP,
                 new HostPortHttpField(host ~ ":" ~ port),
                 "/test2", HttpVersion.HTTP_1_1, new HttpFields());
         clientConnection.send(get, new TestH2cHandler() {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 printResponse(request, response, BufferUtils.toString(contentList));
@@ -197,14 +197,14 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         writeln("Client sends data.");
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
-        MetaData.Request post2 = new MetaData.Request("POST", HttpScheme.HTTP,
+        HttpRequest post2 = new HttpRequest("POST", HttpScheme.HTTP,
                 new HostPortHttpField(host ~ ":" ~ port),
                 "/data", HttpVersion.HTTP_1_1, fields);
         clientConnection.send(post2, new ByteBuffer[]{
                 ByteBuffer.wrap("test data 2".getBytes("UTF-8")),
                 ByteBuffer.wrap("finished test data 2".getBytes("UTF-8"))}, new TestH2cHandler() {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 return dataComplete(phaser, BufferUtils.toString(contentList), request, response);
@@ -216,14 +216,14 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         writeln("Client sends data with continuation");
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
-        MetaData.Request post = new MetaData.Request("POST", HttpScheme.HTTP,
+        HttpRequest post = new HttpRequest("POST", HttpScheme.HTTP,
                 new HostPortHttpField(host ~ ":" ~ port),
                 "/data", HttpVersion.HTTP_1_1, fields);
         clientConnection.sendRequestWithContinuation(post, new TestH2cHandler(new ByteBuffer[]{
                 ByteBuffer.wrap("hello world!".getBytes("UTF-8")),
                 ByteBuffer.wrap("big hello world!".getBytes("UTF-8"))}) {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 return dataComplete(phaser, BufferUtils.toString(contentList), request, response);
@@ -231,7 +231,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         });
     }
 
-    private void printResponse(MetaData.Request request, MetaData.Response response, string content) {
+    private void printResponse(HttpRequest request, HttpResponse response, string content) {
         writeln("client---------------------------------");
         writeln("client received frame: " ~ request ~ ", " ~ response);
         writeln(response.getFields());
@@ -240,7 +240,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         writeln();
     }
 
-    public bool dataComplete(Phaser phaser, string content, MetaData.Request request, MetaData.Response response) {
+    public bool dataComplete(Phaser phaser, string content, HttpRequest request, HttpResponse response) {
         printResponse(request, response, content);
         Assert.assertThat(response.getStatus(), is(HttpStatus.OK_200));
         Assert.assertThat(content, is("Receive data stream successful. Thank you!"));
@@ -256,27 +256,27 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         HttpServer server = new HttpServer(host, port, config, new ServerHttpHandlerAdapter() {
 
             override
-            public void badMessage(int status, string reason, MetaData.Request request, MetaData.Response response,
+            public void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
                                    HttpOutputStream output, HttpConnection connection) {
                 writeln("Server received the bad message. " ~ reason);
             }
 
             override
-            public void earlyEOF(MetaData.Request request, MetaData.Response response,
+            public void earlyEOF(HttpRequest request, HttpResponse response,
                                  HttpOutputStream output,
                                  HttpConnection connection) {
                 writeln("Server is early EOF. ");
             }
 
             override
-            public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+            public bool content(ByteBuffer item, HttpRequest request, HttpResponse response, HttpOutputStream output,
                                    HttpConnection connection) {
 //                writeln("Server received data: " ~ BufferUtils.toString(item, StandardCharsets.UTF_8));
                 return false;
             }
 
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response, HttpOutputStream outputStream,
+            public bool messageComplete(HttpRequest request, HttpResponse response, HttpOutputStream outputStream,
                                            HttpConnection connection) {
                 writeln("Server received request: " ~ request ~ ", " ~ outputStream.getClass() ~ ", " ~ connection.getHttpVersion());
                 HttpURI uri = request.getURI();

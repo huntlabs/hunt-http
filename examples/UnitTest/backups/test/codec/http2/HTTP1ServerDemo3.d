@@ -28,14 +28,14 @@ public class Http1ServerDemo3 {
 				new ServerHttpHandlerAdapter() {
 
 					override
-					public void earlyEOF(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+					public void earlyEOF(HttpRequest request, HttpResponse response, HttpOutputStream output,
 										 HttpConnection connection) {
 						writeln("the server connection " ~ connection.getSessionId() ~ " is early EOF");
 					}
 
 					override
-					public void badMessage(int status, string reason, MetaData.Request request,
-										   MetaData.Response response, HttpOutputStream output, HttpConnection connection) {
+					public void badMessage(int status, string reason, HttpRequest request,
+										   HttpResponse response, HttpOutputStream output, HttpConnection connection) {
 						writeln("the server received a bad message, " ~ status ~ "|" ~ reason);
 
 						try {
@@ -47,7 +47,7 @@ public class Http1ServerDemo3 {
 					}
 
 					override
-					public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
+					public bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
 										   HttpOutputStream output, HttpConnection connection) {
 						System.out
 								.println("server received data: " ~ BufferUtils.toString(item, StandardCharsets.UTF_8));
@@ -55,7 +55,7 @@ public class Http1ServerDemo3 {
 					}
 
 					override
-					public bool accept100Continue(MetaData.Request request, MetaData.Response response,
+					public bool accept100Continue(HttpRequest request, HttpResponse response,
 													 HttpOutputStream output, HttpConnection connection) {
 						writeln(
 								"the server received a 100 continue header, the path is " ~ request.getURI().getPath());
@@ -63,7 +63,7 @@ public class Http1ServerDemo3 {
 					}
 
 					override
-					public bool messageComplete(MetaData.Request request, MetaData.Response response,
+					public bool messageComplete(HttpRequest request, HttpResponse response,
 												   HttpOutputStream outputStream, HttpConnection connection) {
 						HttpURI uri = request.getURI();
 						writeln("current path is " ~ uri.getPath());

@@ -61,93 +61,6 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
     private bool upgradeWebSocketComplete = false; // new bool(false);
     private ResponseHandlerWrap wrap;
 
-    private static class ResponseHandlerWrap : ResponseHandler {
-
-        private Http1ClientResponseHandler writing; // = new AtomicReference<)();
-        private int status;
-        private string reason;
-        private Http1ClientConnection connection;
-
-        void badMessage(BadMessageException failure) {
-            badMessage(failure.getCode(), failure.getReason());
-        }
-
-        override
-        void earlyEOF() {
-            Http1ClientResponseHandler h = writing;
-            if (h !is null) {
-                h.earlyEOF();
-            } else {
-                IOUtils.close(connection);
-            }
-
-            writing = null;
-        }
-
-
-        override
-        void parsedHeader(HttpField field) {
-            writing.parsedHeader(field);
-        }
-
-        override
-        bool headerComplete() {
-            return writing.headerComplete();
-        }
-
-        override
-        bool content(ByteBuffer item) {
-            return writing.content(item);
-        }
-
-        override
-        bool contentComplete() {
-            return writing.contentComplete();
-        }
-
-        override
-        void parsedTrailer(HttpField field) {
-            writing.parsedTrailer(field);
-        }
-
-        override
-        bool messageComplete() {
-            if (status == 100 && "Continue".equalsIgnoreCase(reason)) {
-                tracef("client received the 100 Continue response");
-                connection.getParser().reset();
-                return true;
-            } else {
-                auto r = writing.messageComplete();
-                writing = null;                
-                return r;
-            }
-        }
-
-        override
-        void badMessage(int status, string reason) {
-            Http1ClientResponseHandler h = writing;
-            writing = null;                
-            if (h !is null) {
-                h.badMessage(status, reason);
-            } else {
-                IOUtils.close(connection);
-            }
-        }
-
-        override
-        int getHeaderCacheSize() {
-            return 1024;
-        }
-
-        override
-        bool startResponse(HttpVersion ver, int status, string reason) {
-            this.status = status;
-            this.reason = reason;
-            return writing.startResponse(ver, status, reason);
-        }
-
-    }
-
     this(Http2Configuration config, TcpSession tcpSession, SecureSession secureSession) {
         this(config, secureSession, tcpSession, new ResponseHandlerWrap());
     }
@@ -188,7 +101,8 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
     void upgradeHttp2(Request request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
                              ClientHttpHandler upgradeHandler,
                              ClientHttpHandler http2ResponseHandler) {
-        Promise!(Stream) initStream = new Http2ClientResponseHandler.ClientStreamPromise(request, new class DefaultPromise!(HttpOutputStream) {
+        Promise!(Stream) initStream = new Http2ClientResponseHandler.ClientStreamPromise(request, 
+            new class DefaultPromise!(HttpOutputStream) {
 
             override
             void failed(Exception x) {
@@ -271,7 +185,7 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         send(request, handler);
     }
 
-    bool upgradeProtocolComplete(MetaData.Request request, MetaData.Response response) {
+    bool upgradeProtocolComplete(HttpRequest request, HttpResponse response) {
         switch (ProtocolHelper.from(response)) {
             case HttpProtocol.H2: {
                 if (http2ConnectionPromise !is null && http2SessionListener !is null && http2Connection !is null) {
@@ -409,58 +323,15 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         promise.succeeded(getHttpOutputStream(request, handler));
     }
 
-    static class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
-
-        private Http1ClientConnection connection;
-        private HttpGenerator httpGenerator;
-
-        private this(Http1ClientConnection connection, Request request) {
-            super(request, true);
-            this.connection = connection;
-            httpGenerator = new HttpGenerator();
-        }
-
-        override
-        protected void generateHttpMessageSuccessfully() {
-            tracef("client session %s generates the HTTP message completely", connection.tcpSession.getSessionId());
-        }
-
-        override
-        protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,
-                                                        HttpGenerator.State actualState,
-                                                        HttpGenerator.Result expectedResult,
-                                                        HttpGenerator.State expectedState) {
-            errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]", actualResult, actualState, expectedResult, expectedState);
-            throw new IllegalStateException("client generates http message exception.");
-        }
-
-        override
-        protected ByteBuffer getHeaderByteBuffer() {
-            return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestHeadLength());
-        }
-
-        override
-        protected ByteBuffer getTrailerByteBuffer() {
-            return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestTrailerLength());
-        }
-
-        override
-        protected TcpSession getSession() {
-            return connection.getTcpSession();
-        }
-
-        override
-        protected HttpGenerator getHttpGenerator() {
-            return httpGenerator;
-        }
-    }
-
     private void checkWrite(Request request, Http1ClientResponseHandler handler) {
         assert(request, "The http client request is null.");
         assert(handler, "The http1 client response handler is null.");
-        assert(isOpen(), "The current connection " ~ tcpSession.getSessionId().to!string ~ " has been closed.");
-        assert(!upgradeHttp2Complete, "The current connection " ~ tcpSession.getSessionId().to!string ~ " has upgraded HTTP2.");
-        assert(!upgradeWebSocketComplete, "The current connection " ~ tcpSession.getSessionId().to!string ~ " has upgraded WebSocket.");
+        assert(isOpen(), "The current connection " ~ 
+            tcpSession.getSessionId().to!string ~ " has been closed.");
+        assert(!upgradeHttp2Complete, "The current connection " ~ 
+            tcpSession.getSessionId().to!string ~ " has upgraded HTTP2.");
+        assert(!upgradeWebSocketComplete, "The current connection " ~ 
+            tcpSession.getSessionId().to!string ~ " has upgraded WebSocket.");
 
         if (wrap.writing is null) {
             wrap.writing = handler;
@@ -499,5 +370,144 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
 
     bool getUpgradeWebSocketComplete() {
         return upgradeWebSocketComplete;
+    }
+}
+
+/**
+*/
+private class ResponseHandlerWrap : ResponseHandler {
+
+    private Http1ClientResponseHandler writing; // = new AtomicReference<)();
+    private int status;
+    private string reason;
+    private Http1ClientConnection connection;
+
+    void badMessage(BadMessageException failure) {
+        badMessage(failure.getCode(), failure.getReason());
+    }
+
+    override
+    void earlyEOF() {
+        Http1ClientResponseHandler h = writing;
+        if (h !is null) {
+            h.earlyEOF();
+        } else {
+            IOUtils.close(connection);
+        }
+
+        writing = null;
+    }
+
+
+    override
+    void parsedHeader(HttpField field) {
+        writing.parsedHeader(field);
+    }
+
+    override
+    bool headerComplete() {
+        return writing.headerComplete();
+    }
+
+    override
+    bool content(ByteBuffer item) {
+        return writing.content(item);
+    }
+
+    override
+    bool contentComplete() {
+        return writing.contentComplete();
+    }
+
+    override
+    void parsedTrailer(HttpField field) {
+        writing.parsedTrailer(field);
+    }
+
+    override
+    bool messageComplete() {
+        if (status == 100 && "Continue".equalsIgnoreCase(reason)) {
+            tracef("client received the 100 Continue response");
+            connection.getParser().reset();
+            return true;
+        } else {
+            auto r = writing.messageComplete();
+            writing = null;                
+            return r;
+        }
+    }
+
+    override
+    void badMessage(int status, string reason) {
+        Http1ClientResponseHandler h = writing;
+        writing = null;                
+        if (h !is null) {
+            h.badMessage(status, reason);
+        } else {
+            IOUtils.close(connection);
+        }
+    }
+
+    override
+    int getHeaderCacheSize() {
+        return 1024;
+    }
+
+    override
+    bool startResponse(HttpVersion ver, int status, string reason) {
+        this.status = status;
+        this.reason = reason;
+        return writing.startResponse(ver, status, reason);
+    }
+
+}
+
+
+/**
+*/
+class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
+
+    private Http1ClientConnection connection;
+    private HttpGenerator httpGenerator;
+
+    private this(Http1ClientConnection connection, Request request) {
+        super(request, true);
+        this.connection = connection;
+        httpGenerator = new HttpGenerator();
+    }
+
+    override
+    protected void generateHttpMessageSuccessfully() {
+        tracef("client session %s generates the HTTP message completely", connection.getSessionId());
+    }
+
+    override
+    protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,
+                                                    HttpGenerator.State actualState,
+                                                    HttpGenerator.Result expectedResult,
+                                                    HttpGenerator.State expectedState) {
+        errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]", 
+            actualResult, actualState, expectedResult, expectedState);
+        throw new IllegalStateException("client generates http message exception.");
+    }
+
+    override
+    protected ByteBuffer getHeaderByteBuffer() {
+        return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestHeadLength());
+    }
+
+    override
+    protected ByteBuffer getTrailerByteBuffer() {
+        return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestTrailerLength());
+    }
+
+    override
+    protected TcpSession getSession() {
+        return connection.getTcpSession();
+    }
+
+    override
+    protected HttpGenerator getHttpGenerator() {
+        return httpGenerator;
     }
 }

@@ -31,7 +31,7 @@ void main(string[] args)
         new class ServerHttpHandlerAdapter {
 
             override
-            bool messageComplete(MetaData.Request request, MetaData.Response response,
+            bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 return true;

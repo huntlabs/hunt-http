@@ -17,7 +17,7 @@ import hunt.util.Assert.assertEquals;
 public class HttpGeneratorClientTest {
     public final static string[] connect = {null, "keep-alive", "close"};
 
-    class Info extends MetaData.Request {
+    class Info extends HttpRequest {
         Info(string method, string uri) {
             super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, new HttpFields(), -1);
         }

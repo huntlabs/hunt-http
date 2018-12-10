@@ -39,7 +39,7 @@ public class Http2ClientTLSDemo2 {
 
 			if (httpConnection.getHttpVersion() == HttpVersion.HTTP_2) {
 				httpConnection.send(
-						new MetaData.Request("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"), "/index",
+						new HttpRequest("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"), "/index",
 								HttpVersion.HTTP_1_1, fields),
 						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
@@ -54,7 +54,7 @@ public class Http2ClientTLSDemo2 {
 						}));
 
 				httpConnection.send(
-						new MetaData.Request("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"),
+						new HttpRequest("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"),
 								"/index_1", HttpVersion.HTTP_1_1, fields),
 						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());

@@ -85,7 +85,7 @@ void main(string[] args) {
 	fields.put(HttpHeader.ACCEPT, "text/html");
 	fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
 	fields.put(HttpHeader.CONTENT_LENGTH, "28");
-	MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
+	HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
 			new HostPortHttpField(format("%s:%d", host, port)), "/data", HttpVersion.HTTP_2, fields);
 
 	HttpConnection connection = promise.get();

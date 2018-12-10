@@ -15,8 +15,8 @@ import hunt.util.concurrent.Promise;
 import hunt.container.ByteBuffer;
 import hunt.container.Collection;
 
-alias Request = MetaData.Request;
-alias Response = MetaData.Response;
+alias Request = HttpRequest;
+alias Response = HttpResponse;
 
 interface HttpClientConnection : HttpConnection {
 

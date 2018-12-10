@@ -123,7 +123,7 @@ import std.datetime;
 		tracef("%(%02X %)", buffer.array());
 
         HpackDecoder decoder = new HpackDecoder(4096, 8192);
-        MetaData.Response response = cast(MetaData.Response) decoder.decode(buffer);
+        HttpResponse response = cast(HttpResponse) decoder.decode(buffer);
 		tracef("status: %d", response.getStatus());
 		foreach(HttpField h; response)
 		{

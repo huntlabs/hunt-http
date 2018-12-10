@@ -18,7 +18,9 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.net.AbstractConnection;
-import hunt.net.OutputEntry;;
+import hunt.net.OutputEntry;
+
+;
 import hunt.net.ConnectionEvent;
 import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
@@ -31,29 +33,28 @@ import hunt.util.concurrent.CompletableFuture;
 import hunt.lang.exception;
 import hunt.util.functional;
 
-import std.random; 
+import std.random;
 import std.socket;
 import std.array;
 
 /**
  * 
  */
-class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, IncomingFrames {
+class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, IncomingFrames {
 
     protected ConnectionEvent!(WebSocketConnection) connectionEvent;
     protected Parser parser;
     protected Generator generator;
     protected WebSocketPolicy policy;
-    protected MetaData.Request upgradeRequest;
-    protected MetaData.Response upgradeResponse;
+    protected HttpRequest upgradeRequest;
+    protected HttpResponse upgradeResponse;
     protected IOState ioState;
     protected Http2Configuration config;
     protected ExtensionNegotiator extensionNegotiator;
 
-    this(SecureSession secureSession, Session tcpSession,
-                                   IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
-                                   MetaData.Request upgradeRequest, MetaData.Response upgradeResponse,
-                                   Http2Configuration config) {
+    this(SecureSession secureSession, Session tcpSession, IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
+            HttpRequest upgradeRequest, HttpResponse upgradeResponse,
+            Http2Configuration config) {
         super(secureSession, tcpSession);
 
         extensionNegotiator = new ExtensionNegotiator();
@@ -68,34 +69,36 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         ioState = new IOState();
         ioState.onOpened();
 
-        extensionNegotiator.setNextOutgoingFrames(new class OutgoingFrames { 
-            void outgoingFrame(Frame frame, Callback callback) {
-            WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
-            if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
-                if (!webSocketFrame.isMasked()) {
-                    webSocketFrame.setMask(generateMask());
+        //dfmt off
+        extensionNegotiator.setNextOutgoingFrames(
+            new class OutgoingFrames { 
+                void outgoingFrame(Frame frame, Callback callback) {
+                WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
+                if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
+                    if (!webSocketFrame.isMasked()) {
+                        webSocketFrame.setMask(generateMask());
+                    }
+                }
+                ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
+                generator.generateWholeFrame(frame, buf);
+                BufferUtils.flipToFlush(buf, 0);
+                tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
+                if (frame.getType() == Frame.Type.CLOSE) {
+                    CloseFrame closeFrame = cast(CloseFrame) frame;
+                    if(closeFrame !is null) {
+                        CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
+                        getIOState().onCloseLocal(closeInfo);
+                        this.outer.close();
+                    }
                 }
             }
-            ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
-            generator.generateWholeFrame(frame, buf);
-            BufferUtils.flipToFlush(buf, 0);
-            tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
-            if (frame.getType() == Frame.Type.CLOSE) {
-                CloseFrame closeFrame = cast(CloseFrame) frame;
-                if(closeFrame !is null) {
-                    CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
-                    getIOState().onCloseLocal(closeInfo);
-                    this.outer.close();
-                }
-            }
-        }
         });
-
+//dfmt on
         setNextIncomingFrames(nextIncomingFrames);
 
         if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
 
-        implementationMissing(false);
+            implementationMissing(false);
 
             // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
             //     PingFrame pingFrame = new PingFrame();
@@ -113,13 +116,12 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         }
     }
 
-    override
-    WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
+    override WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
         return connectionEvent.onClose(closedListener);
     }
 
-    override
-    WebSocketConnection onException(Action2!(WebSocketConnection, Exception) exceptionListener) {
+    override WebSocketConnection onException(Action2!(WebSocketConnection,
+            Exception) exceptionListener) {
         return connectionEvent.onException(exceptionListener);
     }
 
@@ -131,13 +133,11 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         connectionEvent.notifyException(t);
     }
 
-    override
-    IOState getIOState() {
+    override IOState getIOState() {
         return ioState;
     }
 
-    override
-    WebSocketPolicy getPolicy() {
+    override WebSocketPolicy getPolicy() {
         return policy;
     }
 
@@ -159,9 +159,10 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
                 generator.configureFromExtensions(extensions);
                 parser.configureFromExtensions(extensions);
 
-                foreach(Extension e; extensions) {
-                    AbstractExtension ae = cast(AbstractExtension)e;
-                    if(ae is null) continue;
+                foreach (Extension e; extensions) {
+                    AbstractExtension ae = cast(AbstractExtension) e;
+                    if (ae is null)
+                        continue;
                     ae.setPolicy(policy);
                 }
                 // auto r = extensions.filter!(e => instanceof!(AbstractExtension)(e))
@@ -173,24 +174,22 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         }
     }
 
-
     void incomingError(Exception t) {
         // Optional.ofNullable(extensionNegotiator.getIncomingFrames()).ifPresent(e -> e.incomingError(t));
         IncomingFrames frames = extensionNegotiator.getIncomingFrames();
-        if(frames !is null)
+        if (frames !is null)
             frames.incomingError(t);
     }
 
-    override
-    void incomingFrame(Frame frame) {
+    override void incomingFrame(Frame frame) {
         switch (frame.getType()) {
-            case FrameType.PING: {
+        case FrameType.PING: {
                 PongFrame pongFrame = new PongFrame();
                 outgoingFrame(pongFrame, Callback.NOOP);
             }
             break;
 
-            case FrameType.CLOSE: {
+        case FrameType.CLOSE: {
                 CloseFrame closeFrame = cast(CloseFrame) frame;
                 CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
                 ioState.onCloseRemote(closeInfo);
@@ -198,92 +197,87 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
             }
             break;
 
-            case FrameType.PONG: {
+        case FrameType.PONG: {
                 info("The websocket connection %s received pong frame", getSessionId());
             }
             break;
 
-            default: break;
+        default:
+            break;
         }
-        
+
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
-        if(e !is null)
+        if (e !is null)
             e.incomingFrame(frame);
     }
 
-    override
-    bool isEncrypted() {
+    override bool isEncrypted() {
         return secureSession !is null;
     }
 
-    override
-    ConnectionType getConnectionType() {
+    override ConnectionType getConnectionType() {
         return ConnectionType.WEB_SOCKET;
     }
 
-    override
-    byte[] generateMask() {
+    override byte[] generateMask() {
         byte[] mask = new byte[4];
         // ThreadLocalRandom.current().nextBytes(mask);
-        foreach(size_t i; 0..mask.length)
+        foreach (size_t i; 0 .. mask.length)
             mask[i] = uniform(byte.min, byte.max);
         return mask;
     }
 
-    override
-    CompletableFuture!(bool) sendText(string text) {
+    override CompletableFuture!(bool) sendText(string text) {
         TextFrame textFrame = new TextFrame();
         textFrame.setPayload(text);
         CompletableFuture!(bool) future = new CompletableFuture!bool();
-        outgoingFrame(textFrame, new class NoopCallback {
-            override
-            void succeeded() {
+        //dfmt off        
+        outgoingFrame(textFrame, 
+            new class NoopCallback {
+            override void succeeded() {
                 future.complete(true);
             }
 
-            override
-            void failed(Exception x) {
+            override void failed(Exception x) {
                 future.completeExceptionally(x);
             }
         });
+//dfmt on        
         return future;
     }
 
-    override
-    CompletableFuture!(bool) sendData(byte[] data) {
+    override CompletableFuture!(bool) sendData(byte[] data) {
         return _sendData(data);
     }
 
-    override
-    CompletableFuture!(bool) sendData(ByteBuffer data) {
+    override CompletableFuture!(bool) sendData(ByteBuffer data) {
         return _sendData(data);
     }
 
-    private  CompletableFuture!(bool) _sendData(T)(T data) {
+    private CompletableFuture!(bool) _sendData(T)(T data) {
         BinaryFrame binaryFrame = new BinaryFrame();
         binaryFrame.setPayload(data);
         CompletableFuture!(bool) future = new CompletableFuture!bool();
-        outgoingFrame(binaryFrame, new class NoopCallback {
-            override
-            void succeeded() {
+        //dfmt off        
+        outgoingFrame(binaryFrame, 
+            new class NoopCallback {
+            override void succeeded() {
                 future.complete(true);
             }
 
-            override
-            void failed(Exception x) {
+            override void failed(Exception x) {
                 future.completeExceptionally(x);
             }
         });
+//dfmt on          
         return future;
     }
 
-    override
-    MetaData.Request getUpgradeRequest() {
+    override HttpRequest getUpgradeRequest() {
         return upgradeRequest;
     }
 
-    override
-    MetaData.Response getUpgradeResponse() {
+    override HttpResponse getUpgradeResponse() {
         return upgradeResponse;
     }
 
@@ -299,74 +293,64 @@ class WebSocketConnectionImpl : AbstractConnection , WebSocketConnection, Incomi
         return generator;
     }
 
-    override long getIdleTimeout() {
-        return super.getIdleTimeout();
-    }
-    
-    override long getMaxIdleTimeout() {
-        return super.getMaxIdleTimeout();
-    }
-    
     override Object getAttachment() {
         return super.getAttachment();
     }
 
-    
     override void setAttachment(Object attachment) {
         super.setAttachment(attachment);
     }
-
 
     override int getSessionId() {
         return super.getSessionId();
     }
 
-    
+version (HUNT_METRIC) {
     override long getOpenTime() {
         return super.getOpenTime();
     }
 
-    
     override long getCloseTime() {
         return super.getCloseTime();
     }
 
-    
     override long getDuration() {
         return super.getDuration();
     }
 
-    
     override long getLastReadTime() {
         return super.getLastReadTime();
     }
 
-    
     override long getLastWrittenTime() {
         return super.getLastWrittenTime();
     }
 
-    
     override long getLastActiveTime() {
         return super.getLastActiveTime();
     }
 
-    
     override long getReadBytes() {
         return super.getReadBytes();
     }
 
-    
     override long getWrittenBytes() {
         return super.getWrittenBytes();
     }
 
-    
+    override long getIdleTimeout() {
+        return super.getIdleTimeout();
+    }
+}
+
+    override long getMaxIdleTimeout() {
+        return super.getMaxIdleTimeout();
+    }
+
     override bool isOpen() {
         return super.isOpen();
     }
 
-    
     override bool isClosed() {
         return super.isClosed();
     }

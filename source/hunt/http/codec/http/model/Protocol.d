@@ -15,11 +15,11 @@ enum Protocol {
 
 struct ProtocolHelper {
 
-    static Protocol from(MetaData.Request request) {
+    static Protocol from(HttpRequest request) {
         return getProtocol(request);
     }
 
-    static Protocol from(MetaData.Response response) {
+    static Protocol from(HttpResponse response) {
         if (response.getStatus() == HttpStatus.SWITCHING_PROTOCOLS_101) {
             return getProtocol(response);
         } else {

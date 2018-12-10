@@ -22,7 +22,7 @@ import hunt.util.concurrent.Promise;
 import std.conv;
 import std.string;
 
-alias Request = MetaData.Request;
+alias Request = HttpRequest;
 
 class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
 
@@ -84,7 +84,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
                 }
 
                 if (headersFrame.getMetaData().isResponse()) {
-                    MetaData.Response response = cast(MetaData.Response) headersFrame.getMetaData();
+                    HttpResponse response = cast(HttpResponse) headersFrame.getMetaData();
 
                     if (response.getStatus() == HttpStatus.CONTINUE_100) {
                         handler.continueToSendData(request, response, output, connection);
@@ -97,7 +97,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
                     }
                 } else {
                     if (headersFrame.isEndStream()) {
-                        MetaData.Response response = getResponse(stream);
+                        HttpResponse response = getResponse(stream);
 
                         response.setTrailerSupplier(() => headersFrame.getMetaData().getFields());
                         handler.contentComplete(request, response, output, connection);
@@ -112,7 +112,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
             case FrameType.DATA: {
                 DataFrame dataFrame = cast(DataFrame) receivedFrame.getFrame();
                 Callback callback = receivedFrame.getCallback();
-                MetaData.Response response = getResponse(stream);
+                HttpResponse response = getResponse(stream);
 
                 DataFrameHandler.handleDataFrame(dataFrame, callback, request, response, output, connection, handler);
             }
@@ -126,7 +126,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
     void onReset(Stream stream, ResetFrame frame) {
         // writeln("Client received reset frame: " ~ stream ~ ", " ~ frame);
         HttpOutputStream output = getOutputStream(stream);
-        MetaData.Response response = getResponse(stream);
+        HttpResponse response = getResponse(stream);
 
         int errorCode = frame.getError();
         string reason = isValidErrorCode(errorCode) ? (cast(ErrorCode)errorCode).to!string().toLower() : "error=" ~ errorCode.to!string();
@@ -152,8 +152,8 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
         return cast(HttpOutputStream) stream.getAttribute(OUTPUT_STREAM_KEY);
     }
 
-    private MetaData.Response getResponse(Stream stream) {
-        return cast(MetaData.Response) stream.getAttribute(RESPONSE_KEY);
+    private HttpResponse getResponse(Stream stream) {
+        return cast(HttpResponse) stream.getAttribute(RESPONSE_KEY);
     }
 
     static class ReceivedFrame {

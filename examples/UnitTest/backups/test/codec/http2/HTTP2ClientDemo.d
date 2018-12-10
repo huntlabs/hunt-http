@@ -87,7 +87,7 @@ public class Http2ClientDemo {
 		fields.put(HttpHeader.ACCEPT, "text/html");
 		fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
 		fields.put(HttpHeader.CONTENT_LENGTH, "28");
-		MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
+		HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
 				new HostPortHttpField("127.0.0.1:6677"), "/data", HttpVersion.HTTP_2, fields);
 
 		Http2ClientConnection clientConnection = (Http2ClientConnection) connection;

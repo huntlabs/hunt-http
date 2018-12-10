@@ -24,7 +24,7 @@ public class HpackDecoderTest {
         string encoded = "828684410f7777772e6578616d706c652e636f6d";
         ByteBuffer buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-        MetaData.Request request = (MetaData.Request) decoder.decode(buffer);
+        HttpRequest request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -36,7 +36,7 @@ public class HpackDecoderTest {
         encoded = "828684be58086e6f2d6361636865";
         buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-        request = (MetaData.Request) decoder.decode(buffer);
+        request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -51,7 +51,7 @@ public class HpackDecoderTest {
         encoded = "828785bf400a637573746f6d2d6b65790c637573746f6d2d76616c7565";
         buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-        request = (MetaData.Request) decoder.decode(buffer);
+        request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTPS.asString(), request.getURI().getScheme());
@@ -71,7 +71,7 @@ public class HpackDecoderTest {
         string encoded = "828684418cf1e3c2e5f23a6ba0ab90f4ff";
         ByteBuffer buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-        MetaData.Request request = (MetaData.Request) decoder.decode(buffer);
+        HttpRequest request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -83,7 +83,7 @@ public class HpackDecoderTest {
         encoded = "828684be5886a8eb10649cbf";
         buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-        request = (MetaData.Request) decoder.decode(buffer);
+        request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -106,7 +106,7 @@ public class HpackDecoderTest {
         System.arraycopy(bytes, 0, array, 1, bytes.length);
         ByteBuffer buffer = ByteBuffer.wrap(array, 1, bytes.length).slice();
 
-        MetaData.Request request = (MetaData.Request) decoder.decode(buffer);
+        HttpRequest request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -128,7 +128,7 @@ public class HpackDecoderTest {
         System.arraycopy(bytes, 0, array, 1, bytes.length);
         ByteBuffer buffer = ByteBuffer.wrap(array, 1, bytes.length).slice();
 
-        MetaData.Request request = (MetaData.Request) decoder.decode(buffer);
+        HttpRequest request = (HttpRequest) decoder.decode(buffer);
 
         assertEquals("GET", request.getMethod());
         assertEquals(HttpScheme.HTTP.asString(), request.getURI().getScheme());
@@ -144,7 +144,7 @@ public class HpackDecoderTest {
         ByteBuffer buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
         HpackDecoder decoder = new HpackDecoder(4096, 8192);
-        MetaData.Response response = (MetaData.Response) decoder.decode(buffer);
+        HttpResponse response = (HttpResponse) decoder.decode(buffer);
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getFields().size(), is(6));

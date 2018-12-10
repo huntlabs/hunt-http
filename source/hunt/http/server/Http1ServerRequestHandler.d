@@ -1,6 +1,5 @@
 module hunt.http.server.Http1ServerRequestHandler;
 
-
 import hunt.http.server.Http1ServerConnection;
 import hunt.http.server.Http2ServerHandler;
 import hunt.http.server.HttpServerRequest;
@@ -16,13 +15,12 @@ import hunt.string;
 import hunt.logging;
 
 alias RequestHandler = HttpParser.RequestHandler;
-alias Http1ServerResponseOutputStream = Http1ServerConnection.Http1ServerResponseOutputStream;
 
 /**
 */
 class Http1ServerRequestHandler : RequestHandler {
-    package(hunt.http.server) MetaData.Request request;
-    package(hunt.http.server) MetaData.Response response;
+    package(hunt.http.server) HttpRequest request;
+    package(hunt.http.server) HttpResponse response;
     package(hunt.http.server) Http1ServerConnection connection;
     package(hunt.http.server) Http1ServerResponseOutputStream outputStream;
     package(hunt.http.server) ServerHttpHandler serverHttpHandler;
@@ -32,9 +30,8 @@ class Http1ServerRequestHandler : RequestHandler {
         this.serverHttpHandler = serverHttpHandler;
     }
 
-    override
-    bool startRequest(string method, string uri, HttpVersion ver) {
-        version(HUNT_DEBUG) {
+    override bool startRequest(string method, string uri, HttpVersion ver) {
+        version (HUNT_DEBUG) {
             tracef("server received the request line, %s, %s, %s", method, uri, ver);
         }
 
@@ -45,43 +42,42 @@ class Http1ServerRequestHandler : RequestHandler {
         return HttpMethod.PRI.isSame(method) && connection.directUpgradeHttp2(request);
     }
 
-    override
-    void parsedHeader(HttpField field) {
+    override void parsedHeader(HttpField field) {
         request.getFields().add(field);
     }
 
-    override
-    bool headerComplete() {
+    override bool headerComplete() {
         if (HttpMethod.CONNECT.asString().equalsIgnoreCase(request.getMethod())) {
-            return serverHttpHandler.acceptHttpTunnelConnection(request, response, outputStream, connection);
+            return serverHttpHandler.acceptHttpTunnelConnection(request,
+                    response, outputStream, connection);
         } else {
             string expectedValue = request.getFields().get(HttpHeader.EXPECT);
             if ("100-continue".equalsIgnoreCase(expectedValue)) {
-                bool skipNext = serverHttpHandler.accept100Continue(request, response, outputStream, connection);
+                bool skipNext = serverHttpHandler.accept100Continue(request,
+                        response, outputStream, connection);
                 if (skipNext) {
                     return true;
                 } else {
                     connection.response100Continue();
-                    return serverHttpHandler.headerComplete(request, response, outputStream, connection);
+                    return serverHttpHandler.headerComplete(request, response,
+                            outputStream, connection);
                 }
             } else {
-                return serverHttpHandler.headerComplete(request, response, outputStream, connection);
+                return serverHttpHandler.headerComplete(request, response,
+                        outputStream, connection);
             }
         }
     }
 
-    override
-    bool content(ByteBuffer item) {
+    override bool content(ByteBuffer item) {
         return serverHttpHandler.content(item, request, response, outputStream, connection);
     }
 
-    override
-    bool contentComplete() {
+    override bool contentComplete() {
         return serverHttpHandler.contentComplete(request, response, outputStream, connection);
     }
 
-    override
-    void parsedTrailer(HttpField field) {
+    override void parsedTrailer(HttpField field) {
         if (trailer is null) {
             trailer = new HttpFields();
             request.setTrailerSupplier(() => trailer);
@@ -89,43 +85,37 @@ class Http1ServerRequestHandler : RequestHandler {
         trailer.add(field);
     }
 
-    override
-    bool messageComplete() {
+    override bool messageComplete() {
         try {
             if (connection.getUpgradeHttp2Complete() || connection.getUpgradeWebSocketComplete()) {
                 return true;
             } else {
-                bool success = connection.upgradeProtocol(request, response, outputStream, connection);
-                return success || serverHttpHandler.messageComplete(request, response, outputStream, connection);
+                bool success = connection.upgradeProtocol(request, response,
+                        outputStream, connection);
+                return success || serverHttpHandler.messageComplete(request,
+                        response, outputStream, connection);
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             error("Upgrade failed: ", ex.msg);
             return true;
-        }
-        finally {
+        } finally {
             connection.getParser().reset();
         }
     }
 
-    override
-    void badMessage(int status, string reason) {
+    override void badMessage(int status, string reason) {
         serverHttpHandler.badMessage(status, reason, request, response, outputStream, connection);
     }
 
-
-    void badMessage(BadMessageException failure)
-    {
+    void badMessage(BadMessageException failure) {
         badMessage(failure.getCode(), failure.getReason());
     }
 
-
-    override
-    void earlyEOF() {
+    override void earlyEOF() {
         serverHttpHandler.earlyEOF(request, response, outputStream, connection);
     }
 
-    override
-    int getHeaderCacheSize() {
+    override int getHeaderCacheSize() {
         return 1024;
     }
 

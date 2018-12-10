@@ -3,23 +3,21 @@ module hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;
 
-
 import hunt.container;
 import hunt.io;
 import hunt.lang.exception;
-
 import hunt.logging;
 import std.conv;
 
 abstract class HttpOutputStream : OutputStream {
 
     protected bool clientMode;
-    protected MetaData info;
+    protected MetaData metaData;
     protected bool closed;
     protected bool committed;
 
-    this(MetaData info, bool clientMode) {
-        this.info = info;
+    this(MetaData metaData, bool clientMode) {
+        this.metaData = metaData;
         this.clientMode = clientMode;
     }
 
@@ -55,7 +53,7 @@ abstract class HttpOutputStream : OutputStream {
     //     try {
     //         if (!committed) {
     //             long contentLength = BufferUtils.remaining(data);
-    //             info.getFields().put(HttpHeader.CONTENT_LENGTH, contentLength.to!string);
+    //             metaData.getFields().put(HttpHeader.CONTENT_LENGTH, contentLength.to!string);
     //         }
     //         foreach (ByteBuffer buf ; data) {
     //             write(buf);
@@ -73,7 +71,7 @@ abstract class HttpOutputStream : OutputStream {
         try {
             if (!committed) {
                 long contentLength = BufferUtils.remaining(data);
-                info.getFields().put(HttpHeader.CONTENT_LENGTH, contentLength.to!string);
+                metaData.getFields().put(HttpHeader.CONTENT_LENGTH, contentLength.to!string);
             }
             foreach (ByteBuffer buf ; data) {
                 write(buf);

@@ -39,7 +39,7 @@ void main(string[] args) {
         
         new class ClientHttpHandler.Adapter {
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 tracef("upgrade websocket success: " ~ response.toString());

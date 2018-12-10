@@ -4,7 +4,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.model.MetaData.Response;
+import hunt.http.codec.http.model.HttpResponse;
 import hunt.container.BufferUtils;
 import hunt.util.Assert;
 import hunt.util.Test;
@@ -35,7 +35,7 @@ public class HpackTest {
         fields0.add(Date);
         fields0.add(HttpHeader.SET_COOKIE, "abcdefghijklmnopqrstuvwxyz");
         fields0.add("custom-key", "custom-value");
-        Response original0 = new MetaData.Response(HttpVersion.HTTP_2, 200, fields0);
+        Response original0 = new HttpResponse(HttpVersion.HTTP_2, 200, fields0);
 
         BufferUtils.clearToFill(buffer);
         encoder.encode(buffer, original0);
@@ -60,7 +60,7 @@ public class HpackTest {
         fields1.add(XPowerFirefly);
         fields1.add(Date);
         fields1.add("Custom-Key", "Other-Value");
-        Response original1 = new MetaData.Response(HttpVersion.HTTP_2, 200, fields1);
+        Response original1 = new HttpResponse(HttpVersion.HTTP_2, 200, fields1);
 
         // Same again?
         BufferUtils.clearToFill(buffer);
@@ -147,7 +147,7 @@ public class HpackTest {
         assertEquals("foo", encoder.getHpackContext().get(HpackContext.STATIC_TABLE.length + 1).getHttpField().getName());
     }
 
-    private void assertMetadataSame(MetaData.Response expected, MetaData.Response actual) {
+    private void assertMetadataSame(HttpResponse expected, HttpResponse actual) {
         assertThat("Response.status", actual.getStatus(), is(expected.getStatus()));
         assertThat("Response.reason", actual.getReason(), is(expected.getReason()));
         assertMetadataSame((MetaData) expected, (MetaData) actual);

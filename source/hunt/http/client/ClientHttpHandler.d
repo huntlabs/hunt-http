@@ -10,12 +10,12 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.lang.common;
 import hunt.container.ByteBuffer;
 
-alias Request = MetaData.Request;
-alias Response = MetaData.Response;
+alias Request = HttpRequest;
+alias Response = HttpResponse;
 
 interface ClientHttpHandler : HttpHandler {
 
-    void continueToSendData(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+    void continueToSendData(HttpRequest request, HttpResponse response, HttpOutputStream output,
                             HttpConnection connection);
 
     static class Adapter : HttpHandlerAdapter, ClientHttpHandler {

@@ -86,13 +86,13 @@ interface WebSocketConnection : OutgoingFrames, Connection {
      *
      * @return The upgrade request.
      */
-    MetaData.Request getUpgradeRequest();
+    HttpRequest getUpgradeRequest();
 
     /**
      * Get the websocket upgrade response.
      *
      * @return The upgrade response.
      */
-    MetaData.Response getUpgradeResponse();
+    HttpResponse getUpgradeResponse();
 
 }

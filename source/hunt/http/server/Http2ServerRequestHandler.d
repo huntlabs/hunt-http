@@ -68,15 +68,15 @@ class Http2ServerRequestHandler : ServerSessionListener.Adapter {
             tracef("Server received stream: %s, %s", stream.getId(), headersFrame.toString());
         }
 
-        MetaData.Request request = cast(MetaData.Request) headersFrame.getMetaData();
-        MetaData.Response response = new HttpServerResponse();
+        HttpRequest request = cast(HttpRequest) headersFrame.getMetaData();
+        HttpResponse response = new HttpServerResponse();
         ServerHttp2OutputStream output = new ServerHttp2OutputStream(response, stream);
 
         string expectedValue = request.getFields().get(HttpHeader.EXPECT);
         if ("100-continue".equalsIgnoreCase(expectedValue)) {
             bool skipNext = serverHttpHandler.accept100Continue(request, response, output, connection);
             if (!skipNext) {
-                MetaData.Response continue100 = new MetaData.Response(HttpVersion.HTTP_1_1,
+                HttpResponse continue100 = new HttpResponse(HttpVersion.HTTP_1_1,
                         HttpStatus.CONTINUE_100, HttpStatus.Code.CONTINUE.getMessage(),
                         new HttpFields(), -1);
                 output.writeFrame(new HeadersFrame(stream.getId(), continue100, null, false));

@@ -29,8 +29,8 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
     private LinkedList!Frame frames;
     private bool noContent = true;
 
-    this(MetaData info, bool clientMode) {
-        super(info, clientMode);
+    this(MetaData metaData, bool clientMode) {
+        super(metaData, clientMode);
         frames = new LinkedList!Frame();
     }
 
@@ -50,7 +50,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
             return;
         }
 
-        HeadersFrame headersFrame = new HeadersFrame(getStream().getId(), info, null, noContent);
+        HeadersFrame headersFrame = new HeadersFrame(getStream().getId(), metaData, null, noContent);
         version(HUNT_DEBUG) {
             tracef("http2 output stream %s commits the header frame %s", getStream().toString(), headersFrame.toString());
         }
@@ -66,7 +66,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
 
         commit();
         if (isChunked()) {
-            // Optional.ofNullable(info.getTrailerSupplier())
+            // Optional.ofNullable(metaData.getTrailerSupplier())
             //         .map(Supplier::get)
             //         .ifPresent(trailer -> {
             //             MetaData metaData = new MetaData(HttpVersion.HTTP_1_1, trailer);
@@ -74,7 +74,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
             //             frames.offer(trailerFrame);
             //         });
 
-            Supplier!HttpFields supplier= info.getTrailerSupplier();
+            Supplier!HttpFields supplier= metaData.getTrailerSupplier();
             if(supplier !is null)
             {
                 HttpFields trailer = supplier();
@@ -226,7 +226,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
     }
 
     protected long getContentLength() {
-        return info.getFields().getLongField(HttpHeader.CONTENT_LENGTH.asString());
+        return metaData.getFields().getLongField(HttpHeader.CONTENT_LENGTH.asString());
     }
 
     bool isNoContent() {

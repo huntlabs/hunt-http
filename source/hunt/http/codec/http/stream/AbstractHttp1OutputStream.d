@@ -1,24 +1,22 @@
 module hunt.http.codec.http.stream.AbstractHttp1OutputStream;
 
 import hunt.http.codec.http.stream.HttpOutputStream;
-
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.net.Session;
-import hunt.lang.exception;
-
 import hunt.container.ByteBuffer;
 import hunt.container.BufferUtils;
-
+import hunt.net.Session;
+import hunt.lang.exception;
 import hunt.logging;
+
 
 /**
 */
 abstract class AbstractHttp1OutputStream : HttpOutputStream {
 
-    this(MetaData info, bool clientMode) {
-        super(info, clientMode);
+    this(MetaData metaData, bool clientMode) {
+        super(metaData, clientMode);
     }
 
     override
@@ -42,7 +40,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         HttpGenerator.Result generatorResult;
         ByteBuffer header = getHeaderByteBuffer();
 
-        generatorResult = generate(info, header, null, data, false);
+        generatorResult = generate(metaData, header, null, data, false);
         if (generatorResult == HttpGenerator.Result.FLUSH && 
             generator.getState() == HttpGenerator.State.COMMITTED) {
             if (data !is null) {
@@ -109,7 +107,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
 
             if (!committed) {
                 ByteBuffer header = getHeaderByteBuffer();
-                generatorResult = generate(info, header, null, null, true);
+                generatorResult = generate(metaData, header, null, null, true);
                 if (generatorResult == HttpGenerator.Result.FLUSH && 
                     generator.getState() == HttpGenerator.State.COMPLETING) {
                     tcpSession.encode(header);
@@ -197,13 +195,13 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
     }
 
-    protected HttpGenerator.Result generate(MetaData info, 
+    protected HttpGenerator.Result generate(MetaData metaData, 
         ByteBuffer header, ByteBuffer chunk, ByteBuffer content, bool last) {
         HttpGenerator generator = getHttpGenerator();
         if (clientMode) {
-            return generator.generateRequest(cast(MetaData.Request) info, header, chunk, content, last);
+            return generator.generateRequest(cast(HttpRequest) metaData, header, chunk, content, last);
         } else {
-            return generator.generateResponse(cast(MetaData.Response) info, false, header, chunk, content, last);
+            return generator.generateResponse(cast(HttpResponse) metaData, false, header, chunk, content, last);
         }
     }
 

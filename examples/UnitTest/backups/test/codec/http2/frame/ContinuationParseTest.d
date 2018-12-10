@@ -61,7 +61,7 @@ module test.codec.http2.frame;
 // 			HttpFields fields = new HttpFields();
 // 			fields.put("Accept", "text/html");
 // 			fields.put("User-Agent", "Jetty");
-// 			MetaData.Request metaData = new MetaData.Request("GET", HttpScheme.HTTP,
+// 			HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP,
 // 					new HostPortHttpField("localhost:8080"), "/path", HttpVersion.HTTP_2, fields);
 
 // 			List!(ByteBuffer) byteBuffers = generator.generateHeaders(streamId, metaData, null, true);
@@ -131,7 +131,7 @@ module test.codec.http2.frame;
 // 			HeadersFrame frame = frames.get(0);
 // 			Assert.assertEquals(streamId, frame.getStreamId());
 // 			Assert.assertTrue(frame.isEndStream());
-// 			MetaData.Request request = cast(MetaData.Request) frame.getMetaData();
+// 			HttpRequest request = cast(HttpRequest) frame.getMetaData();
 // 			Assert.assertEquals(metaData.getMethod(), request.getMethod());
 // 			Assert.assertEquals(metaData.getURI(), request.getURI());
 // 			for (int j = 0; j < fields.size(); ++j) {

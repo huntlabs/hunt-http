@@ -147,7 +147,7 @@ class HpackEncoder {
 
         // Add Request/response meta fields
         if (metadata.isRequest()) {
-            MetaData.Request request = cast(MetaData.Request) metadata;
+            HttpRequest request = cast(HttpRequest) metadata;
 
             // TODO optimise these to avoid HttpField creation
             string scheme = request.getURI().getScheme();
@@ -156,7 +156,7 @@ class HpackEncoder {
             encode(buffer, new HttpField(HttpHeader.C_AUTHORITY, request.getURI().getAuthority()));
             encode(buffer, new HttpField(HttpHeader.C_PATH, request.getURI().getPathQuery()));
         } else if (metadata.isResponse()) {
-            MetaData.Response response = cast(MetaData.Response) metadata;
+            HttpResponse response = cast(HttpResponse) metadata;
             int code = response.getStatus();
             HttpField status = code < __status.length ? __status[code] : null;
             if (status is null)

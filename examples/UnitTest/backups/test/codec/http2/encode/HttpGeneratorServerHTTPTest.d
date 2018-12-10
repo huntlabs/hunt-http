@@ -115,7 +115,7 @@ public class HttpGeneratorServerHTTPTest {
             }
             ByteBuffer header = null;
             ByteBuffer chunk = null;
-            MetaData.Response info = null;
+            HttpResponse info = null;
 
             loop:
             while (true) {
@@ -130,7 +130,7 @@ public class HttpGeneratorServerHTTPTest {
 
                 switch (result) {
                     case NEED_INFO:
-                        info = new MetaData.Response(HttpVersion.fromVersion(version), _code, reason, _fields, _contentLength);
+                        info = new HttpResponse(HttpVersion.fromVersion(version), _code, reason, _fields, _contentLength);
                         continue;
 
                     case NEED_HEADER:

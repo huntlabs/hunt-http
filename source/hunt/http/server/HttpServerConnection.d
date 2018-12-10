@@ -5,8 +5,9 @@ import hunt.http.codec.http.stream.HttpTunnelConnection;
 import hunt.util.concurrent.Promise;
 import hunt.util.concurrent.CompletableFuture;
 
-
-interface HttpServerConnection : HttpConnection { //  
+/**
+*/
+interface HttpServerConnection : HttpConnection { 
 
     void upgradeHttpTunnel(Promise!HttpTunnelConnection promise);
 

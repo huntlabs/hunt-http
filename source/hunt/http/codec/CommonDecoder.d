@@ -1,7 +1,8 @@
 module hunt.http.codec.CommonDecoder;
 
-import hunt.net.DecoderChain;
-// import hunt.net.secure.SecureSession;
+import hunt.container.ByteBuffer;
+import hunt.lang.exception;
+import hunt.logging;
 
 import hunt.net.AbstractConnection;
 import hunt.net.ConnectionType;
@@ -9,22 +10,22 @@ import hunt.net.DecoderChain;
 import hunt.net.Session;
 import hunt.net.secure.SecureSession;
 
-import hunt.lang.exception;
-
-import hunt.logging;
-import hunt.container.ByteBuffer;
-
 /**
  * 
  */
-class CommonDecoder : DecoderChain
-{
+class CommonDecoder : DecoderChain {
 
     this(DecoderChain next) {
         super(next);
     }
 
     override void decode(ByteBuffer buf, Session session) {
+        version(HUNT_METRIC) {
+            import core.time;
+            import hunt.datetime;
+            MonoTime startTime = MonoTime.currTime;
+            debug infof("start decoding ...");
+        }
         Object attachment = session.getAttachment();
         version(HUNT_DEBUG) {
             tracef("decoding with %s", typeid(attachment).name);
@@ -74,7 +75,13 @@ class CommonDecoder : DecoderChain
                 }
             }
         } else {
-            version(HUNT_DEBUG) warning("No handler");
+            version(HUNT_DEBUG) warning("No handler for decoding");
+        }
+
+        version(HUNT_METRIC) {
+            Duration timeElapsed = MonoTime.currTime - startTime;
+            warningf("decoding done for session %d with cost: %d microseconds",
+                session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
         }
     }
 }

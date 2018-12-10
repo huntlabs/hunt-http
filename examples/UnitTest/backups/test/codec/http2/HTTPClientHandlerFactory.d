@@ -17,7 +17,7 @@ abstract public class HttpClientHandlerFactory {
     public static ClientHttpHandler.Adapter newHandler(ByteBuffer[] buffers) {
         return new ClientHttpHandler.Adapter() {
             override
-            public void continueToSendData(MetaData.Request request, MetaData.Response response, HttpOutputStream output,
+            public void continueToSendData(HttpRequest request, HttpResponse response, HttpOutputStream output,
                                            HttpConnection connection) {
                 writeln("client received 100 continue");
                 try (HttpOutputStream out = output) {
@@ -30,7 +30,7 @@ abstract public class HttpClientHandlerFactory {
             }
 
             override
-            public bool content(ByteBuffer item, MetaData.Request request, MetaData.Response response,
+            public bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
                                    HttpOutputStream output,
                                    HttpConnection connection) {
                 writeln("client received data: " ~ BufferUtils.toUTF8String(item));
@@ -38,7 +38,7 @@ abstract public class HttpClientHandlerFactory {
             }
 
             override
-            public bool messageComplete(MetaData.Request request, MetaData.Response response,
+            public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
                                            HttpConnection connection) {
                 writeln("client received frame: " ~ response.getStatus() ~ ", " ~ response.getReason());

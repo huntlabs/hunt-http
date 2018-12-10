@@ -70,7 +70,7 @@ class Http2DecoderTest {
                 Assert.assertThat(frame.getMetaData().getFields().get("User-Agent"), ("Hunt Client 1.0"));
                 Assert.assertThat(frame.getMetaData().getFields().get(HttpHeader.CONTENT_LENGTH), ("72"));
 
-                MetaData.Request request = cast(MetaData.Request) frame.getMetaData();
+                HttpRequest request = cast(HttpRequest) frame.getMetaData();
                 Assert.assertThat(request.getMethod(), ("POST"));
                 Assert.assertThat(request.getURI().getPath(), ("/data"));
                 Assert.assertThat(request.getURI().getPort(), (8080));
@@ -199,7 +199,7 @@ class Http2DecoderTest {
         fields.put(HttpHeader.ACCEPT, "text/html");
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
         fields.put(HttpHeader.CONTENT_LENGTH, "72");
-        MetaData.Request metaData = new MetaData.Request("POST", HttpScheme.HTTP,
+        HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
                 new HostPortHttpField("localhost:8080"), "/data", HttpVersion.HTTP_2, fields);
 
         DataFrame smallDataFrame = new DataFrame(streamId, ByteBuffer.wrap(smallContent), false);
@@ -251,7 +251,7 @@ class Http2DecoderTest {
                         Assert.assertThat(frame.getMetaData().getHttpVersion(), (HttpVersion.HTTP_2));
                         Assert.assertThat(frame.getMetaData().getFields().get("User-Agent"), ("Hunt Client 1.0"));
 
-                        MetaData.Request request = cast(MetaData.Request) frame.getMetaData();
+                        HttpRequest request = cast(HttpRequest) frame.getMetaData();
                         Assert.assertThat(request.getMethod(), ("GET"));
                         Assert.assertThat(request.getURI().getPath(), ("/index"));
                         Assert.assertThat(request.getURI().getPort(), (8080));
@@ -363,7 +363,7 @@ class Http2DecoderTest {
         HttpFields fields = new HttpFields();
         fields.put("Accept", "text/html");
         fields.put("User-Agent", "Hunt Client 1.0");
-        MetaData.Request metaData = new MetaData.Request("GET", HttpScheme.HTTP,
+        HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP,
                 new HostPortHttpField("localhost:8080"), "/index", HttpVersion.HTTP_2, fields);
         Map!(int, int) settings = new HashMap!(int, int)();
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());

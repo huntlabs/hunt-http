@@ -4,7 +4,7 @@ import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
-class HttpServerResponse : MetaData.Response {
+class HttpServerResponse : HttpResponse {
 
 	this() {
 		super(HttpVersion.HTTP_1_1, 0, new HttpFields());

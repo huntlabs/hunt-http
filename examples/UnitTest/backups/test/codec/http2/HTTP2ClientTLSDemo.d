@@ -34,15 +34,15 @@ public class Http2ClientTLSDemo {
         // test
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
-        MetaData.Request post = new MetaData.Request("POST", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
+        HttpRequest post = new HttpRequest("POST", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
                 "/data", HttpVersion.HTTP_1_1, fields);
         httpConnection.sendRequestWithContinuation(post, handler);
 
-        MetaData.Request get = new MetaData.Request("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
+        HttpRequest get = new HttpRequest("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
                 "/test2", HttpVersion.HTTP_1_1, new HttpFields());
         httpConnection.send(get, handler);
 
-        MetaData.Request post2 = new MetaData.Request("POST", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
+        HttpRequest post2 = new HttpRequest("POST", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
                 "/data", HttpVersion.HTTP_1_1, fields);
         httpConnection.send(post2, new ByteBuffer[]{ByteBuffer.wrap("test data 2".getBytes("UTF-8")),
                 ByteBuffer.wrap("finished test data 2".getBytes("UTF-8"))}, handler);

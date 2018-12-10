@@ -57,7 +57,8 @@ abstract class AbstractHttpHandler : Handler {
 
     override
     void sessionClosed(Session session) {
-        info("The HTTP handler received the session %s closed event.", session.getSessionId());
+        version(HUNT_DEBUG) 
+            tracef("The HTTP handler received the session %s closed event.", session.getSessionId());
         Object attachment = session.getAttachment();
         if (attachment is null) {
             return;

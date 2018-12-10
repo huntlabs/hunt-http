@@ -19,7 +19,7 @@ abstract class PredefinedHttp1Response {
     __gshared byte[] CONTINUE_100_BYTES;
 
     shared static this() {
-        MetaData.Response H2C_RESPONSE = new MetaData.Response(HttpVersion.HTTP_1_1, 101, new HttpFields());
+        HttpResponse H2C_RESPONSE = new HttpResponse(HttpVersion.HTTP_1_1, 101, new HttpFields());
         H2C_RESPONSE.getFields().put(HttpHeader.CONNECTION, HttpHeaderValue.UPGRADE);
         H2C_RESPONSE.getFields().put(HttpHeader.UPGRADE, "h2c");
 

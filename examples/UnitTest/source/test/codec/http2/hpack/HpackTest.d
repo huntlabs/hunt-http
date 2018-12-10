@@ -22,7 +22,7 @@ alias assertThat = Assert.assertThat;
 alias assertEquals = Assert.assertEquals;
 alias assertNull = Assert.assertNull;
 
-alias Response = MetaData.Response;
+alias Response = HttpResponse;
 
 class HpackTest {
     static HttpField ServerHunt; 
@@ -56,7 +56,7 @@ class HpackTest {
         fields0.add(Date);
         fields0.add(HttpHeader.SET_COOKIE, "abcdefghijklmnopqrstuvwxyz");
         fields0.add("custom-key", "custom-value");
-        Response original0 = new MetaData.Response(HttpVersion.HTTP_2, 200, fields0);
+        Response original0 = new HttpResponse(HttpVersion.HTTP_2, 200, fields0);
         // trace(original0.toString());
 
         foreach(HttpField h; original0.iterator)
@@ -93,7 +93,7 @@ class HpackTest {
         fields1.add(XPowerHunt);
         fields1.add(Date);
         fields1.add("Custom-Key", "Other-Value");
-        Response original1 = new MetaData.Response(HttpVersion.HTTP_2, 200, fields1);
+        Response original1 = new HttpResponse(HttpVersion.HTTP_2, 200, fields1);
 
         // Same again?
         BufferUtils.clearToFill(buffer);
@@ -180,7 +180,7 @@ class HpackTest {
         assertEquals("foo", encoder.getHpackContext().get(HpackContext.STATIC_TABLE.length + 1).getHttpField().getName());
     }
 
-    private void assertMetadataSame(MetaData.Response expected, MetaData.Response actual) {
+    private void assertMetadataSame(HttpResponse expected, HttpResponse actual) {
         assertThat("Response.status", actual.getStatus(), (expected.getStatus()));
         assertThat("Response.reason", actual.getReason(), (expected.getReason()));
         assertMetadataSame(cast(MetaData) expected, cast(MetaData) actual);

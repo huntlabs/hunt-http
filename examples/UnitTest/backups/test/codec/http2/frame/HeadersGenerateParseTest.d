@@ -64,7 +64,7 @@ public class HeadersGenerateParseTest {
 		HttpFields fields = new HttpFields();
 		fields.put("Accept", "text/html");
 		fields.put("User-Agent", "Jetty");
-		MetaData.Request metaData = new MetaData.Request("GET", HttpScheme.HTTP,
+		HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP,
 				new HostPortHttpField("localhost:8080"), "/path", HttpVersion.HTTP_2, fields);
 
 		final List!(HeadersFrame) frames = new ArrayList<>();
@@ -92,7 +92,7 @@ public class HeadersGenerateParseTest {
 			HeadersFrame frame = frames.get(0);
 			Assert.assertEquals(streamId, frame.getStreamId());
 			Assert.assertTrue(frame.isEndStream());
-			MetaData.Request request = (MetaData.Request) frame.getMetaData();
+			HttpRequest request = (HttpRequest) frame.getMetaData();
 			Assert.assertEquals(metaData.getMethod(), request.getMethod());
 			Assert.assertEquals(metaData.getURI(), request.getURI());
 			for (int j = 0; j < fields.size(); ++j) {
@@ -127,7 +127,7 @@ public class HeadersGenerateParseTest {
 			HttpFields fields = new HttpFields();
 			fields.put("Accept", "text/html");
 			fields.put("User-Agent", "Jetty");
-			MetaData.Request metaData = new MetaData.Request("GET", HttpScheme.HTTP,
+			HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP,
 					new HostPortHttpField("localhost:8080"), "/path", HttpVersion.HTTP_2, fields);
 
 			PriorityFrame priorityFrame = new PriorityFrame(streamId, 3 * streamId, 200, true);
@@ -145,7 +145,7 @@ public class HeadersGenerateParseTest {
 			HeadersFrame frame = frames.get(0);
 			Assert.assertEquals(streamId, frame.getStreamId());
 			Assert.assertTrue(frame.isEndStream());
-			MetaData.Request request = (MetaData.Request) frame.getMetaData();
+			HttpRequest request = (HttpRequest) frame.getMetaData();
 			Assert.assertEquals(metaData.getMethod(), request.getMethod());
 			Assert.assertEquals(metaData.getURI(), request.getURI());
 			for (int j = 0; j < fields.size(); ++j) {

@@ -173,7 +173,7 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    HttpOutputStream sendRequestWithContinuation(MetaData.Request request, ClientHttpHandler handler) {
+    HttpOutputStream sendRequestWithContinuation(HttpRequest request, ClientHttpHandler handler) {
         request.getFields().put(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE);
         return getHttpOutputStream(request, handler);
     }

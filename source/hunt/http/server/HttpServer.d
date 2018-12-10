@@ -15,10 +15,13 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.container.ByteBuffer;
 import hunt.event.EventLoop;
+import hunt.datetime;
 import hunt.lang.exception;
 import hunt.logging;
 import hunt.net;
 import hunt.util.Lifecycle;
+
+import core.time;
 
 /**
 */
@@ -64,23 +67,28 @@ class HttpServer : AbstractLifecycle {
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(http2ServerHandler);
 
-        _server = NetUtil.createNetServer!(ServerThreadMode.Single)();
+        _server = NetUtil.createNetServer!(ServerThreadMode.Multi)();
         _server.setConfig(c.getTcpConfiguration());
 
         _server.connectionHandler((NetSocket sock) {
-            version(HUNT_DEBUG) info("server accepted a connection...");
+            version(HUNT_DEBUG) infof("server accepted a new connection from %s", sock.remoteAddress);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
-            session.handler( (in ubyte[] data) {   
-                    version(HUNT_DEBUG) { 
-                        infof("data received (%d bytes): ", data.length); 
-                        if(data.length<=64)
-                            infof("%(%02X %)", data[0 .. $]);
-                        else
-                            infof("%(%02X %) ...", data[0 .. 64]);
-                        // infof(cast(string) data); 
+            session.handler( (const ubyte[] data) {   
+                    version(HUNT_METRIC) {
+                        trace("start hadling session data ...");
+                        MonoTime startTime = MonoTime.currTime;
+                    } else version(HUNT_DEBUG) { 
+                        trace("start hadling session data ...");
                     }
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
                     commonDecoder.decode(buf, session);
+                    version(HUNT_METRIC) {
+                        Duration timeElapsed = MonoTime.currTime - startTime;
+                        warningf("handling done for session %d with cost: %d microseconds",
+                            session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
+                        tracef("session handling done: %s.", session.toString());
+                    } else version(HUNT_DEBUG) 
+                        tracef("session handling done");
                 }
             );
         });
