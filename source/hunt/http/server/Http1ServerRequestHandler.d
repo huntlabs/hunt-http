@@ -2,7 +2,6 @@ module hunt.http.server.Http1ServerRequestHandler;
 
 import hunt.http.server.Http1ServerConnection;
 import hunt.http.server.Http2ServerHandler;
-import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
 
@@ -13,8 +12,21 @@ import hunt.container.ByteBuffer;
 import hunt.string;
 
 import hunt.logging;
+import std.string : icmp;
 
 alias RequestHandler = HttpParser.RequestHandler;
+
+
+class HttpServerRequest : HttpRequest {
+
+    this(string method, string uri, HttpVersion ver) {
+        enum string connect = HttpMethod.CONNECT.asString();
+        super(method, 
+            new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
+            ver, new HttpFields());        
+        // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
+    }
+}
 
 /**
 */

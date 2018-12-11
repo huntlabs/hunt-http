@@ -292,7 +292,7 @@ class HttpGenerator {
         version(HUNT_METRIC) {
             scope(exit) {
                 Duration timeElapsed = MonoTime.currTime - startTime;
-                warningf("generating completed with cost: %d microseconds", 
+                warningf("generating completed in: %d microseconds", 
                     timeElapsed.total!(TimeUnit.Microsecond)());
             }
         }
@@ -419,7 +419,7 @@ class HttpGenerator {
                     // debug infof("_state: %s", _state);
                     if(_state == State.COMMITTED) {
                         Duration timeElapsed = MonoTime.currTime - startTime;
-                        warningf("comitted with cost: %d microseconds", 
+                        warningf("comitted in: %d microseconds", 
                             timeElapsed.total!(TimeUnit.Microsecond)());
                     }
                 }

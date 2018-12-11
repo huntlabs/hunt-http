@@ -1,18 +1,14 @@
 module hunt.http.codec.http.model.HttpFields;
 
-// import hunt.http.utils.collection.ArrayTernaryTrie;
-// import hunt.http.utils.collection.Trie;
-// import hunt.http.utils.lang.QuotedStringTokenizer;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.QuotedCSV;
 
-import hunt.lang.exception;
-import hunt.string;
 import hunt.container;
-
+import hunt.lang.exception;
 import hunt.logging;
+import hunt.string;
 
 import std.array;
 import std.container.array;
@@ -21,9 +17,6 @@ import std.datetime;
 import std.string;
 import std.range;
 
-// import java.util;
-// import java.util.stream.Stream;
-// import java.util.stream.StreamSupport;
 
 /**
  * HTTP Fields. A collection of HTTP header and or Trailer fields.
@@ -37,11 +30,8 @@ import std.range;
  * specification and RFC6265.
  *
  */
-class HttpFields : Iterable!HttpField { 
-	// deprecated("")
+class HttpFields : Iterable!HttpField {
 	// static string __separators = ", \t";
-
-	
 
 	private HttpField[] _fields;
 	private int _size;
@@ -79,20 +69,18 @@ class HttpFields : Iterable!HttpField {
 	}
 
 	InputRange!HttpField iterator() {
-		return inputRangeObject(_fields[0.._size]);
+		return inputRangeObject(_fields[0 .. _size]);
 	}
 
-    int opApply(scope int delegate(ref HttpField) dg)
-    {
-        int result = 0;
-        foreach(HttpField v; _fields[0.._size])
-        {
-            result = dg(v);
-            if(result != 0) return result;
-        }
-        return result;
-    }
-
+	int opApply(scope int delegate(ref HttpField) dg) {
+		int result = 0;
+		foreach (HttpField v; _fields[0 .. _size]) {
+			result = dg(v);
+			if (result != 0)
+				return result;
+		}
+		return result;
+	}
 
 	/**
 	 * Get Collection of header names.
@@ -101,7 +89,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	Set!string getFieldNamesCollection() {
 		Set!string set = new HashSet!string(_size);
-		foreach (HttpField f ; _fields[0.._size]) {
+		foreach (HttpField f; _fields[0 .. _size]) {
 			if (f !is null)
 				set.add(f.getName());
 		}
@@ -114,15 +102,15 @@ class HttpFields : Iterable!HttpField {
 	 * 
 	 * @return an enumeration of field names
 	 */
-	 InputRange!string getFieldNames() {
+	InputRange!string getFieldNames() {
 		bool[string] set;
-		foreach (HttpField f ; _fields[0.._size]) {
+		foreach (HttpField f; _fields[0 .. _size]) {
 			if (f !is null)
-				set[f.getName()] = true;				
+				set[f.getName()] = true;
 		}
 		return inputRangeObject(set.keys);
 	}
-	
+
 	// InputRange!string getFieldNames() {
 	// 	// return Collections.enumeration(getFieldNamesCollection());
 	// 	// return getFieldNamesCollection().toArray();
@@ -211,11 +199,6 @@ class HttpFields : Iterable!HttpField {
 		return false;
 	}
 
-	// deprecated("")
-	// string getStringField(HttpHeader header) {
-	// 	return get(header);
-	// }
-
 	string get(HttpHeader header) {
 		for (int i = 0; i < _size; i++) {
 			HttpField f = _fields[i];
@@ -224,11 +207,6 @@ class HttpFields : Iterable!HttpField {
 		}
 		return null;
 	}
-
-	// deprecated("")
-	// string getStringField(string name) {
-	// 	return get(name);
-	// }
 
 	string get(string header) {
 		for (int i = 0; i < _size; i++) {
@@ -248,7 +226,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	string[] getValuesList(HttpHeader header) {
 		Array!(string) list;
-		foreach (HttpField f ; this)
+		foreach (HttpField f; this)
 			if (f.getHeader() == header)
 				list.insertBack(f.getValue());
 		return list.array();
@@ -263,7 +241,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	string[] getValuesList(string name) {
 		Array!(string) list;
-		foreach (HttpField f ; this)
+		foreach (HttpField f; this)
 			if (f.getName().equalsIgnoreCase(name))
 				list.insertBack(f.getValue());
 		return list.array();
@@ -307,7 +285,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	bool addCSV(string name, string[] values...) {
 		QuotedCSV existing = null;
-		foreach (HttpField f ; this) {
+		foreach (HttpField f; this) {
 			if (f.getName().equalsIgnoreCase(name)) {
 				if (existing is null)
 					existing = new QuotedCSV(false);
@@ -339,7 +317,7 @@ class HttpFields : Iterable!HttpField {
 
 		if (add) {
 			StringBuilder value = new StringBuilder();
-			foreach (string v ; values) {
+			foreach (string v; values) {
 				if (v == null)
 					continue;
 				if (value.length > 0)
@@ -364,7 +342,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	string[] getCSV(HttpHeader header, bool keepQuotes) {
 		QuotedCSV values = null;
-		foreach (HttpField f ; _fields[0.._size]) {
+		foreach (HttpField f; _fields[0 .. _size]) {
 			if (f.getHeader() == header) {
 				if (values is null)
 					values = new QuotedCSV(keepQuotes);
@@ -374,7 +352,7 @@ class HttpFields : Iterable!HttpField {
 		// Array!string ar = values.getValues();
 		// return inputRangeObject(values.getValues()[].array);
 
-		return values is null ? cast(string[])null : values.getValues().array;
+		return values is null ? cast(string[]) null : values.getValues().array;
 	}
 
 	/**
@@ -388,7 +366,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	List!string getCSV(string name, bool keepQuotes) {
 		QuotedCSV values = null;
-		foreach (HttpField f ; _fields[0.._size]) {
+		foreach (HttpField f; _fields[0 .. _size]) {
 			if (f.getName().equalsIgnoreCase(name)) {
 				if (values is null)
 					values = new QuotedCSV(keepQuotes);
@@ -401,7 +379,7 @@ class HttpFields : Iterable!HttpField {
 
 	string[] getCsvAsArray(string name, bool keepQuotes) {
 		QuotedCSV values = null;
-		foreach (HttpField f ; _fields[0.._size]) {
+		foreach (HttpField f; _fields[0 .. _size]) {
 			if (f.getName().equalsIgnoreCase(name)) {
 				if (values is null)
 					values = new QuotedCSV(keepQuotes);
@@ -468,63 +446,14 @@ class HttpFields : Iterable!HttpField {
 		for (int i = 0; i < _size; i++) {
 			HttpField f = _fields[i];
 			if (f.getName().equalsIgnoreCase(name)) {
-				 string  v = f.getValue();
-				 if(!v.empty) r.insertBack(v);
+				string v = f.getValue();
+				if (!v.empty)
+					r.insertBack(v);
 			}
 		}
 
-		// List!string empty = Collections.emptyList();
-		// return Collections.enumeration(empty);
 		return inputRangeObject(r[].array);
 	}
-
-	/**
-	 * Get multi field values with separator. The multiple values can be
-	 * represented as separate headers of the same name, or by a single header
-	 * using the separator(s), or a combination of both. Separators may be
-	 * quoted.
-	 *
-	 * @param name
-	 *            the case-insensitive field name
-	 * @param separators
-	 *            string of separators.
-	 * @return Enumeration of the values, or null if no such header.
-	 */
-	// deprecated("")
-	// Enumeration<string> getValues(string name, string separators) {
-	// 	Enumeration<string> e = getValues(name);
-	// 	if (e == null)
-	// 		return null;
-	// 	return new Enumeration<string>() {
-	// 		QuotedStringTokenizer tok = null;
-
-	// 		override
-	// 		bool hasMoreElements() {
-	// 			if (tok != null && tok.hasMoreElements())
-	// 				return true;
-	// 			while (e.hasMoreElements()) {
-	// 				string value = e.nextElement();
-	// 				if (value != null) {
-	// 					tok = new QuotedStringTokenizer(value, separators, false, false);
-	// 					if (tok.hasMoreElements())
-	// 						return true;
-	// 				}
-	// 			}
-	// 			tok = null;
-	// 			return false;
-	// 		}
-
-	// 		override
-	// 		string nextElement() throws NoSuchElementException {
-	// 			if (!hasMoreElements())
-	// 				throw new NoSuchElementException();
-	// 			string next = (string) tok.nextElement();
-	// 			if (next != null)
-	// 				next = next.strip();
-	// 			return next;
-	// 		}
-	// 	};
-	// }
 
 	void put(HttpField field) {
 		bool put = false;
@@ -533,7 +462,7 @@ class HttpFields : Iterable!HttpField {
 			if (f.isSameName(field)) {
 				if (put) {
 					--_size;
-					_fields[i+1 .. _size+1] = _fields[i .. _size];
+					_fields[i + 1 .. _size + 1] = _fields[i .. _size];
 				} else {
 					_fields[i] = field;
 					put = true;
@@ -588,7 +517,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	void put(string name, List!string list) {
 		remove(name);
-		foreach (string v ; list)
+		foreach (string v; list)
 			if (!v.empty)
 				add(name, v);
 	}
@@ -643,8 +572,8 @@ class HttpFields : Iterable!HttpField {
 			if (f.getHeader() == name) {
 				removed = f;
 				--_size;
-				for(int j =i; j<size; j++)
-					_fields[j] = _fields[j+1];	
+				for (int j = i; j < size; j++)
+					_fields[j] = _fields[j + 1];
 			}
 		}
 		return removed;
@@ -657,15 +586,15 @@ class HttpFields : Iterable!HttpField {
 	 *            the field to remove
 	 * @return the header that was removed
 	 */
-	HttpField remove(string name) {				
+	HttpField remove(string name) {
 		HttpField removed = null;
 		for (int i = _size; i-- > 0;) {
 			HttpField f = _fields[i];
 			if (f.getName().equalsIgnoreCase(name)) {
 				removed = f;
 				--_size;
-				for(int j =i; j<size; j++)
-					_fields[j] = _fields[j+1];					
+				for (int j = i; j < size; j++)
+					_fields[j] = _fields[j + 1];
 			}
 		}
 		return removed;
@@ -704,8 +633,8 @@ class HttpFields : Iterable!HttpField {
 		if (val.empty)
 			return -1;
 
-// TODO: Tasks pending completion -@zxp at 6/21/2018, 10:59:24 AM
-// 
+		// TODO: Tasks pending completion -@zxp at 6/21/2018, 10:59:24 AM
+		// 
 		long date = SysTime.fromISOExtString(val).stdTime(); // DateParser.parseDate(val);
 		if (date == -1)
 			throw new IllegalArgumentException("Cannot convert date: " ~ val);
@@ -784,46 +713,45 @@ class HttpFields : Iterable!HttpField {
 		add(name, d);
 	}
 
-	override
-	size_t toHash() @trusted nothrow {
+	override size_t toHash() @trusted nothrow {
 		int hash = 0;
-		foreach (HttpField field ; _fields[0.._size])
+		foreach (HttpField field; _fields[0 .. _size])
 			hash += field.toHash();
 		return hash;
 	}
 
-	override bool opEquals(Object o)
-	{
-		if(o is this) return true;
+	override bool opEquals(Object o) {
+		if (o is this)
+			return true;
 
-		if(!object.opEquals(this, o))
+		if (!object.opEquals(this, o))
 			return false;
 		HttpFields that = cast(HttpFields) o;
-		if(that is null)
+		if (that is null)
 			return false;
-		
+
 		// Order is not important, so we cannot rely on List.equals().
 		if (size() != that.size())
 			return false;
 
-		foreach (HttpField fi ; this) {
+		foreach (HttpField fi; this) {
 			bool isContinue = false;
-			foreach (HttpField fa ; that) {
+			foreach (HttpField fa; that) {
 				if (fi == fa) {
 					isContinue = true;
 					break;
 				}
 			}
-			if(!isContinue) return false;
+			if (!isContinue)
+				return false;
 		}
 		return true;
 	}
 
-	override
-	string toString() {
+	override string toString() {
 		try {
 			StringBuilder buffer = new StringBuilder();
-			foreach (HttpField field ; this) {
+			foreach (HttpField field; this) {
 				if (field !is null) {
 					string tmp = field.getName();
 					if (tmp != null)
@@ -880,10 +808,9 @@ class HttpFields : Iterable!HttpField {
 		// }
 
 		auto fieldNames = fields.getFieldNames();
-		foreach(string n; fieldNames)
-		{
+		foreach (string n; fieldNames) {
 			auto values = fields.getValues(n);
-			foreach(string v; values)
+			foreach (string v; values)
 				add(n, v);
 		}
 	}
@@ -907,7 +834,7 @@ class HttpFields : Iterable!HttpField {
 		if (value == null)
 			return null;
 
-		int i = cast(int)value.indexOf(';');
+		int i = cast(int) value.indexOf(';');
 		if (i < 0)
 			return value;
 		return value.substring(0, i).strip();
@@ -934,7 +861,7 @@ class HttpFields : Iterable!HttpField {
 		if (value is null)
 			return null;
 
-		int i = cast(int)value.indexOf(';');
+		int i = cast(int) value.indexOf(';');
 		if (i < 0)
 			return value;
 		if (parameters is null)
@@ -955,81 +882,4 @@ class HttpFields : Iterable!HttpField {
 
 		return value.substring(0, i).strip();
 	}
-
-	// deprecated("")
-	// private static Float __one = new Float("1.0");
-	// deprecated("")
-	// private static Float __zero = new Float("0.0");
-	// deprecated("")
-	// private static Trie<Float> __qualities = new ArrayTernaryTrie<>();
-	// shared static this() {
-	// 	__qualities.put("*", __one);
-	// 	__qualities.put("1.0", __one);
-	// 	__qualities.put("1", __one);
-	// 	__qualities.put("0.9", new Float("0.9"));
-	// 	__qualities.put("0.8", new Float("0.8"));
-	// 	__qualities.put("0.7", new Float("0.7"));
-	// 	__qualities.put("0.66", new Float("0.66"));
-	// 	__qualities.put("0.6", new Float("0.6"));
-	// 	__qualities.put("0.5", new Float("0.5"));
-	// 	__qualities.put("0.4", new Float("0.4"));
-	// 	__qualities.put("0.33", new Float("0.33"));
-	// 	__qualities.put("0.3", new Float("0.3"));
-	// 	__qualities.put("0.2", new Float("0.2"));
-	// 	__qualities.put("0.1", new Float("0.1"));
-	// 	__qualities.put("0", __zero);
-	// 	__qualities.put("0.0", __zero);
-	// }
-
-	// deprecated("")
-	// static Float getQuality(string value) {
-	// 	if (value == null)
-	// 		return __zero;
-
-	// 	int i = cast(int)value.indexOf(";");
-	// 	if (qe++ < 0 || qe == value.length)
-	// 		return __one;
-
-	// 	if (value.charAt(qe++) == 'q') {
-	// 		qe++;
-	// 		Float q = __qualities.get(value, qe, value.length - qe);
-	// 		if (q != null)
-	// 			return q;
-	// 	}
-
-	// 	Map<string, string> params = new HashMap<>(4);
-	// 	valueParameters(value, params);
-	// 	string qs = params.get("q");
-	// 	if (qs == null)
-	// 		qs = "*";
-	// 	Float q = __qualities.get(qs);
-	// 	if (q == null) {
-	// 		try {
-	// 			q = new Float(qs);
-	// 		} catch (Exception e) {
-	// 			q = __one;
-	// 		}
-	// 	}
-	// 	return q;
-	// }
-
-	/**
-	 * List values in quality order.
-	 *
-	 * @param e
-	 *            Enumeration of values with quality parameters
-	 * @return values in quality order.
-	 */
-	// deprecated("")
-	// static List!string qualityList(Enumeration<string> e) {
-	// 	if (e == null || !e.hasMoreElements())
-	// 		return Collections.emptyList();
-
-	// 	QuotedQualityCSV values = new QuotedQualityCSV();
-	// 	while (e.hasMoreElements())
-	// 		values.addValue(e.nextElement());
-	// 	return values.getValues();
-	// }
-
-
 }

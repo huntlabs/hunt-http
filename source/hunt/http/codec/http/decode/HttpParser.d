@@ -1569,7 +1569,7 @@ class HttpParser {
         version(HUNT_METRIC) {
             if(state == State.END) {
                 Duration timeElapsed = MonoTime.currTime - startTime;
-                warningf("parsing ended with cost: %d microseconds", timeElapsed.total!(TimeUnit.Microsecond)());
+                warningf("parsing ended in: %d microseconds", timeElapsed.total!(TimeUnit.Microsecond)());
             }
         }
     }

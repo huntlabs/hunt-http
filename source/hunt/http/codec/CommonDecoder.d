@@ -80,7 +80,7 @@ class CommonDecoder : DecoderChain {
 
         version(HUNT_METRIC) {
             Duration timeElapsed = MonoTime.currTime - startTime;
-            warningf("decoding done for session %d with cost: %d microseconds",
+            warningf("decoding done for session %d in: %d microseconds",
                 session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
         }
     }

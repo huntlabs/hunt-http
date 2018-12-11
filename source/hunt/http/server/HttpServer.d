@@ -84,7 +84,7 @@ class HttpServer : AbstractLifecycle {
                     commonDecoder.decode(buf, session);
                     version(HUNT_METRIC) {
                         Duration timeElapsed = MonoTime.currTime - startTime;
-                        warningf("handling done for session %d with cost: %d microseconds",
+                        warningf("handling done for session %d in: %d microseconds",
                             session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
                         tracef("session handling done: %s.", session.toString());
                     } else version(HUNT_DEBUG) 
