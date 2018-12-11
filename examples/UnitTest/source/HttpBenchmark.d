@@ -110,6 +110,9 @@ Connection: keep-alive
 
         
         bool startRequest(string method, string uri, HttpVersion ver) {
+            version (HUNT_DEBUG) {
+                tracef("server received the request line, %s, %s, %s", method, uri, ver);
+            }
             _fields.clear();
             _trailers.clear();
             _headers = -1;

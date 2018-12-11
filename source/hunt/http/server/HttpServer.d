@@ -67,15 +67,24 @@ class HttpServer : AbstractLifecycle {
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
         c.getTcpConfiguration().setHandler(http2ServerHandler);
 
-        _server = NetUtil.createNetServer!(ServerThreadMode.Multi)();
+        _server = NetUtil.createNetServer!(ServerThreadMode.Single)();
         _server.setConfig(c.getTcpConfiguration());
 
+//         string responseString = `HTTP/1.1 000 
+// Server: Hunt-HTTP/1.0
+// Date: Tue, 11 Dec 2018 08:17:36 GMT
+// Content-Type: text/plain
+// Content-Length: 13
+// Connection: keep-alive
+
+// Hello, World!`;
+
         _server.connectionHandler((NetSocket sock) {
-            version(HUNT_DEBUG) infof("server accepted a new connection from %s", sock.remoteAddress);
+            version(HUNT_DEBUG) infof("accepted a new connection from %s", sock.remoteAddress);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
             session.handler( (const ubyte[] data) {   
                     version(HUNT_METRIC) {
-                        trace("start hadling session data ...");
+                        debug trace("start hadling session data ...");
                         MonoTime startTime = MonoTime.currTime;
                     } else version(HUNT_DEBUG) { 
                         trace("start hadling session data ...");
@@ -89,6 +98,16 @@ class HttpServer : AbstractLifecycle {
                         tracef("session handling done: %s.", session.toString());
                     } else version(HUNT_DEBUG) 
                         tracef("session handling done");
+
+
+                    // session.write(responseString, () {
+                    // version(HUNT_METRIC) {
+                    //     Duration timeElapsed = MonoTime.currTime - startTime;
+                    //     warningf("handling done for session %d in: %d microseconds",
+                    //         session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
+                    //     debug tracef("session handling done: %s.", session.toString());
+                    // }                      
+                    // });
                 }
             );
         });

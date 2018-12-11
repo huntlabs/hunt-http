@@ -216,14 +216,14 @@ class HttpGenerator {
                         throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, "HTTP/0.9 not supported");
 
                     generateHeaders(metaData, header, content, last);
-
-                    bool expect100 = metaData.getFields().contains(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE.asString());
+                    enum string continueString = HttpHeaderValue.CONTINUE.asString();
+                    bool expect100 = metaData.getFields().contains(HttpHeader.EXPECT, continueString);
 
                     if (expect100) {
                         _state = State.COMMITTED;
                     } else {
                         // handle the content.
-                        int len = BufferUtils.length(content);
+                        int len = content.remaining(); // BufferUtils.length(content);
                         if (len > 0) {
                             _contentPrepared += len;
                             if (isChunking())
@@ -296,6 +296,7 @@ class HttpGenerator {
                     timeElapsed.total!(TimeUnit.Microsecond)());
             }
         }
+
         if (BufferUtils.hasContent(content)) {
             version(HUNT_DEBUG)
                 tracef("discarding content in COMPLETING");
