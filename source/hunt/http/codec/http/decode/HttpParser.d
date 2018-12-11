@@ -1674,7 +1674,7 @@ class HttpParser {
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
-    interface RequestHandler :HttpHandler {
+    interface RequestHandler : HttpHandler {
         /**
          * This is the method called by parser when the HTTP request line is parsed
          *
@@ -1719,7 +1719,7 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     
-    private static class IllegalCharacterException :BadMessageException {
+    private static class IllegalCharacterException : BadMessageException {
         private this(State state, byte ch, ByteBuffer buffer) {
             super(400, format("Illegal character 0x%X", ch));
             // Bug #460642 - don't reveal buffers to end user

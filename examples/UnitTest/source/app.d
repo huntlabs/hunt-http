@@ -30,20 +30,22 @@ import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
-
 import hunt.lang.exception;
 import hunt.logging;
 import hunt.http.codec.http.model.HttpHeader;
 
-void main()
-{
+import HttpBenchmark;
+
+void main() {
+
+	HttpBenchmark hb = new HttpBenchmark();
+	hb.benchmark(10000);
 
 	// testHpackDecoder();
 
 	// **********************
 	// bug
 	// **********************
-
 
 	// **********************
 	// test.codec.http2.model
@@ -53,11 +55,10 @@ void main()
 	// testUnits!HttpFieldsTest();
 	// testUnits!HttpURIParseTest();
 	// testUnits!HttpURITest();
-	testUnits!MultipartFormInputStreamTest(); 
+	// testUnits!MultipartFormInputStreamTest(); 
 	// testUnits!MultipartParserTest(); 
 	// testUnits!QuotedCSVTest();
 	// testUnits!TestHttpField();
-	
 
 	// **********************
 	// test.codec.http2.hpack
@@ -72,7 +73,7 @@ void main()
 	// **********************
 	// test.codec.http2.decode.*
 	// **********************
-	
+
 	// testUnits!HttpParserTest(); 
 	// testUnits!Http2DecoderTest();
 
@@ -88,7 +89,6 @@ void main()
 	// testUnits!SettingsGenerateParseTest();
 	// testUnits!URLEncodedTest();
 
-
 	// **********************
 	// test.codec.websocket.*
 	// **********************
@@ -97,40 +97,36 @@ void main()
 	// testUnits!QuoteUtilTest(); 
 	// testUnits!WebSocketFrameTest(); 
 
-
 }
 
+void testHpackDecoder() {
+	import hunt.http.codec.http.hpack.HpackDecoder;
+	import hunt.http.codec.http.model;
+	import hunt.util.TypeUtils;
 
-void testHpackDecoder()
-{
-import hunt.http.codec.http.hpack.HpackDecoder;
-import hunt.http.codec.http.model;
-import hunt.util.TypeUtils;
+	import hunt.util.Assert;
+	import hunt.util.UnitTest;
 
-import hunt.util.Assert;
-import hunt.util.UnitTest;
+	import hunt.container.ByteBuffer;
+	import hunt.container.Iterator;
+	import hunt.http.codec.http.model.DateGenerator;
+	import std.datetime;
 
-import hunt.container.ByteBuffer;
-import hunt.container.Iterator;
-import hunt.http.codec.http.model.DateGenerator;
-import std.datetime;
-	
-        // Response encoded by nghttpx
-        string encoded = "886196C361Be940b6a65B6850400B8A00571972e080a62D1Bf5f87497cA589D34d1f9a0f0d0234327690Aa69D29aFcA954D3A5358980Ae112e0f7c880aE152A9A74a6bF3";
-		encoded = "885f87497cA589D34d1f"; // ok 
-        ByteBuffer buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
+	// Response encoded by nghttpx
+	string encoded = "886196C361Be940b6a65B6850400B8A00571972e080a62D1Bf5f87497cA589D34d1f9a0f0d0234327690Aa69D29aFcA954D3A5358980Ae112e0f7c880aE152A9A74a6bF3";
+	encoded = "885f87497cA589D34d1f"; // ok 
+	ByteBuffer buffer = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
 
-		tracef("%(%02X %)", buffer.array());
+	tracef("%(%02X %)", buffer.array());
 
-        HpackDecoder decoder = new HpackDecoder(4096, 8192);
-        HttpResponse response = cast(HttpResponse) decoder.decode(buffer);
-		tracef("status: %d", response.getStatus());
-		foreach(HttpField h; response)
-		{
-			tracef("%s", h.toString());
-		}
+	HpackDecoder decoder = new HpackDecoder(4096, 8192);
+	HttpResponse response = cast(HttpResponse) decoder.decode(buffer);
+	tracef("status: %d", response.getStatus());
+	foreach (HttpField h; response) {
+		tracef("%s", h.toString());
+	}
 
-		tracef(DateGenerator.formatDate(Clock.currTime));
+	tracef(DateGenerator.formatDate(Clock.currTime));
 
-		trace(Clock.currTime.toSimpleString());
+	trace(Clock.currTime.toSimpleString());
 }
