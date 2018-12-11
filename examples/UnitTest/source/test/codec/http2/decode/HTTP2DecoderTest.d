@@ -16,20 +16,17 @@ import hunt.http.server.Http2ServerConnection;
 import hunt.http.server.Http2ServerDecoder;
 import hunt.http.server.ServerSessionListener;
 
-import hunt.net.Session;
-
+import hunt.container;
 import hunt.lang.exception;
 import hunt.lang.common;
+import hunt.net.Session;
 import hunt.util.Assert;
 import hunt.util.functional;
-
-import hunt.container;
 
 import std.conv;
 import std.random;
 import std.stdio;
 import std.socket;
-
 
 
 class Http2DecoderTest {
@@ -302,7 +299,8 @@ class Http2DecoderTest {
                     override
                     void onSettings(StreamSession session, SettingsFrame frame) {
                         writeln("on settings: " ~ frame.toString());
-                        Assert.assertThat(frame.getSettings().get(SettingsFrame.INITIAL_WINDOW_SIZE), (http2Configuration.getInitialStreamSendWindow()));
+                        Assert.assertThat(frame.getSettings().get(SettingsFrame.INITIAL_WINDOW_SIZE), 
+                            (http2Configuration.getInitialStreamSendWindow()));
                     }
 
                     override
@@ -369,7 +367,8 @@ class Http2DecoderTest {
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
         settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-        Generator generator = new Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
+        Generator generator = new Generator(http2Configuration.getMaxDynamicTableSize(), 
+            http2Configuration.getMaxHeaderBlockFragment());
 
         HeadersGenerator headersGenerator = generator.getControlGenerator!HeadersGenerator(FrameType.HEADERS);
         SettingsGenerator settingsGenerator = generator.getControlGenerator!SettingsGenerator(FrameType.SETTINGS);
@@ -482,8 +481,9 @@ class MockSessionFactory
                 encoder.encode(message, this);
             }
 
-        int getSessionId(){ implementationMissing(false); return 0; }
+        int getSessionId(){ return 0; }
 
+version(HUNT_METRIC) {
         long getOpenTime(){ implementationMissing(false); return 0; }
 
         long getCloseTime(){ implementationMissing(false); return 0; }
@@ -496,11 +496,15 @@ class MockSessionFactory
 
         long getLastActiveTime(){ implementationMissing(false); return 0; }
 
-        long getReadBytes(){ implementationMissing(false); return 0; }
+        size_t getReadBytes(){ implementationMissing(false); return 0; }
 
-        long getWrittenBytes(){ implementationMissing(false); return 0; }
+        size_t getWrittenBytes(){ implementationMissing(false); return 0; }
 
-        void close(){ implementationMissing(false); }
+        long getIdleTimeout() { implementationMissing(false); return 0; }
+
+        override string toString() { return ""; }
+}
+        void close(){  }
 
         void shutdownOutput(){ implementationMissing(false); }
 
@@ -514,12 +518,9 @@ class MockSessionFactory
 
         bool isWaitingForClose(){ implementationMissing(false); return false; }
 
-        Address getLocalAddress(){ implementationMissing(false); return cast(Address)null; }
+        Address getLocalAddress(){ return new InternetAddress("127.0.0.1", 8080); }
 
-        Address getRemoteAddress(){ implementationMissing(false); return cast(Address)null; }
-
-
-        long getIdleTimeout() { implementationMissing(false); return 0; }
+        Address getRemoteAddress(){ return new InternetAddress("127.0.0.1", 0); }
 
         long getMaxIdleTimeout() { implementationMissing(false); return 0; }
 
