@@ -26,7 +26,7 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
     this(Http2Configuration config, SecureSession secureSession, Session tcpSession,
                                    HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         super(secureSession, tcpSession, HttpVersion.HTTP_1_1);
-        version (HUNT_DEBUG) trace("initilizing Http1Connection");
+        version (HUNT_DEBUG) trace("initializing Http1Connection");
         this.config = config;
         parser = initHttpParser(config, requestHandler, responseHandler);
         version(WithHTTP2) {

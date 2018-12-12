@@ -1,6 +1,7 @@
 module hunt.http.codec.http.model.HttpVersion;
 
 import hunt.container.ByteBuffer;
+
 // import java.nio.charset.StandardCharsets;
 
 import hunt.util.traits;
@@ -8,6 +9,7 @@ import hunt.lang.exception;
 
 import std.ascii;
 import std.string;
+
 // import hunt.http.utils.collection.ArrayTrie;
 // import hunt.http.utils.collection.Trie;
 
@@ -18,11 +20,11 @@ struct HttpVersion {
 	enum HttpVersion HTTP_1_1 = HttpVersion("HTTP/1.1", 11);
 	enum HttpVersion HTTP_2 = HttpVersion("HTTP/2.0", 20);
 
-	private __gshared HttpVersion[string] CACHE; 
+	private __gshared HttpVersion[string] CACHE;
 
 	shared static this() {
-		foreach (HttpVersion ver ; HttpVersion.values())
-			CACHE[ver.toString()] =  ver;
+		foreach (HttpVersion ver; HttpVersion.values())
+			CACHE[ver.toString()] = ver;
 	}
 
 	mixin GetConstantValues!(HttpVersion);
@@ -44,11 +46,11 @@ struct HttpVersion {
 			return HttpVersion.Null;
 
 		if (bytes[position + 4] == '/' && bytes[position + 6] == '.'
-				&&  std.ascii.isWhite(cast(char) bytes[position + 8])
-				&& ((bytes[position] == 'H' && bytes[position + 1] == 'T' && bytes[position + 2] == 'T'
-						&& bytes[position + 3] == 'P')
-						|| (bytes[position] == 'h' && bytes[position + 1] == 't' && bytes[position + 2] == 't'
-								&& bytes[position + 3] == 'p'))) {
+				&& std.ascii.isWhite(cast(char) bytes[position + 8])
+				&& ((bytes[position] == 'H' && bytes[position + 1] == 'T'
+					&& bytes[position + 2] == 'T' && bytes[position + 3] == 'P') || (bytes[position] == 'h'
+					&& bytes[position + 1] == 't' && bytes[position + 2] == 't'
+					&& bytes[position + 3] == 'p'))) {
 			switch (bytes[position + 5]) {
 			case '1':
 				switch (bytes[position + 7]) {
@@ -65,7 +67,7 @@ struct HttpVersion {
 					return HTTP_2;
 				}
 				break;
-			
+
 			default:
 				break;
 			}
@@ -96,7 +98,7 @@ struct HttpVersion {
 
 	this(string s, int ver) {
 		_string = s;
-		_bytes = cast(byte[])s.dup;
+		_bytes = cast(byte[]) s.dup;
 		// _buffer = ByteBuffer.wrap(_bytes);
 		_version = ver;
 	}
@@ -125,18 +127,22 @@ struct HttpVersion {
 		return _string;
 	}
 
-	int opCmp(ref const HttpVersion h) const
-	{
-		if(_version>h._version)	return 1;
-		else if(_version == h._version) return 0;
-		else return -1;
+	int opCmp(ref const HttpVersion h) const {
+		if (_version > h._version)
+			return 1;
+		else if (_version == h._version)
+			return 0;
+		else
+			return -1;
 	}
 
-	int opCmp(const HttpVersion h) const
-	{
-		if(_version>h._version)	return 1;
-		else if(_version == h._version) return 0;
-		else return -1;
+	int opCmp(const HttpVersion h) const {
+		if (_version > h._version)
+			return 1;
+		else if (_version == h._version)
+			return 0;
+		else
+			return -1;
 	}
 
 	/**

@@ -1,6 +1,5 @@
 module hunt.http.client.Http1ClientConnection;
 
-
 import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.ClientHttp2SessionListener;
 import hunt.http.client.HttpClientConnection;
@@ -24,23 +23,20 @@ import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
-import hunt.util.Assert;
+// import hunt.util.Assert;
+import hunt.container;
 import hunt.io;
+import hunt.lang.exception;
+import hunt.logging;
+import hunt.string;
 import hunt.util.codec;
 import hunt.util.concurrent.Promise;
-import hunt.lang.exception;
-import hunt.string;
-
-import hunt.container;
-
-import hunt.logging;
 
 import std.array;
 import std.base64;
 import std.conv;
 import std.random;
 import std.socket;
-
 
 alias HttpProtocol = hunt.http.codec.http.model.Protocol.Protocol;
 alias SessionListener = StreamSession.Listener;
@@ -49,7 +45,7 @@ alias SessionListener = StreamSession.Listener;
 
 /**
 */
-class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
+class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
     private Promise!(WebSocketConnection) webSocketConnectionPromise;
     private IncomingFrames incomingFrames;
@@ -65,27 +61,24 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         this(config, secureSession, tcpSession, new ResponseHandlerWrap());
     }
 
-    private this(Http2Configuration config, SecureSession secureSession, TcpSession tcpSession,
-                                  ResponseHandler responseHandler) {
+    private this(Http2Configuration config, SecureSession secureSession,
+            TcpSession tcpSession, ResponseHandler responseHandler) {
+
         super(config, secureSession, tcpSession, null, responseHandler);
         wrap = cast(ResponseHandlerWrap) responseHandler;
         wrap.connection = this;
     }
 
-    override
-    protected HttpParser initHttpParser(Http2Configuration config, HttpRequestHandler requestHandler,
-                                        ResponseHandler responseHandler) {
+    override protected HttpParser initHttpParser(Http2Configuration config,
+            HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         return new HttpParser(responseHandler, config.getMaxRequestHeadLength());
     }
 
-
-    override
-    ConnectionType getConnectionType() {
+    override ConnectionType getConnectionType() {
         return ConnectionType.HTTP1;
     }
 
-    override
-    bool isEncrypted() {
+    override bool isEncrypted() {
         return super.isEncrypted();
     }
 
@@ -97,10 +90,11 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         return config;
     }
 
-    override
-    void upgradeHttp2(Request request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
-                             ClientHttpHandler upgradeHandler,
-                             ClientHttpHandler http2ResponseHandler) {
+    // dfmt off
+    override void upgradeHttp2(Request request, SettingsFrame settings, 
+            Promise!(HttpClientConnection) promise, ClientHttpHandler upgradeHandler,
+            ClientHttpHandler http2ResponseHandler) {
+
         Promise!(Stream) initStream = new Http2ClientResponseHandler.ClientStreamPromise(request, 
             new class DefaultPromise!(HttpOutputStream) {
 
@@ -122,9 +116,9 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
     }
 
     void upgradeHttp2(Request request, SettingsFrame settings,
-                             Promise!(HttpClientConnection) promise, Promise!(Stream) initStream,
-                             Stream.Listener initStreamListener, ClientHttp2SessionListener listener,
-                             ClientHttpHandler handler) {
+            Promise!(HttpClientConnection) promise, Promise!(Stream) initStream,
+            Stream.Listener initStreamListener,
+            ClientHttp2SessionListener listener, ClientHttpHandler handler) {
         if (isEncrypted()) {
             throw new IllegalStateException("The TLS TCP connection must use ALPN to upgrade HTTP2");
         }
@@ -143,7 +137,7 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
                         listener, flowControl, 3, config.getStreamIdleTimeout(), initStream,
                         initStreamListener);
             }
-        };
+        };        
 
         // generate http2 upgrading headers
         request.getFields().add(new HttpField(HttpHeader.CONNECTION, "Upgrade, HTTP2-Settings"));
@@ -151,13 +145,13 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         if (settings !is null) {
             List!(ByteBuffer) byteBuffers = http2Generator.control(settings);
             if (byteBuffers !is null && byteBuffers.size() > 0) {
-                try  {
+                try {
                     // ByteArrayOutputStream ot = new ByteArrayOutputStream();
                     // foreach (ByteBuffer buffer ; byteBuffers) {
                     //     ot.write(BufferUtils.toArray(buffer));
                     // }
                     Appender!(byte[]) ot;
-                    foreach (ByteBuffer buffer ; byteBuffers) {
+                    foreach (ByteBuffer buffer; byteBuffers) {
                         byte[] bufferArray = BufferUtils.toArray(buffer);
                         // writeln("before1:\t" ~ TypeUtils.toHexString(bufferArray));
                         // writefln("before1:\t%(%02X %)" , bufferArray);
@@ -166,12 +160,11 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
                     byte[] settingsFrame = ot.data; //ot.toByteArray();
                     byte[] settingsPayload = new byte[settingsFrame.length - 9];
                     // System.arraycopy(settingsFrame, 9, settingsPayload, 0, settingsPayload.length);
-                    settingsPayload[0 .. settingsPayload.length] = settingsFrame[9 .. 9+settingsPayload.length];
+                    settingsPayload[0 .. settingsPayload.length] = settingsFrame[9 .. 9 + settingsPayload.length];
 
-                    request.getFields().add(new HttpField(HttpHeader.HTTP2_SETTINGS, 
-                    // Base64Utils.encodeToUrlSafeString(settingsPayload)
-                    Base64URL.encode(settingsPayload)
-                    ));
+                    request.getFields().add(new HttpField(HttpHeader.HTTP2_SETTINGS,
+                            // Base64Utils.encodeToUrlSafeString(settingsPayload)
+                            Base64URL.encode(settingsPayload)));
                 } catch (IOException e) {
                     errorf("generate http2 upgrading settings exception", e);
                 }
@@ -184,29 +177,30 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
 
         send(request, handler);
     }
+    // dfmt on
 
     bool upgradeProtocolComplete(HttpRequest request, HttpResponse response) {
         switch (ProtocolHelper.from(response)) {
-            case HttpProtocol.H2: {
-                if (http2ConnectionPromise !is null && http2SessionListener !is null && http2Connection !is null) {
+        case HttpProtocol.H2: {
+                if (http2ConnectionPromise !is null
+                        && http2SessionListener !is null && http2Connection !is null) {
                     upgradeHttp2Complete = true;
                     getTcpSession().attachObject(http2Connection);
                     http2SessionListener.setConnection(http2Connection);
-                    http2Connection.initialize(getHttp2Configuration(), http2ConnectionPromise, http2SessionListener);
+                    http2Connection.initialize(getHttp2Configuration(),
+                            http2ConnectionPromise, http2SessionListener);
                     return true;
                 } else {
                     resetUpgradeProtocol();
                     return false;
                 }
             }
-            case HttpProtocol.WEB_SOCKET: {
+        case HttpProtocol.WEB_SOCKET: {
                 if (webSocketConnectionPromise !is null && incomingFrames !is null && policy !is null) {
                     upgradeWebSocketComplete = true;
-                    WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
-                            secureSession, tcpSession,
-                            incomingFrames, policy,
-                            request, response, config);
-                    getTcpSession().attachObject(cast(Object)webSocketConnection);
+                    WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(secureSession,
+                            tcpSession, incomingFrames, policy, request, response, config);
+                    getTcpSession().attachObject(cast(Object) webSocketConnection);
                     webSocketConnectionPromise.succeeded(webSocketConnection);
                     return true;
                 } else {
@@ -214,9 +208,9 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
                     return false;
                 }
             }
-            default:
-                resetUpgradeProtocol();
-                return false;
+        default:
+            resetUpgradeProtocol();
+            return false;
         }
     }
 
@@ -228,23 +222,25 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         http2SessionListener = null;
         http2Connection = null;
         if (webSocketConnectionPromise !is null) {
-            webSocketConnectionPromise.failed(new IllegalStateException("The websocket handshake failed"));
+            webSocketConnectionPromise.failed(
+                    new IllegalStateException("The websocket handshake failed"));
             webSocketConnectionPromise = null;
         }
         incomingFrames = null;
         policy = null;
     }
 
-    override
-    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
-                                 ClientHttpHandler upgradeHandler, IncomingFrames incomingFrames) {
-        assert(HttpMethod.GET.asString() == request.getMethod(), 
-            "The method of the request MUST be GET in the websocket handshake.");
+    override void upgradeWebSocket(Request request, WebSocketPolicy policy,
+            Promise!(WebSocketConnection) promise,
+            ClientHttpHandler upgradeHandler, IncomingFrames incomingFrames) {
+        assert(HttpMethod.GET.asString() == request.getMethod(),
+                "The method of the request MUST be GET in the websocket handshake.");
 
-        assert(policy.getBehavior() == WebSocketBehavior.CLIENT, 
-            "The websocket behavior MUST be client");
+        assert(policy.getBehavior() == WebSocketBehavior.CLIENT,
+                "The websocket behavior MUST be client");
 
-        request.getFields().put(HttpHeader.SEC_WEBSOCKET_VERSION, WebSocketConstants.SPEC_VERSION.to!string());
+        request.getFields().put(HttpHeader.SEC_WEBSOCKET_VERSION,
+                WebSocketConstants.SPEC_VERSION.to!string());
         request.getFields().put(HttpHeader.UPGRADE, "websocket");
         request.getFields().put(HttpHeader.CONNECTION, "Upgrade");
         request.getFields().put(HttpHeader.SEC_WEBSOCKET_KEY, genRandomKey());
@@ -258,13 +254,12 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         byte[] bytes = new byte[16];
         // ThreadLocalRandom.current().nextBytes(bytes);
         auto rnd = Random(2018);
-        for(int i; i< bytes.length; i++)
+        for (int i; i < bytes.length; i++)
             bytes[i] = cast(byte) uniform(byte.min, byte.max, rnd);
         return cast(string)(B64Code.encode(bytes));
     }
 
-    override
-    HttpOutputStream sendRequestWithContinuation(Request request, ClientHttpHandler handler) {
+    override HttpOutputStream sendRequestWithContinuation(Request request, ClientHttpHandler handler) {
         request.getFields().put(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE);
         HttpOutputStream outputStream = getHttpOutputStream(request, handler);
         try {
@@ -275,9 +270,8 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         return outputStream;
     }
 
-    override
-    void send(Request request, ClientHttpHandler handler) {
-        try  {
+    override void send(Request request, ClientHttpHandler handler) {
+        try {
             tracef("client request and does not send data");
             HttpOutputStream output = getHttpOutputStream(request, handler);
             output.close();
@@ -286,9 +280,8 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         }
     }
 
-    override
-    void send(Request request, ByteBuffer buffer, ClientHttpHandler handler) {
-        try  {
+    override void send(Request request, ByteBuffer buffer, ClientHttpHandler handler) {
+        try {
             HttpOutputStream output = getHttpOutputStream(request, handler);
             if (buffer !is null) {
                 output.writeWithContentLength(buffer);
@@ -298,9 +291,8 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         }
     }
 
-    override
-    void send(Request request, ByteBuffer[] buffers, ClientHttpHandler handler) {
-        try  {
+    override void send(Request request, ByteBuffer[] buffers, ClientHttpHandler handler) {
+        try {
             HttpOutputStream output = getHttpOutputStream(request, handler);
             if (buffers !is null) {
                 output.writeWithContentLength(buffers);
@@ -310,28 +302,29 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         }
     }
 
-    override
-    HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler) {
-        Http1ClientResponseHandler http1ClientResponseHandler = new Http1ClientResponseHandler(handler);
+    override HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler) {
+        Http1ClientResponseHandler http1ClientResponseHandler = new Http1ClientResponseHandler(
+                handler);
         checkWrite(request, http1ClientResponseHandler);
-        http1ClientResponseHandler.outputStream = new Http1ClientRequestOutputStream(this, wrap.writing.request);
+        http1ClientResponseHandler.outputStream = new Http1ClientRequestOutputStream(this,
+                wrap.writing.request);
         return http1ClientResponseHandler.outputStream;
     }
 
-    override
-    void send(Request request, Promise!(HttpOutputStream) promise, ClientHttpHandler handler) {
+    override void send(Request request, Promise!(HttpOutputStream) promise,
+            ClientHttpHandler handler) {
         promise.succeeded(getHttpOutputStream(request, handler));
     }
 
     private void checkWrite(Request request, Http1ClientResponseHandler handler) {
         assert(request, "The http client request is null.");
         assert(handler, "The http1 client response handler is null.");
-        assert(isOpen(), "The current connection " ~ 
-            tcpSession.getSessionId().to!string ~ " has been closed.");
-        assert(!upgradeHttp2Complete, "The current connection " ~ 
-            tcpSession.getSessionId().to!string ~ " has upgraded HTTP2.");
-        assert(!upgradeWebSocketComplete, "The current connection " ~ 
-            tcpSession.getSessionId().to!string ~ " has upgraded WebSocket.");
+        assert(isOpen(), "The current connection " ~ tcpSession.getSessionId()
+                .to!string ~ " has been closed.");
+        assert(!upgradeHttp2Complete, "The current connection " ~ tcpSession.getSessionId()
+                .to!string ~ " has upgraded HTTP2.");
+        assert(!upgradeWebSocketComplete, "The current connection " ~ tcpSession.getSessionId()
+                .to!string ~ " has upgraded WebSocket.");
 
         if (wrap.writing is null) {
             wrap.writing = handler;
@@ -343,23 +336,20 @@ class Http1ClientConnection : AbstractHttp1Connection , HttpClientConnection {
         }
     }
 
-    override
-    void close() {
+    override void close() {
         if (isOpen()) {
             super.close();
         }
     }
 
-    override
-    bool isClosed() {
+    override bool isClosed() {
         return !isOpen();
     }
 
-    override
-    bool isOpen() {
-        version(HUNT_DEBUG) {
-            tracef("Connection status: isOpen=%s, upgradeHttp2Complete=%s, upgradeWebSocketComplete=%s", 
-                tcpSession.isOpen(), upgradeHttp2Complete, upgradeWebSocketComplete);
+    override bool isOpen() {
+        version (HUNT_DEBUG) {
+            tracef("Connection status: isOpen=%s, upgradeHttp2Complete=%s, upgradeWebSocketComplete=%s",
+                    tcpSession.isOpen(), upgradeHttp2Complete, upgradeWebSocketComplete);
         }
         return tcpSession.isOpen() && !upgradeHttp2Complete && !upgradeWebSocketComplete;
     }
@@ -386,8 +376,7 @@ private class ResponseHandlerWrap : ResponseHandler {
         badMessage(failure.getCode(), failure.getReason());
     }
 
-    override
-    void earlyEOF() {
+    override void earlyEOF() {
         Http1ClientResponseHandler h = writing;
         if (h !is null) {
             h.earlyEOF();
@@ -398,49 +387,41 @@ private class ResponseHandlerWrap : ResponseHandler {
         writing = null;
     }
 
-
-    override
-    void parsedHeader(HttpField field) {
+    override void parsedHeader(HttpField field) {
         writing.parsedHeader(field);
     }
 
-    override
-    bool headerComplete() {
+    override bool headerComplete() {
         return writing.headerComplete();
     }
 
-    override
-    bool content(ByteBuffer item) {
+    override bool content(ByteBuffer item) {
         return writing.content(item);
     }
 
-    override
-    bool contentComplete() {
+    override bool contentComplete() {
         return writing.contentComplete();
     }
 
-    override
-    void parsedTrailer(HttpField field) {
+    override void parsedTrailer(HttpField field) {
         writing.parsedTrailer(field);
     }
 
-    override
-    bool messageComplete() {
+    override bool messageComplete() {
         if (status == 100 && "Continue".equalsIgnoreCase(reason)) {
             tracef("client received the 100 Continue response");
             connection.getParser().reset();
             return true;
         } else {
             auto r = writing.messageComplete();
-            writing = null;                
+            writing = null;
             return r;
         }
     }
 
-    override
-    void badMessage(int status, string reason) {
+    override void badMessage(int status, string reason) {
         Http1ClientResponseHandler h = writing;
-        writing = null;                
+        writing = null;
         if (h !is null) {
             h.badMessage(status, reason);
         } else {
@@ -448,20 +429,17 @@ private class ResponseHandlerWrap : ResponseHandler {
         }
     }
 
-    override
-    int getHeaderCacheSize() {
+    override int getHeaderCacheSize() {
         return 1024;
     }
 
-    override
-    bool startResponse(HttpVersion ver, int status, string reason) {
+    override bool startResponse(HttpVersion ver, int status, string reason) {
         this.status = status;
         this.reason = reason;
         return writing.startResponse(ver, status, reason);
     }
 
 }
-
 
 /**
 */
@@ -476,38 +454,32 @@ class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
         httpGenerator = new HttpGenerator();
     }
 
-    override
-    protected void generateHttpMessageSuccessfully() {
+    override protected void generateHttpMessageSuccessfully() {
         tracef("client session %s generates the HTTP message completely", connection.getSessionId());
     }
 
-    override
-    protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,
-                                                    HttpGenerator.State actualState,
-                                                    HttpGenerator.Result expectedResult,
-                                                    HttpGenerator.State expectedState) {
-        errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]", 
-            actualResult, actualState, expectedResult, expectedState);
+    override protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,
+            HttpGenerator.State actualState, HttpGenerator.Result expectedResult,
+            HttpGenerator.State expectedState) {
+        errorf("http1 generator error, actual: [%s, %s], expected: [%s, %s]",
+                actualResult, actualState, expectedResult, expectedState);
         throw new IllegalStateException("client generates http message exception.");
     }
 
-    override
-    protected ByteBuffer getHeaderByteBuffer() {
+    override protected ByteBuffer getHeaderByteBuffer() {
         return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestHeadLength());
     }
 
-    override
-    protected ByteBuffer getTrailerByteBuffer() {
-        return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestTrailerLength());
+    override protected ByteBuffer getTrailerByteBuffer() {
+        return BufferUtils.allocate(connection.getHttp2Configuration()
+                .getMaxRequestTrailerLength());
     }
 
-    override
-    protected TcpSession getSession() {
+    override protected TcpSession getSession() {
         return connection.getTcpSession();
     }
 
-    override
-    protected HttpGenerator getHttpGenerator() {
+    override protected HttpGenerator getHttpGenerator() {
         return httpGenerator;
     }
 }

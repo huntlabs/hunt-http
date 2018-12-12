@@ -79,7 +79,7 @@ class HttpServer : AbstractLifecycle {
 
         _server.connectionHandler((NetSocket sock) {
             version (HUNT_DEBUG)
-                infof("accepted a new connection from %s", sock.remoteAddress);
+                infof("new http session with %s", sock.remoteAddress);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
             session.handler((const ubyte[] data) {
                 version (HUNT_METRIC) {

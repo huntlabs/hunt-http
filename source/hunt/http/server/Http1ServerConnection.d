@@ -47,6 +47,9 @@ import std.algorithm;
 import std.array;
 import std.base64;
 
+
+/**
+*/
 class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
     private WebSocketHandler webSocketHandler;
@@ -58,7 +61,11 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
     this(Http2Configuration config, TcpSession tcpSession,
             SecureSession secureSession, Http1ServerRequestHandler requestHandler,
-            ServerSessionListener serverSessionListener, WebSocketHandler webSocketHandler) {
+            ServerSessionListener serverSessionListener, 
+            WebSocketHandler webSocketHandler) {
+        
+        version (HUNT_DEBUG) 
+            trace("initializing Http1ServerConnection ...");
         super(config, secureSession, tcpSession, requestHandler, null);
         requestHandler.connection = this;
         this.serverSessionListener = serverSessionListener;
@@ -127,10 +134,10 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     }
 
     bool directUpgradeHttp2(HttpRequest request) {
-        version (HUNT_DEBUG) {
+        version (HUNT_DEBUG) 
             info("Upgrading to Http2");
-        }
 
+version(WithHTTP2) {
         if (HttpMethod.PRI.isSame(request.getMethod())) {
             Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
                     tcpSession, secureSession, serverSessionListener);
@@ -141,6 +148,11 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         } else {
             return false;
         }
+} else {
+    version (HUNT_DEBUG) 
+            warning("Upgrading to Http2 is not supported.");
+    return false;
+}
     }
 
     bool upgradeProtocol(HttpRequest request, HttpResponse response,

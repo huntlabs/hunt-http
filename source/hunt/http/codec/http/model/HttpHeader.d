@@ -8,17 +8,15 @@ import std.string;
 
 import hunt.logging;
 
-bool contains(HttpHeader[] items, ref HttpHeader item)
-{
+bool contains(HttpHeader[] items, ref HttpHeader item) {
     return items.canFind(item);
 }
 
 /**
 */
-struct HttpHeader
-{
+struct HttpHeader {
     enum HttpHeader Null = HttpHeader("Null");
-    
+
     /**
      * General Fields.
      */
@@ -128,27 +126,23 @@ struct HttpHeader
 
     enum HttpHeader UNKNOWN = HttpHeader("::UNKNOWN::");
 
-    private __gshared HttpHeader[string] CACHE; 
+    private __gshared HttpHeader[string] CACHE;
 
-    static bool exists(string name)
-    {
+    static bool exists(string name) {
         return (name.toLower() in CACHE) !is null;
     }
 
-    static HttpHeader get(string name)
-    {
+    static HttpHeader get(string name) {
         return CACHE.get(name.toLower(), HttpHeader.Null);
     }
 
-    static int getCount()
-    {
-        return cast(int)CACHE.length;
+    static int getCount() {
+        return cast(int) CACHE.length;
     }
 
-    shared static this()  {
-        int i=0;
-        foreach(ref HttpHeader header; HttpHeader.values())
-        {
+    shared static this() {
+        int i = 0;
+        foreach (ref HttpHeader header; HttpHeader.values()) {
             // header._ordinal = i++;
             if (header != UNKNOWN)
                 CACHE[header.asString().toLower()] = header;
@@ -161,7 +155,7 @@ struct HttpHeader
         // }
     }
 
-	mixin GetConstantValues!(HttpHeader);
+    mixin GetConstantValues!(HttpHeader);
 
     private int _ordinal;
     private string _string;
@@ -173,7 +167,7 @@ struct HttpHeader
         _string = s;
         _bytes = cast(byte[]) s.dup; // StringUtils.getBytes(s);
         _bytesColonSpace = cast(byte[])(s ~ ": ").dup;
-        _ordinal = cast(int)hashOf(s.toLower());
+        _ordinal = cast(int) hashOf(s.toLower());
         // _buffer = ByteBuffer.wrap(_bytes);
     }
 
@@ -189,11 +183,11 @@ struct HttpHeader
         return _bytesColonSpace;
     }
 
-    bool isSame(string s) const nothrow{
+    bool isSame(string s) const nothrow {
         return std.string.icmp(_string, s) == 0;
     }
 
-    string asString() const nothrow{
+    string asString() const nothrow {
         return _string;
     }
 
@@ -201,22 +195,21 @@ struct HttpHeader
         return _string;
     }
 
-    int ordinal()
-    {
+    int ordinal() {
         return _ordinal;
     }
 
     size_t toHash() @trusted nothrow {
         return hashOf(_string);
-    }  
+    }
 
     bool opEquals(const HttpHeader h) nothrow {
         return std.string.cmp(_string, h._string) == 0;
-    } 
+    }
 
     bool opEquals(ref const HttpHeader h) nothrow {
         return std.string.cmp(_string, h._string) == 0;
-    } 
+    }
 
     // bool opEquals(const HttpHeader h) const nothrow{
     //     return isSame(h.asString());
