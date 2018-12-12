@@ -19,12 +19,11 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         super(metaData, clientMode);
     }
 
-    override
-    void commit() {
+    override void commit() {
         commit(cast(ByteBuffer)null);
     }
 
-    protected  void commit(ByteBuffer data) {
+    protected void commit(ByteBuffer data) {
         if (closed)
             return;
 

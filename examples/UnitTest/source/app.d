@@ -39,7 +39,7 @@ import HttpBenchmark;
 void main() {
 
 	HttpBenchmark hb = new HttpBenchmark();
-	hb.benchmark(1);
+	hb.benchmark(1000);
 
 	// testHpackDecoder();
 

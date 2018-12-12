@@ -15,7 +15,7 @@ import hunt.util.Test;
 
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.decode.SettingsBodyParser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame.ErrorCode;
@@ -30,7 +30,7 @@ public class SettingsGenerateParseTest {
 	
 	public void testSettingsWithBase64() {
 		final Http2Configuration http2Configuration = new Http2Configuration();
-		final Generator http2Generator = new Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
+		final Http2Generator http2Generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map<Integer, Integer> settings = new HashMap<>();
 		settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());

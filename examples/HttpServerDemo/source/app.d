@@ -36,8 +36,9 @@ void main(string[] args) {
                     HttpOutputStream outputStream, HttpConnection connection) {
                     scope(exit) outputStream.close();
 
-                    string path = request.getURI().getPath(); 
-                    // debug trace(" request path: ", path);
+                    // string path = request.getURI().getPath(); 
+                    string path = "/plaintext";
+                    debug trace("request path: ", path);
                     // debug trace(request.toString()); 
                     // trace(request.getFields()); 
 

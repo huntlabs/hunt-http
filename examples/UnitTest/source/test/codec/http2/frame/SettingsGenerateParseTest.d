@@ -8,7 +8,7 @@ import hunt.util.Assert;
 
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.decode.SettingsBodyParser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame.ErrorCode;
@@ -29,7 +29,7 @@ class SettingsGenerateParseTest {
 	
 	void testSettingsWithBase64() {
 		Http2Configuration http2Configuration = new Http2Configuration();
-		Generator http2Generator = new Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
+		Http2Generator http2Generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map!(int, int) settings = new HashMap!(int, int)();
 		settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());

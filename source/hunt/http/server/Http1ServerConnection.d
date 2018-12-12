@@ -134,10 +134,8 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     }
 
     bool directUpgradeHttp2(HttpRequest request) {
-        version (HUNT_DEBUG) 
-            info("Upgrading to Http2");
+        version (HUNT_DEBUG) info("Upgrading to Http2");
 
-version(WithHTTP2) {
         if (HttpMethod.PRI.isSame(request.getMethod())) {
             Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
                     tcpSession, secureSession, serverSessionListener);
@@ -148,15 +146,13 @@ version(WithHTTP2) {
         } else {
             return false;
         }
-} else {
-    version (HUNT_DEBUG) 
-            warning("Upgrading to Http2 is not supported.");
-    return false;
-}
     }
 
     bool upgradeProtocol(HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection) {
+        version (HUNT_DEBUG) warning("try upgrading protocol ...");                
+        if(request is null)
+            return false;
         switch (ProtocolHelper.from(request)) {
         case Protocol.H2: {
                 if (upgradeHttp2Complete) {

@@ -1,6 +1,6 @@
 module test.codec.http2.decode.Http2DecoderTest;
 
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.encode.HeadersGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 
@@ -202,7 +202,7 @@ class Http2DecoderTest {
         DataFrame smallDataFrame = new DataFrame(streamId, ByteBuffer.wrap(smallContent), false);
         DataFrame bigDataFrame = new DataFrame(streamId, ByteBuffer.wrap(bigContent), true);
 
-        Generator generator = new Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
+        Http2Generator generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 
         HeadersGenerator headersGenerator = generator.getControlGenerator!(HeadersGenerator)(FrameType.HEADERS);
         SettingsGenerator settingsGenerator = generator.getControlGenerator!(SettingsGenerator)(FrameType.SETTINGS);
@@ -367,7 +367,7 @@ class Http2DecoderTest {
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
         settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-        Generator generator = new Generator(http2Configuration.getMaxDynamicTableSize(), 
+        Http2Generator generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), 
             http2Configuration.getMaxHeaderBlockFragment());
 
         HeadersGenerator headersGenerator = generator.getControlGenerator!HeadersGenerator(FrameType.HEADERS);

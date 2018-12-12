@@ -566,9 +566,12 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     private bool handleHeaderContentMessage() {
+        version (HUNT_DEBUG) trace("handling headers ...");
         bool handle_header = _handler.headerComplete();
         _headerComplete = true;
+        version (HUNT_DEBUG) trace("handling content ...");
         bool handle_content = _handler.contentComplete();
+        version (HUNT_DEBUG) trace("handling message ...");
         bool handle_message = _handler.messageComplete();
         return handle_header || handle_content || handle_message;
     }
@@ -1020,6 +1023,7 @@ class HttpParser {
                                     return handle;
                                 }
                                 case EndOfContent.NO_CONTENT: {
+                                    version (HUNT_DEBUG) trace("parsing done for no content");
                                     setState(State.END);
                                     return handleHeaderContentMessage();
                                 }
@@ -1252,6 +1256,13 @@ class HttpParser {
         version(HUNT_DEBUG) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
             // tracef("buffer: %s", BufferUtils.toHexString(buffer));
+
+            // startTime = MonoTime.currTime;
+            // _requestHandler.startRequest("GET", "/plaintext", HttpVersion.HTTP_1_1);
+            // setState(State.END);
+            // _handler.messageComplete();
+            // BufferUtils.clear(buffer);
+            // return false;
         }
         try {
             // Start a request/response
