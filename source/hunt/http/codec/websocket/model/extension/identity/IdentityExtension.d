@@ -3,6 +3,7 @@ module hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
+
 // import hunt.http.utils.lang.QuotedStringTokenizer;
 
 import hunt.lang.exception;
@@ -24,13 +25,11 @@ class IdentityExtension : AbstractExtension {
         return getConfig().getParameter(key, "?");
     }
 
-    override
-    string getName() {
+    override string getName() {
         return "identity";
     }
 
-    override
-    void incomingError(Exception e) {
+    override void incomingError(Exception e) {
         // pass through
         nextIncomingError(e);
     }
@@ -47,8 +46,7 @@ class IdentityExtension : AbstractExtension {
         nextOutgoingFrame(frame, callback);
     }
 
-    override
-    void setConfig(ExtensionConfig config) {
+    override void setConfig(ExtensionConfig config) {
         super.setConfig(config);
         StringBuilder s = new StringBuilder();
         s.append(config.getName());
@@ -56,7 +54,7 @@ class IdentityExtension : AbstractExtension {
         // s.append("@").append(Integer.toHexString(hashCode()));
         s.append("[");
         bool delim = false;
-        foreach (string param ; config.getParameterKeys()) {
+        foreach (string param; config.getParameterKeys()) {
             if (delim) {
                 s.append(';');
             }
@@ -68,18 +66,15 @@ class IdentityExtension : AbstractExtension {
         id = s.toString();
     }
 
-    override
-    string toString() {
+    override string toString() {
         return id;
     }
 
-    override
-    protected void initilize() {
+    override protected void initialize() {
 
     }
 
-    override
-    protected void destroy() {
+    override protected void destroy() {
 
     }
 }

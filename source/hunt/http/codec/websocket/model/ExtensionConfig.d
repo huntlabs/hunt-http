@@ -180,7 +180,7 @@ class ExtensionConfig {
      *
      * @param other the other configuration.
      */
-    final void initilize(ExtensionConfig other) {
+    final void initialize(ExtensionConfig other) {
         this.parameters.clear();
         this.parameters.putAll(other.parameters);
     }

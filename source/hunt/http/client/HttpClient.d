@@ -113,7 +113,7 @@ class HttpClient : AbstractLifecycle {
     }
 
     override
-    protected void initilize() {
+    protected void initialize() {
     }
 
     override
