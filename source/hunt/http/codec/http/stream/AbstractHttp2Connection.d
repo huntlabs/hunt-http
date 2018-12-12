@@ -1,7 +1,7 @@
 module hunt.http.codec.http.stream.AbstractHttp2Connection;
 
 import hunt.http.codec.http.decode.Parser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.model;
 
 
@@ -26,10 +26,11 @@ abstract class AbstractHttp2Connection :AbstractHttpConnection  {
 
     protected Http2Session http2Session;
     protected Parser parser;
-    protected Generator generator;
+    protected Http2Generator generator;
 
     this(Http2Configuration config,TcpSession tcpSession, 
-    SecureSession secureSession, Listener listener) {
+        SecureSession secureSession, Listener listener) {
+            
         super(secureSession, tcpSession, HttpVersion.HTTP_2);
 
         FlowControlStrategy flowControl;
@@ -44,7 +45,7 @@ abstract class AbstractHttp2Connection :AbstractHttpConnection  {
                 flowControl = new SimpleFlowControlStrategy(config.getInitialStreamSendWindow());
                 break;
         }
-        this.generator = new Generator(config.getMaxDynamicTableSize(), config.getMaxHeaderBlockFragment());
+        this.generator = new Http2Generator(config.getMaxDynamicTableSize(), config.getMaxHeaderBlockFragment());
         this.http2Session = initHttp2Session(config, flowControl, listener);
         this.parser = initParser(config);
     }

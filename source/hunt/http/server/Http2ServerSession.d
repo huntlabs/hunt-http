@@ -3,7 +3,7 @@ module hunt.http.server.Http2ServerSession;
 import hunt.http.server.ServerSessionListener;
 
 import hunt.http.codec.http.decode.ServerParser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream;
@@ -21,7 +21,7 @@ class Http2ServerSession : Http2Session , ServerParser.Listener {
     
     private ServerSessionListener listener;
 
-    this(Scheduler scheduler, TcpSession endPoint, Generator generator,
+    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
                               ServerSessionListener listener, FlowControlStrategy flowControl, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, 2, streamIdleTimeout);
         this.listener = listener;

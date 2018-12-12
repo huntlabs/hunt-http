@@ -6,7 +6,7 @@ import hunt.http.client.Http2ClientResponseHandler;
 import hunt.http.client.Http2ClientSession;
 
 import hunt.http.codec.http.decode.Parser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
@@ -111,7 +111,7 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
         return parser;
     }
 
-    Generator getGenerator() {
+    Http2Generator getGenerator() {
         return generator;
     }
 

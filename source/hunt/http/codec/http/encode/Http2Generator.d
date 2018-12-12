@@ -1,7 +1,4 @@
-module hunt.http.codec.http.encode.Generator;
-
-import hunt.container.ByteBuffer;
-import hunt.container.List;
+module hunt.http.codec.http.encode.Http2Generator;
 
 import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.frame.Frame;
@@ -22,11 +19,15 @@ import hunt.http.codec.http.encode.ResetGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.encode.WindowUpdateGenerator;
 
+import hunt.container.ByteBuffer;
+import hunt.container.List;
+import hunt.logging;
+
 import std.typecons;
 
 /**
 */
-class Generator {
+class Http2Generator {
 	private HeaderGenerator headerGenerator;
 	private HpackEncoder hpackEncoder;
 	private FrameGenerator[FrameType] generators;
@@ -37,6 +38,8 @@ class Generator {
 	}
 
 	this(int maxDynamicTableSize, int maxHeaderBlockFragment) {
+
+        version (HUNT_DEBUG) trace("initilizing Http2Generator");
 
 		headerGenerator = new HeaderGenerator();
 		hpackEncoder = new HpackEncoder(maxDynamicTableSize);

@@ -10,7 +10,7 @@ import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.StreamSPI;
 
 import hunt.http.codec.http.decode.Parser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
 
 import hunt.container;
@@ -69,7 +69,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     private Scheduler scheduler;
     private TcpSession endPoint;
-    private Generator generator;
+    private Http2Generator generator;
     private StreamSession.Listener listener;
     private FlowControlStrategy flowControl;
     private Http2Flusher flusher;
@@ -82,7 +82,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     alias convertToMillisecond = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond);
 
-    this(Scheduler scheduler, TcpSession endPoint, Generator generator,
+    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
                         StreamSession.Listener listener, FlowControlStrategy flowControl,
                         int initialStreamId, int streamIdleTimeout) {
         this.scheduler = scheduler;
@@ -141,7 +141,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         return endPoint;
     }
 
-    Generator getGenerator() {
+    Http2Generator getGenerator() {
         return generator;
     }
 

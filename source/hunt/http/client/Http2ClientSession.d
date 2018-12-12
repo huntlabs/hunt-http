@@ -1,6 +1,6 @@
 module hunt.http.client.Http2ClientSession;
 
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.stream;
@@ -15,13 +15,13 @@ import hunt.logging;
 
 class Http2ClientSession : Http2Session {
     
-    this(Scheduler scheduler, TcpSession endPoint, Generator generator,
+    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
                               Listener listener, FlowControlStrategy flowControl, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, 1, streamIdleTimeout);
     }
 
     static Http2ClientSession initSessionForUpgradingHTTP2(Scheduler scheduler, TcpSession endPoint,
-                                                                  Generator generator, Listener listener, FlowControlStrategy flowControl, int initialStreamId,
+                                                                  Http2Generator generator, Listener listener, FlowControlStrategy flowControl, int initialStreamId,
                                                                   int streamIdleTimeout, Promise!(Stream) initStream, Stream.Listener initStreamListener) {
         Http2ClientSession session = new Http2ClientSession(scheduler, endPoint, generator, listener, flowControl,
                 initialStreamId, streamIdleTimeout);
@@ -32,7 +32,7 @@ class Http2ClientSession : Http2Session {
         return session;
     }
 
-    private this(Scheduler scheduler, TcpSession endPoint, Generator generator,
+    private this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
                                Listener listener, FlowControlStrategy flowControl, int initialStreamId, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, initialStreamId, streamIdleTimeout);
     }

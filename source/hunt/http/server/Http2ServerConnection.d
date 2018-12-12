@@ -7,7 +7,7 @@ import hunt.http.server.ServerSessionListener;
 
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.decode.ServerParser;
-import hunt.http.codec.http.encode.Generator;
+import hunt.http.codec.http.encode.Http2Generator;
 
 import hunt.http.codec.http.stream;
 
@@ -62,7 +62,7 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
         return cast(ServerParser) parser;
     }
 
-    Generator getGenerator() {
+    Http2Generator getGenerator() {
         return generator;
     }
 

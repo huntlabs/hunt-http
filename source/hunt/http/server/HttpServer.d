@@ -82,7 +82,7 @@ class HttpServer : AbstractLifecycle {
         _server.connectionHandler((NetSocket sock) {
             version(HUNT_DEBUG) infof("accepted a new connection from %s", sock.remoteAddress);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
-            session.handler( (const ubyte[] data) {   
+            session.handler( (const ubyte[] data) { 
                     version(HUNT_METRIC) {
                         debug trace("start hadling session data ...");
                         MonoTime startTime = MonoTime.currTime;
@@ -91,6 +91,7 @@ class HttpServer : AbstractLifecycle {
                     }
                     ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
                     commonDecoder.decode(buf, session);
+
                     version(HUNT_METRIC) {
                         Duration timeElapsed = MonoTime.currTime - startTime;
                         warningf("handling done for session %d in: %d microseconds",
@@ -98,7 +99,6 @@ class HttpServer : AbstractLifecycle {
                         tracef("session handling done: %s.", session.toString());
                     } else version(HUNT_DEBUG) 
                         tracef("session handling done");
-
 
                     // session.write(responseString, () {
                     // version(HUNT_METRIC) {
