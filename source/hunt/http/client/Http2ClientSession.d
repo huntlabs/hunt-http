@@ -21,8 +21,10 @@ class Http2ClientSession : Http2Session {
     }
 
     static Http2ClientSession initSessionForUpgradingHTTP2(Scheduler scheduler, TcpSession endPoint,
-                                                                  Http2Generator generator, Listener listener, FlowControlStrategy flowControl, int initialStreamId,
-                                                                  int streamIdleTimeout, Promise!(Stream) initStream, Stream.Listener initStreamListener) {
+        Http2Generator generator, Listener listener, FlowControlStrategy flowControl, 
+        int initialStreamId, int streamIdleTimeout, Promise!(Stream) initStream, 
+        Stream.Listener initStreamListener) {
+
         Http2ClientSession session = new Http2ClientSession(scheduler, endPoint, generator, listener, flowControl,
                 initialStreamId, streamIdleTimeout);
         StreamSPI stream = session.createLocalStream(1, initStream);

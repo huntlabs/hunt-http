@@ -2,7 +2,7 @@ module hunt.http.server.HttpServer;
 
 import hunt.http.server.Http1ServerDecoder;
 import hunt.http.server.Http2ServerDecoder;
-import hunt.http.server.Http2ServerHandler;
+import hunt.http.server.HttpServerHandler;
 import hunt.http.server.Http2ServerRequestHandler;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
@@ -28,6 +28,7 @@ import core.time;
 class HttpServer : AbstractLifecycle {
 
     private AbstractServer _server;
+    private HttpServerHandler httpServerHandler;
     private Http2Configuration http2Configuration;
     private string host;
     private int port;
@@ -59,13 +60,13 @@ class HttpServer : AbstractLifecycle {
 
         this.host = host;
         this.port = port;
-        http2ServerHandler = new Http2ServerHandler(c, listener, serverHttpHandler, webSocketHandler);
+        httpServerHandler = new HttpServerHandler(c, listener, serverHttpHandler, webSocketHandler);
 
         Http1ServerDecoder httpServerDecoder = new Http1ServerDecoder(new WebSocketDecoder(), new Http2ServerDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
         c.getTcpConfiguration().setDecoder(commonDecoder);
         c.getTcpConfiguration().setEncoder(new CommonEncoder());
-        c.getTcpConfiguration().setHandler(http2ServerHandler);
+        c.getTcpConfiguration().setHandler(httpServerHandler);
 
         _server = NetUtil.createNetServer!(ServerThreadMode.Single)();
         _server.setConfig(c.getTcpConfiguration());
@@ -120,8 +121,6 @@ class HttpServer : AbstractLifecycle {
                 tracef("Listing at: http://%s:%d", host, port);
         }
     }
-
-    private Http2ServerHandler http2ServerHandler;
 
     Http2Configuration getHttp2Configuration() {
         return http2Configuration;

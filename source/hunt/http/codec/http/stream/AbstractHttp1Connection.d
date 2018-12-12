@@ -29,7 +29,9 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
         version (HUNT_DEBUG) trace("initilizing Http1Connection");
         this.config = config;
         parser = initHttpParser(config, requestHandler, responseHandler);
-        http2Generator = new Http2Generator(config.getMaxDynamicTableSize(), config.getMaxHeaderBlockFragment());
+        version(WithHTTP2) {
+            http2Generator = new Http2Generator(config.getMaxDynamicTableSize(), config.getMaxHeaderBlockFragment());
+        }
     }
 
     ConnectionType getConnectionType() {

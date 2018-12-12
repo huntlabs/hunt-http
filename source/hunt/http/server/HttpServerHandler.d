@@ -1,4 +1,4 @@
-module hunt.http.server.Http2ServerHandler;
+module hunt.http.server.HttpServerHandler;
 
 import hunt.http.server.Http1ServerConnection;
 import hunt.http.server.Http1ServerRequestHandler;
@@ -23,7 +23,7 @@ import hunt.string;
 
 import std.range.primitives;
 
-class Http2ServerHandler : AbstractHttpHandler {
+class HttpServerHandler : AbstractHttpHandler {
 
     private ServerSessionListener listener;
     private ServerHttpHandler serverHttpHandler;
