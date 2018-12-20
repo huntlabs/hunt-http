@@ -13,7 +13,7 @@ import hunt.container.Map;
 import hunt.lang.common;
 import hunt.logging;
 import hunt.net.Session;
-import hunt.util.concurrent.Scheduler;
+import hunt.concurrent.Scheduler;
 import hunt.util.functional;
 
 

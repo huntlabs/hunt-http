@@ -13,8 +13,8 @@ import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.util.concurrent.Promise;
-import hunt.util.concurrent.FuturePromise;
+import hunt.concurrent.Promise;
+import hunt.concurrent.FuturePromise;
 
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.secure.conscrypt;

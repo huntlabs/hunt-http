@@ -11,7 +11,7 @@ import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
 
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 import hunt.lang.exception;
 import hunt.string;
 

@@ -17,7 +17,7 @@ import hunt.logging;
 import hunt.lang.common;
 import hunt.lang.exception;
 import hunt.util.functional;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 
 import std.conv;
 import std.string;

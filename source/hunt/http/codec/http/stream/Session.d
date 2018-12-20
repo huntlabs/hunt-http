@@ -14,7 +14,7 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.util.functional;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 
 alias StreamSession = Session;
 

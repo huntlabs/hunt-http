@@ -6,7 +6,7 @@ import hunt.http.client.HttpClientConnection;
 import hunt.http.client.Http2ClientContext;
 
 import hunt.http.codec.http.stream.Session;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 
 class Http2ClientContext {
     private Promise!(HttpClientConnection) promise;

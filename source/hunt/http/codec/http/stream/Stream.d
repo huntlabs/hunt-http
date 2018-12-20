@@ -7,7 +7,7 @@ import hunt.http.codec.http.frame.ResetFrame;
 import hunt.http.codec.http.stream.Session;
 
 import hunt.util.functional;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 
 
 alias StreamListener = Stream.Listener;

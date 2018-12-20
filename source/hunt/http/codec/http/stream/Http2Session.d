@@ -20,10 +20,10 @@ import hunt.lang.common;
 import hunt.lang.exception;
 import hunt.util.functional;
 
-import hunt.util.concurrent.atomic;
-import hunt.util.concurrent.CountingCallback;
-import hunt.util.concurrent.Promise;
-import hunt.util.concurrent.Scheduler;
+import hunt.concurrent.atomic;
+import hunt.concurrent.CountingCallback;
+import hunt.concurrent.Promise;
+import hunt.concurrent.Scheduler;
 
 import hunt.net.Session;
 

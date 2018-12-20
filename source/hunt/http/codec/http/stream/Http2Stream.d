@@ -8,10 +8,10 @@ import hunt.http.codec.http.stream.StreamSPI;
 
 import hunt.http.codec.http.frame;
 // import hunt.http.utils.concurrent.IdleTimeout;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 // import hunt.http.utils.concurrent.Scheduler;
 
-import hunt.util.concurrent.Scheduler;
+import hunt.concurrent.Scheduler;
 import hunt.util.functional;
 import hunt.lang.exception;
 

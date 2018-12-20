@@ -14,8 +14,8 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.util.Lifecycle;
 import hunt.lang.exception;
-import hunt.util.concurrent.CompletableFuture;;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.CompletableFuture;;
+import hunt.concurrent.Promise;
 
 import hunt.container.ByteBuffer;
 import hunt.container.Map;

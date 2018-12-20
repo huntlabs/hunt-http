@@ -8,8 +8,8 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
-import hunt.util.concurrent.Locker;
-import hunt.util.concurrent.IteratingCallback;
+import hunt.concurrent.Locker;
+import hunt.concurrent.IteratingCallback;
 import hunt.lang.exception;
 import hunt.util.functional;
 

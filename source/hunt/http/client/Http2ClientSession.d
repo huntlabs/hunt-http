@@ -8,8 +8,8 @@ import hunt.http.codec.http.stream;
 import hunt.net.Session;
 
 import hunt.util.functional;
-import hunt.util.concurrent.Promise;
-import hunt.util.concurrent.Scheduler;
+import hunt.concurrent.Promise;
+import hunt.concurrent.Scheduler;
 import hunt.logging;
 
 

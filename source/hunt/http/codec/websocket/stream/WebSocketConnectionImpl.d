@@ -29,7 +29,7 @@ import hunt.net.Session;
 import hunt.container;
 import hunt.lang.common;
 import hunt.logging;
-import hunt.util.concurrent.CompletableFuture;
+import hunt.concurrent.CompletableFuture;
 import hunt.lang.exception;
 import hunt.util.functional;
 

@@ -15,8 +15,8 @@ import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
-import hunt.util.concurrent.CompletableFuture;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.CompletableFuture;
+import hunt.concurrent.Promise;
 import hunt.lang.exception;
 
 alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;

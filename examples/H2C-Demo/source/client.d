@@ -13,7 +13,7 @@ import hunt.http.codec.http.stream;
 
 import hunt.lang.exception;
 import hunt.lang.common;
-import hunt.util.concurrent.FuturePromise;
+import hunt.concurrent.FuturePromise;
 
 import hunt.container;
 import hunt.logging;

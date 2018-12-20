@@ -30,7 +30,7 @@ import hunt.lang.exception;
 import hunt.logging;
 import hunt.string;
 import hunt.util.codec;
-import hunt.util.concurrent.Promise;
+import hunt.concurrent.Promise;
 
 import std.array;
 import std.base64;

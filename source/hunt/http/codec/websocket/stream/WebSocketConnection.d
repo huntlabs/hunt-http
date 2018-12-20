@@ -9,7 +9,7 @@ import hunt.net.Connection;
 
 import hunt.container.ByteBuffer;
 import hunt.lang.common;
-import hunt.util.concurrent.CompletableFuture;
+import hunt.concurrent.CompletableFuture;
 
 interface WebSocketConnection : OutgoingFrames, Connection {
 
