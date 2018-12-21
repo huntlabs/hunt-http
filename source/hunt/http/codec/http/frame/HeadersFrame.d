@@ -7,7 +7,7 @@ import hunt.http.codec.http.frame.FrameType;
 
 import std.format;
 
-class HeadersFrame :Frame {
+class HeadersFrame : Frame {
 	private int streamId;
 	private MetaData metaData;
 	private PriorityFrame priority;

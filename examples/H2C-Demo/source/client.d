@@ -11,12 +11,13 @@ import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 
+import hunt.container;
 import hunt.lang.exception;
 import hunt.lang.common;
-import hunt.concurrent.FuturePromise;
-
-import hunt.container;
 import hunt.logging;
+import hunt.concurrent.FuturePromise;
+import hunt.util.functional;
+
 import std.format;
 
 
