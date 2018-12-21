@@ -24,7 +24,7 @@ import std.format;
 void main(string[] args) {
 
 	enum host = "127.0.0.1";
-	enum port = 6677;
+	enum port = 8080;
 
 	Http2Configuration http2Configuration = new Http2Configuration();
 	http2Configuration.setSecureConnectionEnabled(false);
@@ -147,6 +147,7 @@ void main(string[] args) {
 
 	DataFrame smallDataFrame = new DataFrame(clientStream.getId(),
 			ByteBuffer.wrap(cast(byte[])"hello world!"), false);
+			
 	DataFrame bigDataFrame = new DataFrame(clientStream.getId(),
 			ByteBuffer.wrap(cast(byte[])"big hello world!"), true);
 
@@ -154,24 +155,24 @@ void main(string[] args) {
 
 		override
 		void succeeded() {
-			infof("client sents small data success");
+			infof("client sent small data successfully");
 			clientStream.data(bigDataFrame, new class NoopCallback {
 
 				override
 				void succeeded() {
-					infof("client sents big data success");
+					infof("client sent big data successfully");
 				}
 
 				override
 				void failed(Exception x) {
-					infof("client sents big data failure");
+					warning("client failed to send big data ");
 				}
 			});
 		}
 
 		override
 		void failed(Exception x) {
-			infof("client sents small data failure");
+			infof("client sends small data failure");
 		}
 	});
 

@@ -27,11 +27,13 @@ import hunt.net;
 
 import hunt.logging;
 
+import core.atomic;
+
 class HttpClient : AbstractLifecycle { 
 
     private AbstractClient client;
     private Map!(int, Http2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
-    private __gshared static int sessionId = 0; // new int(0);
+    private static shared int sessionId = 0;
     private Http2Configuration http2Configuration;
 
     this(Http2Configuration c) {
@@ -39,6 +41,8 @@ class HttpClient : AbstractLifecycle {
             throw new IllegalArgumentException("the http2 configuration is null");
         }
         http2ClientContext = new HashMap!(int, Http2ClientContext)();
+
+        http2ClientContext.put(111, null);
 
         Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(), new Http2ClientDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
@@ -97,7 +101,8 @@ class HttpClient : AbstractLifecycle {
         clientContext = new Http2ClientContext();
         clientContext.setPromise(promise);
         clientContext.setListener(listener);
-        int id = sessionId++;
+
+        int id = atomicOp!("+=")(sessionId, 1);
         version(HUNT_DEBUG) tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);

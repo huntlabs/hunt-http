@@ -382,9 +382,10 @@ class HpackContext {
                     _nameMap.remove(lc);
 
             }
-            version(HUNT_DEBUG)
+            version(HUNT_DEBUG) {
                 tracef(format("HdrTbl[%x] entries=%d, size=%d, max=%d", toHash(), _dynamicTable.size(), 
                     _dynamicTableSizeInBytes, _maxDynamicTableSizeInBytes));
+            }
         }
 
     }

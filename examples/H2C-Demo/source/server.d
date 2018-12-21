@@ -29,7 +29,7 @@ void main(string[] args)
 	settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
 	settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
 
-	HttpServer server = new HttpServer("0.0.0.0", 6677, http2Configuration, new class ServerSessionListener {
+	HttpServer server = new HttpServer("0.0.0.0", 8080, http2Configuration, new class ServerSessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {

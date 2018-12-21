@@ -78,7 +78,7 @@ class Http2Flusher : IteratingCallback {
             if (closed is null) {
                 frames.offer(entry);
                 version(HUNT_DEBUG) {
-                    tracef("Appended %s, frames=%s", entry.toString(), frames.size());
+                    // tracef("Appended %s, frames=%s", entry.toString(), frames.size());
                 }
             }
         }
@@ -100,7 +100,7 @@ class Http2Flusher : IteratingCallback {
     override
     protected Action process() {
         version(HUNT_DEBUG) {
-            tracef("Flushing %s", session.toString());
+            // tracef("Flushing %s", session.toString());
         }
         synchronized (this) {
             if (terminated !is null) {
@@ -122,7 +122,7 @@ class Http2Flusher : IteratingCallback {
 
         if (entries.isEmpty()) {
             version(HUNT_DEBUG) {
-                tracef("Flushed %s", session.toString());
+                // tracef("Flushed %s", session.toString());
             }
             return Action.IDLE;
         }
@@ -130,7 +130,7 @@ class Http2Flusher : IteratingCallback {
         while (!entries.isEmpty()) {
             Entry entry = entries.poll();
             version(HUNT_DEBUG) {
-                tracef("Processing %s", entry.toString());
+                // tracef("Processing %s", entry.toString());
             }
             // If the stream has been reset or removed, don't send the frame.
             if (entry.isStale()) {
