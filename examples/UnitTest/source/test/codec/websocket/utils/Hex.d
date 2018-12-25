@@ -1,6 +1,7 @@
 module test.codec.websocket.utils.Hex;
 
-import hunt.lang.character;
+import hunt.lang.Character;
+import hunt.lang.CharacterData;
 import hunt.lang.exception;
 
 import hunt.container.BufferUtils;
