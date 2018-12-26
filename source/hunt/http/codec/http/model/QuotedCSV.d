@@ -4,7 +4,7 @@ import std.array;
 import std.conv;
 import std.container.array;
 
-import hunt.container.Iterable;
+import hunt.lang.common;
 import hunt.container.StringBuffer;
 import hunt.string;
 

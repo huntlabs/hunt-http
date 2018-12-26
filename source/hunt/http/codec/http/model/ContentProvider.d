@@ -1,7 +1,7 @@
 module hunt.http.codec.http.model.ContentProvider;
 
 import hunt.container.ByteBuffer;
-import hunt.container.Iterable;
+import hunt.lang.common;
 
 /**
  * <p>{@link ContentProvider} provides a source of request content.</p>
