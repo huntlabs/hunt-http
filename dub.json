@@ -1,7 +1,7 @@
 {
     "name": "hunt-http",
     "description": "http module for hunt.",
-    "copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+    "copyright": "Copyright (C) 2015-2018, HuntLabs.net",
     "authors": ["HuntLabs.net"],
     "license": "Apache-2.0",
     "dependencies": {
