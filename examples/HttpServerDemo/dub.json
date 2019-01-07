@@ -5,12 +5,12 @@
         "Hunt Labs"
     ],
 	"description": "A demo for HTTP Server with Hunt-http.",
-	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+	"copyright": "Copyright (C) 2015-2018, HuntLabs.net",
 	"license": "Apache-2.0",
 	"dependencies": {
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG", "HUNT_METRIC"
+		"HUNT_DEBUG", "HUNT_METRIC", "HUNT_THREADPOOL"
 	]
 }

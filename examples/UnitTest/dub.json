@@ -4,12 +4,12 @@
         "Hunt Labs"
     ],
 	"description": "All the unittests for hunt-http.",
-	"copyright": "Copyright (C) 2015-2018, HuntLabs.cn",
+	"copyright": "Copyright (C) 2015-2018, HuntLabs.net",
 	"license": "Apache-2.0",
 	"dependencies": {
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG"
+		"HUNT_DEBUG", "HUNT_METRIC"
 	]
 }
