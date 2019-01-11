@@ -3,8 +3,8 @@ module hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.exception;
 
-import hunt.container.BufferUtils;
-import hunt.container.ByteBuffer;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
 
 import std.conv;
 

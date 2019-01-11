@@ -1,10 +1,11 @@
 module hunt.http.codec.websocket.model.ExtensionConfig;
 
-import hunt.string.QuoteUtil;
+import hunt.text.QuoteUtil;
 
-import hunt.container;
-import hunt.lang.exception;
-import hunt.string;
+import hunt.collection;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 import std.array;
 import std.container.array;

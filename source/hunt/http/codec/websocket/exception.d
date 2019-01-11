@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.exception;
 
 import hunt.http.codec.websocket.model.StatusCode;
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 
 class WebSocketException : RuntimeException

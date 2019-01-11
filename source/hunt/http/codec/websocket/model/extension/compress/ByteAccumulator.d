@@ -1,12 +1,12 @@
 module hunt.http.codec.websocket.model.extension.compress.ByteAccumulator;
 
 import hunt.http.codec.websocket.exception;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
-import hunt.container;
-import hunt.lang.exception;
+import hunt.collection;
+import hunt.Exceptions;
 
 import std.format;
 

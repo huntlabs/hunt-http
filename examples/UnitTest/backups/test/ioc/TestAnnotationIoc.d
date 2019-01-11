@@ -2,7 +2,7 @@ module test.ioc;
 
 import hunt.http.core.ApplicationContext;
 import hunt.http.core.XmlApplicationContext;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import test.component.FieldInject;
 import test.component.MethodInject;

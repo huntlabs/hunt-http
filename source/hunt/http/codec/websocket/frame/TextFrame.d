@@ -4,10 +4,10 @@ import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.model.common;
-import hunt.string;
+import hunt.text.Common;
 
-import hunt.container.ByteBuffer;
-import hunt.container.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 
 class TextFrame : DataFrame {
     this() {

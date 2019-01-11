@@ -14,9 +14,9 @@ import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.DataFrameHandler;
 import hunt.http.environment;
 
-import hunt.lang.exception;
-import hunt.util.functional;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.util.Common;
+import hunt.text.Common;
 
 import hunt.logging;
 import std.conv;

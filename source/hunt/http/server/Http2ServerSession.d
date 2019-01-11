@@ -8,13 +8,13 @@ import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream;
 
-import hunt.container.Collections;
-import hunt.container.Map;
-import hunt.lang.common;
+import hunt.collection.Collections;
+import hunt.collection.Map;
+import hunt.util.Common;
 import hunt.logging;
 import hunt.net.Session;
-import hunt.concurrent.Scheduler;
-import hunt.util.functional;
+import hunt.concurrency.Scheduler;
+import hunt.util.Common;
 
 
 class Http2ServerSession : Http2Session , ServerParser.Listener {

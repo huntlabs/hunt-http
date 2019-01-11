@@ -3,7 +3,7 @@ module test.http.router.handler;
 import hunt.http.$;
 import hunt.http.client.http2.SimpleHttpClient;
 import hunt.http.server.Http2ServerBuilder;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import java.util.concurrent.CountDownLatch;

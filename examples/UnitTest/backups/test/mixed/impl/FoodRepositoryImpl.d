@@ -1,6 +1,6 @@
 module test.mixed.impl;
 
-import hunt.container.List;
+import hunt.collection.List;
 
 import test.mixed.Food;
 import test.mixed.FoodRepository;

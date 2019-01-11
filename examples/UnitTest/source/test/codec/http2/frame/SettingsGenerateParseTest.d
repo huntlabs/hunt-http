@@ -1,9 +1,9 @@
 module test.codec.http2.frame.SettingsGenerateParseTest;
 
-import hunt.container;
+import hunt.collection;
 // import java.util.concurrent.atomic.AtomicInteger;
 
-import hunt.util.Assert;
+import hunt.Assert;
 // import hunt.util.Test;
 
 import hunt.http.codec.http.decode.Parser;
@@ -16,7 +16,7 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.stream.Http2Configuration;
 
 import hunt.logging;
-import hunt.lang.exception;
+import hunt.Exceptions;
 import hunt.util.TypeUtils;
 
 import std.array;

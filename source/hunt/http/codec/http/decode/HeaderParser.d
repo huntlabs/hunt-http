@@ -1,10 +1,10 @@
 module hunt.http.codec.http.decode.HeaderParser;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.frame.Frame;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 /**
  * <p>

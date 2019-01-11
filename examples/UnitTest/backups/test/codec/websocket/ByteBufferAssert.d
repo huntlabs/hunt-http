@@ -1,12 +1,12 @@
 module test.codec.websocket;
 
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 
 
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertThat;
 
 public class ByteBufferAssert {
     public static void assertEquals(string message, byte[] expected, byte[] actual) {

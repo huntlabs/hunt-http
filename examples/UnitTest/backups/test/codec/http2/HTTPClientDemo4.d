@@ -14,7 +14,7 @@ import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 public class HttpClientDemo4 {
 

@@ -7,7 +7,7 @@ import hunt.http.codec.http.model.HttpURI;
 // import hunt.net.URI;
 import hunt.security.Principal;
 
-import hunt.container;
+import hunt.collection;
 
 /**
  * The HTTP Upgrade to WebSocket Request

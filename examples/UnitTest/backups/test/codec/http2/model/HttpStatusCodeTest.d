@@ -1,7 +1,7 @@
 module test.codec.http2.model;
 
-import hunt.util.Assert.assertEquals;
-import hunt.util.Assert.assertNull;
+import hunt.Assert.assertEquals;
+import hunt.Assert.assertNull;
 
 import hunt.util.Test;
 

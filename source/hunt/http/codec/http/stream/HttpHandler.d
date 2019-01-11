@@ -5,8 +5,9 @@ import hunt.http.codec.http.stream.HttpConnection;
 
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.lang.common;
-import hunt.container.ByteBuffer;
+import hunt.Functions;
+import hunt.util.Common;
+import hunt.collection.ByteBuffer;
 
 // alias HttpRequest = HttpRequest;
 // alias HttpResponse = HttpResponse;

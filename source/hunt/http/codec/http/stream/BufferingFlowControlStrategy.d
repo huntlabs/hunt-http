@@ -7,9 +7,9 @@ import hunt.http.codec.http.stream.SessionSPI;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
-import hunt.container.Map;
+import hunt.collection.Map;
 import hunt.logging;
-import hunt.util.functional;
+import hunt.util.Common;
 
 import std.format;
 

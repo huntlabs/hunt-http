@@ -2,15 +2,15 @@ module test.codec.http2.frame;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import hunt.container.List;
+import hunt.collection.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import hunt.http.codec.http.decode.Parser;
@@ -22,7 +22,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.utils.codec.Base64Utils;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 import hunt.util.TypeUtils;
 
 public class SettingsGenerateParseTest {

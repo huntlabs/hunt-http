@@ -7,8 +7,8 @@ import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 
-import hunt.container;
-import hunt.lang.exception;
+import hunt.collection;
+import hunt.Exceptions;
 
 import std.algorithm;
 import std.conv;

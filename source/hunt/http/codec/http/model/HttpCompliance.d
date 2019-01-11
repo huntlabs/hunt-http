@@ -4,8 +4,8 @@ import hunt.logging;
 
 import hunt.http.codec.http.model.HttpComplianceSection;
 
-import hunt.container.HashMap;
-import hunt.container.Map;
+import hunt.collection.HashMap;
+import hunt.collection.Map;
 
 import std.algorithm;
 import std.array;

@@ -1,7 +1,7 @@
 module test.codec.http2.model.QuotedCSVTest;
 
 import std.array;
-import hunt.util.Assert;
+import hunt.Assert;
 
 import hunt.http.codec.http.model.QuotedCSV;
 

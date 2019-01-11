@@ -18,12 +18,12 @@
 
 module hunt.http.codec.http.model.HttpScheme;
 
-// import hunt.container.ByteBuffer;
+// import hunt.collection.ByteBuffer;
 
 // import hunt.http.utils.collection.ArrayTrie;
 // import hunt.http.utils.collection.Trie;
-// import hunt.container.BufferUtils;
-import hunt.util.traits;
+// import hunt.collection.BufferUtils;
+import hunt.util.Traits;
 
 struct HttpScheme {
 	enum HTTP = "http";

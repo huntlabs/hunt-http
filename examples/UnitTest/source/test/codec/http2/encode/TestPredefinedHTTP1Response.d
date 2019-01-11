@@ -1,6 +1,6 @@
 module test.codec.http2.encode.TestPredefinedHttp1Response;
 
-import hunt.util.Assert;
+import hunt.Assert;
 // import hunt.util.Test;
 
 import hunt.http.codec.http.encode.PredefinedHttp1Response;

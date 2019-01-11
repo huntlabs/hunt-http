@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.utils.MaskedByteBuffer;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 class MaskedByteBuffer {
     private enum byte[] mask = [0x00, cast(byte) 0xF0, 0x0F, cast(byte) 0xFF];

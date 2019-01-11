@@ -1,7 +1,7 @@
 module hunt.http.codec.http.model.ContentProvider;
 
-import hunt.container.ByteBuffer;
-import hunt.lang.common;
+import hunt.collection.ByteBuffer;
+import hunt.util.Common;
 
 /**
  * <p>{@link ContentProvider} provides a source of request content.</p>

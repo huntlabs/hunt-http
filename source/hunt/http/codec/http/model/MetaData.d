@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.MetaData;
 
-import hunt.container;
+import hunt.collection;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpField;
@@ -10,9 +10,10 @@ import hunt.http.codec.http.model.HttpScheme;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpVersion;
 
-import hunt.lang.common;
-import hunt.string.common;
-import hunt.string.StringBuilder;
+import hunt.Functions;
+import hunt.util.Common;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 import std.ascii;
 import std.format;

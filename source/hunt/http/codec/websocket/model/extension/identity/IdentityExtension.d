@@ -6,9 +6,11 @@ import hunt.http.codec.websocket.model.extension.AbstractExtension;
 
 // import hunt.http.utils.lang.QuotedStringTokenizer;
 
-import hunt.lang.exception;
-import hunt.util.functional;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.util.Common;
+import hunt.text.Common;
+import hunt.text.QuotedStringTokenizer;
+import hunt.text.StringBuilder;
 
 import std.conv;
 

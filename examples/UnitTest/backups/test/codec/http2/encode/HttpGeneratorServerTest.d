@@ -3,16 +3,16 @@ module test.codec.http2.encode;
 import hunt.http.Version;
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model;
-import hunt.container.BufferUtils;
-import hunt.util.Assert;
+import hunt.collection.BufferUtils;
+import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.util.function.Supplier;
 
 
-import hunt.util.Assert.assertEquals;
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertEquals;
+import hunt.Assert.assertThat;
 
 public class HttpGeneratorServerTest {
 

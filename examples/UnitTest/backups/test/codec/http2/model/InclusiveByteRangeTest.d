@@ -4,9 +4,9 @@ import hunt.http.codec.http.model.InclusiveByteRange;
 import hunt.util.Test;
 
 import java.util.Collections;
-import hunt.container.List;
+import hunt.collection.List;
 
-import hunt.util.Assert;
+import hunt.Assert;
 
 public class InclusiveByteRangeTest {
 

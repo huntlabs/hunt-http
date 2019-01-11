@@ -1,10 +1,10 @@
 module test.codec.http2.frame.ContinuationParseTest;
 
-// import hunt.container.ByteBuffer;
-// import hunt.container.ArrayList;
-// import hunt.container.List;
+// import hunt.collection.ByteBuffer;
+// import hunt.collection.ArrayList;
+// import hunt.collection.List;
 
-// import hunt.util.Assert;
+// import hunt.Assert;
 // import hunt.util.Test;
 
 // import hunt.http.codec.http.decode.Parser;

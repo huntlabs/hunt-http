@@ -6,15 +6,15 @@ import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertThat;
 
 public class HpackEncoderTest {
     

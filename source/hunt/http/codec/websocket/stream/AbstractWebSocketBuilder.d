@@ -4,9 +4,9 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.frame.Frame;
-import hunt.lang.common;
+import hunt.Functions;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 /**
  * 

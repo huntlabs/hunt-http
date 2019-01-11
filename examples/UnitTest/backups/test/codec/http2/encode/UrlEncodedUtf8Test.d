@@ -4,7 +4,7 @@ module test.codec.http2.encode;
 import hunt.http.codec.http.encode.UrlEncoded;
 import hunt.http.utils.collection.MultiMap;
 import hunt.http.utils.lang.Utf8Appendable;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import java.io.ByteArrayInputStream;

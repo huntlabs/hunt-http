@@ -3,13 +3,14 @@ module test.codec.http2.model.MultipartParserTest;
 import hunt.http.codec.http.model.BadMessageException;
 import hunt.http.codec.http.model.MultipartParser;
 
-import hunt.container.BufferUtils;
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 import hunt.logging;
-import hunt.string;
-import hunt.util.Assert;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
+import hunt.Assert;
 
 import std.algorithm;
 import std.conv;

@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.QuotedQualityCSV;
 
 // import java.util.ArrayList;
 // import java.util.Iterator;
-import hunt.container.List;
+import hunt.collection.List;
 // import java.util.function.Function;
 
 

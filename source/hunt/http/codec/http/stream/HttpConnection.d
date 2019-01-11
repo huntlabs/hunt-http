@@ -2,7 +2,7 @@ module hunt.http.codec.http.stream.HttpConnection;
 
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.net.Connection;
-import hunt.lang.common;
+import hunt.Functions;
 
 
 interface HttpConnection : Connection {

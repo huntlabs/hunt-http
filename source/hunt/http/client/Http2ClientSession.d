@@ -7,9 +7,9 @@ import hunt.http.codec.http.stream;
 
 import hunt.net.Session;
 
-import hunt.util.functional;
-import hunt.concurrent.Promise;
-import hunt.concurrent.Scheduler;
+import hunt.util.Common;
+import hunt.concurrency.Promise;
+import hunt.concurrency.Scheduler;
 import hunt.logging;
 
 

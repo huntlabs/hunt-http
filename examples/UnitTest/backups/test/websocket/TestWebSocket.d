@@ -4,13 +4,13 @@ import hunt.http.$;
 import hunt.http.client.websocket.SimpleWebSocketClient;
 import hunt.http.server.websocket.SimpleWebSocketServer;
 import hunt.http.utils.RandomUtils;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 import hunt.util.runners.Parameterized;
 
 import java.nio.charset.StandardCharsets;
-import hunt.container.ArrayList;
+import hunt.collection.ArrayList;
 import java.util.Collection;
-import hunt.container.List;
+import hunt.collection.List;
 import java.util.concurrent.CountDownLatch;
 
 /**

@@ -1,11 +1,11 @@
 module test.codec.http2.frame;
 
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 import java.util.Random;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import hunt.http.codec.http.decode.Parser;

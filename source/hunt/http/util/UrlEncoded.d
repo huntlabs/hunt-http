@@ -1,10 +1,11 @@
 module hunt.http.util.UrlEncoded;
 
-import hunt.container;
+import hunt.collection;
 
-import hunt.lang.Charset;
-import hunt.lang.exception;
-import hunt.string;
+import hunt.text.Charset;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 import hunt.util.TypeUtils;
 
 import hunt.logging;

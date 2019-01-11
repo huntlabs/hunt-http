@@ -1,10 +1,10 @@
 
 module test.codec.http2.encode.URLEncodedTest;
 
-import hunt.container;
+import hunt.collection;
 
-import hunt.util.Assert;
-import hunt.string;
+import hunt.Assert;
+import hunt.text.Common;
 import hunt.util.TypeUtils;
 
 import hunt.http.util.UrlEncoded;

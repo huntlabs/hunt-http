@@ -5,12 +5,12 @@ import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.MetaData;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
-import hunt.util.Assert;
-import hunt.string;
+import hunt.Assert;
+import hunt.text.Common;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.logging;
 import std.datetime;

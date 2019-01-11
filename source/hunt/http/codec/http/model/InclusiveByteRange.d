@@ -21,11 +21,13 @@ module hunt.http.codec.http.model.InclusiveByteRange;
 
 import hunt.logging;
 
-import hunt.lang.exception;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
+import hunt.text.StringTokenizer;
 
-import hunt.container.List;
-import hunt.container.ArrayList;
+import hunt.collection.List;
+import hunt.collection.ArrayList;
 
 import std.conv;
 import std.format;

@@ -5,12 +5,12 @@ import hunt.http.codec.http.model.HttpStatus;
 import hunt.util.MimeType;
 import hunt.http.server.SimpleHttpServer;
 import hunt.http.server.SimpleResponse;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 import java.io.PrintWriter;
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 
 public class ServerDemo4 {
 

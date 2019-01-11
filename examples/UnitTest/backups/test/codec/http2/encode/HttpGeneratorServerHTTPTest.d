@@ -6,22 +6,22 @@ import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 import hunt.util.Test;
 import hunt.util.runner.RunWith;
 import hunt.util.runners.Parameterized;
 import hunt.util.runners.Parameterized.Parameter;
 import hunt.util.runners.Parameterized.Parameters;
 
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
-import hunt.container.List;
+import hunt.collection.List;
 
 
 
-import hunt.util.Assert;
+import hunt.Assert;
 
 
 public class HttpGeneratorServerHTTPTest {

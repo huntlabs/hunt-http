@@ -1,6 +1,6 @@
 module hunt.http.codec.http.hpack.HpackDecoder;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.hpack.AuthorityHttpField;
 import hunt.http.codec.http.hpack.HpackContext;
@@ -10,9 +10,10 @@ import hunt.http.codec.http.hpack.NBitInteger;
 
 import hunt.http.codec.http.model;
 
-import hunt.string;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 import hunt.util.TypeUtils;
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import hunt.logging;
 

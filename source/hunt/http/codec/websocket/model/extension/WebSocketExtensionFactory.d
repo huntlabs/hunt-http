@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import std.array;
 

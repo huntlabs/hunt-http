@@ -4,12 +4,12 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 
-import hunt.container;
+import hunt.collection;
 import hunt.logging;
 
-import hunt.lang.common;
-import hunt.util.Assert;
-import hunt.util.functional;
+import hunt.util.Common;
+import hunt.Assert;
+import hunt.util.Common;
 
 
 class OutgoingFramesCapture : OutgoingFrames {

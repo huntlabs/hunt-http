@@ -8,9 +8,9 @@ import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
-import hunt.lang.common;
+import hunt.Functions;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 /**
 */

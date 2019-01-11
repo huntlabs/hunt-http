@@ -7,8 +7,9 @@ import hunt.http.codec.websocket.decode.payload;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.logging;
-import hunt.container;
-import hunt.string;
+import hunt.collection;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 import std.algorithm;
 import std.conv;

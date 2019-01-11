@@ -2,7 +2,7 @@ module hunt.http.codec.websocket.model.CloseStatus;
 
 import hunt.http.codec.websocket.model.StatusCode;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import std.conv;
 

@@ -8,10 +8,11 @@ import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.container;
+import hunt.collection;
 import hunt.logging;
-import hunt.util.Assert;
-import hunt.string;
+import hunt.Assert;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 import test.codec.websocket.utils.Hex;
 import test.codec.websocket.IncomingFramesCapture;

@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.utils.HeaderValueGenerator;
 
-import hunt.container.List;
+import hunt.collection.List;
 
 /**
  * 

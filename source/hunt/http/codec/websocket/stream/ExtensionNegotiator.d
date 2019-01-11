@@ -10,12 +10,12 @@ import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;
 import hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 
-import hunt.container;
+import hunt.collection;
 
 import hunt.http.codec.websocket.model.ExtensionConfig;
 
-import hunt.container;
-import hunt.lang.exception;
+import hunt.collection;
+import hunt.Exceptions;
 
 import std.algorithm;
 import std.array;

@@ -6,8 +6,8 @@ import hunt.net.DecoderChain;
 import hunt.net.Session;
 import hunt.logging;
 
-import hunt.container.ByteBuffer;
-import hunt.container.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 
 
 class Http2ClientDecoder : DecoderChain {

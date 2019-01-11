@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.HeaderBlockFragments;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.frame.PriorityFrame;
 

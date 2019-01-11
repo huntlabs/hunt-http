@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.container;
+import hunt.collection;
 import hunt.logging;
 
 /**

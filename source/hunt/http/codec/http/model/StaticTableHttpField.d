@@ -4,7 +4,7 @@ import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpMethod;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 /**
 */

@@ -1,8 +1,8 @@
 module hunt.http.codec.http.encode.DisconnectGenerator;
 
-import hunt.container.ByteBuffer;
-import hunt.container.LinkedList;
-import hunt.container.List;
+import hunt.collection.ByteBuffer;
+import hunt.collection.LinkedList;
+import hunt.collection.List;
 
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.encode.FrameGenerator;

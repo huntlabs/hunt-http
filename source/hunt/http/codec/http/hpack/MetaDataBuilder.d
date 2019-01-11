@@ -12,7 +12,7 @@ import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.StaticTableHttpField;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import std.algorithm;
 import std.array;

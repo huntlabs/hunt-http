@@ -1,14 +1,13 @@
 module hunt.http.client.ClientHttpHandler;
 
 import hunt.http.codec.http.model.MetaData;
-
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
-
-import hunt.lang.common;
-import hunt.container.ByteBuffer;
+import hunt.Functions;
+import hunt.util.Common;
+import hunt.collection.ByteBuffer;
 
 alias Request = HttpRequest;
 alias Response = HttpResponse;

@@ -17,7 +17,7 @@ import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 // alias TcpSession = hunt.net.Session.Session;
 alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;

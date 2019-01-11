@@ -3,7 +3,7 @@ module test.codec.websocket.model;
 import hunt.http.codec.websocket.model.AcceptHash;
 import hunt.http.utils.codec.B64Code;
 import hunt.util.TypeUtils;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 

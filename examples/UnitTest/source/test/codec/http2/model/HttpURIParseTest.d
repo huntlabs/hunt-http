@@ -1,13 +1,13 @@
 module test.codec.http2.model.HttpURIParseTest;
 
 
-import hunt.util.Assert;
+import hunt.Assert;
 
 
 // import java.net.URI;
 // import java.net.URISyntaxException;
 // import java.util.Arrays;
-// import hunt.container.List;
+// import hunt.collection.List;
 
 // import hunt.util.Test;
 // import hunt.util.runner.RunWith;

@@ -1,14 +1,14 @@
 module hunt.http.codec.http.model.InputStreamContentProvider;
 
-// import hunt.lang.common;
-// import hunt.container.BufferUtils;
+// import hunt.util.Common;
+// import hunt.collection.BufferUtils;
 // import hunt.io;
 // import hunt.logging;
 
 
 // import java.io.Closeable;
 // import java.io.InputStream;
-// import hunt.container.ByteBuffer;
+// import hunt.collection.ByteBuffer;
 // import java.util.Iterator;
 // import java.util.NoSuchElementException;
 

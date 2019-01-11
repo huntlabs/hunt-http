@@ -1,10 +1,10 @@
 module test.codec.http2;
 
 import java.io.IOException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
@@ -16,7 +16,7 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 import hunt.http.utils.collection.MultiMap;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 public class Http1ServerDemo3 {
 

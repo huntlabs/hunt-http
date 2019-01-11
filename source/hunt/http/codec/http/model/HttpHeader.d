@@ -1,12 +1,11 @@
 module hunt.http.codec.http.model.HttpHeader;
 
-import hunt.util.traits;
+import hunt.util.Traits;
+import hunt.logging;
 
 import std.algorithm;
 import std.conv;
 import std.string;
-
-import hunt.logging;
 
 bool contains(HttpHeader[] items, ref HttpHeader item) {
     return items.canFind(item);

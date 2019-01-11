@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.PingBodyParser;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.decode.BodyParser;
 import hunt.http.codec.http.decode.HeaderParser;
@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.PingFrame;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 /**
 */

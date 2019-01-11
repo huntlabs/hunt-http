@@ -1,10 +1,10 @@
 module hunt.http.codec.http.model.HttpMethod;
 
 import std.string;
-import hunt.string;
-import hunt.util.traits;
+import hunt.text.Common;
+import hunt.util.Traits;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 /**
 */

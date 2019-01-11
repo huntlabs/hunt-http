@@ -4,9 +4,9 @@ import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.QuotedCSV;
 
-import hunt.container;
-import hunt.string;
-import hunt.lang.exception;
+import hunt.collection;
+import hunt.text.Common;
+import hunt.Exceptions;
 
 import std.array;
 import std.ascii;

@@ -6,9 +6,9 @@ import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 import hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExtension;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 import hunt.util.TypeUtils;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import test.codec.websocket.ByteBufferAssert;
 import test.codec.websocket.IncomingFramesCapture;
@@ -17,13 +17,13 @@ import test.codec.websocket.model.extension.AbstractExtensionTest;
 import test.codec.websocket.model.extension.ExtensionTool.Tester;
 
 import java.io.IOException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 
 
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertThat;
 
 /**
  * Client side behavioral tests for permessage-deflate extension.

@@ -14,8 +14,8 @@ import hunt.http.codec.http.model.HttpScheme;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.container.ByteBuffer;
-import hunt.container.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 
 import hunt.http.codec.http.encode.Http1FieldPreEncoder;
 import hunt.http.codec.http.encode.HttpFieldPreEncoder;
@@ -26,7 +26,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 // import hunt.http.codec.http.model.HttpHeader;
 // import hunt.http.codec.http.model.HttpVersion;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 import hunt.util.TypeUtils;
 
 

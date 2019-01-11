@@ -6,7 +6,7 @@ import hunt.http.codec.http.stream.StreamSPI;
 
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
-import hunt.util.functional;
+import hunt.util.Common;
 
 import hunt.logging;
 

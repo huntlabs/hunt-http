@@ -1,7 +1,8 @@
 module hunt.http.codec.http.model.HostPort;
 
-import hunt.lang.exception;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringUtils;
 
 import std.array;
 import std.string;

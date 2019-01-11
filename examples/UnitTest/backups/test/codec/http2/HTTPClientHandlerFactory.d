@@ -4,10 +4,10 @@ import hunt.http.client.http2.ClientHttpHandler;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 import java.io.IOException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 /**
  * 

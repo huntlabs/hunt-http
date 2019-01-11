@@ -1,6 +1,6 @@
 module test.mixed;
 
-import hunt.container.List;
+import hunt.collection.List;
 
 
 public interface FoodRepository {

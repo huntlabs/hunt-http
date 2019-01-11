@@ -1,6 +1,6 @@
 module hunt.http.codec.http.hpack.NBitInteger;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import hunt.util.TypeUtils;
 
 class NBitInteger {

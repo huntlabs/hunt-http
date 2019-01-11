@@ -9,12 +9,12 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.container.ByteBuffer;
-import hunt.container.LinkedList;
+import hunt.collection.ByteBuffer;
+import hunt.collection.LinkedList;
 
-import hunt.lang.common;
-import hunt.lang.exception;
-import hunt.util.functional;
+import hunt.Functions;
+import hunt.Exceptions;
+import hunt.util.Common;
 
 import hunt.logging;
 

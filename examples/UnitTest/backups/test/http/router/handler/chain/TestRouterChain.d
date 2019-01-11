@@ -4,7 +4,7 @@ import hunt.http.$;
 import hunt.http.client.http2.SimpleResponse;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHttpHandlerTest;
 

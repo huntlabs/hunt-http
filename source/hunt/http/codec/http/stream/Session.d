@@ -1,7 +1,7 @@
 module hunt.http.codec.http.stream.Session;
 
-import hunt.container.Collection;
-import hunt.container.Map;
+import hunt.collection.Collection;
+import hunt.collection.Map;
 
 import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.frame.GoAwayFrame;
@@ -13,8 +13,8 @@ import hunt.http.codec.http.frame.SettingsFrame;
 
 import hunt.http.codec.http.stream.Stream;
 
-import hunt.util.functional;
-import hunt.concurrent.Promise;
+import hunt.util.Common;
+import hunt.concurrency.Promise;
 
 alias StreamSession = Session;
 

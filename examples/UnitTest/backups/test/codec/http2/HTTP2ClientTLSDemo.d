@@ -8,7 +8,7 @@ import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.utils.concurrent.FuturePromise;
 
 import java.io.UnsupportedEncodingException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
 import test.codec.http2.HttpClientHandlerFactory.newHandler;

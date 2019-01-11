@@ -3,9 +3,9 @@ module hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.container;
+import hunt.collection;
 import hunt.io;
-import hunt.lang.exception;
+import hunt.Exceptions;
 import hunt.logging;
 import std.conv;
 

@@ -9,17 +9,17 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.container.BufferUtils;
-import hunt.util.Assert;
+import hunt.collection.BufferUtils;
+import hunt.Assert;
 import hunt.util.Test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import hunt.container.ArrayList;
+import hunt.collection.ArrayList;
 import java.util.HashMap;
-import hunt.container.List;
+import hunt.collection.List;
 import java.util.Map;
 import java.util.concurrent.Phaser;
 

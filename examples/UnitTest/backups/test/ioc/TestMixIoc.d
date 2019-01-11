@@ -3,7 +3,7 @@ module test.ioc;
 import hunt.http.core.ApplicationContext;
 import hunt.http.core.XmlApplicationContext;
 import hunt.http.core.support.exception.BeanDefinitionParsingException;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import test.mixed.FoodService;
 import test.mixed.FoodService2;
 
 import java.util.Collection;
-import hunt.container.List;
+import hunt.collection.List;
 
 
 

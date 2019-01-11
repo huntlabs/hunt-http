@@ -1,9 +1,9 @@
 module test.codec.http2.model.TestHttpField;
 
-import hunt.util.Assert;
+import hunt.Assert;
 
-import hunt.container.ByteBuffer;
-import hunt.container.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;

@@ -1,6 +1,6 @@
 module hunt.http.codec.http.encode.HeadersGenerator;
 
-import hunt.container;
+import hunt.collection;
 
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.Frame;
@@ -14,7 +14,7 @@ import hunt.http.codec.http.encode.FrameGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.PriorityGenerator;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 import std.conv;
 
 /**

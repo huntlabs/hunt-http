@@ -1,11 +1,11 @@
 module test.codec.websocket.utils.Hex;
 
-import hunt.lang.Character;
-import hunt.lang.CharacterData;
-import hunt.lang.exception;
+import hunt.Char;
+import hunt.text.CharacterData;
+import hunt.Exceptions;
 
-import hunt.container.BufferUtils;
-import hunt.container.ByteBuffer;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
 
 import std.math;
 import std.format;

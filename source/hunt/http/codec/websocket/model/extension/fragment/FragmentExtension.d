@@ -5,10 +5,10 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
-import hunt.lang.common;
+import hunt.util.Common;
 // import hunt.http.utils.concurrent.IteratingCallback;
 import hunt.logging;
-import hunt.container;
+import hunt.collection;
 
 
 /**

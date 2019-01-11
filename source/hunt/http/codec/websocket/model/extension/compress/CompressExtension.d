@@ -4,14 +4,14 @@ module hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 // import hunt.http.codec.websocket.frame.Frame;
 // import hunt.http.codec.websocket.model.common;
 // import hunt.http.codec.websocket.model.extension.AbstractExtension;
-// import hunt.lang.common;
+// import hunt.util.Common;
 // import hunt.http.utils.concurrent.IteratingCallback;
-// import hunt.container.BufferUtils;
+// import hunt.collection.BufferUtils;
 // import hunt.logging;
 
 
 // import java.io.ByteArrayOutputStream;
-// import hunt.container.ByteBuffer;
+// import hunt.collection.ByteBuffer;
 // import java.util.ArrayDeque;
 // import java.util.Queue;
 // import java.util.concurrent.atomic.AtomicInteger;

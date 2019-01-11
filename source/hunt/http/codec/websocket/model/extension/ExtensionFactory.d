@@ -10,10 +10,10 @@ import hunt.http.codec.websocket.model.extension.compress.XWebkitDeflateFrameExt
 import hunt.http.codec.websocket.model.extension.fragment.FragmentExtension;
 import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 
-import hunt.container.Map;
-import hunt.container.HashMap;
+import hunt.collection.Map;
+import hunt.collection.HashMap;
 import hunt.logging;
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 
 abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>

@@ -8,8 +8,8 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 
-import hunt.container.ByteBuffer;
-import hunt.string;
+import hunt.collection.ByteBuffer;
+import hunt.text.Common;
 
 import hunt.logging;
 import std.string : icmp;

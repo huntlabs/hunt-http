@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.ContinuationBodyParser;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.decode.BodyParser;
 import hunt.http.codec.http.decode.HeaderBlockParser;
@@ -14,7 +14,7 @@ import hunt.http.codec.http.frame.HeadersFrame;
 
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 /**
 */

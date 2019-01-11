@@ -5,15 +5,15 @@ import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.model.HttpResponse;
-import hunt.container.BufferUtils;
-import hunt.util.Assert;
+import hunt.collection.BufferUtils;
+import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import org.hamcrest.CoreMatchers.is;
-import hunt.util.Assert.assertEquals;
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertEquals;
+import hunt.Assert.assertThat;
 
 public class HpackTest {
     final static HttpField ServerFirefly = new PreEncodedHttpField(HttpHeader.SERVER, "hunt");

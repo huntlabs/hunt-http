@@ -2,11 +2,11 @@ module test.codec.http2.model;
 
 import hunt.http.codec.http.model.QuotedQualityCSV;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 
-import hunt.util.Assert.assertThat;
+import hunt.Assert.assertThat;
 
 public class QuotedQualityCSVTest {
     

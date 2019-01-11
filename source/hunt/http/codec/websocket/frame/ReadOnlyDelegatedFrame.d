@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.frame.ReadOnlyDelegatedFrame;
 
 import hunt.http.codec.websocket.frame.Frame;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 /**
  * Immutable, Read-only, Frame implementation.

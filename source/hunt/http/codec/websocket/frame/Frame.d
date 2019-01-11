@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.frame.Frame;
 
-import hunt.container.ByteBuffer;
-import hunt.lang.exception;
+import hunt.collection.ByteBuffer;
+import hunt.Exceptions;
 import std.conv;
 
 alias FrameType = Frame.Type;

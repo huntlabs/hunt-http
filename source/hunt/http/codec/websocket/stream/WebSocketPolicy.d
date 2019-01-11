@@ -4,8 +4,9 @@ import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.model.common;
 
-import hunt.lang.exception;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 import std.conv;
 import std.format;

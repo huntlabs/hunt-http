@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.PushPromiseBodyParser;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.decode.BodyParser;
 import hunt.http.codec.http.decode.HeaderBlockParser;
@@ -12,7 +12,7 @@ import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import std.algorithm;
 

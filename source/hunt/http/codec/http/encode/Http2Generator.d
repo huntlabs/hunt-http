@@ -19,8 +19,8 @@ import hunt.http.codec.http.encode.ResetGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.encode.WindowUpdateGenerator;
 
-import hunt.container.ByteBuffer;
-import hunt.container.List;
+import hunt.collection.ByteBuffer;
+import hunt.collection.List;
 import hunt.logging;
 
 import std.typecons;

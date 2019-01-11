@@ -1,8 +1,8 @@
 module test.codec.http2.model.CookieTest;
 
-import hunt.container.ArrayList;
-import hunt.container.List;
-import hunt.util.Assert;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
+import hunt.Assert;
 
 import hunt.http.codec.http.model.Cookie;
 import hunt.http.codec.http.model.CookieGenerator;

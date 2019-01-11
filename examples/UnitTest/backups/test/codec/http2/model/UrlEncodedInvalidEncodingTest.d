@@ -28,8 +28,8 @@ import hunt.util.runner.RunWith;
 import hunt.util.runners.Parameterized;
 
 import java.nio.charset.Charset;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 
 import java.nio.charset.StandardCharsets.UTF_8;
 

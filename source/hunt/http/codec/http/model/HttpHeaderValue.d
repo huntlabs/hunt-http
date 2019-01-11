@@ -19,11 +19,11 @@
 module hunt.http.codec.http.model.HttpHeaderValue;
 
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.util.traits;
+import hunt.util.Traits;
 
 import std.algorithm;
 import std.string;
-// import hunt.container.ByteBuffer;
+// import hunt.collection.ByteBuffer;
 // import java.nio.charset.StandardCharsets;
 // import java.util.EnumSet;
 

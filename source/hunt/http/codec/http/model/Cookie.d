@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.Cookie;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 
 import std.array;
 import std.conv;

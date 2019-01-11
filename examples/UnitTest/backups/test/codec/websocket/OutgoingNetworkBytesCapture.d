@@ -3,14 +3,14 @@ module test.codec.websocket;
 import hunt.http.codec.websocket.encode.Generator;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.OutgoingFrames;
-import hunt.lang.common;
-import hunt.container.BufferUtils;
+import hunt.util.Common;
+import hunt.collection.BufferUtils;
 import hunt.util.TypeUtils;
-import hunt.util.Assert;
+import hunt.Assert;
 
-import hunt.container.ByteBuffer;
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ByteBuffer;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 import java.util.Locale;
 
 

@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import java.io.IOException;
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Phaser;
@@ -19,7 +19,7 @@ import hunt.http.codec.http.stream.Http2Configuration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 public class Http1ClientDemo3 {
 

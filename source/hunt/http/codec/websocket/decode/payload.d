@@ -3,10 +3,10 @@ module hunt.http.codec.websocket.decode.payload;
 import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.Frame;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 import hunt.http.codec.websocket.frame.Frame;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 
 /**

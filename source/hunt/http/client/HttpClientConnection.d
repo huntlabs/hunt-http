@@ -10,10 +10,10 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.concurrent.Promise;
+import hunt.concurrency.Promise;
 
-import hunt.container.ByteBuffer;
-import hunt.container.Collection;
+import hunt.collection.ByteBuffer;
+import hunt.collection.Collection;
 
 alias Request = HttpRequest;
 alias Response = HttpResponse;

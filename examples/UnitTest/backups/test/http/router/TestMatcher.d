@@ -4,7 +4,7 @@ import hunt.http.server.router.Matcher;
 import hunt.http.server.router.Router;
 import hunt.http.server.router.RouterManager;
 import hunt.http.server.router.impl.RouterManagerImpl;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import java.util.NavigableSet;

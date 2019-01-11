@@ -10,8 +10,8 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
-import hunt.util.functional;
-import hunt.concurrent.Promise;
+import hunt.util.Common;
+import hunt.concurrency.Promise;
 
 /**
  * <p>The SPI interface for implementing a HTTP/2 session.</p>

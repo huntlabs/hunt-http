@@ -5,9 +5,9 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.common;
 
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 import hunt.logging;
-import hunt.util.Assert;
+import hunt.Assert;
 
 import std.format;
 

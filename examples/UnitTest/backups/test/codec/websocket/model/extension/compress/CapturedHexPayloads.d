@@ -2,11 +2,11 @@ module test.codec.websocket.model.extension.compress;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.OutgoingFrames;
-import hunt.lang.common;
+import hunt.util.Common;
 import test.codec.websocket.utils.Hex;
 
-import hunt.container.ArrayList;
-import hunt.container.List;
+import hunt.collection.ArrayList;
+import hunt.collection.List;
 
 public class CapturedHexPayloads : OutgoingFrames {
     private List<string> captured = new ArrayList<>();

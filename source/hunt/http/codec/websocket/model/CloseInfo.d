@@ -7,8 +7,8 @@ import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame.CloseFrame;
 import hunt.http.codec.websocket.frame.Frame;
 
-import hunt.container.BufferUtils;
-import hunt.container.ByteBuffer;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
 
 import std.algorithm;
 import std.conv;

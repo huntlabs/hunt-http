@@ -6,8 +6,8 @@ import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.frame.ResetFrame;
 import hunt.http.codec.http.stream.Session;
 
-import hunt.util.functional;
-import hunt.concurrent.Promise;
+import hunt.util.Common;
+import hunt.concurrency.Promise;
 
 
 alias StreamListener = Stream.Listener;

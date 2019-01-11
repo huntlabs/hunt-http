@@ -7,9 +7,10 @@ import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.container;
-import hunt.lang.exception;
-import hunt.string;
+import hunt.collection;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 /**
  * Generating a frame in WebSocket land.

@@ -7,14 +7,14 @@ import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.UnitTest;
 
-import hunt.container.BufferUtils;
-import hunt.container.ByteBuffer;
-import hunt.container.Iterator;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.Iterator;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.logging;
 
 alias assertTrue = Assert.assertTrue;

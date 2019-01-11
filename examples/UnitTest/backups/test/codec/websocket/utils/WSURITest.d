@@ -1,7 +1,7 @@
 module test.codec.websocket.utils;
 
 import hunt.http.codec.websocket.utils.WSURI;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 
 import java.net.URI;

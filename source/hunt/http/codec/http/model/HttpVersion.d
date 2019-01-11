@@ -1,11 +1,11 @@
 module hunt.http.codec.http.model.HttpVersion;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 // import java.nio.charset.StandardCharsets;
 
-import hunt.util.traits;
-import hunt.lang.exception;
+import hunt.util.Traits;
+import hunt.Exceptions;
 
 import std.ascii;
 import std.string;

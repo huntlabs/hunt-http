@@ -2,8 +2,8 @@ module test.codec.http2.model.HttpURITest;
 
 import hunt.http.codec.http.model.HttpURI;
 
-import hunt.util.Assert;
-import hunt.lang.exception;
+import hunt.Assert;
+import hunt.Exceptions;
 
 
 alias assertTrue = Assert.assertTrue;

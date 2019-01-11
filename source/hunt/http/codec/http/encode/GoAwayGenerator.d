@@ -8,8 +8,8 @@ import hunt.http.codec.http.frame.GoAwayFrame;
 import hunt.http.codec.http.encode.FrameGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 
-import hunt.container;
-import hunt.lang.exception;
+import hunt.collection;
+import hunt.Exceptions;
 
 import std.conv;
 

@@ -17,9 +17,9 @@ import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 import hunt.logging;
-import hunt.string;
+import hunt.text.Common;
 
 import std.range.primitives;
 

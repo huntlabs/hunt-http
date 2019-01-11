@@ -4,7 +4,7 @@ import hunt.http.$;
 import hunt.http.core.ApplicationContext;
 import hunt.http.core.XmlApplicationContext;
 import hunt.http.utils.exception.CommonRuntimeException;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import test.component3.Person;
 import test.component3.PersonService;
 
 import java.util.Arrays;
-import hunt.container.List;
+import hunt.collection.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;

@@ -4,11 +4,11 @@ module hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExten
 // import hunt.http.codec.websocket.frame.Frame;
 // import hunt.http.codec.websocket.model.ExtensionConfig;
 // import hunt.http.codec.websocket.model.common;
-// import hunt.lang.common;
+// import hunt.util.Common;
 // import hunt.logging;
 
 
-// import hunt.container.ByteBuffer;
+// import hunt.collection.ByteBuffer;
 // import java.util.zip.DataFormatException;
 
 // /**

@@ -1,9 +1,9 @@
 module test.codec.http2.model.HttpFieldsTest;
 
-import hunt.container;
-import hunt.lang.exception;
-import hunt.string;
-import hunt.util.Assert;
+import hunt.collection;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.Assert;
 
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.HttpField;

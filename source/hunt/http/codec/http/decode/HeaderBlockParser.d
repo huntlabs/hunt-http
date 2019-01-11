@@ -1,10 +1,10 @@
 module hunt.http.codec.http.decode.HeaderBlockParser;
 
-import hunt.container.ByteBuffer;
+import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.model.MetaData;
-import hunt.container.BufferUtils;
+import hunt.collection.BufferUtils;
 
 class HeaderBlockParser {
 	private HpackDecoder hpackDecoder;

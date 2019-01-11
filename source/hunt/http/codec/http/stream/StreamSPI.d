@@ -5,8 +5,8 @@ import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.SessionSPI;
 
 import hunt.http.codec.http.frame.Frame;
-import hunt.lang.common;
-import hunt.util.functional;
+import hunt.util.Common;
+import hunt.util.Common;
 
 
 /**

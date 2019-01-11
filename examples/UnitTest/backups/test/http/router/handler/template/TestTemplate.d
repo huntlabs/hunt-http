@@ -4,7 +4,7 @@ import hunt.http.$;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.server.Http2ServerBuilder;
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHttpHandlerTest;
 

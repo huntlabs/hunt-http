@@ -4,11 +4,11 @@ import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.model;
 import hunt.util.TypeUtils;
 
-import hunt.util.Assert;
+import hunt.Assert;
 import hunt.util.UnitTest;
 
-import hunt.container.ByteBuffer;
-import hunt.container.Iterator;
+import hunt.collection.ByteBuffer;
+import hunt.collection.Iterator;
 
 
 alias assertTrue = Assert.assertTrue;

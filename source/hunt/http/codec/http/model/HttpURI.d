@@ -1,10 +1,11 @@
 module hunt.http.codec.http.model.HttpURI;
 
-import hunt.container.MultiMap;
+import hunt.collection.MultiMap;
 
-import hunt.lang.exception;
-import hunt.lang.Charset;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.text.Charset;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 import hunt.util.TypeUtils;
 import hunt.http.util.UrlEncoded;
 

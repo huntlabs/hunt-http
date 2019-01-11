@@ -8,7 +8,7 @@ import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.WebSocketHandler;
 
-import hunt.datetime;
+import hunt.util.DateTime;
 import hunt.logging;
 import hunt.util.MimeType;
 

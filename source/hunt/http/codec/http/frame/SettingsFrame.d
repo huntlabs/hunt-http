@@ -3,7 +3,7 @@ module hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 
-import hunt.container.Map;
+import hunt.collection.Map;
 
 import std.format;
 

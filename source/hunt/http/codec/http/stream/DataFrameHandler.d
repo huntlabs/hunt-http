@@ -6,7 +6,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.model.MetaData;
-import hunt.util.functional;
+import hunt.util.Common;
 
 /**
  * 

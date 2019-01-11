@@ -18,10 +18,11 @@
 
 module hunt.http.codec.http.model.MultiException;
 
-import hunt.container;
+import hunt.collection;
 
-import hunt.lang.exception;
-import hunt.string;
+import hunt.Exceptions;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
 
 /** 
  * Wraps multiple exceptions.

@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.HttpStatus;
 
-import hunt.util.traits;
+import hunt.util.Traits;
 import std.conv;
 import std.format;
 

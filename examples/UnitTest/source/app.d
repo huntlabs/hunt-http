@@ -30,7 +30,7 @@ import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
-import hunt.lang.exception;
+import hunt.Exceptions;
 import hunt.logging;
 import hunt.http.codec.http.model.HttpHeader;
 
@@ -41,7 +41,7 @@ void main() {
 	HttpBenchmark hb = new HttpBenchmark();
 	hb.benchmark(1000);
 
-	// testHpackDecoder();
+	testHpackDecoder();
 
 	// **********************
 	// bug
@@ -51,51 +51,51 @@ void main() {
 	// test.codec.http2.model
 	// **********************
 
-	// testUnits!CookieTest(); 
-	// testUnits!HttpFieldsTest();
+	testUnits!CookieTest(); 
+	testUnits!HttpFieldsTest();
 	// testUnits!HttpURIParseTest();
-	// testUnits!HttpURITest();
-	// testUnits!MultipartFormInputStreamTest(); 
-	// testUnits!MultipartParserTest(); 
-	// testUnits!QuotedCSVTest();
-	// testUnits!TestHttpField();
+	testUnits!HttpURITest();
+	testUnits!MultipartFormInputStreamTest(); 
+	testUnits!MultipartParserTest(); 
+	testUnits!QuotedCSVTest();
+	testUnits!TestHttpField();
 
 	// **********************
 	// test.codec.http2.hpack
 	// **********************
 
-	// testUnits!HpackContextTest(); 
-	// testUnits!HpackEncoderTest(); 
-	// testUnits!HpackDecoderTest(); 
-	// testUnits!TestHuffman(); 
-	// testUnits!HpackTest(); 
+	testUnits!HpackContextTest(); 
+	testUnits!HpackEncoderTest(); 
+	testUnits!HpackDecoderTest(); 
+	testUnits!TestHuffman(); 
+	testUnits!HpackTest(); 
 
 	// **********************
 	// test.codec.http2.decode.*
 	// **********************
 
-	// testUnits!HttpParserTest(); 
-	// testUnits!Http2DecoderTest();
+	testUnits!HttpParserTest(); 
+	testUnits!Http2DecoderTest();
 
 	// **********************
 	// test.codec.http2.encode.*
 	// **********************
 
-	// testUnits!TestPredefinedHttp1Response();
+	testUnits!TestPredefinedHttp1Response();
 
 	// **********************
 	// test.codec.http2.frame.*
 	// **********************
-	// testUnits!SettingsGenerateParseTest();
-	// testUnits!URLEncodedTest();
+	testUnits!SettingsGenerateParseTest();
+	testUnits!URLEncodedTest();
 
 	// **********************
 	// test.codec.websocket.*
 	// **********************
-	// testUnits!GeneratorTest(); 
-	// testUnits!ParserTest(); 
-	// testUnits!QuoteUtilTest(); 
-	// testUnits!WebSocketFrameTest(); 
+	testUnits!GeneratorTest(); 
+	testUnits!ParserTest(); 
+	testUnits!QuoteUtilTest(); 
+	testUnits!WebSocketFrameTest(); 
 
 }
 
@@ -104,11 +104,11 @@ void testHpackDecoder() {
 	import hunt.http.codec.http.model;
 	import hunt.util.TypeUtils;
 
-	import hunt.util.Assert;
+	import hunt.Assert;
 	import hunt.util.UnitTest;
 
-	import hunt.container.ByteBuffer;
-	import hunt.container.Iterator;
+	import hunt.collection.ByteBuffer;
+	import hunt.collection.Iterator;
 	import hunt.http.codec.http.model.DateGenerator;
 	import std.datetime;
 

@@ -6,10 +6,10 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.net.Connection;
 
-
-import hunt.container.ByteBuffer;
-import hunt.lang.common;
-import hunt.concurrent.CompletableFuture;
+import hunt.Functions;
+import hunt.collection.ByteBuffer;
+import hunt.util.Common;
+import hunt.concurrency.CompletableFuture;
 
 interface WebSocketConnection : OutgoingFrames, Connection {
 

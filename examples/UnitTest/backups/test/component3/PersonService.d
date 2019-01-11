@@ -1,6 +1,6 @@
 module test.component3;
 
-import hunt.container.List;
+import hunt.collection.List;
 
 public class PersonService {
 	

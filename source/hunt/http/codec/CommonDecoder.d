@@ -1,7 +1,7 @@
 module hunt.http.codec.CommonDecoder;
 
-import hunt.container.ByteBuffer;
-import hunt.lang.exception;
+import hunt.collection.ByteBuffer;
+import hunt.Exceptions;
 import hunt.logging;
 
 import hunt.net.AbstractConnection;
@@ -22,7 +22,7 @@ class CommonDecoder : DecoderChain {
     override void decode(ByteBuffer buf, Session session) {
         version(HUNT_METRIC) {
             import core.time;
-            import hunt.datetime;
+            import hunt.util.DateTime;
             MonoTime startTime = MonoTime.currTime;
             debug infof("start decoding ...");
         }
