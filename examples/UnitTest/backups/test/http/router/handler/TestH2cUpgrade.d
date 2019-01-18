@@ -72,7 +72,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         client.stop();
     }
 
-    private static class TestH2cHandler extends ClientHttpHandler.Adapter {
+    private static class TestH2cHandler extends AbstractClientHttpHandler {
 
         protected final ByteBuffer[] buffers;
         protected final List!(ByteBuffer) contentList = new ArrayList<>();

@@ -29,7 +29,7 @@ interface ServerHttpHandler : HttpHandler {
 }
 
 
-class ServerHttpHandlerAdapter : HttpHandlerAdapter, ServerHttpHandler {
+class ServerHttpHandlerAdapter : AbstractHttpHandler, ServerHttpHandler {
 
     protected Action1!HttpConnection _acceptConnection;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _accept100Continue;

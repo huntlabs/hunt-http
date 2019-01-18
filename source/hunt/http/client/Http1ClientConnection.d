@@ -303,8 +303,8 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     }
 
     override HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler) {
-        Http1ClientResponseHandler http1ClientResponseHandler = new Http1ClientResponseHandler(
-                handler);
+        Http1ClientResponseHandler http1ClientResponseHandler = 
+            new Http1ClientResponseHandler(handler);
         checkWrite(request, http1ClientResponseHandler);
         http1ClientResponseHandler.outputStream = new Http1ClientRequestOutputStream(this,
                 wrap.writing.request);

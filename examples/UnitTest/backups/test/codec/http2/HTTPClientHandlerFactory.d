@@ -14,8 +14,8 @@ import hunt.collection.ByteBuffer;
  */
 abstract public class HttpClientHandlerFactory {
 
-    public static ClientHttpHandler.Adapter newHandler(ByteBuffer[] buffers) {
-        return new ClientHttpHandler.Adapter() {
+    public static AbstractClientHttpHandler newHandler(ByteBuffer[] buffers) {
+        return new AbstractClientHttpHandler() {
             override
             public void continueToSendData(HttpRequest request, HttpResponse response, HttpOutputStream output,
                                            HttpConnection connection) {

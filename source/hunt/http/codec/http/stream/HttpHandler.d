@@ -9,50 +9,45 @@ import hunt.Functions;
 import hunt.util.Common;
 import hunt.collection.ByteBuffer;
 
-// alias HttpRequest = HttpRequest;
-// alias HttpResponse = HttpResponse;
 
 interface HttpHandler {
 
     bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
-                    HttpOutputStream output,
-                    HttpConnection connection);
+            HttpOutputStream output, HttpConnection connection);
 
     bool contentComplete(HttpRequest request, HttpResponse response,
-                            HttpOutputStream output,
-                            HttpConnection connection);
+            HttpOutputStream output, HttpConnection connection);
 
     bool headerComplete(HttpRequest request, HttpResponse response,
-                           HttpOutputStream output,
-                           HttpConnection connection);
+            HttpOutputStream output, HttpConnection connection);
 
     bool messageComplete(HttpRequest request, HttpResponse response,
-                            HttpOutputStream output,
-                            HttpConnection connection);
+            HttpOutputStream output, HttpConnection connection);
 
-    void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
-                    HttpOutputStream output, HttpConnection connection);
+    void badMessage(int status, string reason, HttpRequest request,
+            HttpResponse response, HttpOutputStream output, HttpConnection connection);
 
     void earlyEOF(HttpRequest request, HttpResponse response,
-                  HttpOutputStream output,
-                  HttpConnection connection);
-
+            HttpOutputStream output, HttpConnection connection);
 }
 
+deprecated("Using AbstractHttpHandler instead.") 
+alias HttpHandlerAdapter = AbstractHttpHandler;
 
-class HttpHandlerAdapter : HttpHandler {
+/**
+*/
+class AbstractHttpHandler : HttpHandler {
 
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _headerComplete;
-    protected Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _content;
+    protected Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream,
+            HttpConnection, bool) _content;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _contentComplete;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _messageComplete;
     protected Action6!(int, string, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) _badMessage;
     protected Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) _earlyEOF;
 
-    override
-    bool headerComplete(HttpRequest request, HttpResponse response,
-                                    HttpOutputStream output,
-                                    HttpConnection connection) {
+    override bool headerComplete(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
         if (_headerComplete !is null) {
             return _headerComplete(request, response, output, connection);
         } else {
@@ -60,10 +55,8 @@ class HttpHandlerAdapter : HttpHandler {
         }
     }
 
-    override
-    bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
-                            HttpOutputStream output,
-                            HttpConnection connection) {
+    override bool content(ByteBuffer item, HttpRequest request,
+            HttpResponse response, HttpOutputStream output, HttpConnection connection) {
         if (_content !is null) {
             return _content(item, request, response, output, connection);
         } else {
@@ -71,10 +64,8 @@ class HttpHandlerAdapter : HttpHandler {
         }
     }
 
-    override
-    bool contentComplete(HttpRequest request, HttpResponse response,
-                                    HttpOutputStream output,
-                                    HttpConnection connection) {
+    override bool contentComplete(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
         if (_contentComplete !is null) {
             return _contentComplete(request, response, output, connection);
         } else {
@@ -82,11 +73,8 @@ class HttpHandlerAdapter : HttpHandler {
         }
     }
 
-
-    override
-    bool messageComplete(HttpRequest request, HttpResponse response,
-                                    HttpOutputStream output,
-                                    HttpConnection connection) {
+    override bool messageComplete(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
         if (_messageComplete !is null) {
             return _messageComplete(request, response, output, connection);
         } else {
@@ -94,17 +82,15 @@ class HttpHandlerAdapter : HttpHandler {
         }
     }
 
-    override
-    void badMessage(int status, string reason, HttpRequest request, HttpResponse response,
-                            HttpOutputStream output,
-                            HttpConnection connection) {
+    override void badMessage(int status, string reason, HttpRequest request,
+            HttpResponse response, HttpOutputStream output, HttpConnection connection) {
         if (_badMessage !is null) {
             _badMessage(status, reason, request, response, output, connection);
         }
     }
 
-    override
-    void earlyEOF(HttpRequest request, HttpResponse response, HttpOutputStream output, HttpConnection connection) {
+    override void earlyEOF(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
         if (_earlyEOF !is null) {
             _earlyEOF(request, response, output, connection);
         }

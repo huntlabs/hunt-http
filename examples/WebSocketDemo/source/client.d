@@ -37,7 +37,7 @@ void main(string[] args) {
     FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
     connection.upgradeWebSocket(request, WebSocketPolicy.newClientPolicy(), promise, 
         
-        new class ClientHttpHandler.Adapter {
+        new class AbstractClientHttpHandler {
             override
             public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,

@@ -39,7 +39,7 @@ public class Http1ClientDemo2 {
 
 			// request index.html
 			HttpClientRequest request = new HttpClientRequest("GET", "/index");
-			http1ClientConnection.send(request, new ClientHttpHandler.Adapter() {
+			http1ClientConnection.send(request, new AbstractClientHttpHandler() {
 
 				override
 				public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,

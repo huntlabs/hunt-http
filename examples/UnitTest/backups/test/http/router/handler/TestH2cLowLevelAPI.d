@@ -160,7 +160,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
             public void onFailure(Session session, Throwable failure) {
                 failure.printStackTrace();
             }
-        }, new ClientHttpHandler.Adapter());
+        }, new AbstractClientHttpHandler());
 
         Http2ClientConnection clientConnection = http2promise.get();
         Assert.assertThat(clientConnection.getHttpVersion(), is(HttpVersion.HTTP_2));

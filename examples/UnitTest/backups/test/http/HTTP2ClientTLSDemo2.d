@@ -41,7 +41,7 @@ public class Http2ClientTLSDemo2 {
 				httpConnection.send(
 						new HttpRequest("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"), "/index",
 								HttpVersion.HTTP_1_1, fields),
-						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+						new AbstractClientHttpHandler().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 							writeln();
 							writeln();
@@ -56,7 +56,7 @@ public class Http2ClientTLSDemo2 {
 				httpConnection.send(
 						new HttpRequest("GET", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6655"),
 								"/index_1", HttpVersion.HTTP_1_1, fields),
-						new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+						new AbstractClientHttpHandler().messageComplete((req, resp, outputStream, conn) -> {
 							writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 							writeln();
 							writeln();

@@ -30,7 +30,7 @@ public class HttpClientDemo4 {
 
 			HttpClientRequest request = new HttpClientRequest("GET", "/index?version=1&test=ok");
 			http1ClientConnection.send(request,
-					new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+					new AbstractClientHttpHandler().messageComplete((req, resp, outputStream, conn) -> {
 						writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 						phaser.arrive();
 						return true;
@@ -44,7 +44,7 @@ public class HttpClientDemo4 {
 			
 			HttpClientRequest request2 = new HttpClientRequest("GET", "/test");
 			http1ClientConnection.send(request2,
-					new ClientHttpHandler.Adapter().messageComplete((req, resp, outputStream, conn) -> {
+					new AbstractClientHttpHandler().messageComplete((req, resp, outputStream, conn) -> {
 						writeln("message complete: " ~ resp.getStatus() ~ "|" ~ resp.getReason());
 						phaser.arrive();
 						return true;

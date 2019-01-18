@@ -48,7 +48,7 @@ public class Http1ClientDemo {
 
 			// request index.html
 			HttpClientRequest request = new HttpClientRequest("GET", "/index.html");
-			http1ClientConnection.send(request, new ClientHttpHandler.Adapter() {
+			http1ClientConnection.send(request, new AbstractClientHttpHandler() {
 
 				override
 				public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
@@ -73,7 +73,7 @@ public class Http1ClientDemo {
 			final List<Cookie> currentCookies = new CopyOnWriteArrayList<>();
 			// login
 			HttpClientRequest loginRequest = new HttpClientRequest("GET", "/login");
-			http1ClientConnection.send(loginRequest, new ClientHttpHandler.Adapter() {
+			http1ClientConnection.send(loginRequest, new AbstractClientHttpHandler() {
 
 				override
 				public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
@@ -115,7 +115,7 @@ public class Http1ClientDemo {
 			ByteBuffer data2 = ByteBuffer.wrap("_data2test".getBytes(StandardCharsets.UTF_8));
 			ByteBuffer[] dataArray = new ByteBuffer[] { data, data2 };
 
-			http1ClientConnection.send(post, dataArray, new ClientHttpHandler.Adapter() {
+			http1ClientConnection.send(post, dataArray, new AbstractClientHttpHandler() {
 
 				override
 				public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
@@ -148,7 +148,7 @@ public class Http1ClientDemo {
 			}
 
 			ByteBuffer data1 = ByteBuffer.wrap("content=test_post_single_data".getBytes(StandardCharsets.UTF_8));
-			http1ClientConnection.send(post, data1, new ClientHttpHandler.Adapter() {
+			http1ClientConnection.send(post, data1, new AbstractClientHttpHandler() {
 
 				override
 				public bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
