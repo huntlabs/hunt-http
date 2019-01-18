@@ -1,11 +1,9 @@
 {
 	"name": "httpclientdemo",
 	"targetName": "client-demo",
-    "authors": [
-        "Hunt Labs"
-    ],
 	"description": "A demo for HTTP Client with Hunt-http.",
-	"copyright": "Copyright (C) 2015-2018, HuntLabs.net",
+    "copyright": "Copyright (C) 2018-2019, HuntLabs",
+    "homepage": "https://www.huntlabs.net/",
 	"license": "Apache-2.0",
 	"dependencies": {
 		"hunt-http" :{"path": "../../"}

@@ -5,8 +5,9 @@
     "homepage": "https://www.huntlabs.net/",
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net":"~>0.0.12",
-        "hunt":"~>1.0.0"
+        "hunt": {"path":"../hunt"},
+		"hunt-net": {"path":"../hunt-net"},
+        "hunt-trace" : {"path":"../hunt-trace"}
     },
     "configurations": [
         {
