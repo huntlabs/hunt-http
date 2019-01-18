@@ -4,7 +4,7 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpRequest;
 import hunt.http.codec.http.model.HttpResponse;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
@@ -26,7 +26,7 @@ public class Http2ServerTLSDemo {
 	public static void main(string[] args) {
 		// System.setProperty("javax.net.debug", "all");
 
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 

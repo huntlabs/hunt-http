@@ -9,7 +9,7 @@ import hunt.http.codec.http.stream.AbstractHttpConnection;
 import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 import hunt.http.codec.http.stream.FlowControlStrategy;
 import hunt.http.codec.http.stream.Http2Session;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.SimpleFlowControlStrategy;
 
@@ -28,7 +28,7 @@ abstract class AbstractHttp2Connection :AbstractHttpConnection  {
     protected Parser parser;
     protected Http2Generator generator;
 
-    this(Http2Configuration config,TcpSession tcpSession, 
+    this(HttpConfiguration config,TcpSession tcpSession, 
         SecureSession secureSession, Listener listener) {
             
         super(secureSession, tcpSession, HttpVersion.HTTP_2);
@@ -55,10 +55,10 @@ abstract class AbstractHttp2Connection :AbstractHttpConnection  {
         return ConnectionType.HTTP2;
     }
 
-    abstract protected Http2Session initHttp2Session(Http2Configuration config, FlowControlStrategy flowControl,
+    abstract protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
                                                      Listener listener);
 
-    abstract protected Parser initParser(Http2Configuration config);
+    abstract protected Parser initParser(HttpConfiguration config);
 
     StreamSession getHttp2Session() {
         return http2Session;

@@ -11,7 +11,7 @@ import hunt.http.client.http2.HttpClient;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.client.http2.HttpClientRequest;
 import hunt.http.codec.http.model.HttpVersion;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.collection.BufferUtils;
@@ -19,7 +19,7 @@ import hunt.collection.BufferUtils;
 public class HttpClientDemo4 {
 
 	public static void main(string[] args) throws InterruptedException, ExecutionException, IOException {
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		HttpClient client = new HttpClient(http2Configuration);
 		FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
 		client.connect("localhost", 7777, promise);

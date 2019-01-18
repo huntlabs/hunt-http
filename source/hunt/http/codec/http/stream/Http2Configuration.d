@@ -1,4 +1,4 @@
-module hunt.http.codec.http.stream.Http2Configuration;
+module hunt.http.codec.http.stream.HttpConfiguration;
 
 import hunt.http.codec.http.stream.FlowControlStrategy;
 
@@ -8,7 +8,12 @@ import hunt.http.codec.http.model.HttpVersion;
 import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
 import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
 
-class Http2Configuration {
+deprecated("Using HttpConfiguration instead.")
+alias Http2Configuration = HttpConfiguration;
+
+/**
+*/
+class HttpConfiguration {
 
     // TCP settings
     private Config tcpConfiguration; 
@@ -38,15 +43,14 @@ class Http2Configuration {
     // WebSocket settings
     private int websocketPingInterval = 10 * 1000;
 
-    this()
-    {
+    this() {
         version(WithTLS) {
             secureSessionFactory = new ConscryptSecureSessionFactory(
                 new NoCheckConscryptSSLContextFactory(),
                 new DefaultCredentialConscryptSSLContextFactory()
             );
         }
-        tcpConfiguration = new hunt.net.Config.Config();
+        tcpConfiguration = new Config();
         protocol = HttpVersion.HTTP_1_1.asString();
     }
 
@@ -55,7 +59,7 @@ class Http2Configuration {
      *
      * @return The TCP configuration.
      */
-    hunt.net.Config.Config getTcpConfiguration() {
+    Config getTcpConfiguration() {
         return tcpConfiguration;
     }
 
@@ -64,7 +68,7 @@ class Http2Configuration {
      *
      * @param tcpConfiguration The TCP configuration.
      */
-    void setTcpConfiguration(hunt.net.Config.Config tcpConfiguration) {
+    void setTcpConfiguration(Config tcpConfiguration) {
         this.tcpConfiguration = tcpConfiguration;
     }
 

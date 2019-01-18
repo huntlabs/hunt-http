@@ -12,7 +12,7 @@ public import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 public import hunt.http.codec.http.stream.CloseState;
 public import hunt.http.codec.http.stream.DataFrameHandler;
 public import hunt.http.codec.http.stream.FlowControlStrategy;
-public import hunt.http.codec.http.stream.Http2Configuration;
+public import hunt.http.codec.http.stream.HttpConfiguration;
 public import hunt.http.codec.http.stream.Http2Flusher;
 public import hunt.http.codec.http.stream.Http2Session;
 public import hunt.http.codec.http.stream.Http2Stream;

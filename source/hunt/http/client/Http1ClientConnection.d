@@ -57,11 +57,11 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     private bool upgradeWebSocketComplete = false; // new bool(false);
     private ResponseHandlerWrap wrap;
 
-    this(Http2Configuration config, TcpSession tcpSession, SecureSession secureSession) {
+    this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession) {
         this(config, secureSession, tcpSession, new ResponseHandlerWrap());
     }
 
-    private this(Http2Configuration config, SecureSession secureSession,
+    private this(HttpConfiguration config, SecureSession secureSession,
             TcpSession tcpSession, ResponseHandler responseHandler) {
 
         super(config, secureSession, tcpSession, null, responseHandler);
@@ -69,7 +69,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         wrap.connection = this;
     }
 
-    override protected HttpParser initHttpParser(Http2Configuration config,
+    override protected HttpParser initHttpParser(HttpConfiguration config,
             HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         return new HttpParser(responseHandler, config.getMaxRequestHeadLength());
     }
@@ -86,7 +86,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return parser;
     }
 
-    Http2Configuration getHttp2Configuration() {
+    HttpConfiguration getHttp2Configuration() {
         return config;
     }
 
@@ -131,7 +131,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                 getTcpSession(), null, http2SessionListener);
             }
             override
-            protected Http2Session initHttp2Session(Http2Configuration config, FlowControlStrategy flowControl,
+            protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
                                                     StreamSession.Listener listener) {
                 return Http2ClientSession.initSessionForUpgradingHTTP2(null, this.tcpSession, generator,
                         listener, flowControl, 3, config.getStreamIdleTimeout(), initStream,

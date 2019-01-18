@@ -10,7 +10,7 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.AbstractHttpHandler;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 
 import hunt.net.secure.SecureSession;
@@ -29,7 +29,7 @@ class HttpServerHandler : AbstractHttpHandler {
     private ServerHttpHandler serverHttpHandler;
     private WebSocketHandler webSocketHandler;
 
-    this(Http2Configuration config, ServerSessionListener listener,
+    this(HttpConfiguration config, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         super(config);
         this.listener = listener;

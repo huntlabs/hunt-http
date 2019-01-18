@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.Stream.Listener;
@@ -22,7 +22,7 @@ public class Http2ServerDemo {
 	
 
 	public static void main(string[] args) {
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.setFlowControlStrategy("simple");
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);

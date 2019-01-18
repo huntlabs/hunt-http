@@ -6,7 +6,7 @@ import hunt.http.codec.http.frame.DataFrame;
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
@@ -47,7 +47,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
     }
 
     public HttpServer createServerLowLevelAPI() {
-        final Http2Configuration http2Configuration = new Http2Configuration();
+        final HttpConfiguration http2Configuration = new HttpConfiguration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 
@@ -118,7 +118,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
     }
 
     public HttpClient createClientLowLevelClient(Phaser phaser) {
-        final Http2Configuration http2Configuration = new Http2Configuration();
+        final HttpConfiguration http2Configuration = new HttpConfiguration();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
         HttpClient client = new HttpClient(http2Configuration);

@@ -6,7 +6,7 @@ import hunt.http.client.Http2ClientConnection;
 
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.AbstractHttpHandler;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
@@ -24,7 +24,7 @@ class Http2ClientHandler : AbstractHttpHandler {
 
     private Map!(int, Http2ClientContext) http2ClientContext;
 
-    this(Http2Configuration config, Map!(int, Http2ClientContext) http2ClientContext) {
+    this(HttpConfiguration config, Map!(int, Http2ClientContext) http2ClientContext) {
         super(config);
         this.http2ClientContext = http2ClientContext;
     }

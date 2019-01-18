@@ -9,7 +9,7 @@ import hunt.collection.List;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpURI;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
@@ -26,7 +26,7 @@ public class HttpServerDemo4 {
 		}
 		final string data = s.toString();
 
-		Http2Configuration http2Configuration = new Http2Configuration();
+		HttpConfiguration http2Configuration = new HttpConfiguration();
 		HttpServer server = new HttpServer("localhost", 7777, http2Configuration,
 				new ServerHttpHandlerAdapter().messageComplete((request, response, outputStream, connection) -> {
 

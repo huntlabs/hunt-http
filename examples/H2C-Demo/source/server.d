@@ -19,7 +19,7 @@ import hunt.util.Common;
 
 void main(string[] args)
 {
-	Http2Configuration http2Configuration = new Http2Configuration();
+	HttpConfiguration http2Configuration = new HttpConfiguration();
 	http2Configuration.setSecureConnectionEnabled(true);
 	http2Configuration.setFlowControlStrategy("simple");
 	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);

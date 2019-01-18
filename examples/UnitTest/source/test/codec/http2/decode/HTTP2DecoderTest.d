@@ -7,7 +7,7 @@ import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
 
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.CommonEncoder;
@@ -41,7 +41,7 @@ class Http2DecoderTest {
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        Http2Configuration http2Configuration = new Http2Configuration();
+        HttpConfiguration http2Configuration = new HttpConfiguration();
         http2Configuration.setFlowControlStrategy("simple");
 
         Map!(int, int) settings = new HashMap!(int, int)();
@@ -228,7 +228,7 @@ class Http2DecoderTest {
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        Http2Configuration http2Configuration = new Http2Configuration();
+        HttpConfiguration http2Configuration = new HttpConfiguration();
         Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
                 new class ServerSessionListener {
 

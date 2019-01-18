@@ -1,7 +1,7 @@
 module hunt.http.codec.http.stream.AbstractHttp1Connection;
 
 import hunt.http.codec.http.stream.AbstractHttpConnection;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.encode.Http2Generator;
@@ -21,9 +21,9 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
 
     protected HttpParser parser;
     protected Http2Generator http2Generator;
-    protected Http2Configuration config;
+    protected HttpConfiguration config;
 
-    this(Http2Configuration config, SecureSession secureSession, Session tcpSession,
+    this(HttpConfiguration config, SecureSession secureSession, Session tcpSession,
                                    HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         super(secureSession, tcpSession, HttpVersion.HTTP_1_1);
         version (HUNT_DEBUG) trace("initializing Http1Connection");
@@ -36,7 +36,7 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
         return ConnectionType.HTTP1;
     }
 
-    protected HttpParser initHttpParser(Http2Configuration config, HttpRequestHandler requestHandler,
+    protected HttpParser initHttpParser(HttpConfiguration config, HttpRequestHandler requestHandler,
                                                  ResponseHandler responseHandler);
 
 }

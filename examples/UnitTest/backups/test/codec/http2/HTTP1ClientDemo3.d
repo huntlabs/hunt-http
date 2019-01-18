@@ -15,7 +15,7 @@ import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.HttpRequest;
 import hunt.http.codec.http.model.HttpResponse;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.utils.concurrent.FuturePromise;
@@ -24,7 +24,7 @@ import hunt.collection.BufferUtils;
 public class Http1ClientDemo3 {
 
 	public static void main(string[] args) throws InterruptedException, ExecutionException, IOException {
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 		HttpClient client = new HttpClient(http2Configuration);
 

@@ -1,6 +1,6 @@
 module hunt.http.codec.http.stream.AbstractHttpHandler;
 
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.AbstractHttpConnection;
 
 // import hunt.http.codec.websocket.stream.impl.WebSocketConnectionImpl;
@@ -14,9 +14,9 @@ import std.exception;
 
 abstract class AbstractHttpHandler : Handler {
 
-    protected Http2Configuration config;
+    protected HttpConfiguration config;
 
-    this(Http2Configuration config) {
+    this(HttpConfiguration config) {
         this.config = config;
     }
 

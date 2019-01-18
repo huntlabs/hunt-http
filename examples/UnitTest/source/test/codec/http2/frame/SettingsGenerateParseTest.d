@@ -13,7 +13,7 @@ import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.SettingsFrame;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 
 import hunt.logging;
 import hunt.Exceptions;
@@ -28,7 +28,7 @@ import std.stdio;
 class SettingsGenerateParseTest {
 	
 	void testSettingsWithBase64() {
-		Http2Configuration http2Configuration = new Http2Configuration();
+		HttpConfiguration http2Configuration = new HttpConfiguration();
 		Http2Generator http2Generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map!(int, int) settings = new HashMap!(int, int)();

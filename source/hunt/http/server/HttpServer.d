@@ -10,7 +10,7 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.collection.ByteBuffer;
@@ -29,23 +29,23 @@ class HttpServer : AbstractLifecycle {
 
     private AbstractServer _server;
     private HttpServerHandler httpServerHandler;
-    private Http2Configuration http2Configuration;
+    private HttpConfiguration http2Configuration;
     private string host;
     private int port;
 
-    this(string host, int port, Http2Configuration http2Configuration,
+    this(string host, int port, HttpConfiguration http2Configuration,
             ServerHttpHandler serverHttpHandler) {
         this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, new WebSocketHandler());
     }
 
-    this(string host, int port, Http2Configuration http2Configuration,
+    this(string host, int port, HttpConfiguration http2Configuration,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, webSocketHandler);
     }
 
-    this(string host, int port, Http2Configuration c, ServerSessionListener listener,
+    this(string host, int port, HttpConfiguration c, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         if (c is null)
             throw new IllegalArgumentException("the http2 configuration is null");
@@ -119,7 +119,7 @@ class HttpServer : AbstractLifecycle {
         }
     }
 
-    Http2Configuration getHttp2Configuration() {
+    HttpConfiguration getHttp2Configuration() {
         return http2Configuration;
     }
 

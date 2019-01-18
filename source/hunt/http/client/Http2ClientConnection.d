@@ -33,7 +33,7 @@ import std.conv;
 alias SessionListener = StreamSession.Listener;
 
 class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
-    void initialize(Http2Configuration config, Promise!(HttpClientConnection) promise,
+    void initialize(HttpConfiguration config, Promise!(HttpClientConnection) promise,
                            SessionListener listener) {
         Map!(int, int) settings = listener.onPreface(getHttp2Session());
         if (settings is null) {
@@ -79,19 +79,19 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
         // onClose(c => pingFuture.cancel());
     }
 
-    this(Http2Configuration config, TcpSession tcpSession, SecureSession secureSession,
+    this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession,
                                  SessionListener listener) {
         super(config, tcpSession, secureSession, listener);
     }
 
     override
-    protected Http2Session initHttp2Session(Http2Configuration config, FlowControlStrategy flowControl,
+    protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
                                             SessionListener listener) {
         return new Http2ClientSession(null, this.tcpSession, this.generator, listener, flowControl, config.getStreamIdleTimeout());
     }
 
     override
-    protected Parser initParser(Http2Configuration config) {
+    protected Parser initParser(HttpConfiguration config) {
         return new Parser(http2Session, config.getMaxDynamicTableSize(), config.getMaxRequestHeadLength());
     }
 

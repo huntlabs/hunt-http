@@ -9,34 +9,35 @@ import hunt.http.client.Http2ClientHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-import hunt.util.Lifecycle;
 import hunt.Exceptions;
-import hunt.concurrency.CompletableFuture;;
+import hunt.concurrency.CompletableFuture;
+
+;
 import hunt.concurrency.Promise;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.Map;
 import hunt.collection.HashMap;
 
+import hunt.logging;
 import hunt.net.AsynchronousTcpSession;
 import hunt.net.Client;
 import hunt.net;
-
-import hunt.logging;
+import hunt.util.Lifecycle;
 
 import core.atomic;
 
-class HttpClient : AbstractLifecycle { 
+class HttpClient : AbstractLifecycle {
 
     private AbstractClient client;
     private Map!(int, Http2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
     private static shared int sessionId = 0;
-    private Http2Configuration http2Configuration;
+    private HttpConfiguration http2Configuration;
 
-    this(Http2Configuration c) {
+    this(HttpConfiguration c) {
         if (c is null) {
             throw new IllegalArgumentException("the http2 configuration is null");
         }
@@ -44,7 +45,8 @@ class HttpClient : AbstractLifecycle {
 
         http2ClientContext.put(111, null);
 
-        Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(), new Http2ClientDecoder());
+        Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(),
+                new Http2ClientDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
 
         c.getTcpConfiguration().setDecoder(commonDecoder);
@@ -56,28 +58,23 @@ class HttpClient : AbstractLifecycle {
         // this.client = new AsynchronousTcpClient(c.getTcpConfiguration());
         client.setConfig(c.getTcpConfiguration());
 
-        client.connectHandler((NetSocket sock){
+        client.connectHandler((NetSocket sock) {
             infof("A connection created with %s:%d", _host, _port);
-            AsynchronousTcpSession session = cast(AsynchronousTcpSession)sock;
+            AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
 
-            session.handler( (const ubyte[] data) {    
-                infof("data received (%d bytes): ", data.length);                 
-                version(HUNT_DEBUG) {
-                    if(data.length<=64)
+            session.handler((const ubyte[] data) {
+                infof("data received (%d bytes): ", data.length);
+                version (HUNT_DEBUG) {
+                    if (data.length <= 64) {
                         infof("%(%02X %)", data[0 .. $]);
-                    else
-                    {
+                    } else {
                         infof("%(%02X %) ...", data[0 .. 64]);
-                        // debug { infof("%(%02X %)", data[0 .. $]); }
-                        // else{ infof("%(%02X %) ...", data[0 .. 64]);  }
                     }
                 }
 
-                ByteBuffer buf = ByteBuffer.wrap(cast(byte[])data);
+                ByteBuffer buf = ByteBuffer.wrap(cast(byte[]) data);
                 commonDecoder.decode(buf, session);
-                // httpClientDecoder.decode(buf, session);
-                }
-            );
+            });
         });
 
         this.http2Configuration = c;
@@ -85,7 +82,7 @@ class HttpClient : AbstractLifecycle {
 
     Completable!(HttpClientConnection) connect(string host, int port) {
         Completable!(HttpClientConnection) completable = new Completable!(HttpClientConnection)();
-        completable.id = "http2client";
+        completable.id = "httpclient";
         connect(host, port, completable);
         return completable;
     }
@@ -94,16 +91,18 @@ class HttpClient : AbstractLifecycle {
         connect(host, port, promise, new ClientHttp2SessionListener());
     }
 
-    void connect(string host, int port, Promise!(HttpClientConnection) promise, ClientHttp2SessionListener listener) {
+    void connect(string host, int port, Promise!(HttpClientConnection) promise,
+            ClientHttp2SessionListener listener) {
         _host = host;
-        _port = port;        
+        _port = port;
         start();
         clientContext = new Http2ClientContext();
         clientContext.setPromise(promise);
         clientContext.setListener(listener);
 
         int id = atomicOp!("+=")(sessionId, 1);
-        version(HUNT_DEBUG) tracef("Client sessionId = %d", id);
+        version (HUNT_DEBUG)
+            tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);
     }
@@ -113,16 +112,14 @@ class HttpClient : AbstractLifecycle {
     private string _host;
     private int _port;
 
-    Http2Configuration getHttp2Configuration() {
+    HttpConfiguration getHttp2Configuration() {
         return http2Configuration;
     }
 
-    override
-    protected void initialize() {
+    override protected void initialize() {
     }
 
-    override
-    protected void destroy() {
+    override protected void destroy() {
         if (client !is null) {
             client.stop();
         }

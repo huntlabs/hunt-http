@@ -27,7 +27,7 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args)
 {
-    HttpServer server = new HttpServer("0.0.0.0", 8080, new Http2Configuration(), 
+    HttpServer server = new HttpServer("0.0.0.0", 8080, new HttpConfiguration(), 
         new class ServerHttpHandlerAdapter {
 
             override

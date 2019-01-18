@@ -8,7 +8,7 @@ import hunt.collection.List;
 
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
@@ -21,7 +21,7 @@ import hunt.collection.BufferUtils;
 public class Http1ServerDemo3 {
 
 	public static void main(string[] args) {
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		http2Configuration.getTcpConfiguration().setTimeout(10 * 60 * 1000);
 
 		HttpServer server = new HttpServer("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),

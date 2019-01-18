@@ -6,7 +6,7 @@ import hunt.http.client.http2.Http2ClientConnection;
 import hunt.http.client.http2.HttpClientConnection;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.Http2Configuration;
+import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Session.Listener;
@@ -29,7 +29,7 @@ public class Http2ClientDemo {
 
 	public static void main(string[] args)
 			throws InterruptedException, ExecutionException, UnsupportedEncodingException {
-		final Http2Configuration http2Configuration = new Http2Configuration();
+		final HttpConfiguration http2Configuration = new HttpConfiguration();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.setFlowControlStrategy("simple");
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
