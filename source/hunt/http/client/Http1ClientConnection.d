@@ -53,8 +53,8 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     private Promise!(HttpClientConnection) http2ConnectionPromise;
     private Http2ClientConnection http2Connection;
     private ClientHttp2SessionListener http2SessionListener;
-    private bool upgradeHttp2Complete = false; // new bool(false);
-    private bool upgradeWebSocketComplete = false; // new bool(false);
+    private bool upgradeHttp2Complete = false; 
+    private bool upgradeWebSocketComplete = false;
     private ResponseHandlerWrap wrap;
 
     this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession) {
@@ -272,7 +272,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
     override void send(Request request, ClientHttpHandler handler) {
         try {
-            tracef("client request and does not send data");
+            version (HUNT_DEBUG) tracef("client request and does not send data");
             HttpOutputStream output = getHttpOutputStream(request, handler);
             output.close();
         } catch (Exception e) {

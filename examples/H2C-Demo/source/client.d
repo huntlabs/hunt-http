@@ -26,14 +26,14 @@ void main(string[] args) {
 	enum host = "127.0.0.1";
 	enum port = 8080;
 
-	HttpConfiguration http2Configuration = new HttpConfiguration();
-	http2Configuration.setSecureConnectionEnabled(false);
-	http2Configuration.setFlowControlStrategy("simple");
-	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
+	HttpConfiguration httpConfiguration = new HttpConfiguration();
+	httpConfiguration.setSecureConnectionEnabled(false);
+	httpConfiguration.setFlowControlStrategy("simple");
+	httpConfiguration.getTcpConfiguration().setTimeout(60 * 1000);
+	httpConfiguration.setProtocol(HttpVersion.HTTP_2.asString());
 
 	FuturePromise!(HttpClientConnection) promise = new FuturePromise!(HttpClientConnection)();
-	HttpClient client = new HttpClient(http2Configuration);
+	HttpClient client = new HttpClient(httpConfiguration);
 
 	client.connect(host, port, promise, new class ClientHttp2SessionListener {
 
@@ -41,8 +41,8 @@ void main(string[] args) {
 		Map!(int, int) onPreface(Session session) {
 			infof("client preface: %s", session);
 			Map!(int, int) settings = new HashMap!(int, int)();
-			settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
-			settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
+			settings.put(SettingsFrame.HEADER_TABLE_SIZE, httpConfiguration.getMaxDynamicTableSize());
+			settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, httpConfiguration.getInitialStreamSendWindow());
 			return settings;
 		}
 
