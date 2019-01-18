@@ -25,8 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import hunt.collection.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Phaser;
+import hunt.concurrency.CopyOnWriteArrayList;
+import hunt.concurrency.Phaser;
 
 import hunt.http.utils.io.BufferUtils.toBuffer;
 
@@ -171,7 +171,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
         return client;
     }
 
-    private void testReq(Phaser phaser, Http2ClientConnection clientConnection) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private void testReq(Phaser phaser, Http2ClientConnection clientConnection) throws InterruptedException, hunt.concurrency.ExecutionException {
         HttpFields fields = new HttpFields();
         fields.put(HttpHeader.ACCEPT, "text/html");
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");

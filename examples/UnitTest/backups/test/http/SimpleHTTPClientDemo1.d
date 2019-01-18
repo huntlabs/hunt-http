@@ -5,10 +5,10 @@ import hunt.collection.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
-import java.util.concurrent.Future;
+import hunt.concurrency.Future;
 
-import hunt.http.client.http2.SimpleHttpClient;
-import hunt.http.client.http2.SimpleResponse;
+import hunt.http.client.SimpleHttpClient;
+import hunt.http.client.SimpleResponse;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.codec.http.stream.HttpConfiguration;

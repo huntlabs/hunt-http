@@ -1,15 +1,15 @@
 module test.codec.http2;
 
-import hunt.http.client.http2.ClientHttpHandler;
-import hunt.http.client.http2.HttpClient;
-import hunt.http.client.http2.HttpClientConnection;
+import hunt.http.client.ClientHttpHandler;
+import hunt.http.client.HttpClient;
+import hunt.http.client.HttpClientConnection;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.utils.concurrent.FuturePromise;
 
 import java.io.UnsupportedEncodingException;
 import hunt.collection.ByteBuffer;
-import java.util.concurrent.ExecutionException;
+import hunt.concurrency.ExecutionException;
 
 import test.codec.http2.HttpClientHandlerFactory.newHandler;
 

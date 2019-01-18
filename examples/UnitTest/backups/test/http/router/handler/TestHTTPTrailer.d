@@ -1,8 +1,8 @@
 module test.http.router.handler;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHttpClient;
-import hunt.http.client.http2.SimpleHttpClientConfiguration;
+import hunt.http.client.SimpleHttpClient;
+import hunt.http.client.SimpleHttpClientConfiguration;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
@@ -14,7 +14,7 @@ import hunt.Assert;
 import hunt.util.Test;
 
 import java.io.IOException;
-import java.util.concurrent.Phaser;
+import hunt.concurrency.Phaser;
 
 
 

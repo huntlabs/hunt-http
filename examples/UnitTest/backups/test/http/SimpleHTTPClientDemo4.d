@@ -1,12 +1,12 @@
 module test.http;
 
-import hunt.http.client.http2.SimpleHttpClient;
-import hunt.http.client.http2.SimpleResponse;
+import hunt.http.client.SimpleHttpClient;
+import hunt.http.client.SimpleResponse;
 import hunt.http.utils.concurrent.Promise;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Phaser;
+import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.ExecutionException;
+import hunt.concurrency.Phaser;
 
 public class SimpleHttpClientDemo4 {
 

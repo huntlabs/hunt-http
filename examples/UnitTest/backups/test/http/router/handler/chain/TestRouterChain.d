@@ -1,14 +1,14 @@
 module test.http.router.handler.chain;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleResponse;
+import hunt.http.client.SimpleResponse;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
 import hunt.Assert;
 import hunt.util.Test;
 import test.http.router.handler.AbstractHttpHandlerTest;
 
-import java.util.concurrent.TimeUnit;
+import hunt.concurrency.TimeUnit;
 
 
 

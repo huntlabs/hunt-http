@@ -1,7 +1,7 @@
 module test.codec.http2.frame.SettingsGenerateParseTest;
 
 import hunt.collection;
-// import java.util.concurrent.atomic.AtomicInteger;
+// import hunt.concurrency.atomic.AtomicInteger;
 
 import hunt.Assert;
 // import hunt.util.Test;

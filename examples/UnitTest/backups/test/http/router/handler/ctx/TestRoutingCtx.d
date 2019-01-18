@@ -9,7 +9,7 @@ import hunt.util.Test;
 import test.http.router.handler.AbstractHttpHandlerTest;
 
 import java.util.Optional;
-import java.util.concurrent.Phaser;
+import hunt.concurrency.Phaser;
 
 import hunt.http.server.Http2ServerBuilder.getCurrentCtx;
 

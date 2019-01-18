@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import java.nio.charset.StandardCharsets;
 
-import java.util.concurrent.ExecutionException;
+import hunt.concurrency.ExecutionException;
 
-import hunt.http.client.http2.ClientHttpHandler;
-import hunt.http.client.http2.HttpClient;
-import hunt.http.client.http2.HttpClientConnection;
+import hunt.http.client.ClientHttpHandler;
+import hunt.http.client.HttpClient;
+import hunt.http.client.HttpClientConnection;
 import hunt.http.codec.http.model.HostPortHttpField;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import hunt.collection.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import hunt.concurrency.atomic.AtomicInteger;
 
 import hunt.Assert;
 import hunt.util.Test;

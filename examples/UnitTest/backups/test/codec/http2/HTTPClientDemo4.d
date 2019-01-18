@@ -2,14 +2,14 @@ module test.codec.http2;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Phaser;
+import hunt.concurrency.ExecutionException;
+import hunt.concurrency.Phaser;
 
-import hunt.http.client.http2.ClientHttpHandler;
-import hunt.http.client.http2.Http1ClientConnection;
-import hunt.http.client.http2.HttpClient;
-import hunt.http.client.http2.HttpClientConnection;
-import hunt.http.client.http2.HttpClientRequest;
+import hunt.http.client.ClientHttpHandler;
+import hunt.http.client.Http1ClientConnection;
+import hunt.http.client.HttpClient;
+import hunt.http.client.HttpClientConnection;
+import hunt.http.client.HttpClientRequest;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;

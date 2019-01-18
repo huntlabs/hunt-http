@@ -1,14 +1,14 @@
 module test.http;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import hunt.concurrency.ArrayBlockingQueue;
+import hunt.concurrency.BlockingQueue;
+import hunt.concurrency.ExecutorService;
+import hunt.concurrency.FutureTask;
+import hunt.concurrency.RejectedExecutionHandler;
+import hunt.concurrency.RunnableFuture;
+import hunt.concurrency.ThreadFactory;
+import hunt.concurrency.ThreadPoolExecutor;
+import hunt.concurrency.TimeUnit;
 
 public class ThreadPoolDemo {
 	

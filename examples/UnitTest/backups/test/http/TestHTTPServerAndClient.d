@@ -1,8 +1,8 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHttpClient;
-import hunt.http.client.http2.SimpleHttpClientConfiguration;
+import hunt.http.client.SimpleHttpClient;
+import hunt.http.client.SimpleHttpClientConfiguration;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.server.SimpleHttpServer;
@@ -19,9 +19,9 @@ import java.io.PrintWriter;
 import hunt.collection.ArrayList;
 import java.util.Collection;
 import hunt.collection.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicInteger;
+import hunt.concurrency.CountDownLatch;
+import hunt.concurrency.Phaser;
+import hunt.concurrency.atomic.AtomicInteger;
 
 
 

@@ -14,7 +14,7 @@ module hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 // import hunt.collection.ByteBuffer;
 // import java.util.ArrayDeque;
 // import java.util.Queue;
-// import java.util.concurrent.atomic.AtomicInteger;
+// import hunt.concurrency.atomic.AtomicInteger;
 // import java.util.zip.DataFormatException;
 // import java.util.zip.Deflater;
 // import java.util.zip.Inflater;

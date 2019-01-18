@@ -1,7 +1,7 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.client.http2.SimpleHttpClient;
+import hunt.http.client.SimpleHttpClient;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.tcp.secure.conscrypt.ConscryptSecureSessionFactory;
@@ -9,7 +9,7 @@ import hunt.net.tcp.secure.jdk.JdkSecureSessionFactory;
 
 import java.util.Arrays;
 import hunt.collection.List;
-import java.util.concurrent.CountDownLatch;
+import hunt.concurrency.CountDownLatch;
 
 /**
  * 

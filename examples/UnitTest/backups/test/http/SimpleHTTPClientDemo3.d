@@ -1,6 +1,6 @@
 module test.http;
 
-import hunt.http.client.http2.SimpleHttpClient;
+import hunt.http.client.SimpleHttpClient;
 
 public class SimpleHttpClientDemo3 {
 

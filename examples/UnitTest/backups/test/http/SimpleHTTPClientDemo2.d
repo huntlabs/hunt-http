@@ -1,8 +1,8 @@
 module test.http;
 
-import hunt.http.client.http2.SimpleHttpClient;
-import hunt.http.client.http2.SimpleHttpClientConfiguration;
-import hunt.http.client.http2.SimpleResponse;
+import hunt.http.client.SimpleHttpClient;
+import hunt.http.client.SimpleHttpClientConfiguration;
+import hunt.http.client.SimpleResponse;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.codec.http.stream.HttpOutputStream;
