@@ -29,7 +29,7 @@ import std.string;
 /**
  * HttpGenerator. Builds HTTP Messages.
  * <p>
- * If the system property "org.fireflysource.http.HttpGenerator.STRICT" is set
+ * If the system property "http.HttpGenerator.STRICT" is set
  * to true, then the generator will strictly pass on the exact strings received
  * from methods and header fields. Otherwise a fast case insensitive string
  * lookup is used that may alter the case and white space of some
@@ -88,11 +88,11 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------------------------- */
-    static void setFireflyVersion(string serverVersion) {
+    static void setVersion(string serverVersion) {
         SEND[SEND_SERVER] = StringUtils.getBytes("Server: " ~ serverVersion ~ "\015\012");
         SEND[SEND_XPOWEREDBY] = StringUtils.getBytes("X-Powered-By: " ~ serverVersion ~ "\015\012");
-        SEND[SEND_SERVER | SEND_XPOWEREDBY] = StringUtils.getBytes("Server: " ~ serverVersion ~ "\015\012X-Powered-By: " ~
-                serverVersion ~ "\015\012");
+        SEND[SEND_SERVER | SEND_XPOWEREDBY] = StringUtils.getBytes("Server: " ~ serverVersion ~ 
+            "\015\012X-Powered-By: " ~ serverVersion ~ "\015\012");
     }
 
     /* ------------------------------------------------------------------------------- */

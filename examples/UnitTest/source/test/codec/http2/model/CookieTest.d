@@ -14,7 +14,7 @@ class CookieTest {
 	
 	void testSetCookie() {
 		Cookie cookie = new Cookie("test31", "hello");
-		cookie.setDomain("www.fireflysource.com");
+		cookie.setDomain("www.huntlabs.net");
 		cookie.setPath("/test/hello");
 		cookie.setMaxAge(10);
 		cookie.setSecure(true);
@@ -26,7 +26,7 @@ class CookieTest {
 		Cookie setCookie = CookieParser.parseSetCookie(setCookieString);
 		Assert.assertThat(setCookie.getName(), ("test31"));
 		Assert.assertThat(setCookie.getValue(), ("hello"));
-		Assert.assertThat(setCookie.getDomain(), ("www.fireflysource.com"));
+		Assert.assertThat(setCookie.getDomain(), ("www.huntlabs.net"));
 		Assert.assertThat(setCookie.getPath(), ("/test/hello"));
 		Assert.assertThat(setCookie.getSecure(), (true));
 		Assert.assertThat(setCookie.getComment(), ("commenttest"));

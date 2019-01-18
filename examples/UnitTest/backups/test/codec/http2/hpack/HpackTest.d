@@ -16,8 +16,8 @@ import hunt.Assert.assertEquals;
 import hunt.Assert.assertThat;
 
 public class HpackTest {
-    final static HttpField ServerFirefly = new PreEncodedHttpField(HttpHeader.SERVER, "hunt");
-    final static HttpField XPowerFirefly = new PreEncodedHttpField(HttpHeader.X_POWERED_BY, "hunt");
+    final static HttpField ServerHunt = new PreEncodedHttpField(HttpHeader.SERVER, "hunt");
+    final static HttpField XPowerHunt = new PreEncodedHttpField(HttpHeader.X_POWERED_BY, "hunt");
     final static HttpField Date = new PreEncodedHttpField(HttpHeader.DATE, DateGenerator.formatDate(System.currentTimeMillis()));
 
     
@@ -30,8 +30,8 @@ public class HpackTest {
         fields0.add(HttpHeader.CONTENT_TYPE, "text/html");
         fields0.add(HttpHeader.CONTENT_LENGTH, "1024");
         fields0.add(new HttpField(HttpHeader.CONTENT_ENCODING, (string) null));
-        fields0.add(ServerFirefly);
-        fields0.add(XPowerFirefly);
+        fields0.add(ServerHunt);
+        fields0.add(XPowerHunt);
         fields0.add(Date);
         fields0.add(HttpHeader.SET_COOKIE, "abcdefghijklmnopqrstuvwxyz");
         fields0.add("custom-key", "custom-value");
@@ -56,8 +56,8 @@ public class HpackTest {
         fields1.add(HttpHeader.CONTENT_TYPE, "text/plain");
         fields1.add(HttpHeader.CONTENT_LENGTH, "1234");
         fields1.add(HttpHeader.CONTENT_ENCODING, " ");
-        fields1.add(ServerFirefly);
-        fields1.add(XPowerFirefly);
+        fields1.add(ServerHunt);
+        fields1.add(XPowerHunt);
         fields1.add(Date);
         fields1.add("Custom-Key", "Other-Value");
         Response original1 = new HttpResponse(HttpVersion.HTTP_2, 200, fields1);

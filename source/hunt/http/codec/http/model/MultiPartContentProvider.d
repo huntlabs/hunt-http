@@ -49,7 +49,7 @@ import hunt.collection.ByteBuffer;
 
 //     private static string makeBoundary() {
 //         Random random = new Random();
-//         StringBuilder builder = new StringBuilder("FireflyHttpClientBoundary");
+//         StringBuilder builder = new StringBuilder("HuntHttpClientBoundary");
 //         int length = builder.length();
 //         while (builder.length() < length + 16) {
 //             long rnd = random.nextLong();
