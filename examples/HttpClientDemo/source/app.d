@@ -1,81 +1,181 @@
+module test.codec.http2;
 
-import hunt.http.codec.http.model;
+// import java.io.IOException;
+// import hunt.concurrency.CopyOnWriteArrayList;
+// import hunt.concurrency.Exceptions;
+// import hunt.concurrency.Phaser;
 
 import hunt.http.client.ClientHttpHandler;
+import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientRequest;
+import hunt.http.codec.http.model;
+// import hunt.http.codec.http.model.Cookie;
+// import hunt.http.codec.http.model.CookieGenerator;
+// import hunt.http.codec.http.model.CookieParser;
+// import hunt.http.codec.http.model.HttpField;
+// import hunt.http.codec.http.model.HttpHeader;
+// import hunt.http.codec.http.model.HttpVersion;
+// import hunt.http.codec.http.model.HttpRequest;
+// import hunt.http.codec.http.model.HttpResponse;
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.codec.websocket.frame;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
-
-import hunt.concurrency.Promise;
+// import hunt.http.utils.VerifyUtils;
 import hunt.concurrency.FuturePromise;
+import hunt.collection.ArrayList;
+import hunt.collection.BufferUtils;
+import hunt.collection.ByteBuffer;
+import hunt.collection.List;
 
-import hunt.net.secure.SecureSessionFactory;
-import hunt.net.secure.conscrypt;
-
-import hunt.http.helper;
-import hunt.util.DateTime;
 import hunt.logging;
 
-import std.datetime;
-import std.conv;
-import std.stdio;
-
-/**
-sudo apt-get install libssl-dev
-*/
 
 void main(string[] args) {
-	HttpClient client = new HttpClient(new HttpConfiguration());
-    HttpClientConnection connection = client.connect("127.0.0.1", 8080).get();
-    HttpClientRequest request = new HttpClientRequest("GET", "/index");
-    FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
-    connection.upgradeWebSocket(request, WebSocketPolicy.newClientPolicy(), promise, 
-        
-        new class ClientHttpHandler.Adapter {
+    HttpConfiguration http2Configuration = new HttpConfiguration();
+    http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
+    HttpClient client = new HttpClient(http2Configuration);
+
+    FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
+    // client.connect("localhost", 6655, promise);
+    client.connect("10.1.222.120", 8080, promise);
+
+    HttpConnection connection = promise.get();
+    trace(connection.getHttpVersion());
+
+    if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
+        Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
+
+        // final Phaser phaser = new Phaser(2);
+
+        // request index.html
+        HttpClientRequest request = new HttpClientRequest("GET", "/index.html");
+        http1ClientConnection.send(request, new class ClientHttpHandler.Adapter {
+
+            override bool content(ByteBuffer item, Request request, Response response, 
+                    HttpOutputStream output, HttpConnection connection) {
+                trace(BufferUtils.toString(item));
+                return false;
+            }
+
             override
-            public bool messageComplete(HttpRequest request, HttpResponse response,
-                                           HttpOutputStream output,
-                                           HttpConnection connection) {
-                tracef("upgrade websocket success: " ~ response.toString());
+            bool messageComplete(Request request, Response response, HttpOutputStream output,
+                    HttpConnection connection) {
+                trace(response);
+                trace(response.getFields());
+                // int currentPhaseNumber = phaser.arrive();
+                // trace("current phase number: " ~ currentPhaseNumber);
                 return true;
             }
-        }, 
-        
-        new class IncomingFrames {
-            override
-            public void incomingError(Exception t) {
 
-            }
-
-            override
-            public void incomingFrame(Frame frame) {
-                FrameType type = frame.getType();
-                switch (type) {
-                    case FrameType.TEXT: {
-                        TextFrame textFrame = cast(TextFrame) frame;
-                        tracef("Client received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
-                        break;
-                    }
-
-                    default: 
-                        warningf("Can't handle the frame of ", type);
-                        break;
-                }
-            }
         });
+        // phaser.arriveAndAwaitAdvance();
 
-        WebSocketConnection webSocketConnection = promise.get();
-        webSocketConnection.sendText("Hello WebSocket").thenAccept( (r) {
-            tracef("Client sends text frame success.");
-        });
+        List!Cookie currentCookies = new ArrayList!Cookie(); // CopyOnWriteArrayList
+        // login
+        // HttpClientRequest loginRequest = new HttpClientRequest("GET", "/login");
+        // http1ClientConnection.send(loginRequest, new ClientHttpHandler.Adapter() {
 
-        client.stop();
+        //     override
+        //     bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(BufferUtils.toString(item));
+        //         return false;
+        //     }
+
+        //     override
+        //     bool messageComplete(Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(response);
+        //         trace(response.getFields());
+        //         string cookieString = response.getFields().get(HttpHeader.SET_COOKIE);
+        //         if (VerifyUtils.isNotEmpty(cookieString)) {
+        //             Cookie cookie = CookieParser.parseSetCookie(cookieString);
+        //             currentCookies.add(cookie);
+        //         }
+
+        //         int currentPhaseNumber = phaser.arrive();
+        //         trace("current phase number: " ~ currentPhaseNumber);
+        //         return true;
+        //     }
+        // });
+        // phaser.arriveAndAwaitAdvance();
+
+        trace("current cookies : " ~ currentCookies.toString());
+        // post data
+        // HttpClientRequest post = new HttpClientRequest("POST", "/add");
+        // post.getFields().add(new HttpField(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded"));
+
+        // foreach (Cookie cookie ; currentCookies) {
+        //     if (cookie.getName() == "jsessionid") {
+        //         post.getFields().add(new HttpField(HttpHeader.COOKIE, CookieGenerator.generateCookie(cookie)));
+        //     }
+        // }
+
+        // ByteBuffer data = ByteBuffer.wrap("content=hello_world".getBytes(StandardCharsets.UTF_8));
+        // ByteBuffer data2 = ByteBuffer.wrap("_data2test".getBytes(StandardCharsets.UTF_8));
+        // ByteBuffer[] dataArray = [ data, data2 ];
+
+        // http1ClientConnection.send(post, dataArray, new ClientHttpHandler.Adapter() {
+
+        //     override
+        //     bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(BufferUtils.toString(item, StandardCharsets.UTF_8));
+        //         return false;
+        //     }
+
+        //     override
+        //     bool messageComplete(Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(response);
+        //         trace(response.getFields());
+        //         // int currentPhaseNumber = phaser.arrive();
+        //         trace("current phase number: " ~ currentPhaseNumber);
+        //         return true;
+        //     }
+        // });
+        // phaser.arriveAndAwaitAdvance();
+
+        // post single data
+        // HttpClientRequest postSingleData = new HttpClientRequest("POST", "/add");
+        // postSingleData.getFields().add(new HttpField(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded"));
+
+        // foreach (Cookie cookie ; currentCookies) {
+        //     if (cookie.getName() == "jsessionid") {
+        //         postSingleData.getFields()
+        //                 .add(new HttpField(HttpHeader.COOKIE, CookieGenerator.generateCookie(cookie)));
+        //     }
+        // }
+
+        // ByteBuffer data1 = ByteBuffer.wrap("content=test_post_single_data".getBytes(StandardCharsets.UTF_8));
+        // http1ClientConnection.send(post, data1, new ClientHttpHandler.Adapter() {
+
+        //     override
+        //     bool content(ByteBuffer item, Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(BufferUtils.toString(item, StandardCharsets.UTF_8));
+        //         return false;
+        //     }
+
+        //     override
+        //     bool messageComplete(Request request, Response response, HttpOutputStream output,
+        //             HttpConnection connection) {
+        //         trace(response);
+        //         trace(response.getFields());
+        //         // int currentPhaseNumber = phaser.arrive();
+        //         // trace("current phase number: " ~ currentPhaseNumber);
+        //         return true;
+        //     }
+        // });
+        // phaser.arriveAndAwaitAdvance();
+
+        trace("request finished");
+        http1ClientConnection.close();
+    } else {
+
+    }
 
 }
+

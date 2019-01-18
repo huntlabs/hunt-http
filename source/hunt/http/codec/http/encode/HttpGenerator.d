@@ -225,7 +225,7 @@ class HttpGenerator {
                         _state = State.COMMITTED;
                     } else {
                         // handle the content.
-                        int len = content.remaining(); // BufferUtils.length(content);
+                        int len = BufferUtils.length(content);
                         if (len > 0) {
                             _contentPrepared += len;
                             if (isChunking())
