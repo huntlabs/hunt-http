@@ -1574,8 +1574,8 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        version(HUNT_DEBUG)
-            tracef("%s --> %s", _state, state);
+        // version(HUNT_DEBUG)
+        //     tracef("%s --> %s", _state, state);
         _state = state;
     
         version(HUNT_METRIC) {

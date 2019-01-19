@@ -23,14 +23,13 @@ import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;
 
-// import hunt.Assert;
 import hunt.collection;
+import hunt.concurrency.Promise;
 import hunt.io;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;
 import hunt.text.Codec;
-import hunt.concurrency.Promise;
 
 import std.array;
 import std.base64;
@@ -91,7 +90,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     }
 
     // dfmt off
-    override void upgradeHttp2(Request request, SettingsFrame settings, 
+    override void upgradeHttp2(HttpRequest request, SettingsFrame settings, 
             Promise!(HttpClientConnection) promise, ClientHttpHandler upgradeHandler,
             ClientHttpHandler http2ResponseHandler) {
 
@@ -115,7 +114,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         upgradeHttp2(request, settings, promise, initStream, initStreamListener, listener, upgradeHandler);
     }
 
-    void upgradeHttp2(Request request, SettingsFrame settings,
+    void upgradeHttp2(HttpRequest request, SettingsFrame settings,
             Promise!(HttpClientConnection) promise, Promise!(Stream) initStream,
             Stream.Listener initStreamListener,
             ClientHttp2SessionListener listener, ClientHttpHandler handler) {
@@ -230,7 +229,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         policy = null;
     }
 
-    override void upgradeWebSocket(Request request, WebSocketPolicy policy,
+    override void upgradeWebSocket(HttpRequest request, WebSocketPolicy policy,
             Promise!(WebSocketConnection) promise,
             ClientHttpHandler upgradeHandler, IncomingFrames incomingFrames) {
         assert(HttpMethod.GET.asString() == request.getMethod(),
@@ -259,7 +258,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return cast(string)(B64Code.encode(bytes));
     }
 
-    override HttpOutputStream sendRequestWithContinuation(Request request, ClientHttpHandler handler) {
+    override HttpOutputStream sendRequestWithContinuation(HttpRequest request, ClientHttpHandler handler) {
         request.getFields().put(HttpHeader.EXPECT, HttpHeaderValue.CONTINUE);
         HttpOutputStream outputStream = getHttpOutputStream(request, handler);
         try {
@@ -270,7 +269,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return outputStream;
     }
 
-    override void send(Request request, ClientHttpHandler handler) {
+    override void send(HttpRequest request, ClientHttpHandler handler) {
         try {
             version (HUNT_DEBUG) tracef("client request and does not send data");
             HttpOutputStream output = getHttpOutputStream(request, handler);
@@ -280,7 +279,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         }
     }
 
-    override void send(Request request, ByteBuffer buffer, ClientHttpHandler handler) {
+    override void send(HttpRequest request, ByteBuffer buffer, ClientHttpHandler handler) {
         try {
             HttpOutputStream output = getHttpOutputStream(request, handler);
             if (buffer !is null) {
@@ -291,7 +290,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         }
     }
 
-    override void send(Request request, ByteBuffer[] buffers, ClientHttpHandler handler) {
+    override void send(HttpRequest request, ByteBuffer[] buffers, ClientHttpHandler handler) {
         try {
             HttpOutputStream output = getHttpOutputStream(request, handler);
             if (buffers !is null) {
@@ -302,7 +301,12 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         }
     }
 
-    override HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler) {
+    override void send(HttpRequest request, Promise!(HttpOutputStream) promise,
+            ClientHttpHandler handler) {
+        promise.succeeded(getHttpOutputStream(request, handler));
+    }
+
+    override HttpOutputStream getHttpOutputStream(HttpRequest request, ClientHttpHandler handler) {
         Http1ClientResponseHandler http1ClientResponseHandler = 
             new Http1ClientResponseHandler(handler);
         checkWrite(request, http1ClientResponseHandler);
@@ -311,12 +315,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return http1ClientResponseHandler.outputStream;
     }
 
-    override void send(Request request, Promise!(HttpOutputStream) promise,
-            ClientHttpHandler handler) {
-        promise.succeeded(getHttpOutputStream(request, handler));
-    }
-
-    private void checkWrite(Request request, Http1ClientResponseHandler handler) {
+    private void checkWrite(HttpRequest request, Http1ClientResponseHandler handler) {
         assert(request, "The http client request is null.");
         assert(handler, "The http1 client response handler is null.");
         assert(isOpen(), "The current connection " ~ tcpSession.getSessionId()
@@ -331,6 +330,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
             request.getFields().put(HttpHeader.HOST, tcpSession.getRemoteAddress().toAddrString());
             handler.connection = this;
             handler.request = request;
+            handler.onReady();
         } else {
             throw new WritePendingException("");
         }
@@ -444,15 +444,15 @@ private class ResponseHandlerWrap : ResponseHandler {
 /**
 */
 class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
-
     private Http1ClientConnection connection;
     private HttpGenerator httpGenerator;
 
-    private this(Http1ClientConnection connection, Request request) {
+    private this(Http1ClientConnection connection, HttpRequest request) {
         super(request, true);
         this.connection = connection;
         httpGenerator = new HttpGenerator();
     }
+
 
     override protected void generateHttpMessageSuccessfully() {
         tracef("client session %s generates the HTTP message completely", connection.getSessionId());

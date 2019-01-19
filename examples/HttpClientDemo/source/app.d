@@ -31,15 +31,19 @@ import hunt.collection.List;
 
 import hunt.logging;
 
+import core.thread;
+import hunt.net.NetUtil;
 
 void main(string[] args) {
+
+    NetUtil.startEventLoop();
+
     HttpConfiguration http2Configuration = new HttpConfiguration();
     http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
     HttpClient client = new HttpClient(http2Configuration);
 
     FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
-    // client.connect("localhost", 6655, promise);
-    client.connect("10.1.222.120", 8080, promise);
+    client.connect("localhost", 8080, promise);
 
     HttpConnection connection = promise.get();
     trace(connection.getHttpVersion());
@@ -72,7 +76,7 @@ void main(string[] args) {
         });
         // phaser.arriveAndAwaitAdvance();
 
-        List!Cookie currentCookies = new ArrayList!Cookie(); // CopyOnWriteArrayList
+        // List!Cookie currentCookies = new ArrayList!Cookie(); // CopyOnWriteArrayList
         // login
         // HttpClientRequest loginRequest = new HttpClientRequest("GET", "/login");
         // http1ClientConnection.send(loginRequest, new AbstractClientHttpHandler() {
@@ -102,7 +106,7 @@ void main(string[] args) {
         // });
         // phaser.arriveAndAwaitAdvance();
 
-        trace("current cookies : " ~ currentCookies.toString());
+        // trace("current cookies : " ~ currentCookies.toString());
         // post data
         // HttpClientRequest post = new HttpClientRequest("POST", "/add");
         // post.getFields().add(new HttpField(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded"));
@@ -172,10 +176,12 @@ void main(string[] args) {
         // phaser.arriveAndAwaitAdvance();
 
         trace("request finished");
+        import core.time;
+        Thread.sleep(5.seconds);
         http1ClientConnection.close();
+        NetUtil.stopEventLoop();
     } else {
 
     }
-
 }
 

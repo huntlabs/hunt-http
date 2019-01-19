@@ -50,7 +50,7 @@ import hunt.logging;
 class HttpURI {
 	private enum State {
 		START, HOST_OR_PATH, SCHEME_OR_PATH, HOST, IPV6, PORT, PATH, PARAM, QUERY, FRAGMENT, ASTERISK
-	};
+	}
 
 	private string _scheme;
 	private string _user;

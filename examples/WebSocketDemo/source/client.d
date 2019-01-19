@@ -68,13 +68,14 @@ void main(string[] args) {
                         break;
                 }
             }
-        });
+        }
+    );
 
-        WebSocketConnection webSocketConnection = promise.get();
-        webSocketConnection.sendText("Hello WebSocket").thenAccept( (r) {
-            tracef("Client sends text frame success.");
-        });
+    WebSocketConnection webSocketConnection = promise.get();
+    webSocketConnection.sendText("Hello WebSocket").thenAccept( (r) {
+        tracef("Client sends text frame success.");
+    });
 
-        client.stop();
+    client.stop();
 
 }
