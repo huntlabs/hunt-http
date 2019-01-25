@@ -2,11 +2,11 @@
     "name": "hunt-http",
     "description": "http module for hunt.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
-    "homepage": "https://www.huntlabs.net/",
+    "homepage": "https://www.huntlabs.net",
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net":"~>0.0.12",
-        "hunt":"~>1.0.0",
+        "hunt-net":"~>0.1.0",
+        "hunt":"~>1.1.0",
         "hunt-trace" : "~>0.1.4"
     },
     "configurations": [
