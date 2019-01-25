@@ -181,7 +181,7 @@ struct HttpMethod {
      * @return the HttpMethod or null if the parameter method is unknown
      */
     static HttpMethod fromString(string method) {
-        string m = method.toLower();
+        string m = method.toUpper();
         if(m in CACHE)
             return CACHE[m];
         else
