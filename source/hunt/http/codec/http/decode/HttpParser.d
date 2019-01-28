@@ -1381,7 +1381,8 @@ class HttpParser {
 
     protected void badMessage(BadMessageException x) {
         // version(HUNT_DEBUG)
-            warning("Parse exception: " ~ this.toString() ~ " for " ~ _handler.toString(), x.toString());
+            warning("Parse exception: " ~ this.toString() ~ " for " ~ _handler.toString() ~ 
+                ", Exception: ", x.msg);
         version(HUNT_DEBUG) {
             Throwable t = x;
             while((t = t.next) !is null) {

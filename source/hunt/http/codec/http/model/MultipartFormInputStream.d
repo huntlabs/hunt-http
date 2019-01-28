@@ -242,7 +242,6 @@ class MultipartFormInputStream {
          */
         override
         void write(string fileName) {
-            version(HUNT_DEBUG) infof("writing file: _file=%s, target=%s", _file, fileName);
             if(fileName.empty) {
                 warning("Target file name can't be empty.");
                 return;
@@ -251,6 +250,7 @@ class MultipartFormInputStream {
             if (_file.empty) {
                 // part data is only in the ByteArrayOutputStream and never been written to disk
                 _file = buildPath(_tmpDir, fileName);
+                version(HUNT_DEBUG) infof("writing file: _file=%s", _file);
 
                 FileOutputStream bos = null;
                 try {
@@ -260,6 +260,8 @@ class MultipartFormInputStream {
                 } finally {
                     if (bos !is null)
                         bos.close();
+
+                version(HUNT_DEBUG) infof("closing file: _file=%s", _file);
                     _bout = null;
                 }
             } else {
@@ -268,6 +270,12 @@ class MultipartFormInputStream {
                 version(HUNT_DEBUG) tracef("src: %s, target: %s", _file, target);
                 rename(_file, target);
                 _file = target;
+            }
+        }
+
+        void flush() {
+            if(_file.empty) {
+                write("MultiPart-" ~ StringUtils.randomId());
             }
         }
 
