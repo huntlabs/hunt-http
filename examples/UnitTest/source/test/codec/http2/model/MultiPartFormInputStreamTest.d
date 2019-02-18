@@ -50,6 +50,28 @@ class MultipartFormInputStreamTest {
         _tmpDir = this._dirname;
     }
     
+    void testCharsetEncoding() {
+        string contentType = "multipart/form-data; boundary=TheBoundary; charset=ISO-8859-1";
+        string str = "--TheBoundary\r\n" ~
+                "content-disposition: form-data; name=\"field1\"\r\n" ~
+                "\r\n" ~
+                "\nJoe Blow\n" ~
+                "\r\n" ~
+                "--TheBoundary--\r\n";
+
+        MultipartConfig config = new MultipartConfig(_dirname, 1024, 3072, 50);
+        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+                contentType,
+                config,
+                _tmpDir);
+        mpis.setDeleteOnExit(true);
+        Part[] parts = mpis.getParts();
+        assertThat(parts.length, 1);
+        // MultipartFormInputStream.MultiPart mp = cast(MultipartFormInputStream.MultiPart)parts[0];
+        // byte[] c = mp.getBytes();
+        // trace(cast(string)c);
+    }
+
     void testBadMultiPartRequest() {
         string boundary = "X0Y0";
         string str = "--" ~ boundary ~ "\r\n" ~
@@ -615,25 +637,6 @@ class MultipartFormInputStreamTest {
         } catch (Throwable e) {
             assertTrue(e.msg.startsWith("Header Line Exceeded Max Length"));
         }
-    }
-    
-    void testCharsetEncoding() {
-        string contentType = "multipart/form-data; boundary=TheBoundary; charset=ISO-8859-1";
-        string str = "--TheBoundary\r\n" ~
-                "content-disposition: form-data; name=\"field1\"\r\n" ~
-                "\r\n" ~
-                "\nJoe Blow\n" ~
-                "\r\n" ~
-                "--TheBoundary--\r\n";
-
-        MultipartConfig config = new MultipartConfig(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
-                contentType,
-                config,
-                _tmpDir);
-        mpis.setDeleteOnExit(true);
-        Part[] parts = mpis.getParts();
-        assertThat(parts.length, 1);
     }
 
     

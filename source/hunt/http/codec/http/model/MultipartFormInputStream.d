@@ -107,7 +107,8 @@ class MultipartFormInputStream {
                 throw new IllegalStateException("Multipart Mime part " ~ _name ~ " exceeds max filesize");
 
             if (this.outer._config.getFileSizeThreshold() > 0 && 
-                _size + 1 > this.outer._config.getFileSizeThreshold() && _file is null) {
+                _size + 1 > this.outer._config.getFileSizeThreshold() && 
+                !_filename.empty() && _file.empty()) {
                 createFile();
             } 
             _out.write(b);
@@ -119,7 +120,8 @@ class MultipartFormInputStream {
                 throw new IllegalStateException("Multipart Mime part " ~ _name ~ " exceeds max filesize");
 
             if (this.outer._config.getFileSizeThreshold() > 0
-                    && _size + length > this.outer._config.getFileSizeThreshold() && _file is null) {
+                    && _size + length > this.outer._config.getFileSizeThreshold() 
+                    && !_filename.empty() && _file.empty()) {
                 createFile();
             } 
             _out.write(bytes, offset, length);
