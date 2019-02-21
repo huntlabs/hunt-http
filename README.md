@@ -10,3 +10,6 @@
 - [x] WebSocket Demo
 - [ ] Reorganize modules
 - [ ] More unit tests
+
+## References
+- Eclipse Jetty 9.4.x, [https://github.com/eclipse/jetty.project](https://github.com/eclipse/jetty.project)
