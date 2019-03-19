@@ -126,10 +126,15 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
     }
 
     void notifyClose() {
+        version(HUNT_DEBUG) tracef("closing, state: %s", ioState.getConnectionState());
+        ioState.onDisconnected();
         connectionEvent.notifyClose();
     }
 
     void notifyException(Exception t) {
+        version(HUNT_DEBUG) warningf("exception, state: %s, error: %s", 
+            ioState.getConnectionState(), t.msg);
+        ioState.onReadFailure(t);
         connectionEvent.notifyException(t);
     }
 

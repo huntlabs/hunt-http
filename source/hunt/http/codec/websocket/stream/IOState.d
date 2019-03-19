@@ -13,6 +13,9 @@ import hunt.text.StringBuilder;
 import std.array;
 import std.conv;
 
+
+alias ConnectionStateListener = void delegate(ConnectionState state);
+
 /**
  * Simple state tracker for Input / Output and {@link ConnectionState}.
  * <p>
@@ -43,11 +46,6 @@ class IOState {
          */
         ABNORMAL
     }
-
-    interface ConnectionStateListener {
-        void onConnectionStateChange(ConnectionState state);
-    }
-
 
     private ConnectionState state;
     private List!(ConnectionStateListener) listeners;
@@ -150,12 +148,9 @@ class IOState {
 
     private void notifyStateListeners(ConnectionState state) {
         version(HUNT_DEBUG)
-            tracef("Notify State Listeners: %s", state);
+            tracef("Notify State Listeners(%d): %s", listeners.size(), state);
         foreach (ConnectionStateListener listener ; listeners) {
-            version(HUNT_DEBUG) {
-                tracef("%s.onConnectionStateChange(%s)", typeid(listener).name, to!string(state));
-            }
-            listener.onConnectionStateChange(state);
+            listener(state);
         }
     }
 
