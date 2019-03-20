@@ -40,7 +40,7 @@ abstract class HttpOutputStream : OutputStream {
     override
     void write(byte[] array, int offset, int length) {
         assert(array !is null, "The data must be not null");
-        write(ByteBuffer.wrap(array, offset, length));
+        write(BufferUtils.toBuffer(array, offset, length));
     }
 
     alias write = OutputStream.write;

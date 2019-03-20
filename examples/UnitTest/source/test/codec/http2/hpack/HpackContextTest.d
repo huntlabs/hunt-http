@@ -382,7 +382,7 @@ class HpackContextTest {
             Entry entry = ctx.get(i);
             assertTrue(entry.isStatic());
 
-            ByteBuffer buffer = ByteBuffer.wrap(entry.getStaticHuffmanValue());
+            ByteBuffer buffer = BufferUtils.toBuffer(entry.getStaticHuffmanValue());
             int huff = 0xff & buffer.get();
             assertTrue((0x80 & huff) == 0x80);
 

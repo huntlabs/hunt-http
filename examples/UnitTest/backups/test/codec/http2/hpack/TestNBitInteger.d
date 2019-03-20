@@ -104,7 +104,7 @@ public class TestNBitInteger {
 	}
 
 	public void testDecode(int n, int expected, string encoded) {
-		ByteBuffer buf = ByteBuffer.wrap(TypeUtils.fromHexString(encoded));
+		ByteBuffer buf = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
 		buf.position(n == 8 ? 0 : 1);
 		Assert.assertEquals(expected, NBitInteger.decode(buf, n));
 	}
@@ -126,7 +126,7 @@ public class TestNBitInteger {
 
 	
 	public void testDecodeExampleD_1_1() {
-		ByteBuffer buf = ByteBuffer.wrap(TypeUtils.fromHexString("77EaFF"));
+		ByteBuffer buf = BufferUtils.toBuffer(TypeUtils.fromHexString("77EaFF"));
 		buf.position(2);
 
 		Assert.assertEquals(10, NBitInteger.decode(buf, 5));
@@ -149,7 +149,7 @@ public class TestNBitInteger {
 
 	
 	public void testDecodeExampleD_1_2() {
-		ByteBuffer buf = ByteBuffer.wrap(TypeUtils.fromHexString("881f9a0aff"));
+		ByteBuffer buf = BufferUtils.toBuffer(TypeUtils.fromHexString("881f9a0aff"));
 		buf.position(2);
 
 		Assert.assertEquals(1337, NBitInteger.decode(buf, 5));
@@ -172,7 +172,7 @@ public class TestNBitInteger {
 
 	
 	public void testDecodeExampleD_1_3() {
-		ByteBuffer buf = ByteBuffer.wrap(TypeUtils.fromHexString("882aFf"));
+		ByteBuffer buf = BufferUtils.toBuffer(TypeUtils.fromHexString("882aFf"));
 		buf.position(1);
 
 		Assert.assertEquals(42, NBitInteger.decode(buf, 8));

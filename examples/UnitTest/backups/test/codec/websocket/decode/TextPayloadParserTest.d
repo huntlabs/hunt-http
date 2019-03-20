@@ -36,7 +36,7 @@ public class TextPayloadParserTest {
 
         Assert.assertThat("Must be a medium length payload", utf.length, allOf(greaterThan(0x7E), lessThan(0xFFFF)));
 
-        ByteBuffer buf = ByteBuffer.allocate(utf.length + 8);
+        ByteBuffer buf = BufferUtils.allocate(utf.length + 8);
         buf.put(cast(byte) 0x81); // text frame, fin = true
         buf.put(cast(byte) (0x80 | 0x7E)); // 0x7E == 126 (a 2 byte payload length)
         buf.putShort((short) utf.length);
@@ -65,7 +65,7 @@ public class TextPayloadParserTest {
 
         Assert.assertThat("Must be a long length payload", utf.length, greaterThan(0xFFFF));
 
-        ByteBuffer buf = ByteBuffer.allocate(utf.length + 32);
+        ByteBuffer buf = BufferUtils.allocate(utf.length + 32);
         buf.put(cast(byte) 0x81); // text frame, fin = true
         buf.put(cast(byte) (0x80 | 0x7F)); // 0x7F == 127 (a 8 byte payload length)
         buf.putLong(utf.length);
@@ -100,7 +100,7 @@ public class TextPayloadParserTest {
 
         Assert.assertThat("Must be a medium length payload", utf.length, allOf(greaterThan(0x7E), lessThan(0xFFFF)));
 
-        ByteBuffer buf = ByteBuffer.allocate(utf.length + 10);
+        ByteBuffer buf = BufferUtils.allocate(utf.length + 10);
         buf.put(cast(byte) 0x81);
         buf.put(cast(byte) (0x80 | 0x7E)); // 0x7E == 126 (a 2 byte payload length)
         buf.putShort((short) utf.length);
@@ -128,7 +128,7 @@ public class TextPayloadParserTest {
         byte b1[] = part1.getBytes(StandardCharsets.UTF_8);
         byte b2[] = part2.getBytes(StandardCharsets.UTF_8);
 
-        ByteBuffer buf = ByteBuffer.allocate(32);
+        ByteBuffer buf = BufferUtils.allocate(32);
 
         // part 1
         buf.put(cast(byte) 0x01); // no fin + text
@@ -164,7 +164,7 @@ public class TextPayloadParserTest {
         string expectedText = "Hello World";
         byte utf[] = expectedText.getBytes(StandardCharsets.UTF_8);
 
-        ByteBuffer buf = ByteBuffer.allocate(24);
+        ByteBuffer buf = BufferUtils.allocate(24);
         buf.put(cast(byte) 0x81);
         buf.put(cast(byte) (0x80 | utf.length));
         MaskedByteBuffer.putMask(buf);
@@ -189,7 +189,7 @@ public class TextPayloadParserTest {
 
         byte utf[] = expectedText.getBytes(StandardCharsets.UTF_8);
 
-        ByteBuffer buf = ByteBuffer.allocate(24);
+        ByteBuffer buf = BufferUtils.allocate(24);
         buf.put(cast(byte) 0x81);
         buf.put(cast(byte) (0x80 | utf.length));
         MaskedByteBuffer.putMask(buf);

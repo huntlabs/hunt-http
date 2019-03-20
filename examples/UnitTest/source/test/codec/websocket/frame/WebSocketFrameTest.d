@@ -20,7 +20,7 @@ class WebSocketFrameTest {
     private Generator laxGenerator;
 
     private ByteBuffer generateWholeFrame(Generator generator, Frame frame) {
-        ByteBuffer buf = ByteBuffer.allocate(frame.getPayloadLength() + Generator.MAX_HEADER_LENGTH);
+        ByteBuffer buf = BufferUtils.allocate(frame.getPayloadLength() + Generator.MAX_HEADER_LENGTH);
         generator.generateWholeFrame(frame, buf);
         BufferUtils.flipToFlush(buf, 0);
         return buf;

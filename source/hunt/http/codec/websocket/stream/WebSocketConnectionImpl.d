@@ -79,7 +79,7 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
                         webSocketFrame.setMask(generateMask());
                     }
                 }
-                ByteBuffer buf = ByteBuffer.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
+                ByteBuffer buf = BufferUtils.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
                 generator.generateWholeFrame(frame, buf);
                 BufferUtils.flipToFlush(buf, 0);
                 tcpSession.encode(new ByteBufferOutputEntry(callback, buf));

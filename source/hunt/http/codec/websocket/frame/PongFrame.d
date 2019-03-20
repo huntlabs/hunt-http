@@ -5,6 +5,7 @@ import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.model.common;
 import hunt.text.Common;
 
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 
 class PongFrame : ControlFrame {
@@ -13,7 +14,7 @@ class PongFrame : ControlFrame {
     }
 
     PongFrame setPayload(byte[] bytes) {
-        setPayload(ByteBuffer.wrap(bytes));
+        setPayload(BufferUtils.toBuffer(bytes));
         return this;
     }
 

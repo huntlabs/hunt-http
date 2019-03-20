@@ -27,8 +27,8 @@ public class Http2ClientTLSDemo {
 
         final HttpClientConnection httpConnection = promise.get();
 
-        final ByteBuffer[] buffers = new ByteBuffer[]{ByteBuffer.wrap("hello world!".getBytes("UTF-8")),
-                ByteBuffer.wrap("big hello world!".getBytes("UTF-8"))};
+        final ByteBuffer[] buffers = new ByteBuffer[]{BufferUtils.toBuffer("hello world!".getBytes("UTF-8")),
+                BufferUtils.toBuffer("big hello world!".getBytes("UTF-8"))};
         ClientHttpHandler handler = newHandler(buffers);
 
         // test
@@ -44,8 +44,8 @@ public class Http2ClientTLSDemo {
 
         HttpRequest post2 = new HttpRequest("POST", HttpScheme.HTTP, new HostPortHttpField("127.0.0.1:6677"),
                 "/data", HttpVersion.HTTP_1_1, fields);
-        httpConnection.send(post2, new ByteBuffer[]{ByteBuffer.wrap("test data 2".getBytes("UTF-8")),
-                ByteBuffer.wrap("finished test data 2".getBytes("UTF-8"))}, handler);
+        httpConnection.send(post2, new ByteBuffer[]{BufferUtils.toBuffer("test data 2".getBytes("UTF-8")),
+                BufferUtils.toBuffer("finished test data 2".getBytes("UTF-8"))}, handler);
     }
 
 

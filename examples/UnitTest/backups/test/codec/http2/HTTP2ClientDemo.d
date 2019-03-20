@@ -131,9 +131,9 @@ public class Http2ClientDemo {
 		info("client stream id is ", clientStream.getId());
 
 		final DataFrame smallDataFrame = new DataFrame(clientStream.getId(),
-				ByteBuffer.wrap("hello world!".getBytes("UTF-8")), false);
+				BufferUtils.toBuffer("hello world!".getBytes("UTF-8")), false);
 		final DataFrame bigDataFrame = new DataFrame(clientStream.getId(),
-				ByteBuffer.wrap("big hello world!".getBytes("UTF-8")), true);
+				BufferUtils.toBuffer("big hello world!".getBytes("UTF-8")), true);
 
 		clientStream.data(smallDataFrame, new Callback() {
 

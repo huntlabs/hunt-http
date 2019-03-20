@@ -33,7 +33,7 @@ public class DataGenerateParseTest {
 
 	
 	public void testGenerateParseSmallContentNoPadding() {
-		testGenerateParseContent(ByteBuffer.wrap(smallContent));
+		testGenerateParseContent(BufferUtils.toBuffer(smallContent));
 	}
 
 	private void testGenerateParseContent(ByteBuffer content) {
@@ -47,10 +47,10 @@ public class DataGenerateParseTest {
 
 	
 	public void testGenerateParseLargeContent() {
-		ByteBuffer content = ByteBuffer.wrap(largeContent);
+		ByteBuffer content = BufferUtils.toBuffer(largeContent);
 		List<DataFrame> frames = testGenerateParse(content);
 		Assert.assertEquals(8, frames.size());
-		ByteBuffer aggregate = ByteBuffer.allocate(content.remaining());
+		ByteBuffer aggregate = BufferUtils.allocate(content.remaining());
 		for (int i = 1; i <= frames.size(); ++i) {
 			DataFrame frame = frames.get(i - 1);
 			Assert.assertTrue(frame.getStreamId() != 0);
@@ -104,7 +104,7 @@ public class DataGenerateParseTest {
 		// Iterate a few times to be sure generator and parser are properly
 		// reset.
 		for (int i = 0; i < 2; ++i) {
-			ByteBuffer data = ByteBuffer.wrap(largeContent);
+			ByteBuffer data = BufferUtils.toBuffer(largeContent);
 			ByteBuffer slice = data.slice();
 			int generated = 0;
 			List!(ByteBuffer) list = new ArrayList<>();
@@ -113,7 +113,7 @@ public class DataGenerateParseTest {
 			frames.clear();
 			for (ByteBuffer buffer : list) {
 				while (buffer.hasRemaining()) {
-					parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+					parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 				}
 			}
 

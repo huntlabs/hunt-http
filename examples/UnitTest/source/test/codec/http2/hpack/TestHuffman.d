@@ -37,7 +37,7 @@ class TestHuffman
         foreach (string[] test; tests)
         {
             byte[] encoded=TypeUtils.fromHexString(test[1]);
-            string decoded=Huffman.decode(ByteBuffer.wrap(encoded));
+            string decoded=Huffman.decode(BufferUtils.toBuffer(encoded));
             Assert.assertEquals(test[0],test[2],decoded);
         }
     }
@@ -48,7 +48,7 @@ class TestHuffman
         foreach (string[] test; tests)
         {
             byte[] encoded=TypeUtils.fromHexString(test[1]~"FF");
-            string decoded=Huffman.decode(ByteBuffer.wrap(encoded));
+            string decoded=Huffman.decode(BufferUtils.toBuffer(encoded));
             Assert.assertEquals(test[0],test[2],decoded);
         }
     }

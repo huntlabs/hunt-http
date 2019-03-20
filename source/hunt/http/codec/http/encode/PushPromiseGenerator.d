@@ -45,7 +45,7 @@ class PushPromiseGenerator :FrameGenerator {
 		int extraSpace = 4;
 		maxFrameSize -= extraSpace;
 
-		ByteBuffer hpacked = ByteBuffer.allocate(maxFrameSize);
+		ByteBuffer hpacked = BufferUtils.allocate(maxFrameSize);
 		BufferUtils.clearToFill(hpacked);
 		encoder.encode(hpacked, metaData);
 		int hpackedLength = hpacked.position();

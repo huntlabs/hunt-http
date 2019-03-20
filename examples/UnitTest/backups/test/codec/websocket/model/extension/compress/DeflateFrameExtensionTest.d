@@ -62,7 +62,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
         parser.configureFromExtensions(Collections.singletonList(ext));
         parser.setIncomingFramesHandler(ext);
 
-        parser.parse(ByteBuffer.wrap(raw));
+        parser.parse(BufferUtils.toBuffer(raw));
 
         int len = expectedTextDatas.length;
         capture.assertFrameCount(len);
@@ -229,7 +229,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
         compressor.finish();
 
         // Perform compression
-        ByteBuffer outbuf = ByteBuffer.allocate(64);
+        ByteBuffer outbuf = BufferUtils.allocate(64);
         BufferUtils.clearToFill(outbuf);
 
         while (!compressor.finished()) {

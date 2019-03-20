@@ -95,7 +95,7 @@ public class PushPromiseGenerateParseTest {
 			frames.clear();
 			for (ByteBuffer buffer : list) {
 				while (buffer.hasRemaining()) {
-					parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+					parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 				}
 			}
 

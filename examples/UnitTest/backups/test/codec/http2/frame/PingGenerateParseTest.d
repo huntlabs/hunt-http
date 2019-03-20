@@ -71,7 +71,7 @@ public class PingGenerateParseTest {
 
 			frames.clear();
 			while (buffer.hasRemaining()) {
-				parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+				parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 			}
 
 			Assert.assertEquals(1, frames.size());

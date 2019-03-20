@@ -40,7 +40,7 @@ final class Hex {
     }
 
     static ByteBuffer asByteBuffer(string hstr) {
-        return ByteBuffer.wrap(cast(byte[])(hstr));
+        return BufferUtils.toBuffer(cast(byte[])(hstr));
     }
 
     static string asHex(byte[] buf) {

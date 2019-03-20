@@ -24,7 +24,7 @@ class HeaderBlockParser {
 
 		if (buffer.remaining() < remaining) {
 			if (blockBuffer is null) {
-				blockBuffer = ByteBuffer.allocate(blockLength);
+				blockBuffer = BufferUtils.allocate(blockLength);
 				BufferUtils.clearToFill(blockBuffer);
 			}
 			blockBuffer.put(buffer);

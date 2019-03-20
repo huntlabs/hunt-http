@@ -81,7 +81,7 @@ class MultipartParser {
 
         string delimiter = "\r\n--" ~ boundary;
         //delimiter.getBytes(StandardCharsets.US_ASCII)
-        _patternBuffer = ByteBuffer.wrap(cast(byte[])delimiter.dup); 
+        _patternBuffer = BufferUtils.toBuffer(cast(byte[])delimiter.dup); 
         _delimiterSearch = SearchPattern.compile(_patternBuffer.array());
     }
 

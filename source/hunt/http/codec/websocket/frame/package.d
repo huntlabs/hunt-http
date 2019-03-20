@@ -49,7 +49,7 @@ class WebSocketFrameHelper {
         copy.copyHeaders(original);
         ByteBuffer payload = original.getPayload();
         if (payload !is null) {
-            ByteBuffer payloadCopy = ByteBuffer.allocate(payload.remaining());
+            ByteBuffer payloadCopy = BufferUtils.allocate(payload.remaining());
             payloadCopy.put(payload.slice()).flip();
             copy.setPayload(payloadCopy);
         }

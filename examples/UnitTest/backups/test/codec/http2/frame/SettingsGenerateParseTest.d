@@ -137,7 +137,7 @@ public class SettingsGenerateParseTest {
 		bytes.putShort(1, (short) (bytes.get!short(1) - 1));
 
 		while (buffer.hasRemaining()) {
-			parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+			parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 		}
 
 		Assert.assertEquals(ErrorCode.FRAME_SIZE_ERROR.code, errorRef.get());
@@ -167,7 +167,7 @@ public class SettingsGenerateParseTest {
 
 			frames.clear();
 			while (buffer.hasRemaining()) {
-				parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+				parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 			}
 
 			Assert.assertEquals(1, frames.size());

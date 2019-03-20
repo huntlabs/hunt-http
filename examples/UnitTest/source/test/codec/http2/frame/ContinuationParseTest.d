@@ -99,7 +99,7 @@ module test.codec.http2.frame.ContinuationParseTest;
 // 			continuationHeader1[6] = 0x00;
 // 			continuationHeader1[7] = 0x00;
 // 			continuationHeader1[8] = cast(byte) streamId;
-// 			byteBuffers.add(ByteBuffer.wrap(continuationHeader1));
+// 			byteBuffers.add(BufferUtils.toBuffer(continuationHeader1));
 // 			// First CONTINUATION body.
 // 			headersBody.position(start + oneThird);
 // 			headersBody.limit(start + 2 * oneThird);
@@ -115,7 +115,7 @@ module test.codec.http2.frame.ContinuationParseTest;
 // 			continuationHeader2[6] = 0x00;
 // 			continuationHeader2[7] = 0x00;
 // 			continuationHeader2[8] = cast(byte) streamId;
-// 			byteBuffers.add(ByteBuffer.wrap(continuationHeader2));
+// 			byteBuffers.add(BufferUtils.toBuffer(continuationHeader2));
 // 			headersBody.position(start + 2 * oneThird);
 // 			headersBody.limit(start + length);
 // 			byteBuffers.add(headersBody.slice());
@@ -123,7 +123,7 @@ module test.codec.http2.frame.ContinuationParseTest;
 // 			frames.clear();
 // 			for (ByteBuffer buffer : byteBuffers) {
 // 				while (buffer.hasRemaining()) {
-// 					parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+// 					parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 // 				}
 // 			}
 

@@ -75,7 +75,7 @@ import hunt.logging;
 //                         tracef("Opened file %s", filePath);
 //                 }
 
-//                 ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+//                 ByteBuffer buffer = BufferUtils.allocate(bufferSize);
 //                 int read = channel.read(buffer);
 //                 if (read < 0)
 //                     throw new NoSuchElementException();

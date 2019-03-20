@@ -437,7 +437,7 @@ class HpackContext {
                 int huffmanLen = Huffman.octetsNeeded(value);
                 int lenLen = NBitInteger.octectsNeeded(7, huffmanLen);
                 _huffmanValue = new byte[1 + lenLen + huffmanLen];
-                ByteBuffer buffer = ByteBuffer.wrap(_huffmanValue);
+                ByteBuffer buffer = BufferUtils.toBuffer(_huffmanValue);
 
                 // Indicate Huffman
                 buffer.put(cast(byte) 0x80);

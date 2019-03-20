@@ -18,7 +18,7 @@ import hunt.collection.ByteBuffer;
 public class PingPayloadParserTest {
     
     public void testBasicPingParsing() {
-        ByteBuffer buf = ByteBuffer.allocate(16);
+        ByteBuffer buf = BufferUtils.allocate(16);
         BufferUtils.clearToFill(buf);
         buf.put(new byte[]
                 {cast(byte) 0x89, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f});

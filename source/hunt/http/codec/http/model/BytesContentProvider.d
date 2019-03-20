@@ -42,7 +42,7 @@ module hunt.http.codec.http.model.BytesContentProvider;
 //             override
 //             ByteBuffer next() {
 //                 try {
-//                     return ByteBuffer.wrap(bytes[index++]);
+//                     return BufferUtils.toBuffer(bytes[index++]);
 //                 } catch (ArrayIndexOutOfBoundsException x) {
 //                     throw new NoSuchElementException();
 //                 }

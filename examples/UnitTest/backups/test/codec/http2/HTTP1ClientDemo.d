@@ -111,8 +111,8 @@ public class Http1ClientDemo {
 				}
 			}
 
-			ByteBuffer data = ByteBuffer.wrap("content=hello_world".getBytes(StandardCharsets.UTF_8));
-			ByteBuffer data2 = ByteBuffer.wrap("_data2test".getBytes(StandardCharsets.UTF_8));
+			ByteBuffer data = BufferUtils.toBuffer("content=hello_world".getBytes(StandardCharsets.UTF_8));
+			ByteBuffer data2 = BufferUtils.toBuffer("_data2test".getBytes(StandardCharsets.UTF_8));
 			ByteBuffer[] dataArray = new ByteBuffer[] { data, data2 };
 
 			http1ClientConnection.send(post, dataArray, new AbstractClientHttpHandler() {
@@ -147,7 +147,7 @@ public class Http1ClientDemo {
 				}
 			}
 
-			ByteBuffer data1 = ByteBuffer.wrap("content=test_post_single_data".getBytes(StandardCharsets.UTF_8));
+			ByteBuffer data1 = BufferUtils.toBuffer("content=test_post_single_data".getBytes(StandardCharsets.UTF_8));
 			http1ClientConnection.send(post, data1, new AbstractClientHttpHandler() {
 
 				override

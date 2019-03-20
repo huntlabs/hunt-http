@@ -3,6 +3,7 @@ module hunt.http.codec.websocket.frame.BinaryFrame;
 import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.model.common;
 
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 
 class BinaryFrame : DataFrame {
@@ -16,7 +17,7 @@ class BinaryFrame : DataFrame {
     }
 
     BinaryFrame setPayload(byte[] buf) {
-        setPayload(ByteBuffer.wrap(buf));
+        setPayload(BufferUtils.toBuffer(buf));
         return this;
     }
 

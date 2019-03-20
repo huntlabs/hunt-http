@@ -29,6 +29,7 @@ import hunt.net;
 import hunt.util.Lifecycle;
 
 import core.atomic;
+import hunt.collection.BufferUtils;
 
 class HttpClient : AbstractLifecycle {
 
@@ -59,12 +60,13 @@ class HttpClient : AbstractLifecycle {
         client.setConfig(c.getTcpConfiguration());
 
         client.connectHandler((NetSocket sock) {
-            infof("A connection created with %s:%d", _host, _port);
+            version (HUNT_DEBUG) infof("A connection created with %s:%d", _host, _port);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
 
-            session.handler((const ubyte[] data) {
-                infof("data received (%d bytes): ", data.length);
+            session.handler((ByteBuffer buffer) {
                 version (HUNT_DEBUG) {
+                    byte[] data = buffer.getRemaining();
+                    infof("data received (%d bytes): ", data.length);
                     if (data.length <= 64) {
                         infof("%(%02X %)", data[0 .. $]);
                     } else {
@@ -72,8 +74,7 @@ class HttpClient : AbstractLifecycle {
                     }
                 }
 
-                ByteBuffer buf = ByteBuffer.wrap(cast(byte[]) data);
-                commonDecoder.decode(buf, session);
+                commonDecoder.decode(buffer, session);
             });
         });
 

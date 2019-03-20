@@ -3,6 +3,7 @@ module hunt.http.codec.websocket.frame.ContinuationFrame;
 import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.codec.websocket.model.common;
 
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 
 class ContinuationFrame : DataFrame {
@@ -16,7 +17,7 @@ class ContinuationFrame : DataFrame {
     }
 
     ContinuationFrame setPayload(byte[] buf) {
-        return this.setPayload(ByteBuffer.wrap(buf));
+        return this.setPayload(BufferUtils.toBuffer(buf));
     }
 
     ContinuationFrame setPayload(string message) {

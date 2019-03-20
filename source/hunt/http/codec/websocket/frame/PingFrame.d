@@ -5,6 +5,7 @@ import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.text.Common;
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 
 class PingFrame : ControlFrame {
@@ -13,12 +14,12 @@ class PingFrame : ControlFrame {
     }
 
     PingFrame setPayload(byte[] bytes) {
-        setPayload(ByteBuffer.wrap(bytes));
+        setPayload(BufferUtils.toBuffer(bytes));
         return this;
     }
 
     PingFrame setPayload(string payload) {
-        setPayload(ByteBuffer.wrap(cast(byte[])(payload.dup)));
+        setPayload(BufferUtils.toBuffer(cast(byte[])(payload.dup)));
         return this;
     }
 

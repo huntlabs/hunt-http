@@ -13,6 +13,7 @@ import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 import hunt.event.EventLoop;
 import hunt.util.DateTime;
@@ -81,15 +82,14 @@ class HttpServer : AbstractLifecycle {
             version (HUNT_DEBUG)
                 infof("new http session with %s", sock.remoteAddress);
             AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
-            session.handler((const ubyte[] data) {
+            session.handler((ByteBuffer buffer) {
                 version (HUNT_METRIC) {
                     debug trace("start hadling session data ...");
                     MonoTime startTime = MonoTime.currTime;
                 } else version (HUNT_DEBUG) {
                     trace("start hadling session data ...");
                 }
-                ByteBuffer buf = ByteBuffer.wrap(cast(byte[]) data);
-                commonDecoder.decode(buf, session);
+                commonDecoder.decode(buffer, session);
 
                 version (HUNT_METRIC) {
                     Duration timeElapsed = MonoTime.currTime - startTime;

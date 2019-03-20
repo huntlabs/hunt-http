@@ -62,7 +62,7 @@ public class TestHttpBodyHandler extends AbstractHttpHandlerTest {
 
         // post big data with content length
         client.post(uri ~ "/bigData").put(HttpHeader.CONTENT_LENGTH, data.length ~ "")
-              .write(ByteBuffer.wrap(data))
+              .write(BufferUtils.toBuffer(data))
               .submit()
               .thenAccept(res -> {
                   Assert.assertThat(res.getStatus(), is(HttpStatus.OK_200));
@@ -110,7 +110,7 @@ public class TestHttpBodyHandler extends AbstractHttpHandlerTest {
         }).listen(host, port);
 
         // post big data using chunked encoding
-        List!(ByteBuffer) buffers = $.buffer.split(ByteBuffer.wrap(data), 4 * 1024);
+        List!(ByteBuffer) buffers = $.buffer.split(BufferUtils.toBuffer(data), 4 * 1024);
         Promise.Completable<HttpOutputStream> promise = new Promise.Completable<>();
         promise.thenAccept(output -> {
             try (HttpOutputStream out = output) {

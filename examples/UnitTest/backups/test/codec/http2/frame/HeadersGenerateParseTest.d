@@ -137,7 +137,7 @@ public class HeadersGenerateParseTest {
 			for (ByteBuffer buffer : list) {
 				buffer = buffer.slice();
 				while (buffer.hasRemaining()) {
-					parser.parse(ByteBuffer.wrap(new byte[] { buffer.get() }));
+					parser.parse(BufferUtils.toBuffer(new byte[] { buffer.get() }));
 				}
 			}
 

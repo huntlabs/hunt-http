@@ -99,7 +99,7 @@ struct HttpVersion {
 	this(string s, int ver) {
 		_string = s;
 		_bytes = cast(byte[]) s.dup;
-		// _buffer = ByteBuffer.wrap(_bytes);
+		// _buffer = BufferUtils.toBuffer(_bytes);
 		_version = ver;
 	}
 

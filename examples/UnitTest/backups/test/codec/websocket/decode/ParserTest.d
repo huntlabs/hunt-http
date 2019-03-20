@@ -148,7 +148,7 @@ public class ParserTest {
             }
             mini = new byte[1];
             mini[0] = msg[i];
-            frame.setPayload(ByteBuffer.wrap(mini));
+            frame.setPayload(BufferUtils.toBuffer(mini));
             bool isLast = (i >= (len - 1));
             frame.setFin(isLast);
             send.add(frame);
@@ -170,7 +170,7 @@ public class ParserTest {
 
     
     public void testParseNothing() {
-        ByteBuffer buf = ByteBuffer.allocate(16);
+        ByteBuffer buf = BufferUtils.allocate(16);
         // Put nothing in the buffer.
         buf.flip();
 
@@ -192,7 +192,7 @@ public class ParserTest {
 
         List<WebSocketFrame> frames = new ArrayList<>();
         TextFrame text = new TextFrame();
-        text.setPayload(ByteBuffer.wrap(payload));
+        text.setPayload(BufferUtils.toBuffer(payload));
         text.setMask(Hex.asByteArray("11223344"));
         frames.add(text);
         frames.add(new CloseInfo(StatusCode.NORMAL).asFrame());

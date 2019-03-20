@@ -349,7 +349,7 @@ class MultipartParserTest {
 
         ByteBuffer data = BufferUtils.allocate(preamble.length + random.length + epilogue.length);
         BufferUtils.append(data, BufferUtils.toBuffer(preamble));
-        BufferUtils.append(data, ByteBuffer.wrap(random));
+        BufferUtils.append(data, BufferUtils.toBuffer(random));
         BufferUtils.append(data, BufferUtils.toBuffer(epilogue));
 
         parser.parse(data, true);

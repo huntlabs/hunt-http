@@ -42,7 +42,7 @@ class GeneratorTest {
                 completeBufSize += Generator.MAX_HEADER_LENGTH + f.getPayloadLength();
             }
 
-            ByteBuffer completeBuf = ByteBuffer.allocate(completeBufSize);
+            ByteBuffer completeBuf = BufferUtils.allocate(completeBufSize);
             BufferUtils.clearToFill(completeBuf);
 
             // Generate from all frames
@@ -140,7 +140,7 @@ class GeneratorTest {
 
     
     void testText_Masked_OffsetSourceByteBuffer() {
-        ByteBuffer payload = ByteBuffer.allocate(100);
+        ByteBuffer payload = BufferUtils.allocate(100);
         payload.position(5);
         payload.put(cast(byte[])("Hello"));
         payload.flip();

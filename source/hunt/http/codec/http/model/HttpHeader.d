@@ -167,7 +167,7 @@ struct HttpHeader {
         _bytes = cast(byte[]) s.dup; // StringUtils.getBytes(s);
         _bytesColonSpace = cast(byte[])(s ~ ": ").dup;
         _ordinal = cast(int) hashOf(s.toLower());
-        // _buffer = ByteBuffer.wrap(_bytes);
+        // _buffer = BufferUtils.toBuffer(_bytes);
     }
 
     // ByteBuffer toBuffer() {

@@ -3,6 +3,7 @@ module hunt.http.codec.http.decode.HeaderBlockFragments;
 import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.frame.PriorityFrame;
+import hunt.collection.BufferUtils;
 
 class HeaderBlockFragments {
 	private PriorityFrame priorityFrame;
@@ -13,14 +14,14 @@ class HeaderBlockFragments {
 	void storeFragment(ByteBuffer fragment, int length, bool last) {
 		if (storage is null) {
 			int space = last ? length : length * 2;
-			storage = ByteBuffer.allocate(space);
+			storage = BufferUtils.allocate(space);
 		}
 
 		// Grow the storage if necessary.
 		if (storage.remaining() < length) {
 			int space = last ? length : length * 2;
 			int capacity = storage.position() + space;
-			ByteBuffer newStorage = ByteBuffer.allocate(capacity);
+			ByteBuffer newStorage = BufferUtils.allocate(capacity);
 			storage.flip();
 			newStorage.put(storage);
 			storage = newStorage;

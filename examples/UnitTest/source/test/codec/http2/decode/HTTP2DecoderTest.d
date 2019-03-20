@@ -199,8 +199,8 @@ class Http2DecoderTest {
         HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
                 new HostPortHttpField("localhost:8080"), "/data", HttpVersion.HTTP_2, fields);
 
-        DataFrame smallDataFrame = new DataFrame(streamId, ByteBuffer.wrap(smallContent), false);
-        DataFrame bigDataFrame = new DataFrame(streamId, ByteBuffer.wrap(bigContent), true);
+        DataFrame smallDataFrame = new DataFrame(streamId, BufferUtils.toBuffer(smallContent), false);
+        DataFrame bigDataFrame = new DataFrame(streamId, BufferUtils.toBuffer(bigContent), true);
 
         Http2Generator generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 
@@ -208,7 +208,7 @@ class Http2DecoderTest {
         SettingsGenerator settingsGenerator = generator.getControlGenerator!(SettingsGenerator)(FrameType.SETTINGS);
 
         List!(ByteBuffer) list = new LinkedList!(ByteBuffer)();
-        list.add(ByteBuffer.wrap(cast(byte[])PrefaceFrame.PREFACE_BYTES));
+        list.add(BufferUtils.toBuffer(cast(byte[])PrefaceFrame.PREFACE_BYTES));
         list.add(settingsGenerator.generateSettings(settings, false));
         list.addAll(headersGenerator.generateHeaders(streamId, metaData, null, false));
         list.addAll(generator.data(smallDataFrame, cast(int)smallContent.length)[1]);
@@ -374,7 +374,7 @@ class Http2DecoderTest {
         SettingsGenerator settingsGenerator = generator.getControlGenerator!SettingsGenerator(FrameType.SETTINGS);
 
         List!(ByteBuffer) list = new LinkedList!(ByteBuffer)();
-        list.add(ByteBuffer.wrap(cast(byte[])PrefaceFrame.PREFACE_BYTES));
+        list.add(BufferUtils.toBuffer(cast(byte[])PrefaceFrame.PREFACE_BYTES));
         list.add(settingsGenerator.generateSettings(settings, false));
         list.addAll(headersGenerator.generateHeaders(streamId, metaData, null, true));
         foreach (ByteBuffer buffer ; list) {

@@ -54,7 +54,7 @@ class HeadersGenerator :FrameGenerator {
 			flags = Flags.PRIORITY;
 
 		int maxFrameSize = getMaxFrameSize();
-		ByteBuffer hpacked = ByteBuffer.allocate(maxFrameSize);
+		ByteBuffer hpacked = BufferUtils.allocate(maxFrameSize);
 		BufferUtils.clearToFill(hpacked);
 		encoder.encode(hpacked, metaData);
 		int hpackedLength = hpacked.position();

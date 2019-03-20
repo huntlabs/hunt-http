@@ -76,7 +76,7 @@ module hunt.http.codec.http.model.InputStreamContentProvider;
 //     protected ByteBuffer onRead(byte[] buffer, int offset, int length) {
 //         if (length <= 0)
 //             return BufferUtils.EMPTY_BUFFER;
-//         return ByteBuffer.wrap(buffer, offset, length);
+//         return BufferUtils.toBuffer(buffer, offset, length);
 //     }
 
 //     /**

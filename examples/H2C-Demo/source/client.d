@@ -146,10 +146,10 @@ void main(string[] args) {
 	infof("client stream id is %d", clientStream.getId());
 
 	DataFrame smallDataFrame = new DataFrame(clientStream.getId(),
-			ByteBuffer.wrap(cast(byte[])"hello world!"), false);
+			BufferUtils.toBuffer(cast(byte[])"hello world!"), false);
 			
 	DataFrame bigDataFrame = new DataFrame(clientStream.getId(),
-			ByteBuffer.wrap(cast(byte[])"big hello world!"), true);
+			BufferUtils.toBuffer(cast(byte[])"big hello world!"), true);
 
 	clientStream.data(smallDataFrame, new class NoopCallback {
 

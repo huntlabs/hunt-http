@@ -38,13 +38,13 @@ import hunt.collection.ByteBuffer;
 //     MultiPartContentProvider(string boundary) {
 //         super("multipart/form-data; boundary=" + boundary);
 //         string firstBoundaryLine = "--" + boundary + "\r\n";
-//         this.firstBoundary = ByteBuffer.wrap(firstBoundaryLine.getBytes(StandardCharsets.US_ASCII));
+//         this.firstBoundary = BufferUtils.toBuffer(firstBoundaryLine.getBytes(StandardCharsets.US_ASCII));
 //         string middleBoundaryLine = "\r\n" + firstBoundaryLine;
-//         this.middleBoundary = ByteBuffer.wrap(middleBoundaryLine.getBytes(StandardCharsets.US_ASCII));
+//         this.middleBoundary = BufferUtils.toBuffer(middleBoundaryLine.getBytes(StandardCharsets.US_ASCII));
 //         string onlyBoundaryLine = "--" + boundary + "--\r\n";
-//         this.onlyBoundary = ByteBuffer.wrap(onlyBoundaryLine.getBytes(StandardCharsets.US_ASCII));
+//         this.onlyBoundary = BufferUtils.toBuffer(onlyBoundaryLine.getBytes(StandardCharsets.US_ASCII));
 //         string lastBoundaryLine = "\r\n" + onlyBoundaryLine;
-//         this.lastBoundary = ByteBuffer.wrap(lastBoundaryLine.getBytes(StandardCharsets.US_ASCII));
+//         this.lastBoundary = BufferUtils.toBuffer(lastBoundaryLine.getBytes(StandardCharsets.US_ASCII));
 //     }
 
 //     private static string makeBoundary() {
@@ -175,7 +175,7 @@ import hunt.collection.ByteBuffer;
 //                     string headers = contentDisposition;
 //                     headers += contentType;
 //                     headers += "\r\n";
-//                     return ByteBuffer.wrap(headers.getBytes(StandardCharsets.UTF_8));
+//                     return BufferUtils.toBuffer(headers.getBytes(StandardCharsets.UTF_8));
 //                 }
 
 //                 ByteArrayOutputStream buffer = new ByteArrayOutputStream((fields.size() + 1) * contentDisposition.length());
@@ -192,7 +192,7 @@ import hunt.collection.ByteBuffer;
 //                     buffer.write(CR_LF_BYTES);
 //                 }
 //                 buffer.write(CR_LF_BYTES);
-//                 return ByteBuffer.wrap(buffer.toByteArray());
+//                 return BufferUtils.toBuffer(buffer.toByteArray());
 //             } catch (IOException x) {
 //                 throw new CommonRuntimeException(x);
 //             }

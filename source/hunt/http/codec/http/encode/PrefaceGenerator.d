@@ -1,6 +1,7 @@
 module hunt.http.codec.http.encode.PrefaceGenerator;
 
 import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 import hunt.collection.Collections;
 import hunt.collection.List;
 
@@ -18,6 +19,6 @@ class PrefaceGenerator :FrameGenerator {
 
 	override
 	List!(ByteBuffer) generate(Frame frame) {
-		return Collections.singletonList(ByteBuffer.wrap(cast(byte[])PrefaceFrame.PREFACE_BYTES.dup));
+		return Collections.singletonList(BufferUtils.toBuffer(cast(byte[])PrefaceFrame.PREFACE_BYTES.dup));
 	}
 }

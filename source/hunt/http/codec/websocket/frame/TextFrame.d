@@ -20,7 +20,7 @@ class TextFrame : DataFrame {
     }
 
     TextFrame setPayload(string str) {
-        setPayload(ByteBuffer.wrap(cast(byte[])(str.dup)));
+        setPayload(BufferUtils.toBuffer(cast(byte[])(str.dup)));
         return this;
     }
 

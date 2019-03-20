@@ -72,7 +72,7 @@ struct HttpHeaderValue {
 	
 	private this(string s) {
 		_string = s;
-		// buffer = ByteBuffer.wrap(s.getBytes(StandardCharsets.UTF_8));
+		// buffer = BufferUtils.toBuffer(s.getBytes(StandardCharsets.UTF_8));
 	}
 
 	// ByteBuffer toBuffer() {

@@ -33,7 +33,7 @@ class UnitGenerator : Generator {
         foreach (Frame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
-        ByteBuffer completeBuf = ByteBuffer.allocate(buflen);
+        ByteBuffer completeBuf = BufferUtils.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames
@@ -66,7 +66,7 @@ class UnitGenerator : Generator {
         foreach (WebSocketFrame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
-        ByteBuffer completeBuf = ByteBuffer.allocate(buflen);
+        ByteBuffer completeBuf = BufferUtils.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames

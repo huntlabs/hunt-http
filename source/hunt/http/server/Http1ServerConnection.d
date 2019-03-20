@@ -288,11 +288,11 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     }
 
     void responseH2c() {
-        getSession().encode(ByteBuffer.wrap(PredefinedHttp1Response.H2C_BYTES));
+        getSession().encode(BufferUtils.toBuffer(PredefinedHttp1Response.H2C_BYTES));
     }
 
     void response100Continue() {
-        getSession().encode(ByteBuffer.wrap(PredefinedHttp1Response.CONTINUE_100_BYTES));
+        getSession().encode(BufferUtils.toBuffer(PredefinedHttp1Response.CONTINUE_100_BYTES));
     }
 
     override protected void generateHttpMessageSuccessfully() {

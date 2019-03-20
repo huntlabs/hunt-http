@@ -20,7 +20,7 @@ class UnitParser : Parser {
         int len = std.algorithm.min(numBytes, buf.remaining());
         byte[] arr = new byte[len];
         buf.get(arr, 0, len);
-        this.parse(ByteBuffer.wrap(arr));
+        this.parse(BufferUtils.toBuffer(arr));
     }
 
     /**

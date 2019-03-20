@@ -201,8 +201,8 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
                 new HostPortHttpField(host ~ ":" ~ port),
                 "/data", HttpVersion.HTTP_1_1, fields);
         clientConnection.send(post2, new ByteBuffer[]{
-                ByteBuffer.wrap("test data 2".getBytes("UTF-8")),
-                ByteBuffer.wrap("finished test data 2".getBytes("UTF-8"))}, new TestH2cHandler() {
+                BufferUtils.toBuffer("test data 2".getBytes("UTF-8")),
+                BufferUtils.toBuffer("finished test data 2".getBytes("UTF-8"))}, new TestH2cHandler() {
             override
             public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
@@ -220,8 +220,8 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
                 new HostPortHttpField(host ~ ":" ~ port),
                 "/data", HttpVersion.HTTP_1_1, fields);
         clientConnection.sendRequestWithContinuation(post, new TestH2cHandler(new ByteBuffer[]{
-                ByteBuffer.wrap("hello world!".getBytes("UTF-8")),
-                ByteBuffer.wrap("big hello world!".getBytes("UTF-8"))}) {
+                BufferUtils.toBuffer("hello world!".getBytes("UTF-8")),
+                BufferUtils.toBuffer("big hello world!".getBytes("UTF-8"))}) {
             override
             public bool messageComplete(HttpRequest request, HttpResponse response,
                                            HttpOutputStream output,
