@@ -279,7 +279,7 @@ class HttpParser {
     private this(RequestHandler requestHandler, ResponseHandler responseHandler, 
         int maxHeaderBytes, HttpCompliance compliance) {
         version (HUNT_DEBUG) {
-            warning("create http parser");
+            trace("create http parser");
         }
         _string = new StringBuilder();
         _uri = new StringBuilder(INITIAL_URI_LENGTH);

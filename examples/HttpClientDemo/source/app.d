@@ -43,9 +43,18 @@ void main(string[] args) {
     HttpClient client = new HttpClient(http2Configuration);
 
     FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
-    client.connect("localhost", 8080, promise);
+    client.connect("127.0.0.1", 8080, promise);
 
-    HttpConnection connection = promise.get();
+    HttpConnection connection;
+    
+    try {
+        connection = promise.get();
+    } catch(Exception ex) {
+        warning(ex.msg);
+        // Thread.sleep(2.seconds);
+        NetUtil.stopEventLoop();
+        return;
+    }
     trace(connection.getHttpVersion());
 
     if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {

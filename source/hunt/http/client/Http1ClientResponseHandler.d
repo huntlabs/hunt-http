@@ -13,9 +13,11 @@ import hunt.io;
 import hunt.logging;
 import hunt.text.Common;
 
+version(WITH_HUNT_TRACE) {
 import hunt.trace.Constrants;
 import hunt.trace.Plugin;
 import hunt.trace.Span;
+}
 
 import std.string : icmp;
 import std.conv;
@@ -32,19 +34,20 @@ class Http1ClientResponseHandler : ResponseHandler {
     protected ClientHttpHandler clientHttpHandler;
     protected HttpFields trailer;
 
-    private Span _span;
-    private string[string] tags;
-
     this(ClientHttpHandler clientHttpHandler) {
         this.clientHttpHandler = clientHttpHandler;
 
     }
 
     package(hunt.http.client) void onReady() {
-        if(request !is null)
-            initializeTracer(request);
+        version(WITH_HUNT_TRACE) {
+            if(request !is null) {
+                initializeTracer(request);
+            }
+        }
     }
 
+version(WITH_HUNT_TRACE) {
     private void initializeTracer(HttpRequest request) {
         HttpURI uri = request.getURI();
         tags[HTTP_HOST] = uri.getHost();
@@ -58,6 +61,19 @@ class Http1ClientResponseHandler : ResponseHandler {
             request.getFields().put("b3", _span.defaultId());
         }
     }
+
+    private Span _span;
+    private string[string] tags;
+
+    private void endTraceSpan(string error) {
+        if(_span !is null) {
+            tags[HTTP_STATUS_CODE] = to!string(response.getStatus());
+            tags[HTTP_RESPONSE_SIZE] = to!string(response.getContentLength());
+
+            traceSpanAfter(_span , tags , error);
+        }
+    }    
+}    
 
     override
     final bool startResponse(HttpVersion ver, int status, string reason) {
@@ -111,18 +127,9 @@ class Http1ClientResponseHandler : ResponseHandler {
         trailer.add(field);
     }
 
-    private void endTraceSpan(string error) {
-        if(_span !is null) {
-            tags[HTTP_STATUS_CODE] = to!string(response.getStatus());
-            tags[HTTP_RESPONSE_SIZE] = to!string(response.getContentLength());
-
-            traceSpanAfter(_span , tags , error);
-        }
-    }
-
     protected bool http1MessageComplete() {
         try {
-            endTraceSpan("");
+            version(WITH_HUNT_TRACE) endTraceSpan("");
             return clientHttpHandler.messageComplete(request, response, outputStream, connection);
         } finally {
             string requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);
