@@ -6,6 +6,7 @@
 | package | version | purpose |
 |--------|--------|--------|
 | hunt-trace |  0.2.0    |  Tracing for API requests  |
+
 **Note:**
 To support requst tracing, your project must add these packages:
 1. hunt-trace
