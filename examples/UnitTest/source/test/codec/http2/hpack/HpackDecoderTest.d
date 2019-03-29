@@ -8,6 +8,7 @@ import hunt.Assert;
 import hunt.util.UnitTest;
 
 import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 import hunt.collection.Iterator;
 
 

@@ -4,6 +4,7 @@ import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.collection.ByteBuffer;
+import hunt.collection.BufferUtils;
 
 import std.algorithm;
 

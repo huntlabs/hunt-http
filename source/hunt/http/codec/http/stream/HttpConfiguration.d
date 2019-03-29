@@ -1,15 +1,17 @@
 module hunt.http.codec.http.stream.HttpConfiguration;
 
 import hunt.http.codec.http.stream.FlowControlStrategy;
-
-import hunt.net.secure.SecureSessionFactory;
-import hunt.net.Config;
 import hunt.http.codec.http.model.HttpVersion;
-import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
-import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
 
-deprecated("Using HttpConfiguration instead.")
-alias Http2Configuration = HttpConfiguration;
+import hunt.net.Config;
+
+// dfmt off
+version(Have_hunt_security) {
+    import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
+    import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
+    import hunt.net.secure.SecureSessionFactory;
+}
+// dfmt on
 
 /**
 */
@@ -20,7 +22,10 @@ class HttpConfiguration {
 
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
-    private SecureSessionFactory secureSessionFactory; 
+
+    version(Have_hunt_security) {
+        private SecureSessionFactory secureSessionFactory; 
+    }
     // private string _sslCertificate;
     // private string _sslPrivateKey;
 
@@ -312,6 +317,8 @@ class HttpConfiguration {
         this._isSecureConnectionEnabled = status;
     }
 
+version(Have_hunt_security) {  
+
     /**
      * Get the SSL/TLS connection factory.
      *
@@ -330,6 +337,7 @@ class HttpConfiguration {
         this.secureSessionFactory = secureSessionFactory;
     }
 
+}
     // string sslCertificate() {
     //     return _sslCertificate;
     // }

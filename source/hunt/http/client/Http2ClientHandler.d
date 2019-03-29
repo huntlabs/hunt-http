@@ -7,9 +7,15 @@ import hunt.http.client.Http2ClientConnection;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.stream.AbstractHttpHandler;
 import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.net.secure.SecureSession;
-import hunt.net.secure.SecureSessionFactory;
 import hunt.net.Session;
+
+import hunt.net.secure.SecureSession;
+
+// dfmt off
+version(Have_hunt_security) {
+    import hunt.net.secure.SecureSessionFactory;
+}
+// dfmt on
 
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
@@ -40,30 +46,34 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            SecureSessionFactory factory = config.getSecureSessionFactory();
-            SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
+            version(Have_hunt_security) {
+                SecureSessionFactory factory = config.getSecureSessionFactory();
+                SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
 
-                string protocol = "http/1.1";
-                string p = sslSession.getApplicationProtocol();
-                if(p.empty)
-                    warningf("The selected application protocol is empty. now use default: %s", protocol);
-                else
-                    protocol = p;
+                    string protocol = "http/1.1";
+                    string p = sslSession.getApplicationProtocol();
+                    if(p.empty)
+                        warningf("The selected application protocol is empty. now use default: %s", protocol);
+                    else
+                        protocol = p;
 
-                infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
-                switch (protocol) {
-                    case "http/1.1":
-                        initializeHttp1ClientConnection(session, context, sslSession);
-                        break;
-                    case "h2":
-                        initializeHttp2ClientConnection(session, context, sslSession);
-                        break;
-                    default:
-                        throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
-                }
-            });
+                    infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
+                    switch (protocol) {
+                        case "http/1.1":
+                            initializeHttp1ClientConnection(session, context, sslSession);
+                            break;
+                        case "h2":
+                            initializeHttp2ClientConnection(session, context, sslSession);
+                            break;
+                        default:
+                            throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
+                    }
+                });
 
-            session.attachObject(cast(Object)secureSession);
+                session.attachObject(cast(Object)secureSession);
+            } else {
+                assert(false, "Please read Readme.md in project hunt-net to support SSL.");
+            }
         } else {
             if (config.getProtocol().empty) {
                 initializeHttp1ClientConnection(session, context, null);

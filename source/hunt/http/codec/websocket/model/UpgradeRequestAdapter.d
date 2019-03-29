@@ -4,7 +4,11 @@ import hunt.http.codec.http.model.Cookie;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.text.QuoteUtil;
 
-import hunt.security.Principal;
+// dfmt off
+version(Have_hunt_security) {
+    import hunt.security.Principal;
+}
+// dfmt on
 
 import hunt.http.codec.websocket.utils.HeaderValueGenerator;
 

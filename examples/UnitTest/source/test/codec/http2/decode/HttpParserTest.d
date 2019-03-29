@@ -80,7 +80,6 @@ class HttpParserTest {
         }
     }
 
-
     void HttpMethodTest() {
         Assert.assertEquals(HttpMethod.Null, HttpMethod.lookAheadGet(BufferUtils.toBuffer("Wibble ")));
         Assert.assertEquals(HttpMethod.Null, HttpMethod.lookAheadGet(BufferUtils.toBuffer("GET")));

@@ -30,6 +30,7 @@ import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
+import hunt.collection.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.http.codec.http.model.HttpHeader;

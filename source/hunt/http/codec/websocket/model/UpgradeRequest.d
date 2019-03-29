@@ -4,8 +4,11 @@ import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.http.model.Cookie;
 import hunt.http.codec.http.model.HttpURI;
 
-// import hunt.net.URI;
-import hunt.security.Principal;
+// dfmt off
+version(Have_hunt_security) {
+    import hunt.security.Principal;
+}
+// dfmt on
 
 import hunt.collection;
 
@@ -173,7 +176,7 @@ interface UpgradeRequest {
      *
      * @return the user principal
      */
-    Principal getUserPrincipal();
+    version(Have_hunt_security) Principal getUserPrincipal();
 
     /**
      * Test if a specific sub-protocol is offered
