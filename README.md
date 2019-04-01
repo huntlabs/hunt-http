@@ -8,7 +8,7 @@
 | hunt-trace |  0.2.0    |  Tracing for API requests  |
 
 **Note:**
-To support request tracing, your project must add these packages:
+To support request tracing, you must add these packages to your project:
 1. hunt-trace
 
 ## TODO
