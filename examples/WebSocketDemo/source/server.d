@@ -8,6 +8,7 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.WebSocketHandler;
+import hunt.collection.ByteBuffer;
 
 
 import hunt.logging;
@@ -55,6 +56,14 @@ void main(string[] args)
                         string msg = textFrame.getPayloadAsUTF8();
                         tracef("Server received: " ~ textFrame.toString() ~ ", " ~ msg);
                         connection.sendText(msg); // echo back
+                        break;
+                    }
+
+                    case FrameType.BINARY: {
+                        BinaryFrame bf = cast(BinaryFrame)frame;
+                        ByteBuffer buf = bf.getPayload;
+                        byte[] data = buf.getRemaining();
+                        tracef("%(%02X %)", data);
                         break;
                     }
 

@@ -27,7 +27,7 @@ class CommonDecoder : DecoderChain {
             debug infof("start decoding ...");
         }
         Object attachment = session.getAttachment();
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("decoding with %s", typeid(attachment).name);
         }
 

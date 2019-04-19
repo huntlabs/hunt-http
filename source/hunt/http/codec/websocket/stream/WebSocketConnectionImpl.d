@@ -212,8 +212,12 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
         }
 
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
-        if (e !is null)
+        if (e !is null) {
+            version(HUNT_HTTP_DEBUG) {
+                trace(BufferUtils.toDetailString(frame.getPayload()));
+            }
             e.incomingFrame(frame);
+        }
     }
 
     override bool isEncrypted() {

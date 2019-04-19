@@ -49,11 +49,14 @@ void main(string[] args) {
             promise, handlerEx, incomingFramesEx);
 
     WebSocketConnection webSocketConnection = promise.get();
-    webSocketConnection.sendText("Hello WebSocket").thenAccept((r) {
+    // webSocketConnection.sendText("Hello WebSocket").thenAccept((r) {
+    //     tracef("Client sends text frame success.");
+    // });
+
+    webSocketConnection.sendData([0x12, 0x13]).thenAccept((r) {
         tracef("Client sends text frame success.");
     });
 
-    getchar();
     client.stop();
 }
 

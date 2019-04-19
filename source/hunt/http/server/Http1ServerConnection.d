@@ -218,10 +218,12 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                 webSocketConnection.setNextIncomingFrames(new class IncomingFrames {
 
                     void incomingError(Exception t) {
+                        version(HUNT_DEBUG) warning(t.msg);
                         webSocketHandler.onError(t, webSocketConnection);
                     }
 
                     void incomingFrame(Frame frame) {
+                        version(HUNT_HTTP_DEBUG) trace(BufferUtils.toDetailString(frame.getPayload()));
                         webSocketHandler.onFrame(frame, webSocketConnection);
                     }
                 });

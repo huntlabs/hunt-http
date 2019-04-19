@@ -62,7 +62,7 @@ class Parser {
     }
 
     private void assertSanePayloadLength(long len) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("%s Payload Length: %s - %s", policy.getBehavior(), 
                 len.to!string(), this.toString());
         }
@@ -142,7 +142,7 @@ class Parser {
     }
 
     protected void notifyFrame(Frame f) {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
 
         if (policy.getBehavior() == WebSocketBehavior.SERVER) {
@@ -181,6 +181,12 @@ class Parser {
     }
 
     void parse(ByteBuffer buffer) {
+        
+        version(HUNT_HTTP_DEBUG) {
+            byte[] bufdata = buffer.getRemaining();
+            tracef("remaining: %d,  date: %(%02X %)", buffer.remaining(), bufdata);
+        }
+
         if (buffer.remaining() <= 0) {
             return;
         }
@@ -189,6 +195,7 @@ class Parser {
             while (parseFrame(buffer)) {
                 version(HUNT_DEBUG) {
                     tracef("%s Parsed Frame: %s", policy.getBehavior(), frame);
+                    // info(BufferUtils.toDetailString(frame.getPayload()));
                 }
                 notifyFrame(frame);
                 if (frame.isDataFrame()) {
@@ -499,11 +506,11 @@ class Parser {
             buffer.limit(limit);
             buffer.position(buffer.position() + window.remaining());
 
-            version(HUNT_DEBUG) {
-                tracef("%s Window: %s", policy.getBehavior(), BufferUtils.toDetailString(window));
-            }
-
             maskProcessor.process(window);
+
+            version(HUNT_HTTP_DEBUG) {
+                tracef("%s Window(unmarked): %s", policy.getBehavior(), BufferUtils.toDetailString(window));
+            }
 
             if (window.remaining() == payloadLength) {
                 // We have the whole content, no need to copy.

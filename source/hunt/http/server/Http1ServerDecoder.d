@@ -35,8 +35,8 @@ class Http1ServerDecoder : DecoderChain {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
         Object attachment = session.getAttachment();
-        version (HUNT_DEBUG)
-            infof("session type: %s", typeid(attachment));
+        version (HUNT_HTTP_DEBUG)
+            tracef("session type: %s", typeid(attachment));
 
         AbstractConnection abstractConnection = cast(AbstractConnection) attachment;
         if (abstractConnection is null) {
