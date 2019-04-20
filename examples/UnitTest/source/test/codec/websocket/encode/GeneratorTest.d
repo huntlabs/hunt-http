@@ -259,7 +259,7 @@ class GeneratorTest {
         parser.parse(completeBuffer);
 
         // Assert validity of frame
-        WebSocketFrame actual = capture.getFrames()[0];
+        WebSocketFrame actual = capture.getFrames().poll();
         Assert.assertThat("Frame.opcode", actual.getOpCode(), (OpCode.BINARY));
         Assert.assertThat("Frame.payloadLength", actual.getPayloadLength(), (payload.length));
 

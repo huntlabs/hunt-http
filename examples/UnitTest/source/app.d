@@ -26,6 +26,7 @@ import test.codec.http2.encode.TestPredefinedHttp1Response;
 import test.codec.http2.encode.URLEncodedTest;
 
 import test.codec.websocket.decode.ParserTest;
+import test.codec.websocket.decode.RFC6455ExamplesParserTest;
 import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
@@ -39,10 +40,10 @@ import HttpBenchmark;
 
 void main() {
 
-	HttpBenchmark hb = new HttpBenchmark();
-	hb.benchmark(1000);
+	// HttpBenchmark hb = new HttpBenchmark();
+	// hb.benchmark(1000);
 
-	testHpackDecoder();
+	// testHpackDecoder();
 
 	// **********************
 	// bug
@@ -95,9 +96,9 @@ void main() {
 	// **********************
 	testUnits!GeneratorTest(); 
 	testUnits!ParserTest(); 
+	testUnits!RFC6455ExamplesParserTest(); 
 	testUnits!QuoteUtilTest(); 
 	testUnits!WebSocketFrameTest(); 
-
 }
 
 void testHpackDecoder() {

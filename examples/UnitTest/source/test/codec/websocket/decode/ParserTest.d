@@ -8,9 +8,9 @@ import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
+import hunt.Assert;
 import hunt.collection;
 import hunt.text.Common;
-import hunt.Assert;
 
 import test.codec.websocket.utils.Hex;
 import test.codec.websocket.IncomingFramesCapture;
@@ -172,7 +172,7 @@ class ParserTest {
         parser.parse(buf);
 
         capture.assertNoErrors();
-        Assert.assertThat("Frame Count", capture.getFrames().length, (0));
+        Assert.assertThat("Frame Count", capture.getFrames().size(), (0));
     }
 
     
@@ -206,9 +206,9 @@ class ParserTest {
         }
 
         capture.assertNoErrors();
-        WebSocketFrame[] captureFrames = capture.getFrames();
-        Assert.assertThat("Frame Count", captureFrames.length, (2));
-        WebSocketFrame frame = captureFrames[0];
+        Queue!WebSocketFrame captureFrames = capture.getFrames();
+        Assert.assertThat("Frame Count", captureFrames.size(), (2));
+        WebSocketFrame frame = captureFrames.poll();
         Assert.assertThat("Frame[0].opcode", frame.getOpCode(), (OpCode.TEXT));
         ByteBuffer actualPayload = frame.getPayload();
         Assert.assertThat("Frame[0].payload.length", actualPayload.remaining(), (payload.length));

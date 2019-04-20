@@ -6,6 +6,8 @@ import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.collection.BufferUtils;
+import hunt.collection.Queue;
+import hunt.concurrency.LinkedBlockingQueue;
 import hunt.logging;
 import hunt.Assert;
 
@@ -14,11 +16,11 @@ import std.format;
 
 class IncomingFramesCapture : IncomingFrames {
 
-    private WebSocketFrame[] frames;
+    private LinkedBlockingQueue!(WebSocketFrame) frames;
     private Throwable[] errors;
 
     this() {
-        
+        frames = new LinkedBlockingQueue!(WebSocketFrame)();
     }
 
     void assertErrorCount(size_t expectedCount) {
@@ -26,18 +28,18 @@ class IncomingFramesCapture : IncomingFrames {
     }
 
     void assertFrameCount(size_t expectedCount) {
-        if (frames.length != expectedCount) {
+        if (frames.size() != expectedCount) {
             // dump details
             tracef("Expected %d frame(s)%n", expectedCount);
-            tracef("But actually captured %d frame(s)%n", frames.length);
+            tracef("But actually captured %d frame(s)%n", frames.size());
             int i = 0;
-            foreach (Frame frame ; frames) {
+            foreach (WebSocketFrame frame ; frames) {
                 tracef(" [%d] Frame[%s] - %s%n", i++,
                         OpCode.name(frame.getOpCode()),
                         BufferUtils.toDetailString(frame.getPayload()));
             }
         }
-        Assert.assertThat("Captured frame count", frames.length, (expectedCount));
+        Assert.assertThat("Captured frame count", frames.size(), (expectedCount));
     }
 
     // void assertHasErrors(Class<? extends WebSocketException> errorType, int expectedCount) {
@@ -54,7 +56,7 @@ class IncomingFramesCapture : IncomingFrames {
     }
 
     void assertHasNoFrames() {
-        Assert.assertThat("Frame count", frames.length, (0));
+        Assert.assertThat("Frame count", frames.size(), (0));
     }
 
     void assertNoErrors() {
@@ -66,9 +68,9 @@ class IncomingFramesCapture : IncomingFrames {
     }
 
     void dump() {
-        tracef("Captured %d incoming frames%n", frames.length);
+        tracef("Captured %d incoming frames%n", frames.size());
         int i = 0;
-        foreach (Frame frame ; frames) {
+        foreach (WebSocketFrame frame ; frames) {
             tracef("[%3d] %s%n", i++, frame);
             tracef("          payload: %s%n", BufferUtils.toDetailString(frame.getPayload()));
         }
@@ -98,7 +100,7 @@ class IncomingFramesCapture : IncomingFrames {
         return count;
     }
 
-    WebSocketFrame[] getFrames() {
+    Queue!WebSocketFrame getFrames() {
         return frames;
     }
 
@@ -113,10 +115,10 @@ class IncomingFramesCapture : IncomingFrames {
         WebSocketFrame copy = WebSocketFrameHelper.copy(frame);
         // TODO: might need to make this optional (depending on use by client vs server tests)
         // Assert.assertThat("frame.masking must be set",frame.isMasked(),(true));
-        frames ~= (copy);
+        frames.add(copy);
     }
 
     int size() {
-        return cast(int)frames.length;
+        return frames.size();
     }
 }
