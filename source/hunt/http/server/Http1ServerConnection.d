@@ -25,6 +25,8 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 
+import hunt.http.util.Completable;
+
 import hunt.net.ConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Session;

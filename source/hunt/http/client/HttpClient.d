@@ -11,11 +11,10 @@ import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
+import hunt.http.util.Completable;
 
 import hunt.Exceptions;
 import hunt.concurrency.CompletableFuture;
-
-;
 import hunt.concurrency.Promise;
 
 import hunt.collection.ByteBuffer;
