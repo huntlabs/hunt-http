@@ -22,11 +22,10 @@ import hunt.trace.Span;
 import std.string : icmp;
 import std.conv;
 
-alias ResponseHandler = HttpParser.ResponseHandler;
 
 /**
 */
-class Http1ClientResponseHandler : ResponseHandler {
+class Http1ClientResponseHandler : HttpResponseHandler {
     package(hunt.http.client)  Http1ClientConnection connection;
     package(hunt.http.client)  HttpResponse response;
     package(hunt.http.client)  HttpRequest request;
@@ -77,13 +76,13 @@ version(WITH_HUNT_TRACE) {
 
     override
     final bool startResponse(HttpVersion ver, int status, string reason) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("client received the response line, %s, %s, %s", ver, status, reason);
         }
 
         if (status == HttpStatus.CONTINUE_100 && HttpStatus.Code.CONTINUE.getMessage().equalsIgnoreCase(reason)) {
             clientHttpHandler.continueToSendData(request, response, outputStream, connection);
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG) {
                 tracef("client received 100 continue, current parser state is %s", connection.getParser().getState());
             }
             return true;
@@ -105,16 +104,19 @@ version(WITH_HUNT_TRACE) {
 
     override
     final bool headerComplete() {
+        version(HUNT_HTTP_DEBUG_MORE) trace("handle response");
         return clientHttpHandler.headerComplete(request, response, outputStream, connection);
     }
 
     override
     final bool content(ByteBuffer item) {
+        version(HUNT_HTTP_DEBUG_MORE) trace("handle response");
         return clientHttpHandler.content(item, request, response, outputStream, connection);
     }
 
     override
     bool contentComplete() {
+        version(HUNT_HTTP_DEBUG_MORE) trace("handle response");
         return clientHttpHandler.contentComplete(request, response, outputStream, connection);
     }
 
@@ -128,6 +130,7 @@ version(WITH_HUNT_TRACE) {
     }
 
     protected bool http1MessageComplete() {
+        version(HUNT_HTTP_DEBUG_MORE) trace("handle response");
         try {
             version(WITH_HUNT_TRACE) endTraceSpan("");
             return clientHttpHandler.messageComplete(request, response, outputStream, connection);

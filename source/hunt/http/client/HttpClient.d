@@ -7,6 +7,11 @@ import hunt.http.client.Http2ClientContext;
 import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.Http2ClientHandler;
 
+import hunt.http.client.HttpClientResponse;
+import hunt.http.client.HttpClientRequest;
+import hunt.http.client.Call;
+import hunt.http.client.RealCall;
+
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.HttpConfiguration;
@@ -30,20 +35,37 @@ import hunt.util.Lifecycle;
 import core.atomic;
 import hunt.collection.BufferUtils;
 
+shared static this() {
+    NetUtil.startEventLoop();
+}
+
+shared static ~this() {
+    NetUtil.stopEventLoop();
+}
+
+
+
 class HttpClient : AbstractLifecycle {
 
     private AbstractClient client;
-    private Map!(int, Http2ClientContext) http2ClientContext; // = new ConcurrentHashMap!()();
+    private Map!(int, Http2ClientContext) http2ClientContext;
     private static shared int sessionId = 0;
-    private HttpConfiguration http2Configuration;
+    private HttpConfiguration httpConfiguration;
+
+    this() {
+        HttpConfiguration config = new HttpConfiguration();
+        config.getTcpConfiguration().setTimeout(60 * 1000);
+        this(config);
+    }
 
     this(HttpConfiguration c) {
         if (c is null) {
             throw new IllegalArgumentException("the http2 configuration is null");
         }
         http2ClientContext = new HashMap!(int, Http2ClientContext)();
+         // = new ConcurrentHashMap!()();
 
-        http2ClientContext.put(111, null);
+        // http2ClientContext.put(111, null);
 
         Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(),
                 new Http2ClientDecoder());
@@ -63,7 +85,7 @@ class HttpClient : AbstractLifecycle {
             AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
 
             session.handler((ByteBuffer buffer) {
-                version (HUNT_DEBUG) {
+                version (HUNT_HTTP_DEBUG_MORE) {
                     byte[] data = buffer.getRemaining();
                     infof("data received (%d bytes): ", data.length);
                     if (data.length <= 64) {
@@ -77,7 +99,7 @@ class HttpClient : AbstractLifecycle {
             });
         });
 
-        this.http2Configuration = c;
+        this.httpConfiguration = c;
     }
 
     Completable!(HttpClientConnection) connect(string host, int port) {
@@ -112,8 +134,8 @@ class HttpClient : AbstractLifecycle {
     private string _host;
     private int _port;
 
-    HttpConfiguration getHttp2Configuration() {
-        return http2Configuration;
+    HttpConfiguration getHttpConfiguration() {
+        return httpConfiguration;
     }
 
     override protected void initialize() {
@@ -124,5 +146,12 @@ class HttpClient : AbstractLifecycle {
             client.stop();
         }
     }
+
+  /**
+   * Prepares the {@code request} to be executed at some point in the future.
+   */
+  Call newCall(Request request) {
+    return RealCall.newRealCall(this, request, false /* for web socket */);
+  }    
 
 }

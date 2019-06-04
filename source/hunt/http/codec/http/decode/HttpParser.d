@@ -278,7 +278,7 @@ class HttpParser {
     /* ------------------------------------------------------------------------------- */
     private this(RequestHandler requestHandler, ResponseHandler responseHandler, 
         int maxHeaderBytes, HttpCompliance compliance) {
-        version (HUNT_DEBUG) {
+        version (HUNT_HTTP_DEBUG) {
             trace("create http parser");
         }
         _string = new StringBuilder();
@@ -567,12 +567,12 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     private bool handleHeaderContentMessage() {
-        version (HUNT_DEBUG) trace("handling headers ...");
+        version (HUNT_HTTP_DEBUG) trace("handling headers ...");
         bool handle_header = _handler.headerComplete();
         _headerComplete = true;
-        version (HUNT_DEBUG) trace("handling content ...");
+        version (HUNT_HTTP_DEBUG) trace("handling content ...");
         bool handle_content = _handler.contentComplete();
-        version (HUNT_DEBUG) trace("handling message ...");
+        version (HUNT_HTTP_DEBUG) trace("handling message ...");
         bool handle_message = _handler.messageComplete();
         return handle_header || handle_content || handle_message;
     }
@@ -828,7 +828,7 @@ class HttpParser {
         // handler last header if any.  Delayed to here just in case there was a continuation line (above)
         if (!_headerString.empty() || !_valueString.empty()) {
             // Handle known headers
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG_MORE) {
                 tracef("parsing header: %s, original name: %s, value: %s ", 
                     _header.toString(), _headerString, _valueString);
             }
@@ -1024,7 +1024,7 @@ class HttpParser {
                                     return handle;
                                 }
                                 case EndOfContent.NO_CONTENT: {
-                                    version (HUNT_DEBUG) trace("parsing done for no content");
+                                    version (HUNT_HTTP_DEBUG) trace("parsing done for no content");
                                     setState(State.END);
                                     return handleHeaderContentMessage();
                                 }
@@ -1254,7 +1254,7 @@ class HttpParser {
      * @return True if an {@link RequestHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
             // tracef("buffer: %s", BufferUtils.toHexString(buffer));
 
@@ -1292,7 +1292,7 @@ class HttpParser {
             // parse headers
             if (_state == State.HEADER) {
                 if (parseFields(buffer)) {
-                    version(HUNT_DEBUG) tracef("after parseFields =>%s", buffer.toString());
+                    version(HUNT_HTTP_DEBUG) tracef("after parseFields =>%s", buffer.toString());
                     return true;
                 }
             }
@@ -1361,7 +1361,7 @@ class HttpParser {
                         break;
 
                     default:
-                        version(HUNT_DEBUG)
+                        version(HUNT_HTTP_DEBUG)
                             tracef("%s EOF in %s", this, _state);
                         setState(State.CLOSED);
                         _handler.badMessage(new BadMessageException(HttpStatus.BAD_REQUEST_400));
@@ -1380,10 +1380,10 @@ class HttpParser {
     }
 
     protected void badMessage(BadMessageException x) {
-        // version(HUNT_DEBUG)
+        // version(HUNT_HTTP_DEBUG)
             warning("Parse exception: " ~ this.toString() ~ " for " ~ _handler.toString() ~ 
                 ", Exception: ", x.msg);
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             Throwable t = x;
             while((t = t.next) !is null) {
                 error(t.msg);
@@ -1435,7 +1435,7 @@ class HttpParser {
 
                         _contentPosition += _contentChunk.remaining();
                         buffer.position(buffer.position() + _contentChunk.remaining());
-
+                        version(HUNT_HTTP_DEBUG) trace("setting content...");
                         if (_handler.content(_contentChunk))
                             return true;
 
@@ -1537,7 +1537,7 @@ class HttpParser {
      * Signal that the associated data source is at EOF
      */
     void atEOF() {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("atEOF %s", this);
         _eof = true;
     }
@@ -1548,14 +1548,14 @@ class HttpParser {
      * Request that the associated data source be closed
      */
     void close() {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("close %s", this);
         setState(State.CLOSE);
     }
 
     /* ------------------------------------------------------------------------------- */
     void reset() {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("reset %s", this);
 
         // reset state
@@ -1575,7 +1575,7 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        // version(HUNT_DEBUG)
+        // version(HUNT_HTTP_DEBUG)
         //     tracef("%s --> %s", _state, state);
         _state = state;
     
@@ -1589,7 +1589,7 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(FieldState state) {
-        // version(HUNT_DEBUG)
+        // version(HUNT_HTTP_DEBUG)
         //     tracef("%s:%s --> %s", _state, _field, state);
         _fieldState = state;
     }
@@ -1625,6 +1625,7 @@ class HttpParser {
      * then it is sufficient for the caller to process the events only once.
      */
     interface HttpHandler {
+
         bool content(ByteBuffer item);
 
         bool headerComplete();
@@ -1703,7 +1704,7 @@ class HttpParser {
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------- */
-    interface ResponseHandler :HttpHandler {
+    interface ResponseHandler : HttpHandler {
         /**
          * This is the method called by parser when the HTTP request line is parsed
          *
@@ -1740,3 +1741,7 @@ class HttpParser {
         }
     }
 }
+
+
+alias HttpRequestHandler = HttpParser.RequestHandler;
+alias HttpResponseHandler = HttpParser.ResponseHandler;

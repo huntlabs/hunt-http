@@ -236,6 +236,7 @@ class MetaData : Iterable!HttpField {
     static class Response : MetaData {
         private int _status;
         private string _reason;
+        private string _contentType;
 
         this() {
             this(HttpVersion.Null, 0, null);
@@ -289,10 +290,21 @@ class MetaData : Iterable!HttpField {
             _reason = reason;
         }
 
-        override
-        string toString() {
+        string getContentType() {
+            if (_contentType.empty()) {
+                if (_fields !is null) {
+                    HttpField field = _fields.getField(HttpHeader.CONTENT_TYPE);
+                    _contentType = field is null ? "" : field.getValue();
+                }
+            }
+            return _contentType;
+        }
+
+
+        override string toString() {
             HttpFields fields = getFields();
-            return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), fields is null ? -1 : fields.size(), getContentLength());
+            return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), 
+                fields is null ? -1 : fields.size(), getContentLength());
         }
     }
 }

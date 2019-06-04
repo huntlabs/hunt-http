@@ -1,7 +1,7 @@
 module hunt.http.codec.http.model.HttpHeader;
 
 import hunt.util.Traits;
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 
 import std.algorithm;
 import std.conv;
@@ -163,9 +163,10 @@ struct HttpHeader {
     // private ByteBuffer _buffer;
 
     this(string s) {
+        // tracef("<%s>", s);
         _string = s;
         _bytes = cast(byte[]) s.dup; // StringUtils.getBytes(s);
-        _bytesColonSpace = cast(byte[])(s ~ ": ").dup;
+        _bytesColonSpace = cast(byte[])(_string ~ ": ").dup;
         _ordinal = cast(int) hashOf(s.toLower());
         // _buffer = BufferUtils.toBuffer(_bytes);
     }

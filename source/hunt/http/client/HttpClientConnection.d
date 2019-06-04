@@ -15,28 +15,27 @@ import hunt.concurrency.Promise;
 import hunt.collection.ByteBuffer;
 import hunt.collection.Collection;
 
-alias Request = HttpRequest;
-alias Response = HttpResponse;
+// alias Response = HttpResponse;
 
 interface HttpClientConnection : HttpConnection {
 
-    void send(Request request, Promise!(HttpOutputStream) promise, ClientHttpHandler handler);
+    void send(HttpRequest request, Promise!(HttpOutputStream) promise, ClientHttpHandler handler);
 
-    void send(Request request, ClientHttpHandler handler);
+    void send(HttpRequest request, ClientHttpHandler handler);
 
-    void send(Request request, ByteBuffer buffer, ClientHttpHandler handler);
+    void send(HttpRequest request, ByteBuffer buffer, ClientHttpHandler handler);
 
-    void send(Request request, ByteBuffer[] buffers, ClientHttpHandler handler);
+    void send(HttpRequest request, ByteBuffer[] buffers, ClientHttpHandler handler);
 
-    // void send(Request request, Collection!ByteBuffer buffers, ClientHttpHandler handler);
+    // void send(HttpRequest request, Collection!ByteBuffer buffers, ClientHttpHandler handler);
 
-    HttpOutputStream sendRequestWithContinuation(Request request, ClientHttpHandler handler);
+    HttpOutputStream sendRequestWithContinuation(HttpRequest request, ClientHttpHandler handler);
 
-    HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler);
+    HttpOutputStream getHttpOutputStream(HttpRequest request, ClientHttpHandler handler);
 
-    void upgradeHttp2(Request request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
+    void upgradeHttp2(HttpRequest request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
                       ClientHttpHandler upgradeHandler, ClientHttpHandler http2ResponseHandler);
 
-    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
+    void upgradeWebSocket(HttpRequest request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
                           ClientHttpHandler upgradeHandler, IncomingFrames incomingFrames);
 }

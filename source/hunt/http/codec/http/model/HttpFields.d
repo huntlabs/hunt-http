@@ -16,6 +16,7 @@ import hunt.text.StringTokenizer;
 import hunt.text.StringUtils;
 
 import std.array;
+import std.algorithm;
 import std.container.array;
 import std.conv;
 import std.datetime;
@@ -595,7 +596,7 @@ class HttpFields : Iterable!HttpField {
 		HttpField removed = null;
 		for (int i = _size; i-- > 0;) {
 			HttpField f = _fields[i];
-			if (f.getName().equalsIgnoreCase(name)) {
+			if (icmp(f.getName(), name) == 0) {
 				removed = f;
 				--_size;
 				for (int j = i; j < size; j++)
