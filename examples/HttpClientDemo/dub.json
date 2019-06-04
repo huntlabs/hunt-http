@@ -9,6 +9,6 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG"
+		"HUNT_DEBUG", "HUNT_HTTP_DEBUG"
 	]
 }
