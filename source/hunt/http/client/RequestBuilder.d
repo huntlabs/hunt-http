@@ -4,6 +4,7 @@ import hunt.http.client.HttpClientRequest;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.HttpFields;
+import hunt.http.codec.http.model.HttpMethod;
 
 
 import hunt.Exceptions;
@@ -12,17 +13,15 @@ import std.array;
 import std.algorithm;
 import std.string;
 
-alias RequestBody = Object;
-
 
 /**
 */
 class RequestBuilder {
 
-    HttpURI httpUri;
+    HttpURI _url;
     string _method;
     HttpFields _headers;
-    RequestBody requestBody;
+    RequestBody _requestBody;
 
     /** A mutable map of tags, or an immutable empty map if we don't have any. */
     // Map<Class<?>, Object> tags = Collections.emptyMap();
@@ -33,18 +32,18 @@ class RequestBuilder {
     }
 
     this(Request request) {
-      this.httpUri = request.getURI();
+      this._url = request.getURI();
       this._method = request.getMethod();
-    //   this.requestBody = request.requestBody;
+      this._requestBody = request.getBody();
     //   this.tags = request.tags.isEmpty()
     //       ? Collections.emptyMap()
     //       : new LinkedHashMap<>(request.tags);
       this._headers = new HttpFields();
     }
 
-    RequestBuilder url(HttpURI httpUri) {
-      if (httpUri is null) throw new NullPointerException("url is null");
-      this.httpUri = httpUri;
+    RequestBuilder url(HttpURI url) {
+      if (url is null) throw new NullPointerException("url is null");
+      this._url = url;
       return this;
     }
 
@@ -142,14 +141,15 @@ class RequestBuilder {
 
     RequestBuilder method(string method, RequestBody requestBody) {
       if (method.empty) throw new NullPointerException("method is empty");
-    //   if (requestBody !is null && !HttpMethod.permitsRequestBody(method)) {
-    //     throw new IllegalArgumentException("method " ~ method ~ " must not have a request body.");
-    //   }
-    //   if (requestBody is null && HttpMethod.requiresRequestBody(method)) {
-    //     throw new IllegalArgumentException("method " ~ method ~ " must have a request body.");
-    //   }
+
+      if (requestBody !is null && !HttpMethod.permitsRequestBody(method)) {
+        throw new IllegalArgumentException("method " ~ method ~ " must not have a request body.");
+      }
+      if (requestBody is null && HttpMethod.requiresRequestBody(method)) {
+        throw new IllegalArgumentException("method " ~ method ~ " must have a request body.");
+      }
       this._method = method;
-      this.requestBody = requestBody;
+      this._requestBody = requestBody;
       return this;
     }
 
@@ -180,7 +180,7 @@ class RequestBuilder {
     // }
 
     Request build() {
-      if (httpUri is null) throw new IllegalStateException("url is null");
-      return new Request(this._method, this.httpUri, _headers, 0);
+      if (_url is null) throw new IllegalStateException("url is null");
+      return new Request(_method, _url, _headers, _requestBody);
     }
 }

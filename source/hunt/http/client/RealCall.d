@@ -14,8 +14,9 @@ import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpConnection;
-import hunt.http.codec.http.model.HttpURI;
+import hunt.http.codec.http.model.HttpMethod;
 import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 
 import hunt.concurrency.FuturePromise;
@@ -29,22 +30,16 @@ import core.sync.condition;
 import core.sync.mutex;
 
 class RealCall : Call {
-    HttpClient client;
-
-    /**
-     * There is a cycle between the {@link Call} and {@link Transmitter} that makes this awkward.
-     * This is set after immediately after creating the call instance.
-     */
-    // private HttpClientConnection transmitter;
+    private HttpClient client;
 
     /** The application's original request unadulterated by redirects or auth headers. */
-    Request originalRequest;
-    bool forWebSocket;
+    private Request originalRequest;
+    private bool forWebSocket;
 
     // Guarded by this.
     private bool executed;
-Mutex responseLocker;
-Condition responseCondition;
+    private Mutex responseLocker;
+    private Condition responseCondition;
 
     private this(HttpClient client, Request originalRequest, bool forWebSocket) {
         this.client = client;
@@ -59,7 +54,6 @@ Condition responseCondition;
 
         // Safely publish the Call instance to the EventListener.
         RealCall call = new RealCall(client, originalRequest, forWebSocket);
-        // call.transmitter = new Http1ClientConnection(client, call);
         return call;
     }
 
@@ -87,8 +81,6 @@ Condition responseCondition;
             connection = promise.get();
         } catch(Exception ex) {
             warning(ex.msg);
-            // Thread.sleep(2.seconds);
-            // NetUtil.stopEventLoop();
             return null;
         }
         
@@ -96,8 +88,8 @@ Condition responseCondition;
         HttpClientResponse hcr;
 
         if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
-            Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
-            http1ClientConnection.send(originalRequest, new class AbstractClientHttpHandler {
+
+            AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
 
                 override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                         HttpOutputStream output, HttpConnection connection) {
@@ -115,7 +107,19 @@ Condition responseCondition;
                     return true;
                 }
 
-            });
+            };
+
+            Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
+            RequestBody rb = originalRequest.getBody();
+            if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
+                http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+            } else {
+                http1ClientConnection.send(originalRequest, httpHandler);
+            }
+        } else {
+            // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
+            // 
+            warning("Unsupported " ~ connection.getHttpVersion().toString());
         }
 
         version (HUNT_HTTP_DEBUG) info("waitting response...");

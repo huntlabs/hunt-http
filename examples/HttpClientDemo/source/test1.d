@@ -19,11 +19,11 @@ class HttpClientTest1 {
     }
 
     void testGet() {
-        string str = run("http://10.1.222.120:8080/index.html");
+        string str = runGet("http://10.1.223.62:8180/test.html");
         trace(str);
     }
 
-    string run(string url) {
+    string runGet(string url) {
 
         Request request = new RequestBuilder().url(url).build();
         Response response = client.newCall(request).execute();
@@ -33,7 +33,25 @@ class HttpClientTest1 {
         }
 
         return "";
-
     }
+
+    void testPost() {
+        string form = "email=test%40test.com&password=test";
+        string response = post("http://10.1.223.62:8180/testpost", form);
+        trace(response);
+    }
+
+    string post(string url, string content) {
+        string mimeType = "application/x-www-form-urlencoded";
+        RequestBody b = new RequestBody(mimeType, content);
+
+        Request request = new RequestBuilder()
+            .url(url)
+            .post(b)
+            .build();
+
+        Response response = client.newCall(request).execute();
+        return response.getBody().asString();
+  }
 
 }
