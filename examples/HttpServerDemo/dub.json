@@ -9,6 +9,6 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG", "HUNT_METRIC", "HUNT_THREADPOOL"
+		"HUNT_DEBUG","HUNT_DEBUG_MORE", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE", "HUNT_METRIC1"
 	]
 }

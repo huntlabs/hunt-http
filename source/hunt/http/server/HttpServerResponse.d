@@ -7,7 +7,7 @@ import hunt.http.codec.http.model.MetaData;
 class HttpServerResponse : HttpResponse {
 
 	this() {
-		super(HttpVersion.HTTP_1_1, 0, new HttpFields());
+		super(HttpVersion.HTTP_1_1, 200, new HttpFields());
 	}
 
 	this(int status, HttpFields fields, long contentLength) {
