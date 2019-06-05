@@ -54,6 +54,7 @@ class HttpClient : AbstractLifecycle {
     private Map!(int, Http2ClientContext) http2ClientContext;
     private static shared int sessionId = 0;
     private HttpConfiguration httpConfiguration;
+    private Http2ClientContext clientContext;
 
     this() {
         HttpConfiguration config = new HttpConfiguration();
@@ -131,8 +132,6 @@ class HttpClient : AbstractLifecycle {
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);
     }
-
-    Http2ClientContext clientContext;
 
     HttpConfiguration getHttpConfiguration() {
         return httpConfiguration;

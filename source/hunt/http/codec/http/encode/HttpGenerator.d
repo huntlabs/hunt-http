@@ -563,7 +563,8 @@ class HttpGenerator {
 
         version(HUNT_HTTP_DEBUG_MORE) {
             tracef("Header fields:\n%s", metaData.getFields().toString());
-            tracef("generateHeaders %s last=%s content=%s", metaData.toString(), last, BufferUtils.toDetailString(content));
+            tracef("generateHeaders %s last=%s content=%s", metaData.toString(), 
+                last, BufferUtils.toDetailString(content));
         }
 
         // default field values

@@ -5,7 +5,7 @@ import hunt.http.codec.http.model.HttpURI;
 import hunt.text.QuoteUtil;
 
 // dfmt off
-version(Have_hunt_security) {
+version(WITH_HUNT_SECURITY) {
     import hunt.security.Principal;
 }
 // dfmt on

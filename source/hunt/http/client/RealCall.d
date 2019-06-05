@@ -45,8 +45,14 @@ class RealCall : Call {
         this.client = client;
         this.originalRequest = request;
         this.forWebSocket = forWebSocket;
-
-        client.getHttpConfiguration().setSecureConnectionEnabled(request.isHttps());
+        
+        version(WITH_HUNT_SECURITY) {
+            if(request.isHttps()) {
+                client.getHttpConfiguration().setSecureConnectionEnabled(true);
+                // import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
+                // client.getHttpConfiguration().setSecureSessionFactory(new ConscryptSecureSessionFactory());
+            }
+        }
 		responseLocker = new Mutex();
 		responseCondition = new Condition(responseLocker);
     }

@@ -12,7 +12,7 @@ import hunt.net.Session;
 import hunt.net.secure.SecureSession;
 
 // dfmt off
-version(Have_hunt_security) {
+version(WITH_HUNT_SECURITY) {
     import hunt.net.secure.SecureSessionFactory;
 }
 // dfmt on
@@ -46,9 +46,13 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            version(Have_hunt_security) {
+            version(HUNT_HTTP_DEBUG) {
+                info("initilizing a secure connection");
+            }
+
+            version(WITH_HUNT_SECURITY) {
                 SecureSessionFactory factory = config.getSecureSessionFactory();
-                SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
+                SecureSession secureSession = factory.create(session, true, (SecureSession sslSession) {
 
                     string protocol = "http/1.1";
                     string p = sslSession.getApplicationProtocol();
@@ -77,6 +81,10 @@ class Http2ClientHandler : AbstractHttpHandler {
                 assert(false, "To support SSL, please read Readme.md in project hunt-net .");
             }
         } else {
+            version(HUNT_HTTP_DEBUG) {
+                info("initilizing a connection");
+            }
+
             if (config.getProtocol().empty) {
                 initializeHttp1ClientConnection(session, context, null);
             } else {

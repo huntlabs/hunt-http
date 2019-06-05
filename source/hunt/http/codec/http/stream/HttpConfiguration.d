@@ -6,7 +6,7 @@ import hunt.http.codec.http.model.HttpVersion;
 import hunt.net.Config;
 
 // dfmt off
-version(Have_hunt_security) {
+version(WITH_HUNT_SECURITY) {
     import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
     import hunt.net.secure.conscrypt.AbstractConscryptSSLContextFactory;
     import hunt.net.secure.SecureSessionFactory;
@@ -23,7 +23,7 @@ class HttpConfiguration {
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
 
-    version(Have_hunt_security) {
+    version(WITH_HUNT_SECURITY) {
         private SecureSessionFactory secureSessionFactory; 
     }
     // private string _sslCertificate;
@@ -49,7 +49,7 @@ class HttpConfiguration {
     private int websocketPingInterval = 10 * 1000;
 
     this() {
-        version(WithTLS) {
+        version(WITH_HUNT_SECURITY) {
             secureSessionFactory = new ConscryptSecureSessionFactory(
                 new NoCheckConscryptSSLContextFactory(),
                 new DefaultCredentialConscryptSSLContextFactory()
@@ -308,6 +308,8 @@ class HttpConfiguration {
         return _isSecureConnectionEnabled;
     }
 
+version(WITH_HUNT_SECURITY) {  
+
     /**
      * If set true, the server or client enable the SSL/TLS connection.
      *
@@ -316,8 +318,6 @@ class HttpConfiguration {
     void setSecureConnectionEnabled(bool status) {
         this._isSecureConnectionEnabled = status;
     }
-
-version(Have_hunt_security) {  
 
     /**
      * Get the SSL/TLS connection factory.
@@ -337,6 +337,13 @@ version(Have_hunt_security) {
         this.secureSessionFactory = secureSessionFactory;
     }
 
+} else {
+
+    void setSecureConnectionEnabled(bool status) {
+        assert(!status, "Please add the dependency of hunt-security.");
+
+        this._isSecureConnectionEnabled = status;
+    }    
 }
     // string sslCertificate() {
     //     return _sslCertificate;
