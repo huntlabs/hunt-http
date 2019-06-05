@@ -1,5 +1,7 @@
 module hunt.http.client.HttpClientRequest;
 
+import hunt.http.client.RequestBuilder;
+
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpVersion;
@@ -46,6 +48,10 @@ class HttpClientRequest : HttpRequest {
 
 	RequestBody getBody() {
 		return _body;
+	}
+
+	RequestBuilder newBuilder() {
+		return new RequestBuilder(this);
 	}
 }
 

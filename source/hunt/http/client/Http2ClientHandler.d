@@ -57,7 +57,9 @@ class Http2ClientHandler : AbstractHttpHandler {
                     else
                         protocol = p;
 
-                    infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
+                    infof("Client session %s SSL handshake finished. The app protocol is %s", 
+                        session.getSessionId(), protocol);
+
                     switch (protocol) {
                         case "http/1.1":
                             initializeHttp1ClientConnection(session, context, sslSession);
@@ -72,7 +74,7 @@ class Http2ClientHandler : AbstractHttpHandler {
 
                 session.attachObject(cast(Object)secureSession);
             } else {
-                assert(false, "Please read Readme.md in project hunt-net to support SSL.");
+                assert(false, "To support SSL, please read Readme.md in project hunt-net .");
             }
         } else {
             if (config.getProtocol().empty) {

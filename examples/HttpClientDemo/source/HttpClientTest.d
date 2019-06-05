@@ -1,4 +1,4 @@
-module test1;
+module HttpClientTest;
 
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
@@ -11,7 +11,7 @@ import hunt.http.codec.http.model.HttpFields;
 
 import hunt.logging.ConsoleLogger;
 
-class HttpClientTest1 {
+class HttpClientTest {
     HttpClient client;
 
     this() {
@@ -19,7 +19,13 @@ class HttpClientTest1 {
     }
 
     void testGet() {
-        string str = runGet("http://10.1.223.62:8180/test.html");
+        // string str = runGet("http://10.1.223.62:8080/test.html");
+        string str = runGet("http://127.0.0.1:8080/json");
+        trace(str);
+    }
+
+    void testGetHttps() {
+        string str = runGet("https://10.1.222.120:444/index.html");
         trace(str);
     }
 
@@ -29,6 +35,7 @@ class HttpClientTest1 {
         Response response = client.newCall(request).execute();
 
         if (response !is null) {
+            tracef("status code: %d", response.getStatus());
             return response.getBody().asString();
         }
 

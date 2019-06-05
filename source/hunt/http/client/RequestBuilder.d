@@ -5,6 +5,7 @@ import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.codec.http.model.HttpScheme;
 
 
 import hunt.Exceptions;
@@ -38,7 +39,7 @@ class RequestBuilder {
     //   this.tags = request.tags.isEmpty()
     //       ? Collections.emptyMap()
     //       : new LinkedHashMap<>(request.tags);
-      this._headers = new HttpFields();
+      this._headers = request.getFields();
     }
 
     RequestBuilder url(HttpURI url) {
@@ -96,7 +97,7 @@ class RequestBuilder {
 
     /** Removes all headers on this builder and adds {@code headers}. */
     RequestBuilder headers(HttpFields headers) {
-      this._headers = headers;
+      _headers = headers;
       return this;
     }
 
@@ -123,11 +124,11 @@ class RequestBuilder {
       return method("POST", requestBody);
     }
 
-    RequestBuilder delete_(RequestBody requestBody) {
+    RequestBuilder del(RequestBody requestBody) {
       return method("DELETE", requestBody);
     }
 
-    RequestBuilder delete_() {
+    RequestBuilder del() {
       return method("DELETE", null);
     }
 

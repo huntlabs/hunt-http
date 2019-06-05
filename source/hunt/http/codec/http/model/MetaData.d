@@ -208,6 +208,11 @@ class HttpRequest : MetaData {
         return true;
     }
 
+    bool isHttps() {
+        string scheme = _uri.getScheme();
+        return scheme == HttpScheme.HTTPS || scheme == HttpScheme.WSS;
+    }
+
     /**
     * @return the HTTP method
     */

@@ -41,19 +41,19 @@ class RealCall : Call {
     private Mutex responseLocker;
     private Condition responseCondition;
 
-    private this(HttpClient client, Request originalRequest, bool forWebSocket) {
+    private this(HttpClient client, Request request, bool forWebSocket) {
         this.client = client;
-        this.originalRequest = originalRequest;
+        this.originalRequest = request;
         this.forWebSocket = forWebSocket;
 
+        client.getHttpConfiguration().setSecureConnectionEnabled(request.isHttps());
 		responseLocker = new Mutex();
 		responseCondition = new Condition(responseLocker);
     }
 
-    static RealCall newRealCall(HttpClient client, Request originalRequest, bool forWebSocket) {
-
+    static RealCall newRealCall(HttpClient client, Request request, bool forWebSocket) {
         // Safely publish the Call instance to the EventListener.
-        RealCall call = new RealCall(client, originalRequest, forWebSocket);
+        RealCall call = new RealCall(client, request, forWebSocket);
         return call;
     }
 

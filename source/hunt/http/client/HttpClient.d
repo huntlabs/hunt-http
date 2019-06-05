@@ -44,9 +44,12 @@ shared static ~this() {
 }
 
 
-
+/**
+*/
 class HttpClient : AbstractLifecycle {
 
+    private string _host;
+    private int _port;
     private AbstractClient client;
     private Map!(int, Http2ClientContext) http2ClientContext;
     private static shared int sessionId = 0;
@@ -60,7 +63,7 @@ class HttpClient : AbstractLifecycle {
 
     this(HttpConfiguration c) {
         if (c is null) {
-            throw new IllegalArgumentException("the http2 configuration is null");
+            throw new IllegalArgumentException("http configuration is null");
         }
         http2ClientContext = new HashMap!(int, Http2ClientContext)();
          // = new ConcurrentHashMap!()();
@@ -131,9 +134,6 @@ class HttpClient : AbstractLifecycle {
 
     Http2ClientContext clientContext;
 
-    private string _host;
-    private int _port;
-
     HttpConfiguration getHttpConfiguration() {
         return httpConfiguration;
     }
@@ -147,11 +147,11 @@ class HttpClient : AbstractLifecycle {
         }
     }
 
-  /**
-   * Prepares the {@code request} to be executed at some point in the future.
-   */
-  Call newCall(Request request) {
-    return RealCall.newRealCall(this, request, false /* for web socket */);
-  }    
+    /**
+     * Prepares the {@code request} to be executed at some point in the future.
+     */
+    Call newCall(Request request) {
+        return RealCall.newRealCall(this, request, false /* for web socket */);
+    }    
 
 }
