@@ -20,7 +20,7 @@ class CommonEncoder : EncoderChain
         Object attachment = session.getAttachment();
         auto messageTypeInfo = typeid(message);
 
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG_MORE) {
             tracef("encoding... message: %s", messageTypeInfo.name);
             tracef("Session attachment: %s", typeid(attachment).name);
         }

@@ -21,6 +21,7 @@ import hunt.text.StringBuilder;
 import hunt.text.StringUtils;
 
 import core.time;
+import std.array;
 import std.conv;
 import std.format;
 import std.string;
@@ -513,29 +514,32 @@ class HttpGenerator {
     private void generateResponseLine(HttpResponse response, ByteBuffer header) {
         // Look for prepared response line
         int status = response.getStatus();
+        version(HUNT_HTTP_DEBUG) {
+            infof("status code: %d", status);
+        }
         PreparedResponse preprepared = status < __preprepared.length ? __preprepared[status] : null;
         string reason = response.getReason();
         if (preprepared !is null) {
-            if (reason == null)
+            if (reason.empty()) {
                 header.put(preprepared._responseLine);
-            else {
+            } else {
                 header.put(preprepared._schemeCode);
                 header.put(getReasonBytes(reason));
                 header.put(HttpTokens.CRLF);
             }
-        } else // generate response line
-        {
+        } else { // generate response line
             header.put(HTTP_1_1_SPACE);
             header.put(cast(byte) ('0' + status / 100));
             header.put(cast(byte) ('0' + (status % 100) / 10));
             header.put(cast(byte) ('0' + (status % 10)));
             header.put(cast(byte) ' ');
-            if (reason == null) {
+            if (reason.empty()) {
                 header.put(cast(byte) ('0' + status / 100));
                 header.put(cast(byte) ('0' + (status % 100) / 10));
                 header.put(cast(byte) ('0' + (status % 10)));
-            } else
+            } else {
                 header.put(getReasonBytes(reason));
+            }
             header.put(HttpTokens.CRLF);
         }
     }
@@ -557,10 +561,10 @@ class HttpGenerator {
         HttpRequest request = cast(HttpRequest) metaData;
         HttpResponse response = cast(HttpResponse) metaData;
 
-        // version(HUNT_DEBUG) {
-        //     tracef("Header fields:\n%s", metaData.getFields().toString());
-        //     tracef("generateHeaders %s last=%s content=%s", metaData.toString(), last, BufferUtils.toDetailString(content));
-        // }
+        version(HUNT_HTTP_DEBUG_MORE) {
+            tracef("Header fields:\n%s", metaData.getFields().toString());
+            tracef("generateHeaders %s last=%s content=%s", metaData.toString(), last, BufferUtils.toDetailString(content));
+        }
 
         // default field values
         int send = _send;

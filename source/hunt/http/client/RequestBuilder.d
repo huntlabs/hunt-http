@@ -123,13 +123,13 @@ class RequestBuilder {
       return method("POST", requestBody);
     }
 
-    // RequestBuilder delete_(RequestBody requestBody) {
-    //   return method("DELETE", requestBody);
-    // }
+    RequestBuilder delete_(RequestBody requestBody) {
+      return method("DELETE", requestBody);
+    }
 
-    // RequestBuilder delete_() {
-    //   return delete_(Util.EMPTY_REQUEST);
-    // }
+    RequestBuilder delete_() {
+      return method("DELETE", null);
+    }
 
     RequestBuilder put(RequestBody requestBody) {
       return method("PUT", requestBody);

@@ -30,7 +30,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         if (committed)
             return;
         
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             infof("committing data: %s", data.toString());
         }
 

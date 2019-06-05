@@ -20,8 +20,8 @@ import std.format;
 import std.range;
 
 
-alias HttpRequest = MetaData.Request;
-alias HttpResponse = MetaData.Response;
+// alias HttpRequest = MetaData.Request;
+// alias HttpResponse = MetaData.Response;
 
 /**
 */
@@ -126,185 +126,220 @@ class MetaData : Iterable!HttpField {
         return result;
     }
 
-    override
-    string toString() {
+    string[] headers(string name) {
+        HttpFields fs = getFields();
+        if(fs !is null)
+            return fs.getValuesList(name);
+        else
+            return null;
+    }
+
+    string header(string name) {
+        return header(name, null);
+    }
+
+    string header(string name, string defaultValue) {
+        HttpFields fs = getFields();
+        string result = fs.get(name);
+        return result.empty ? defaultValue : result;
+    }
+
+    HttpFields headers() {
+        return getFields();
+    }    
+
+
+    override string toString() {
         StringBuilder sb = new StringBuilder();
         foreach (HttpField field ; _fields)
             sb.append(field.toString()).append(std.ascii.newline);
         return sb.toString();
     }
 
-    static class Request : MetaData {
-        private string _method;
-        private HttpURI _uri;
-        private Object attachment;
+}
 
-        this(HttpFields fields) {
-            this("", null, HttpVersion.Null, fields);
-        }
 
-        // this(string method, HttpURI uri, HttpVersion ver, HttpFields fields) {
-        //     this(method, uri, ver, fields, long.min);
-        // }
+/**
+*/
+class HttpRequest : MetaData {
+    private string _method;
+    private HttpURI _uri;
+    private Object attachment;
 
-        this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, long contentLength=long.min) {
-            super(ver, fields, contentLength);
-            _method = method;
-            _uri = uri;
-        }
-
-        // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields) {
-        //     this(method, new HttpURI(scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields);
-        // }
-
-        // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength) {
-        //     this(method, new HttpURI( scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
-        // }
-
-        this(string method, string scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength=long.min) {
-            this(method, new HttpURI(scheme, hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
-        }
-
-        this(Request request) {
-            this(request.getMethod(), new HttpURI(request.getURI()), request.getHttpVersion(), 
-                new HttpFields(request.getFields()), request.getContentLength());
-        }
-
-        override void recycle() {
-            super.recycle();
-            _method = null;
-            if (_uri !is null)
-                _uri.clear();
-        }
-
-        override
-        bool isRequest() {
-            return true;
-        }
-
-        /**
-         * @return the HTTP method
-         */
-        string getMethod() {
-            return _method;
-        }
-
-        /**
-         * @param method the HTTP method to set
-         */
-        void setMethod(string method) {
-            _method = method;
-        }
-
-        /**
-         * @return the HTTP URI
-         */
-        HttpURI getURI() {
-            return _uri;
-        }
-
-        /**
-         * @return the HTTP URI in string form
-         */
-        string getURIString() {
-            return _uri is null ? null : _uri.toString();
-        }
-
-        /**
-         * @param uri the HTTP URI to set
-         */
-        void setURI(HttpURI uri) {
-            _uri = uri;
-        }
-
-        Object getAttachment() {
-            return attachment;
-        }
-
-        void setAttachment(Object attachment) {
-            this.attachment = attachment;
-        }
-
-        override
-        string toString() {
-            HttpFields fields = getFields();
-            return format("%s{u=%s,%s,h=%d,cl=%d}",
-                    getMethod(), getURI(), getHttpVersion(), fields is null ? -1 : fields.size(), getContentLength());
-        }
+    this(HttpFields fields) {
+        this("", null, HttpVersion.Null, fields);
     }
 
-    static class Response : MetaData {
-        private int _status;
-        private string _reason;
-        private string _contentType;
+    // this(string method, HttpURI uri, HttpVersion ver, HttpFields fields) {
+    //     this(method, uri, ver, fields, long.min);
+    // }
 
-        this() {
-            this(HttpVersion.Null, 0, null);
-        }
+    this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, long contentLength=long.min) {
+        super(ver, fields, contentLength);
+        _method = method;
+        _uri = uri;
+    }
 
-        this(HttpVersion ver, int status, HttpFields fields) {
-            this(ver, status, fields, long.min);
-        }
+    // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields) {
+    //     this(method, new HttpURI(scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields);
+    // }
 
-        this(HttpVersion ver, int status, HttpFields fields, long contentLength) {
-            super(ver, fields, contentLength);
-            _status = status;
-        }
+    // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength) {
+    //     this(method, new HttpURI( scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
+    // }
 
-        this(HttpVersion ver, int status, string reason, HttpFields fields, long contentLength) {
-            super(ver, fields, contentLength);
-            _reason = reason;
-            _status = status;
-        }
+    this(string method, string scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength=long.min) {
+        this(method, new HttpURI(scheme, hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
+    }
 
-        override
-        bool isResponse() {
-            return true;
-        }
+    this(HttpRequest request) {
+        this(request.getMethod(), new HttpURI(request.getURI()), request.getHttpVersion(), 
+            new HttpFields(request.getFields()), request.getContentLength());
+    }
 
-        /**
-         * @return the HTTP status
-         */
-        int getStatus() {
-            return _status;
-        }
+    override void recycle() {
+        super.recycle();
+        _method = null;
+        if (_uri !is null)
+            _uri.clear();
+    }
 
-        /**
-         * @return the HTTP reason
-         */
-        string getReason() {
-            return _reason;
-        }
+    override bool isRequest() {
+        return true;
+    }
 
-        /**
-         * @param status the HTTP status to set
-         */
-        void setStatus(int status) {
-            _status = status;
-        }
+    /**
+    * @return the HTTP method
+    */
+    string getMethod() {
+        return _method;
+    }
 
-        /**
-         * @param reason the HTTP reason to set
-         */
-        void setReason(string reason) {
-            _reason = reason;
-        }
+    /**
+    * @param method the HTTP method to set
+    */
+    void setMethod(string method) {
+        _method = method;
+    }
 
-        string getContentType() {
-            if (_contentType.empty()) {
-                if (_fields !is null) {
-                    HttpField field = _fields.getField(HttpHeader.CONTENT_TYPE);
-                    _contentType = field is null ? "" : field.getValue();
-                }
+    /**
+    * @return the HTTP URI
+    */
+    HttpURI getURI() {
+        return _uri;
+    }
+
+    /**
+    * @return the HTTP URI in string form
+    */
+    string getURIString() {
+        return _uri is null ? null : _uri.toString();
+    }
+
+    /**
+    * @param uri the HTTP URI to set
+    */
+    void setURI(HttpURI uri) {
+        _uri = uri;
+    }
+
+    Object getAttachment() {
+        return attachment;
+    }
+
+    void setAttachment(Object attachment) {
+        this.attachment = attachment;
+    }
+
+    override string toString() {
+        HttpFields fields = getFields();
+        return format("%s{u=%s,%s,h=%d,cl=%d}",
+                getMethod(), getURI(), getHttpVersion(), fields is null ? -1 : fields.size(), getContentLength());
+    }
+}
+
+/**
+*/
+class HttpResponse : MetaData {
+    protected int _status;
+    protected string _reason;
+    protected string _contentType;
+
+    this() {
+        this(HttpVersion.Null, 0, null);
+    }
+
+    this(HttpVersion ver, int status, HttpFields fields) {
+        this(ver, status, fields, long.min);
+    }
+
+    this(HttpVersion ver, int status, HttpFields fields, long contentLength) {
+        super(ver, fields, contentLength);
+        _status = status;
+    }
+
+    this(HttpVersion ver, int status, string reason, HttpFields fields, long contentLength) {
+        super(ver, fields, contentLength);
+        _reason = reason;
+        _status = status;
+    }
+
+    override bool isResponse() {
+        return true;
+    }
+
+    /**
+     * @return the HTTP status
+     */
+    int getStatus() {
+        return _status;
+    }
+
+    /**
+    * @return the HTTP reason
+    */
+    string getReason() {
+        return _reason;
+    }
+
+    /**
+    * @param status the HTTP status to set
+    */
+    void setStatus(int status) {
+        _status = status;
+    }
+
+    /**
+    * @param reason the HTTP reason to set
+    */
+    void setReason(string reason) {
+        _reason = reason;
+    }
+
+    string getContentType() {
+        if (_contentType.empty()) {
+            if (_fields !is null) {
+                HttpField field = _fields.getField(HttpHeader.CONTENT_TYPE);
+                _contentType = field is null ? "" : field.getValue();
             }
-            return _contentType;
         }
+        return _contentType;
+    }
 
+    alias code = getStatus;
+    alias message = getReason;
+    
+    /**
+    * Returns true if the code is in [200..300), which means the request was successfully received,
+    * understood, and accepted.
+    */
+    bool isSuccessful() {
+        return _status >= 200 && _status < 300;
+    }
 
-        override string toString() {
-            HttpFields fields = getFields();
-            return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), 
-                fields is null ? -1 : fields.size(), getContentLength());
-        }
+    override string toString() {
+        HttpFields fields = getFields();
+        return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), 
+            fields is null ? -1 : fields.size(), getContentLength());
     }
 }

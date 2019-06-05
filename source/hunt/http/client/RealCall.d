@@ -95,7 +95,8 @@ class RealCall : Call {
                         HttpOutputStream output, HttpConnection connection) {
                     // trace(BufferUtils.toString(item));
                     hcr = cast(HttpClientResponse)response;
-                    hcr.setBody(new ResponseBody(response.getContentType(), response.getContentLength(), item));
+                    hcr.setBody(new ResponseBody(response.getContentType(), 
+                        response.getContentLength(), BufferUtils.clone(item)));
                     return false;
                 }
 
