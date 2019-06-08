@@ -1,6 +1,6 @@
 {
     "name": "hunt-http",
-    "targetType": "staticLibrary",
+    "targetType": "sourceLibrary",
     "description": "http module for hunt.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
     "homepage": "https://www.huntlabs.net",
