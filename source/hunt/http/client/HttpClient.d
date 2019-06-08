@@ -91,12 +91,12 @@ class HttpClient : AbstractLifecycle {
             session.handler((ByteBuffer buffer) {
                 version (HUNT_HTTP_DEBUG_MORE) {
                     byte[] data = buffer.getRemaining();
-                    infof("data received (%d bytes): ", data.length);
-                    if (data.length <= 64) {
-                        infof("%(%02X %)", data[0 .. $]);
-                    } else {
-                        infof("%(%02X %) ...", data[0 .. 64]);
-                    }
+                    tracef("data received (%d bytes): ", data.length);
+                    // if (data.length <= 64) {
+                    //     infof("%(%02X %)", data[0 .. $]);
+                    // } else {
+                    //     infof("%(%02X %) ...", data[0 .. 64]);
+                    // }
                 }
 
                 commonDecoder.decode(buffer, session);

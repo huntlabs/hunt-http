@@ -152,7 +152,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
     bool upgradeProtocol(HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection) {
-        version (HUNT_DEBUG) warning("try upgrading protocol ...");                
+        version (HUNT_DEBUG) info("try upgrading protocol ...");                
         if(request is null)
             return false;
         switch (ProtocolHelper.from(request)) {

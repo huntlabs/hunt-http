@@ -8,9 +8,6 @@
 	"dependencies": {
 		"hunt-http" :{"path": "../../"}
 	},
-	"subConfigurations": {
-		"hunt-http" : "tls"
-	},
 	"versions": [
 		"HUNT_DEBUG", "HUNT_DEBUG_MORE1", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE1"
 	]

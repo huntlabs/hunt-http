@@ -23,12 +23,18 @@ class HttpClientTest {
         string str = runGet("http://10.1.222.120/index.html");
         // string str = runGet("http://127.0.0.1:8080/json");
         trace(str);
+        
+        trace("===============================");
+
+        // str = runGet("http://10.1.222.120/index.html");
+        // // string str = runGet("http://127.0.0.1:8080/json");
+        // trace(str);
     }
 
     void testGetHttps() {
-        // string str = runGet("https://10.1.222.120:444/index.html");
+        string str = runGet("https://10.1.222.120:444/index.html");
 
-        string str = runGet("https://10.1.222.120:6677/index");
+        // string str = runGet("https://10.1.222.120:6677/index");
         trace(str);
     }
 
