@@ -61,7 +61,7 @@ class Http2ClientHandler : AbstractHttpHandler {
                     else
                         protocol = p;
 
-                    infof("Client session %s SSL handshake finished. The app protocol is %s", 
+                    version(HUNT_HTTP_DEBUG) infof("Client session %s SSL handshake finished. The app protocol is %s", 
                         session.getSessionId(), protocol);
 
                     switch (protocol) {
@@ -72,7 +72,8 @@ class Http2ClientHandler : AbstractHttpHandler {
                             initializeHttp2ClientConnection(session, context, sslSession);
                             break;
                         default:
-                            throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
+                            throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " 
+                                ~ protocol ~ " is not supported");
                     }
                 });
 

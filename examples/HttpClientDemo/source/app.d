@@ -6,8 +6,9 @@ import HttpClientTest;
 void main(string[] args) {
 
     HttpClientTest test = new HttpClientTest();
-    test.testGet();
+    // test.testGet();
     // test.testGetHttps();
+    test.testAsynchronousGet();
     // test1.testPost();
 
 }

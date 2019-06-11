@@ -8,8 +8,10 @@ import hunt.http.client.Call;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.codec.http.model.HttpFields;
+import hunt.http.codec.http.model.HttpField;
 
 import hunt.logging.ConsoleLogger;
+import hunt.Exceptions;
 
 class HttpClientTest {
     HttpClient client;
@@ -22,12 +24,13 @@ class HttpClientTest {
         // string str = runGet("http://10.1.223.62:8080/test.html");
         string str = runGet("http://10.1.222.120/index.html");
         // string str = runGet("http://127.0.0.1:8080/json");
+        // string str = runGet("http://www.putao.com/");
         trace(str);
         
         trace("===============================");
 
         // str = runGet("http://10.1.222.120/index.html");
-        // // string str = runGet("http://127.0.0.1:8080/json");
+        // str = runGet("http://www.putao.com/");
         // trace(str);
     }
 
@@ -49,6 +52,30 @@ class HttpClientTest {
         }
 
         return "";
+    }
+
+    void testAsynchronousGet() {
+        // Request request = new RequestBuilder().url("http://publicobject.com/helloworld.txt").build();
+        Request request = new RequestBuilder().url("https://publicobject.com/helloworld.txt").build();
+
+        client.newCall(request).enqueue(new class Callback {
+            void onFailure(Call call, IOException e) {
+               warning(e.toString());
+            }
+
+            void onResponse(Call call, Response response) {
+                ResponseBody responseBody = response.getBody();
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " ~ response.toString());
+
+                HttpFields responseHeaders = response.headers();
+                foreach(HttpField header; responseHeaders) {
+                    trace(header.getName() ~ ": " ~ header.getValue());
+                }
+
+                trace(responseBody.asString());
+            }
+        }); 
+        info("A request has been sent.");
     }
 
     void testPost() {

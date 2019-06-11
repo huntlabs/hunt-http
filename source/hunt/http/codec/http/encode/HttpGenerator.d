@@ -514,9 +514,9 @@ class HttpGenerator {
     private void generateResponseLine(HttpResponse response, ByteBuffer header) {
         // Look for prepared response line
         int status = response.getStatus();
-        version(HUNT_HTTP_DEBUG) {
-            infof("status code: %d", status);
-        }
+        // version(HUNT_HTTP_DEBUG) {
+        //     infof("status code: %d", status);
+        // }
         PreparedResponse preprepared = status < __preprepared.length ? __preprepared[status] : null;
         string reason = response.getReason();
         if (preprepared !is null) {

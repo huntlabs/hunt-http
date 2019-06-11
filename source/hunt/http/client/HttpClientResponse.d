@@ -84,11 +84,10 @@ class ResponseBody {
 	string asString() {
 		if(_content is null)
 			return "";
-
-// import hunt.logging;
-// 		string s = BufferUtils.toDetailString(_content);
-// 		info(s);
-
 		return BufferUtils.toString(_content);
+	}
+
+	override string toString() {
+		return asString();
 	}
  }

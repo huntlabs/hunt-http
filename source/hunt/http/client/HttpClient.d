@@ -69,8 +69,6 @@ class HttpClient : AbstractLifecycle {
         http2ClientContext = new HashMap!(int, Http2ClientContext)();
          // = new ConcurrentHashMap!()();
 
-        // http2ClientContext.put(111, null);
-
         Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(),
                 new Http2ClientDecoder());
         CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
@@ -127,7 +125,7 @@ class HttpClient : AbstractLifecycle {
         clientContext.setListener(listener);
 
         int id = atomicOp!("+=")(sessionId, 1);
-        version (HUNT_DEBUG)
+        version (HUNT_HTTP_DEBUG)
             tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);

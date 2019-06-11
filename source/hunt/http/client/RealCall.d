@@ -29,6 +29,10 @@ import hunt.logging.ConsoleLogger;
 import core.sync.condition;
 import core.sync.mutex;
 
+import std.parallelism;
+
+/**
+*/
 class RealCall : Call {
     private HttpClient client;
 
@@ -100,7 +104,9 @@ class RealCall : Call {
                 override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                         HttpOutputStream output, HttpConnection connection) {
                     // trace(BufferUtils.toString(item));
-                    hcr = cast(HttpClientResponse)response;
+                    synchronized {
+                        hcr = cast(HttpClientResponse)response;
+                    }
                     hcr.setBody(new ResponseBody(response.getContentType(), 
                         response.getContentLength(), BufferUtils.clone(item)));
                     return false;
@@ -130,7 +136,10 @@ class RealCall : Call {
         }
 
         version (HUNT_HTTP_DEBUG) info("waitting response...");
-        responseCondition.wait();
+        synchronized {
+            if(hcr is null)
+                responseCondition.wait();
+        }
         version (HUNT_HTTP_DEBUG) info("response normally");
         return hcr;
 
@@ -143,6 +152,81 @@ class RealCall : Call {
         }
         // transmitter.callStart();
         // client.dispatcher().enqueue(new AsyncCall(responseCallback));
+
+        void doRequestTask() {
+            HttpURI uri = originalRequest.getURI();
+            string scheme = uri.getScheme();
+            int port = uri.getPort();
+
+            version(HUNT_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
+                scheme, uri.getHost(), port);
+
+            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
+
+            if(port <= 0)
+                port = SchemePortMap[scheme];
+            client.connect(uri.getHost(), port, promise);
+            
+            HttpConnection connection;
+            try {
+                connection = promise.get();
+            } catch(Exception ex) {
+                warning(ex.msg);
+            }
+            
+            version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
+
+            if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
+
+                AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
+
+                    override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
+                            HttpOutputStream output, HttpConnection connection) {
+                        // trace(BufferUtils.toString(item));
+                        HttpClientResponse hcr = cast(HttpClientResponse)response;
+                        hcr.setBody(new ResponseBody(response.getContentType(), 
+                            response.getContentLength(), BufferUtils.clone(item)));
+                        return false;
+                    }
+
+                    override bool messageComplete(HttpRequest request, HttpResponse response,
+                            HttpOutputStream output, HttpConnection connection) {
+                        // trace(response);
+                        version (HUNT_DEBUG) trace(response.getFields());
+                        responseCallback.onResponse(this.outer, cast(HttpClientResponse)response);
+                        return true;
+                    }
+
+                };
+
+                httpHandler.badMessage((int status, string reason, HttpRequest request,
+                            HttpResponse response, HttpOutputStream output, HttpConnection connection) {
+                        import std.format;
+                        string msg = format("status: %d, reason: %s", status, reason);
+                        responseCallback.onFailure(this, new IOException(msg));
+                });
+
+                Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
+                RequestBody rb = originalRequest.getBody();
+                if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
+                    http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+                } else {
+                    http1ClientConnection.send(originalRequest, httpHandler);
+                }
+            } else {
+                // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
+                // 
+                string msg = "Unsupported " ~ connection.getHttpVersion().toString();
+                warning(msg);
+                responseCallback.onFailure(this, new IOException(msg));
+            }
+
+            version (HUNT_HTTP_DEBUG) info("waitting response...");
+        }
+
+
+        auto requestTask = task(&doRequestTask);
+        requestTask.executeInNewThread();
     }
 
     void cancel() {
@@ -159,6 +243,7 @@ class RealCall : Call {
 
     bool isCanceled() {
         // return transmitter.isCanceled();
+        
         return false;
     }
     
