@@ -12,7 +12,7 @@ import hunt.http.codec.http.model;
 
 import hunt.text.Common;
 import hunt.text.StringBuilder;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 import hunt.Exceptions;
 
 import hunt.logging;
@@ -69,11 +69,11 @@ class HpackDecoder {
                 to!string(buffer.remaining()) ~ ">" ~ to!string(_builder.getMaxSize()));
 
         while (buffer.hasRemaining()) {
-            // version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
             {
                 if (buffer.hasArray()) {
                     int l = std.algorithm.min(buffer.remaining(), 32);
-                    tracef("decode %s%s", TypeUtils.toHexString(buffer.array(), buffer.arrayOffset() + buffer.position(), l),
+                    tracef("decode %s%s", ConverterUtils.toHexString(buffer.array(), buffer.arrayOffset() + buffer.position(), l),
                             l < buffer.remaining() ? "..." : "");
                 }
             }

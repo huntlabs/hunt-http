@@ -6,7 +6,7 @@ import hunt.Exceptions;
 import hunt.text.Charset;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 import hunt.http.util.UrlEncoded;
 
 import std.array;
@@ -382,7 +382,7 @@ class HttpURI {
 					mark = i + 1;
 					state = State.HOST;
 				} else if (c == '/') {
-					// _port = TypeUtils.parseInt(uri, mark, i - mark, 10);
+					// _port = ConverterUtils.parseInt(uri, mark, i - mark, 10);
 					_port = to!int(uri[mark .. i], 10);
 					path_mark = mark = i;
 					state = State.PATH;
@@ -492,7 +492,7 @@ class HttpURI {
 			throw new IllegalArgumentException("No closing ']' for ipv6 in " ~ uri);
 
 		case State.PORT:
-			// _port = TypeUtils.parseInt(uri, mark, end - mark, 10);
+			// _port = ConverterUtils.parseInt(uri, mark, end - mark, 10);
 			_port = to!int(uri[mark .. end], 10);
 			break;
 
@@ -753,10 +753,11 @@ class URIUtils
                             char u = path.charAt(i + 1);
                             if (u == 'u') {
                                 // TODO this is wrong. This is a codepoint not a char
-                                builder.append(cast(char) (0xffff & TypeUtils.parseInt(path, i + 2, 4, 16)));
+                                builder.append(cast(char) (0xffff & ConverterUtils.parseInt(path, i + 2, 4, 16)));
                                 i += 5;
                             } else {
-                                builder.append(cast(byte) (0xff & (TypeUtils.convertHexDigit(u) * 16 + TypeUtils.convertHexDigit(path.charAt(i + 2)))));
+                                builder.append(cast(byte) (0xff & (ConverterUtils.convertHexDigit(u) * 16 + 
+									ConverterUtils.convertHexDigit(path.charAt(i + 2)))));
                                 i += 2;
                             }
                         } else {
@@ -818,10 +819,10 @@ class URIUtils
                         char u = path.charAt(i + 1);
                         if (u == 'u') {
                             // TODO this is wrong. This is a codepoint not a char
-                            builder.append(cast(char) (0xffff & TypeUtils.parseInt(path, i + 2, 4, 16)));
+                            builder.append(cast(char) (0xffff & ConverterUtils.parseInt(path, i + 2, 4, 16)));
                             i += 5;
                         } else {
-                            builder.append(cast(byte) (0xff & (TypeUtils.convertHexDigit(u) * 16 + TypeUtils.convertHexDigit(path.charAt(i + 2)))));
+                            builder.append(cast(byte) (0xff & (ConverterUtils.convertHexDigit(u) * 16 + ConverterUtils.convertHexDigit(path.charAt(i + 2)))));
                             i += 2;
                         }
                     } else {

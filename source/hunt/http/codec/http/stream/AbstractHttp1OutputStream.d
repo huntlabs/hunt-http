@@ -30,7 +30,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         if (committed)
             return;
         
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             infof("committing data: %s", data.toString());
         }
 
@@ -99,7 +99,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             return;
 
         try {
-            version(HUNT_DEBUG) trace("http1 output stream is closing");
+            version(HUNT_HTTP_DEBUG) trace("http1 output stream is closing");
             HttpGenerator generator = getHttpGenerator();
             Session tcpSession = getSession();
             HttpGenerator.Result generatorResult;
@@ -118,7 +118,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
                 committed = true;
             } else {
                 if (generator.isChunking()) {
-                    version (HUNT_DEBUG) tracef("http1 output stream is generating chunk");
+                    version (HUNT_HTTP_DEBUG) tracef("http1 output stream is generating chunk");
                     generatorResult = generate(null, null, null, null, true);
                     if (generatorResult == HttpGenerator.Result.CONTINUE && 
                         generator.getState() == HttpGenerator.State.COMPLETING) {

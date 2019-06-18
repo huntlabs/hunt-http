@@ -16,7 +16,7 @@ class HostPortHttpField :HttpField {
 	}
 
 	this(HttpHeader header, string name, string authority) {
-		version(HUNT_DEBUG)
+		version(HUNT_HTTP_DEBUG)
 		tracef("name=%s, authority=%s", name, authority);
 		super(header, name, authority);
 		try {

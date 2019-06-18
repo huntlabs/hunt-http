@@ -41,7 +41,7 @@ import hunt.Exceptions;
 import hunt.concurrency.Promise;
 import hunt.concurrency.CompletableFuture;
 import hunt.text.Common;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 
 import hunt.logging;
 
@@ -152,7 +152,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
     bool upgradeProtocol(HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection) {
-        version (HUNT_DEBUG) warning("try upgrading protocol ...");                
+        version (HUNT_HTTP_DEBUG) info("try upgrading protocol ...");                
         if(request is null)
             return false;
         switch (ProtocolHelper.from(request)) {
@@ -166,8 +166,8 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
                 // byte[] settings = Base64Utils.decodeFromUrlSafeString(settingsField.getValue());
                 byte[] settings = cast(byte[]) Base64.decode(settingsField.getValue());
-                version (HUNT_DEBUG) {
-                    tracef("the server received settings %s", TypeUtils.toHexString(settings));
+                version (HUNT_HTTP_DEBUG) {
+                    tracef("the server received settings %s", ConverterUtils.toHexString(settings));
                 }
 
                 SettingsFrame settingsFrame = SettingsBodyParser.parseBody(
@@ -300,7 +300,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     }
 
     override protected void generateHttpMessageSuccessfully() {
-        version (HUNT_DEBUG)
+        version (HUNT_HTTP_DEBUG)
             tracef("server session %s generates the HTTP message completely",
                     connection.getSessionId());
 
@@ -324,7 +324,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
                     || "close".equalsIgnoreCase(responseConnectionValue)) {
                 connection.close();
             } else {
-                version (HUNT_DEBUG)
+                version (HUNT_HTTP_DEBUG)
                     infof("the server %s connection %d is persistent",
                             response.getHttpVersion(), connection.getSessionId());
             }

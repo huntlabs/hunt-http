@@ -27,7 +27,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 // import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.Exceptions;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 
 
 // import hunt.http.codec.http.model.HttpField;
@@ -315,10 +315,11 @@ class HpackEncoder {
                     throw new IllegalStateException("");
         }
 
-        // version(HUNT_DEBUG) 
+        version(HUNT_HTTP_DEBUG) 
         {
             int e = buffer.position();
-            tracef("encode %s:'%s' to '%s'", encoding, field, TypeUtils.toHexString(buffer.array(), buffer.arrayOffset() + p, e - p));
+            tracef("encode %s:'%s' to '%s'", encoding, field, 
+                ConverterUtils.toHexString(buffer.array(), buffer.arrayOffset() + p, e - p));
         }
     }
 

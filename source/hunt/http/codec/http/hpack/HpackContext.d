@@ -197,12 +197,12 @@ class HpackContext {
         _maxDynamicTableSizeInBytes = maxDynamicTableSize;
         int guesstimateEntries = 10 + maxDynamicTableSize / (32 + 10 + 10);
         _dynamicTable = new DynamicTable(guesstimateEntries);
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG_MORE)
             tracef(format("HdrTbl[%x] created max=%d", toHash(), maxDynamicTableSize));
     }
 
     void resize(int newMaxDynamicTableSize) {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG_MORE)
             tracef(format("HdrTbl[%x] resized max=%d->%d", toHash(), _maxDynamicTableSizeInBytes, newMaxDynamicTableSize));
         _maxDynamicTableSizeInBytes = newMaxDynamicTableSize;
         _dynamicTable.evict();

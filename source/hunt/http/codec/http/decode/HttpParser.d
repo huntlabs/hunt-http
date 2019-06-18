@@ -9,7 +9,7 @@ import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 
 import core.time;
 
@@ -1450,7 +1450,7 @@ class HttpParser {
                 case State.CHUNKED_CONTENT: {
                     ch = next(buffer);
                     if (ch > HttpTokens.SPACE) {
-                        _chunkLength = TypeUtils.convertHexDigit(ch);
+                        _chunkLength = ConverterUtils.convertHexDigit(ch);
                         _chunkPosition = 0;
                         setState(State.CHUNK_SIZE);
                     }
@@ -1472,7 +1472,7 @@ class HttpParser {
                     } else if (ch <= HttpTokens.SPACE || ch == HttpTokens.SEMI_COLON)
                         setState(State.CHUNK_PARAMS);
                     else
-                        _chunkLength = _chunkLength * 16 + TypeUtils.convertHexDigit(ch);
+                        _chunkLength = _chunkLength * 16 + ConverterUtils.convertHexDigit(ch);
                     break;
                 }
 

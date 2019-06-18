@@ -86,7 +86,7 @@ class HttpServer : AbstractLifecycle {
                 version (HUNT_METRIC) {
                     debug trace("start hadling session data ...");
                     MonoTime startTime = MonoTime.currTime;
-                } else version (HUNT_DEBUG) {
+                } else version (HUNT_DEBUG_MORE) {
                     trace("start hadling session data ...");
                 }
                 commonDecoder.decode(buffer, session);
@@ -96,7 +96,7 @@ class HttpServer : AbstractLifecycle {
                     warningf("handling done for session %d in: %d microseconds",
                     session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
                     tracef("session handling done: %s.", session.toString());
-                } else version (HUNT_DEBUG)
+                } else version (HUNT_HTTP_DEBUG)
                     tracef("session handling done");
 
                 // session.write(responseString, () {

@@ -6,7 +6,7 @@ import hunt.text.Charset;
 import hunt.Exceptions;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
-import hunt.util.TypeUtils;
+import hunt.util.ConverterUtils;
 
 import hunt.logging;
 
@@ -263,7 +263,7 @@ class UrlEncoded  : MultiMap!string {
                         if (i + 2 < length) {
                             int o = offset + i + 1;
                             i += 3;
-                            ba[n] = cast(byte) TypeUtils.parseInt(encoded, o, 2, 16);
+                            ba[n] = cast(byte) ConverterUtils.parseInt(encoded, o, 2, 16);
                             n++;
                         } else {
                             ba[n++] = cast(byte) '?';
