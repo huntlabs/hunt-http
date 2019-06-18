@@ -187,4 +187,33 @@ struct HttpMethod {
         else
             return HttpMethod.Null;
     }
+
+    static bool invalidatesCache(string method) {
+        return method == "POST"
+            || method == "PATCH"
+            || method == "PUT"
+            || method == "DELETE"
+            || method == "MOVE";     // WebDAV
+    }
+
+    static bool requiresRequestBody(string method) {
+        return method == "POST"
+            || method == "PUT"
+            || method == "PATCH"
+            || method == "PROPPATCH" // WebDAV
+            || method == "REPORT";   // CalDAV/CardDAV (defined in WebDAV Versioning)
+    }
+
+    static bool permitsRequestBody(string method) {
+        return (method != "GET" && method != "HEAD");
+    }
+
+    static bool redirectsWithBody(string method) {
+        return method == "PROPFIND"; // (WebDAV) redirects should also maintain the request body
+    }
+
+    static bool redirectsToGet(string method) {
+        // All requests but PROPFIND should redirect to a GET request.
+        return method != "PROPFIND";
+    }    
 }

@@ -1165,3 +1165,78 @@ class URIUtils
         return false;
     }
 }
+
+
+
+
+/**
+ * A mapping from schemes to their default ports.
+ *
+ * This is not exhaustive. Not all schemes use ports. Not all schemes uniquely identify a port to
+ * use even if they use ports. Entries here should be treated as best guesses.
+ */
+enum ushort[string] SchemePortMap = [
+    "aaa": 3868,
+    "aaas": 5658,
+    "acap": 674,
+    "amqp": 5672,
+    "cap": 1026,
+    "coap": 5683,
+    "coaps": 5684,
+    "dav": 443,
+    "dict": 2628,
+    "ftp": 21,
+    "git": 9418,
+    "go": 1096,
+    "gopher": 70,
+    "http": 80,
+    "https": 443,
+    "ws": 80,
+    "wss": 443,
+    "iac": 4569,
+    "icap": 1344,
+    "imap": 143,
+    "ipp": 631,
+    "ipps": 631,  // yes, they're both mapped to port 631
+    "irc": 6667,  // De facto default port, not the IANA reserved port.
+    "ircs": 6697,
+    "iris": 702,  // defaults to iris.beep
+    "iris.beep": 702,
+    "iris.lwz": 715,
+    "iris.xpc": 713,
+    "iris.xpcs": 714,
+    "jabber": 5222,  // client-to-server
+    "ldap": 389,
+    "ldaps": 636,
+    "msrp": 2855,
+    "msrps": 2855,
+    "mtqp": 1038,
+    "mupdate": 3905,
+    "news": 119,
+    "nfs": 2049,
+    "pop": 110,
+    "redis": 6379,
+    "reload": 6084,
+    "rsync": 873,
+    "rtmfp": 1935,
+    "rtsp": 554,
+    "shttp": 80,
+    "sieve": 4190,
+    "sip": 5060,
+    "sips": 5061,
+    "smb": 445,
+    "smtp": 25,
+    "snews": 563,
+    "snmp": 161,
+    "soap.beep": 605,
+    "ssh": 22,
+    "stun": 3478,
+    "stuns": 5349,
+    "svn": 3690,
+    "teamspeak": 9987,
+    "telnet": 23,
+    "tftp": 69,
+    "tip": 3372,
+    "mysql": 3306,
+    "postgresql": 5432,
+];

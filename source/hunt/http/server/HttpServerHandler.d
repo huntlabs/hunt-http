@@ -41,7 +41,7 @@ class HttpServerHandler : AbstractHttpHandler {
         version (HUNT_DEBUG)
             tracef("New http session");
         // tracef("New http session: %s", typeid(cast(Object) session));
-        version(WithTLS) {
+        version(WITH_HUNT_SECURITY) {
             if (config.isSecureConnectionEnabled()) {
                 buildSecureSession(session);
             } else {
@@ -91,7 +91,7 @@ class HttpServerHandler : AbstractHttpHandler {
         }
     }
 
-    version(WithTLS)
+    version(WITH_HUNT_SECURITY)
     private void buildSecureSession(Session session) {
         string protocol = config.getProtocol();
         SecureSessionFactory factory = config.getSecureSessionFactory();

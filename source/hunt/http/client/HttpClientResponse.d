@@ -3,6 +3,7 @@ module hunt.http.client.HttpClientResponse;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
+import hunt.http.codec.http.model.HttpStatus;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -11,6 +12,7 @@ import hunt.Exceptions;
 alias Response = HttpClientResponse;
 
 class HttpClientResponse : HttpResponse {
+
 	ResponseBody _body;
 	
 	this(HttpVersion ver, int status, string reason) {
@@ -38,6 +40,21 @@ class HttpClientResponse : HttpResponse {
 		_body = b;
 	}	
 
+	/** Returns true if this response redirects to another resource. */
+	bool isRedirect() {
+		switch (_status) {
+			case HttpStatus.PERMANENT_REDIRECT_308:
+			case HttpStatus.TEMPORARY_REDIRECT_307:
+			case HttpStatus.MULTIPLE_CHOICES_300:
+			case HttpStatus.MOVED_PERMANENTLY_301:
+			case HttpStatus.MOVED_TEMPORARILY_302:
+			case HttpStatus.SEE_OTHER_303:
+				return true;
+				
+			default:
+				return false;
+		}
+	}
 }
 
 /**
@@ -67,7 +84,10 @@ class ResponseBody {
 	string asString() {
 		if(_content is null)
 			return "";
-
 		return BufferUtils.toString(_content);
+	}
+
+	override string toString() {
+		return asString();
 	}
  }

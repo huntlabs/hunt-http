@@ -1,12 +1,15 @@
 module test.codec.http2;
 
-import test1;
+import HttpClientTest;
 
 
 void main(string[] args) {
 
-    HttpClientTest1 test1 = new HttpClientTest1();
-    test1.testGet();
+    HttpClientTest test = new HttpClientTest();
+    // test.testGet();
+    // test.testGetHttps();
+    test.testAsynchronousGet();
+    // test1.testPost();
 
 }
 

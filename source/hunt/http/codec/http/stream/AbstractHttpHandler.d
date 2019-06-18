@@ -57,13 +57,13 @@ abstract class AbstractHttpHandler : Handler {
 
     override
     void sessionClosed(Session session) {
-        version(HUNT_DEBUG) 
+        version(HUNT_HTTP_DEBUG) 
             tracef("The HTTP handler received the session %s closed event.", session.getSessionId());
         Object attachment = session.getAttachment();
         if (attachment is null) {
-            version(HUNT_DEBUG) warningf("attachment is null");
+            version(HUNT_HTTP_DEBUG) warningf("attachment is null");
         } else {
-            version(HUNT_DEBUG) tracef("attachment is %s", typeid(attachment).name);
+            version(HUNT_HTTP_DEBUG_MORE) tracef("attachment is %s", typeid(attachment).name);
             if (typeid(attachment) == typeid(AbstractHttpConnection)) {
                 try {
                     AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;

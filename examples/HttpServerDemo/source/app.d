@@ -36,8 +36,8 @@ void main(string[] args) {
                     HttpOutputStream outputStream, HttpConnection connection) {
                     scope(exit) outputStream.close();
 
-                    // string path = request.getURI().getPath(); 
-                    string path = "/plaintext";
+                    string path = request.getURI().getPath(); 
+                    // string path = "/plaintext";
                     debug trace("request path: ", path);
                     // debug trace(request.toString()); 
                     // trace(request.getFields()); 
@@ -48,6 +48,7 @@ void main(string[] args) {
                         
                     switch (path) {
                         case "/plaintext": {
+                            response.setStatus(HttpStatus.OK_200);
                             enum content = "Hello, World!";
                             enum contentLength = content.length.to!string();
                             responsFields.put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN.asString());
@@ -57,6 +58,7 @@ void main(string[] args) {
                         }
 
                         case "/json": {
+                            response.setStatus(HttpStatus.OK_200);
                             JSONValue js;
                             js["message"] = "Hello, World!";
                             string content = js.toString();

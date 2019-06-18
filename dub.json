@@ -1,10 +1,22 @@
 {
     "name": "hunt-http",
+    "targetType": "sourceLibrary",
     "description": "http module for hunt.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
     "homepage": "https://www.huntlabs.net",
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net": "~>0.3.0"
-    }
+        "hunt-net": "~>0.3.2"
+    },
+    "configurations": [
+        {
+            "name": "default"
+        },
+        {
+            "name": "tls",
+            "subConfigurations": {
+                "hunt-net" : "ssl"
+            }
+        }
+    ]
 }

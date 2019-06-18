@@ -23,7 +23,7 @@ module hunt.http.codec.http.model.HttpScheme;
 // import hunt.http.utils.collection.ArrayTrie;
 // import hunt.http.utils.collection.Trie;
 // import hunt.collection.BufferUtils;
-import hunt.util.Traits;
+// import hunt.util.Traits;
 
 struct HttpScheme {
 	enum HTTP = "http";
@@ -31,16 +31,16 @@ struct HttpScheme {
 	enum WS = "ws";
 	enum WSS = "wss";
 
-	__gshared string[] CACHE;
+	enum string[] CACHE = [HTTP, HTTPS, WS, WSS];
 
-	shared static this() {
-		// for (HttpScheme version : HttpScheme.values())
-		// 	CACHE.insert(version.asString(), version);
-		CACHE ~= HTTP;
-		CACHE ~= HTTPS;
-		CACHE ~= WS;
-		CACHE ~= WSS;
-	}
+	// shared static this() {
+	// 	// for (HttpScheme version : HttpScheme.values())
+	// 	// 	CACHE.insert(version.asString(), version);
+	// 	CACHE ~= HTTP;
+	// 	CACHE ~= HTTPS;
+	// 	CACHE ~= WS;
+	// 	CACHE ~= WSS;
+	// }
 
 	// private string _string;
 	// private ByteBuffer buffer;

@@ -44,13 +44,17 @@ shared static ~this() {
 }
 
 
-
+/**
+*/
 class HttpClient : AbstractLifecycle {
 
+    private string _host;
+    private int _port;
     private AbstractClient client;
     private Map!(int, Http2ClientContext) http2ClientContext;
     private static shared int sessionId = 0;
     private HttpConfiguration httpConfiguration;
+    private Http2ClientContext clientContext;
 
     this() {
         HttpConfiguration config = new HttpConfiguration();
@@ -60,12 +64,10 @@ class HttpClient : AbstractLifecycle {
 
     this(HttpConfiguration c) {
         if (c is null) {
-            throw new IllegalArgumentException("the http2 configuration is null");
+            throw new IllegalArgumentException("http configuration is null");
         }
         http2ClientContext = new HashMap!(int, Http2ClientContext)();
          // = new ConcurrentHashMap!()();
-
-        // http2ClientContext.put(111, null);
 
         Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(),
                 new Http2ClientDecoder());
@@ -87,12 +89,12 @@ class HttpClient : AbstractLifecycle {
             session.handler((ByteBuffer buffer) {
                 version (HUNT_HTTP_DEBUG_MORE) {
                     byte[] data = buffer.getRemaining();
-                    infof("data received (%d bytes): ", data.length);
-                    if (data.length <= 64) {
-                        infof("%(%02X %)", data[0 .. $]);
-                    } else {
-                        infof("%(%02X %) ...", data[0 .. 64]);
-                    }
+                    tracef("data received (%d bytes): ", data.length);
+                    // if (data.length <= 64) {
+                    //     infof("%(%02X %)", data[0 .. $]);
+                    // } else {
+                    //     infof("%(%02X %) ...", data[0 .. 64]);
+                    // }
                 }
 
                 commonDecoder.decode(buffer, session);
@@ -123,16 +125,11 @@ class HttpClient : AbstractLifecycle {
         clientContext.setListener(listener);
 
         int id = atomicOp!("+=")(sessionId, 1);
-        version (HUNT_DEBUG)
+        version (HUNT_HTTP_DEBUG)
             tracef("Client sessionId = %d", id);
         http2ClientContext.put(id, clientContext);
         client.connect(host, port, id);
     }
-
-    Http2ClientContext clientContext;
-
-    private string _host;
-    private int _port;
 
     HttpConfiguration getHttpConfiguration() {
         return httpConfiguration;
@@ -147,11 +144,11 @@ class HttpClient : AbstractLifecycle {
         }
     }
 
-  /**
-   * Prepares the {@code request} to be executed at some point in the future.
-   */
-  Call newCall(Request request) {
-    return RealCall.newRealCall(this, request, false /* for web socket */);
-  }    
+    /**
+     * Prepares the {@code request} to be executed at some point in the future.
+     */
+    Call newCall(Request request) {
+        return RealCall.newRealCall(this, request, false /* for web socket */);
+    }    
 
 }

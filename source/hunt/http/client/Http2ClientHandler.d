@@ -12,7 +12,7 @@ import hunt.net.Session;
 import hunt.net.secure.SecureSession;
 
 // dfmt off
-version(Have_hunt_security) {
+version(WITH_HUNT_SECURITY) {
     import hunt.net.secure.SecureSessionFactory;
 }
 // dfmt on
@@ -46,9 +46,13 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            version(Have_hunt_security) {
+            version(HUNT_HTTP_DEBUG) {
+                info("initilizing a secure connection");
+            }
+
+            version(WITH_HUNT_SECURITY) {
                 SecureSessionFactory factory = config.getSecureSessionFactory();
-                SecureSession secureSession = factory.create(session, true, delegate void (SecureSession sslSession) {
+                SecureSession secureSession = factory.create(session, true, (SecureSession sslSession) {
 
                     string protocol = "http/1.1";
                     string p = sslSession.getApplicationProtocol();
@@ -57,7 +61,9 @@ class Http2ClientHandler : AbstractHttpHandler {
                     else
                         protocol = p;
 
-                    infof("Client session %s SSL handshake finished. The app protocol is %s", session.getSessionId(), protocol);
+                    version(HUNT_HTTP_DEBUG) infof("Client session %s SSL handshake finished. The app protocol is %s", 
+                        session.getSessionId(), protocol);
+
                     switch (protocol) {
                         case "http/1.1":
                             initializeHttp1ClientConnection(session, context, sslSession);
@@ -66,15 +72,20 @@ class Http2ClientHandler : AbstractHttpHandler {
                             initializeHttp2ClientConnection(session, context, sslSession);
                             break;
                         default:
-                            throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " ~ protocol ~ " is not supported");
+                            throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " 
+                                ~ protocol ~ " is not supported");
                     }
                 });
 
                 session.attachObject(cast(Object)secureSession);
             } else {
-                assert(false, "Please read Readme.md in project hunt-net to support SSL.");
+                assert(false, "To support SSL, please read Readme.md in project hunt-net .");
             }
         } else {
+            version(HUNT_HTTP_DEBUG) {
+                info("initilizing a connection");
+            }
+
             if (config.getProtocol().empty) {
                 initializeHttp1ClientConnection(session, context, null);
             } else {

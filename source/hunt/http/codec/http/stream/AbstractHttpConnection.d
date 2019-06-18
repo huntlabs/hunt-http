@@ -11,7 +11,7 @@ import hunt.net.Session;
 
 import hunt.Functions;
 
-abstract class AbstractHttpConnection :AbstractConnection, HttpConnection {
+abstract class AbstractHttpConnection : AbstractConnection, HttpConnection {
 
     protected HttpVersion httpVersion;
     protected  Object attachment;

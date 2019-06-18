@@ -5,7 +5,7 @@ import hunt.http.codec.http.model.Cookie;
 import hunt.http.codec.http.model.HttpURI;
 
 // dfmt off
-version(Have_hunt_security) {
+version(WITH_HUNT_SECURITY) {
     import hunt.security.Principal;
 }
 // dfmt on
@@ -176,7 +176,7 @@ interface UpgradeRequest {
      *
      * @return the user principal
      */
-    version(Have_hunt_security) Principal getUserPrincipal();
+    version(WITH_HUNT_SECURITY) Principal getUserPrincipal();
 
     /**
      * Test if a specific sub-protocol is offered
