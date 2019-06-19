@@ -15,4 +15,5 @@ public import hunt.http.client.Http2ClientSession;
 public import hunt.http.client.HttpClientConnection;
 public import hunt.http.client.HttpClientRequest;
 public import hunt.http.client.HttpClientResponse;
+public import hunt.http.client.RequestBuilder;
 

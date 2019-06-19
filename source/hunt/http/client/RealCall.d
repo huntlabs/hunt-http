@@ -114,8 +114,7 @@ class RealCall : Call {
 
                 override bool messageComplete(HttpRequest request, HttpResponse response,
                         HttpOutputStream output, HttpConnection connection) {
-                    // trace(response);
-                    version (HUNT_DEBUG) trace(response.getFields());
+                    version (HUNT_HTTP_DEBUG) trace(response.getFields());
                     responseCondition.notifyAll();
                     return true;
                 }

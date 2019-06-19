@@ -347,7 +347,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     }
 
     override bool isOpen() {
-        version (HUNT_DEBUG) {
+        version (HUNT_HTTP_DEBUG) {
             tracef("Connection status: isOpen=%s, upgradeHttp2Complete=%s, upgradeWebSocketComplete=%s",
                     tcpSession.isOpen(), upgradeHttp2Complete, upgradeWebSocketComplete);
         }

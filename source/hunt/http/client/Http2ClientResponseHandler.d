@@ -22,7 +22,6 @@ import hunt.concurrency.Promise;
 import std.conv;
 import std.string;
 
-alias Request = HttpRequest;
 
 class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
 
@@ -30,12 +29,12 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
     enum string RESPONSE_KEY = "_response";
     enum string RUN_TASK = "_runTask";
 
-    private Request request;
+    private HttpRequest request;
     private ClientHttpHandler handler;
     private HttpClientConnection connection;
     private LinkedList!(ReceivedFrame) receivedFrames; // = new LinkedList!()();
 
-    this(Request request, ClientHttpHandler handler, HttpClientConnection connection) {
+    this(HttpRequest request, ClientHttpHandler handler, HttpClientConnection connection) {
         this.request = request;
         this.handler = handler;
         this.connection = connection;
@@ -198,10 +197,10 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
 
     static class ClientStreamPromise : Promise!(Stream) {
 
-        private Request request;
+        private HttpRequest request;
         private Promise!(HttpOutputStream) promise;
 
-        this(Request request, Promise!(HttpOutputStream) promise) {
+        this(HttpRequest request, Promise!(HttpOutputStream) promise) {
             this.request = request;
             this.promise = promise;
         }

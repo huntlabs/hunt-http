@@ -120,7 +120,7 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    void send(Request request, ClientHttpHandler handler) {
+    void send(HttpRequest request, ClientHttpHandler handler) {
         Promise!(HttpOutputStream) promise = new class Promise!(HttpOutputStream) {
 
             void succeeded(HttpOutputStream output) {
@@ -143,12 +143,12 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    void send(Request request, ByteBuffer buffer, ClientHttpHandler handler) {
+    void send(HttpRequest request, ByteBuffer buffer, ClientHttpHandler handler) {
         send(request, [buffer], handler);
     }
 
     override
-    void send(Request request, ByteBuffer[] buffers, ClientHttpHandler handler) {
+    void send(HttpRequest request, ByteBuffer[] buffers, ClientHttpHandler handler) {
         long contentLength = BufferUtils.remaining(buffers);
         request.getFields().put(HttpHeader.CONTENT_LENGTH, contentLength.to!string);
 
@@ -179,7 +179,7 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    HttpOutputStream getHttpOutputStream(Request request, ClientHttpHandler handler) {
+    HttpOutputStream getHttpOutputStream(HttpRequest request, ClientHttpHandler handler) {
         FuturePromise!(HttpOutputStream) promise = new FuturePromise!(HttpOutputStream)();
         send(request, promise, handler);
         try {
@@ -191,11 +191,11 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    void send(Request request, Promise!(HttpOutputStream) promise, ClientHttpHandler handler) {
+    void send(HttpRequest request, Promise!(HttpOutputStream) promise, ClientHttpHandler handler) {
         this.request(request, false, promise, handler);
     }
 
-    void request(Request request, bool endStream,
+    void request(HttpRequest request, bool endStream,
                         Promise!(HttpOutputStream) promise,
                         ClientHttpHandler handler) {
         http2Session.newStream(new HeadersFrame(request, null, endStream),
@@ -204,14 +204,14 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     }
 
     override
-    void upgradeHttp2(Request request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
+    void upgradeHttp2(HttpRequest request, SettingsFrame settings, Promise!(HttpClientConnection) promise,
                              ClientHttpHandler upgradeHandler,
                              ClientHttpHandler http2ResponseHandler) {
         throw new CommonRuntimeException("The current connection version is http2, it does not need to upgrading.");
     }
 
     override
-    void upgradeWebSocket(Request request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
+    void upgradeWebSocket(HttpRequest request, WebSocketPolicy policy, Promise!(WebSocketConnection) promise,
                                  ClientHttpHandler upgradeHandler, IncomingFrames incomingFrames) {
         throw new CommonRuntimeException("The current connection version is http2, it can not upgrade WebSocket.");
     }
