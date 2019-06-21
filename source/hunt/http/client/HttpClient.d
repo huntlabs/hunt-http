@@ -35,14 +35,18 @@ import hunt.util.Lifecycle;
 import core.atomic;
 import hunt.collection.BufferUtils;
 
-shared static this() {
-    NetUtil.startEventLoop();
-}
+// dfmt off
+version ( unittest ) {} 
+else {
+    shared static this() {
+        NetUtil.startEventLoop();
+    }
 
-shared static ~this() {
-    NetUtil.stopEventLoop();
+    shared static ~this() {
+        NetUtil.stopEventLoop();
+    }
 }
-
+// dfmt on
 
 /**
 */
