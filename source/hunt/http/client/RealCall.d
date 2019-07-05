@@ -60,8 +60,6 @@ class RealCall : Call {
         version(WITH_HUNT_SECURITY) {
             if(request.isHttps()) {
                 client.getHttpConfiguration().setSecureConnectionEnabled(true);
-                // import hunt.net.secure.conscrypt.ConscryptSecureSessionFactory;
-                // client.getHttpConfiguration().setSecureSessionFactory(new ConscryptSecureSessionFactory());
             }
         }
 		responseLocker = new Mutex();
@@ -134,7 +132,6 @@ class RealCall : Call {
         AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
             override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
-                // trace(BufferUtils.toString(item));
                 HttpClientResponse hcr = cast(HttpClientResponse)response;
                 hcr.setBody(new ResponseBody(response.getContentType(), 
                     response.getContentLength(), BufferUtils.clone(item)));
@@ -143,8 +140,7 @@ class RealCall : Call {
 
             override bool messageComplete(HttpRequest request, HttpResponse response,
                     HttpOutputStream output, HttpConnection connection) {
-                // trace(response);
-                version (HUNT_DEBUG) trace(response.getFields());
+                version (HUNT_HTTP_DEBUG) trace(response.getFields());
                 responseCallback.onResponse(this.outer, cast(HttpClientResponse)response);
                 return true;
             }
@@ -165,9 +161,6 @@ class RealCall : Call {
         } catch(IOException ex) {
             responseCallback.onFailure(this, ex);
         }
-        // doRequestTask(responseCallback);
-        // auto requestTask = task(&doRequestTask);
-        // requestTask.executeInNewThread();
     }
 
     void doRequestTask(AbstractClientHttpHandler httpHandler) {
@@ -213,79 +206,6 @@ class RealCall : Call {
     }
 
     
-        void doRequestTask(Callback responseCallback) {
-            HttpURI uri = originalRequest.getURI();
-            string scheme = uri.getScheme();
-            int port = uri.getPort();
-
-            version(HUNT_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
-                scheme, uri.getHost(), port);
-
-            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
-
-            if(port <= 0)
-                port = SchemePortMap[scheme];
-            client.connect(uri.getHost(), port, promise);
-            
-            HttpConnection connection;
-            try {
-                connection = promise.get();
-            } catch(Exception ex) {
-                warning(ex.msg);
-                responseCallback.onFailure(this, new IOException(ex.msg));
-                return;
-            }
-            
-            version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
-
-            if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
-
-                AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
-
-                    override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
-                            HttpOutputStream output, HttpConnection connection) {
-                        // trace(BufferUtils.toString(item));
-                        HttpClientResponse hcr = cast(HttpClientResponse)response;
-                        hcr.setBody(new ResponseBody(response.getContentType(), 
-                            response.getContentLength(), BufferUtils.clone(item)));
-                        return false;
-                    }
-
-                    override bool messageComplete(HttpRequest request, HttpResponse response,
-                            HttpOutputStream output, HttpConnection connection) {
-                        // trace(response);
-                        version (HUNT_DEBUG) trace(response.getFields());
-                        responseCallback.onResponse(this.outer, cast(HttpClientResponse)response);
-                        return true;
-                    }
-
-                };
-
-                httpHandler.badMessage((int status, string reason, HttpRequest request,
-                            HttpResponse response, HttpOutputStream output, HttpConnection connection) {
-                        import std.format;
-                        string msg = format("status: %d, reason: %s", status, reason);
-                        responseCallback.onFailure(this, new IOException(msg));
-                });
-
-                Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
-                RequestBody rb = originalRequest.getBody();
-                if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
-                    http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
-                } else {
-                    http1ClientConnection.send(originalRequest, httpHandler);
-                }
-            } else {
-                // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
-                // 
-                string msg = "Unsupported " ~ connection.getHttpVersion().toString();
-                warning(msg);
-                responseCallback.onFailure(this, new IOException(msg));
-            }
-
-            version (HUNT_HTTP_DEBUG) info("waitting response...");
-        }
-
     void cancel() {
         // transmitter.cancel();
     }
