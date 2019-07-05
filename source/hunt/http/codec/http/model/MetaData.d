@@ -11,9 +11,10 @@ import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.HttpVersion;
 
 import hunt.Functions;
-import hunt.util.Common;
+import hunt.logging.ConsoleLogger;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
+import hunt.util.Common;
 
 import std.ascii;
 import std.format;
@@ -36,6 +37,15 @@ class MetaData : Iterable!HttpField {
     }
 
     this(HttpVersion ver, HttpFields fields, long contentLength) {
+        version(HUNT_HTTP_DEBUG) {
+            if(contentLength>0) {
+                tracef("version: %s", ver.toString());
+                tracef("contentLength: %d", contentLength);
+                if(fields !is null) {
+                    tracef(fields.toString());
+                }
+            }
+        }
         _httpVersion = ver;
         _fields = fields;
         _contentLength = contentLength;
@@ -188,7 +198,8 @@ class HttpRequest : MetaData {
     //     this(method, new HttpURI( scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
     // }
 
-    this(string method, string scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength=long.min) {
+    this(string method, string scheme, HostPortHttpField hostPort, string uri, 
+            HttpVersion ver, HttpFields fields, long contentLength=long.min) {
         this(method, new HttpURI(scheme, hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
     }
 

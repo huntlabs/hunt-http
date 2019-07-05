@@ -561,9 +561,9 @@ class HttpGenerator {
         HttpRequest request = cast(HttpRequest) metaData;
         HttpResponse response = cast(HttpResponse) metaData;
 
-        version(HUNT_HTTP_DEBUG_MORE) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Header fields:\n%s", metaData.getFields().toString());
-            tracef("generateHeaders %s last=%s content=%s", metaData.toString(), 
+            tracef("generateHeaders %s, last=%s, content=%s", metaData.toString(), 
                 last, BufferUtils.toDetailString(content));
         }
 

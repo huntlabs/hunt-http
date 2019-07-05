@@ -7,9 +7,9 @@ import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
-
-
 import hunt.http.client.Http1ClientConnection;
+import hunt.http.client.RequestBody;
+
 import hunt.http.codec.http.stream.HttpConfiguration;
 import hunt.http.codec.http.stream.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -25,6 +25,8 @@ import hunt.collection.BufferUtils;
 import hunt.Exceptions;
 // import hunt.net.NetUtil;
 import hunt.logging.ConsoleLogger;
+
+import hunt.Exceptions;
 
 import core.sync.condition;
 import core.sync.mutex;
@@ -83,7 +85,12 @@ class RealCall : Call {
         HttpURI uri = originalRequest.getURI();
 
         FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
+        string scheme = uri.getScheme();
         int port  = uri.getPort();
+        
+        version(HUNT_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
+            scheme, uri.getHost(), port);
+            
         client.connect(uri.getHost(), port == -1 ? 80 : port, promise);
         
         HttpConnection connection;
@@ -91,7 +98,7 @@ class RealCall : Call {
             connection = promise.get();
         } catch(Exception ex) {
             warning(ex.msg);
-            return null;
+            throw new IOException(ex.msg);
         }
         
         version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());

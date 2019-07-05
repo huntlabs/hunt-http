@@ -7,6 +7,9 @@ import hunt.http.client.Call;
 
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
+import hunt.http.client.FormBody;
+import hunt.http.client.RequestBody;
+
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
 
@@ -35,7 +38,9 @@ class HttpClientTest {
     }
 
     void testGetHttps() {
-        string str = runGet("https://10.1.222.120:444/index.html");
+        string url = `http://api.weixin.qq.com/sns/oauth2/access_token?appid=wx142af949a0fa817f&secret=061b677b5cb397c1a69676c6569ef67a&code=071d9qF722BieR0CYOD722HCF72d9qFH&grant_type=authorization_code`;
+        // url = "https://10.1.222.120:440/index.html";
+        string str = runGet(url);
 
         // string str = runGet("https://10.1.222.120:6677/index");
         trace(str);
@@ -56,7 +61,9 @@ class HttpClientTest {
 
     void testAsynchronousGet() {
         // Request request = new RequestBuilder().url("http://publicobject.com/helloworld.txt").build();
-        Request request = new RequestBuilder().url("https://publicobject.com/helloworld.txt").build();
+        
+        string url = "https://publicobject.com/helloworld.txt";
+        Request request = new RequestBuilder().url(url).build();
 
         client.newCall(request).enqueue(new class Callback {
             void onFailure(Call call, IOException e) {
@@ -78,15 +85,15 @@ class HttpClientTest {
         info("A request has been sent.");
     }
 
+	// 
     void testPost() {
         string form = "email=test%40test.com&password=test";
-        string response = post("http://10.1.223.62:8180/testpost", form);
+        string response = post("http://10.1.222.120:8080/testpost", "application/x-www-form-urlencoded", form);
         trace(response);
     }
 
-    string post(string url, string content) {
-        string mimeType = "application/x-www-form-urlencoded";
-        RequestBody b = new RequestBody(mimeType, content);
+    string post(string url, string contentType,  string content) {
+        RequestBody b = new RequestBody(contentType, content);
 
         Request request = new RequestBuilder()
             .url(url)
@@ -95,6 +102,30 @@ class HttpClientTest {
 
         Response response = client.newCall(request).execute();
         return response.getBody().asString();
-  }
+  	}
+
+	// 
+    void testFormPost() {
+		FormBody form = new FormBody.Builder()
+        .add("sim", "ple")
+        .add("hey", "there")
+        .add("help", "me")
+        .build();
+
+        string response = postForm("http://10.1.11.164:8080/testpost", form);
+		// string response = postForm("http://10.1.222.120:8080/testpost", form);
+        trace(response);
+    }
+
+    string postForm(string url, RequestBody content) {
+        Request request = new RequestBuilder()
+            .url(url)
+			.header("Authorization", "Basic cHV0YW86MjAxOQ==")
+            .post(content)
+            .build();
+
+        Response response = client.newCall(request).execute();
+        return response.getBody().asString();
+  	}
 
 }
