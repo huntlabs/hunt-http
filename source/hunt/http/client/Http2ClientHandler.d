@@ -46,7 +46,7 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
 
         if (config.isSecureConnectionEnabled()) {
-            version(HUNT_HTTP_DEBUG) {
+            version(HUNT_DEBUG) {
                 info("initilizing a secure connection");
             }
 

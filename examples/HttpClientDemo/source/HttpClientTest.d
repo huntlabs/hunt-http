@@ -38,7 +38,9 @@ class HttpClientTest {
     }
 
     void testGetHttps() {
-        string url = `http://api.weixin.qq.com/sns/oauth2/access_token?appid=wx142af949a0fa817f&secret=061b677b5cb397c1a69676c6569ef67a&code=071d9qF722BieR0CYOD722HCF72d9qFH&grant_type=authorization_code`;
+		
+        string url = "https://publicobject.com/helloworld.txt";
+        // string url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx142af949a0fa817f&secret=061b677b5cb397c1a69676c6569ef67a&code=071d9qF722BieR0CYOD722HCF72d9qFH&grant_type=authorization_code`;
         // url = "https://10.1.222.120:440/index.html";
         string str = runGet(url);
 
@@ -62,7 +64,9 @@ class HttpClientTest {
     void testAsynchronousGet() {
         // Request request = new RequestBuilder().url("http://publicobject.com/helloworld.txt").build();
         
+        // string url = "https://10.1.222.120:6677/index";
         string url = "https://publicobject.com/helloworld.txt";
+		// string url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx142af949a0fa817f&secret=061b677b5cb397c1a69676c6569ef67a&code=071d9qF722BieR0CYOD722HCF72d9qFH&grant_type=authorization_code`;
         Request request = new RequestBuilder().url(url).build();
 
         client.newCall(request).enqueue(new class Callback {

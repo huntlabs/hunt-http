@@ -30,21 +30,27 @@ class HttpClientRequest : HttpRequest {
 	this(string method, string uri, RequestBody content) {
 		this._body = content;
 		HttpFields fields = new HttpFields();
-		fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+		if(content !is null)
+			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+
 		super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, fields,  
 			content is null ? 0 : content.contentLength());
 	}
 	
 	this(string method, HttpURI uri, HttpFields fields, RequestBody content) {
 		this._body = content;
-		fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+		if(content !is null)
+			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+
 		super(method, uri, HttpVersion.HTTP_1_1, fields, 
 			content is null ? 0 : content.contentLength());
 	}
 	
 	this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, RequestBody content) {
 		this._body = content;
-		fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+		if(content !is null)
+			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
+			
 		super(method, uri, ver, fields,  
 			content is null ? 0 : content.contentLength());
 	}
