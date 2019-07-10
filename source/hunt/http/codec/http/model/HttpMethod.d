@@ -2,7 +2,7 @@ module hunt.http.codec.http.model.HttpMethod;
 
 import std.string;
 import hunt.text.Common;
-import hunt.util.Traits;
+import hunt.util.ObjectUtils;
 
 import hunt.collection.ByteBuffer;
 

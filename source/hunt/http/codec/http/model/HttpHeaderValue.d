@@ -19,7 +19,7 @@
 module hunt.http.codec.http.model.HttpHeaderValue;
 
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.util.Traits;
+import hunt.util.ObjectUtils;
 
 import std.algorithm;
 import std.string;

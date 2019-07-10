@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.HttpHeader;
 
-import hunt.util.Traits;
+import hunt.util.ObjectUtils;
 import hunt.logging.ConsoleLogger;
 
 import std.algorithm;
