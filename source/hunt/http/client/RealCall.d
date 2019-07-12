@@ -21,22 +21,22 @@ import hunt.http.codec.http.model.HttpVersion;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 
-import hunt.concurrency.FuturePromise;
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
+import hunt.concurrency.FuturePromise;
 import hunt.Exceptions;
 // import hunt.net.NetUtil;
 import hunt.logging.ConsoleLogger;
-
-import hunt.Exceptions;
+import hunt.net.Config;
+import hunt.util.Traits;
 
 import core.atomic;
 import core.sync.condition;
 import core.sync.mutex;
 
 import std.parallelism;
+import std.conv;
 
-import hunt.util.Traits;
 
 /**
 */
@@ -179,9 +179,13 @@ class RealCall : Call {
             HttpConnection connection;
             try {
                 client.connect(uri.getHost(), port, promise);
-                connection = promise.get();
+                Config tcpConfig = client.getHttpConfiguration().getTcpConfiguration();
+                connection = promise.get(tcpConfig.getWaittingTimeout().seconds);
             } catch(Exception ex) {
-                throw new IOException(ex.msg);
+                version(HUNT_DEBUG) {
+                    warning(ex);
+                }
+                throw new IOException("Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string());
             }
             
             version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());

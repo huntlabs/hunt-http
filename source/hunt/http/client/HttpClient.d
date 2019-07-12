@@ -29,6 +29,7 @@ import hunt.collection.HashMap;
 import hunt.logging;
 import hunt.net.AsynchronousTcpSession;
 import hunt.net.Client;
+import hunt.net.Config;
 import hunt.net;
 import hunt.util.Lifecycle;
 
@@ -62,7 +63,9 @@ class HttpClient : AbstractLifecycle {
 
     this() {
         HttpConfiguration config = new HttpConfiguration();
-        config.getTcpConfiguration().setTimeout(60 * 1000);
+        Config tcpConfig = config.getTcpConfiguration();
+        tcpConfig.setTimeout(60 * 1000);
+        tcpConfig.setWaittingTimeout(5);
         this(config);
     }
 
