@@ -271,7 +271,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
     override void send(HttpRequest request, ClientHttpHandler handler) {
         try {
-            version (HUNT_DEBUG) tracef("client request and does not send data");
+            version (HUNT_HTTP_DEBUG) tracef("client request and does not send data");
             HttpOutputStream output = getHttpOutputStream(request, handler);
             output.close();
         } catch (Exception e) {
