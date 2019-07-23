@@ -65,7 +65,7 @@ class HttpClient : AbstractLifecycle {
         HttpConfiguration config = new HttpConfiguration();
         Config tcpConfig = config.getTcpConfiguration();
         tcpConfig.setTimeout(60 * 1000);
-        tcpConfig.setWaittingTimeout(5);
+        tcpConfig.setConnectionTimeout(5);
         this(config);
     }
 

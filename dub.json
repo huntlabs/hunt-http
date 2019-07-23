@@ -6,7 +6,7 @@
     "homepage": "https://www.huntlabs.net",
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net": "~>0.3.2"
+        "hunt-net": "~>0.3.4"
     },
     "configurations": [
         {

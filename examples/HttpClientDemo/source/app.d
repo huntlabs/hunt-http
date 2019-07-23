@@ -7,8 +7,8 @@ import std.stdio;
 void main(string[] args) {
 
     HttpClientTest test = new HttpClientTest();
-    // test.testGet();
-    test.testGetHttps();
+    test.testGet();
+    // test.testGetHttps();
     // test.testAsynchronousGet();
     // test.testPost();
     // test.testFormPost();

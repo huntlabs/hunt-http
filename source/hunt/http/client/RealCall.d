@@ -180,7 +180,7 @@ class RealCall : Call {
             try {
                 client.connect(uri.getHost(), port, promise);
                 Config tcpConfig = client.getHttpConfiguration().getTcpConfiguration();
-                connection = promise.get(tcpConfig.getWaittingTimeout().seconds);
+                connection = promise.get(tcpConfig.getConnectionTimeout().seconds);
             } catch(Exception ex) {
                 version(HUNT_DEBUG) {
                     warning(ex);
