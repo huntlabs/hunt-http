@@ -92,10 +92,18 @@ class RealCall : Call {
 
             override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
-                synchronized {
-                    hcr = cast(HttpClientResponse)response;
+                
+                HttpClientResponse clientResponse = cast(HttpClientResponse)response;
+                assert(clientResponse !is null);
+                
+                version (HUNT_HTTP_DEBUG) tracef("ContentType: %s, ContentLength: %d", 
+                    response.getContentType(), response.getContentLength());
+
+                version (HUNT_HTTP_DEBUG_MORE) {
+                    tracef("content: %s", cast(string)item.getRemaining());
                 }
-                hcr.setBody(new ResponseBody(response.getContentType(), 
+
+                clientResponse.setBody(new ResponseBody(response.getContentType(), 
                     response.getContentLength(), BufferUtils.clone(item)));
                 return false;
             }
@@ -103,6 +111,11 @@ class RealCall : Call {
             override bool messageComplete(HttpRequest request, HttpResponse response,
                     HttpOutputStream output, HttpConnection connection) {
                 version (HUNT_HTTP_DEBUG) trace(response.getFields());
+                
+                synchronized {
+                    hcr = cast(HttpClientResponse)response;
+                    assert(hcr !is null);
+                }
                 responseCondition.notifyAll();
                 return true;
             }

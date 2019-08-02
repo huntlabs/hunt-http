@@ -15,6 +15,7 @@ import hunt.http.codec.http.model.HttpField;
 
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
+import hunt.util.MimeType;
 
 class HttpClientTest {
     HttpClient client;
@@ -90,8 +91,13 @@ class HttpClientTest {
 
 	// 
     void testPost() {
-        string form = "email=test%40test.com&password=test";
-        string response = post("http://10.1.222.120:8080/testpost", "application/x-www-form-urlencoded", form);
+        import hunt.net.util.UrlEncoded;
+        UrlEncoded encoder = new UrlEncoded;
+        encoder.put("email", "test@putao.com");
+        encoder.put("password", "test");
+        // string content = "email=test%40putao.com&password=test";
+        string content = encoder.encode();
+        string response = post("http://127.0.0.1:8080/testpost", "application/x-www-form-urlencoded", content);
         trace(response);
     }
 
@@ -104,7 +110,11 @@ class HttpClientTest {
             .build();
 
         Response response = client.newCall(request).execute();
-        return response.getBody().asString();
+        ResponseBody res = response.getBody();
+        if(res is null)
+            return "";
+        else
+            return res.asString();
   	}
 
 	// 

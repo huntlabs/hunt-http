@@ -107,7 +107,8 @@ class MetaData : Iterable!HttpField {
      * @return the content length if available, otherwise {@link Long#MIN_VALUE}
      */
     long getContentLength() {
-        if (_contentLength == long.min) {
+        version(HUNT_HTTP_DEBUG) tracef("contentLength=%d", _contentLength);
+        if (_contentLength == long.min || _contentLength == -1) {
             if (_fields !is null) {
                 HttpField field = _fields.getField(HttpHeader.CONTENT_LENGTH);
                 _contentLength = field is null ? -1 : field.getLongValue();

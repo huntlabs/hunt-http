@@ -7,10 +7,10 @@ import std.stdio;
 void main(string[] args) {
 
     HttpClientTest test = new HttpClientTest();
-    test.testGet();
+    // test.testGet();
     // test.testGetHttps();
     // test.testAsynchronousGet();
-    // test.testPost();
+    test.testPost();
     // test.testFormPost();
 
     // writeln(HUNT_LOGO);

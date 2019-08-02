@@ -16,7 +16,7 @@ class HttpClientResponse : HttpResponse {
 	ResponseBody _body;
 	
 	this(HttpVersion ver, int status, string reason) {
-		super(ver, status, reason, new HttpFields(), -1);
+		this(ver, status, reason, new HttpFields(), long.min);
 	}
 	
 	this(HttpVersion ver, int status, string reason, HttpFields fields, long contentLength) {
@@ -32,7 +32,7 @@ class HttpClientResponse : HttpResponse {
    * <p>This always returns null on responses returned from {@link #cacheResponse}, {@link
    * #networkResponse}, and {@link #priorResponse()}.
    */
-	ResponseBody getBody() {
+	ResponseBody getBody() {		
 		return _body;
 	}	
 
@@ -63,7 +63,6 @@ class ResponseBody {
 	ByteBuffer _content;
 	string _contentType;
 	long _contentLength;
-
 
 	this(string contentType, long contentLength, ByteBuffer content) {
 

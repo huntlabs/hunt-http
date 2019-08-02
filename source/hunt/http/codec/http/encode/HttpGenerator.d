@@ -566,6 +566,10 @@ class HttpGenerator {
             tracef("generateHeaders %s, last=%s, content=%s", metaData.toString(), 
                 last, BufferUtils.toDetailString(content));
         }
+        
+        version(HUNT_HTTP_DEBUG_MORE) {
+            tracef("content: %s", cast(string)content.getRemaining());
+        }
 
         // default field values
         int send = _send;
