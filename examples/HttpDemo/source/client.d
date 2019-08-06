@@ -34,8 +34,6 @@ void main(string[] args) {
     } catch(Exception ex) {
         warning(ex);
     }
-
-    getchar();
 }
 
 
@@ -49,7 +47,7 @@ class HttpClientTest {
     // 
     void testGet() {
         // string str = runGet("http://10.1.222.120/test.html");
-        string str = runGet("http://10.1.222.120:800/index.html");
+        string str = runGet("http://10.1.222.120:8080/index.html");
         // string str = runGet("http://127.0.0.1:8080/json");
         // string str = runGet("http://www.putao.com/");
         trace(str);

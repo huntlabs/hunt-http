@@ -13,6 +13,7 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.concurrency.Promise;
+import hunt.concurrency.Future;
 import hunt.concurrency.FuturePromise;
 import hunt.concurrency.CompletableFuture;
 
@@ -35,7 +36,7 @@ void main(string[] args) {
     NetUtil.startEventLoop();
 
     HttpClient client = new HttpClient(new HttpConfiguration());
-    Completable!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
+    Future!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
 
     HttpClientRequest request = new HttpClientRequest("GET", "/index");
     FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
