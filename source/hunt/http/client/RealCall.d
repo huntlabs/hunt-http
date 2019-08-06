@@ -18,7 +18,7 @@ import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpMethod;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;

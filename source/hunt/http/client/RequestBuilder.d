@@ -3,7 +3,7 @@ module hunt.http.client.RequestBuilder;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.client.RequestBody;
 
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpMethod;

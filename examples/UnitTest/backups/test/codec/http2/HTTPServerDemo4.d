@@ -8,7 +8,7 @@ import hunt.collection.List;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;

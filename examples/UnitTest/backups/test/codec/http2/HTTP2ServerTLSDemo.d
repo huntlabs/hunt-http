@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import hunt.http.codec.http.frame.SettingsFrame;
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 import hunt.http.codec.http.model.HttpRequest;
 import hunt.http.codec.http.model.HttpResponse;
 import hunt.http.HttpOptions;

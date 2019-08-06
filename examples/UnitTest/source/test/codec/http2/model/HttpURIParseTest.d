@@ -15,7 +15,7 @@ import hunt.Assert;
 // import hunt.util.runners.Parameterized.Parameter;
 // import hunt.util.runners.Parameterized.Parameters;
 
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 
 // public class HttpURIParseTest {
 // 	string[][] tests = [

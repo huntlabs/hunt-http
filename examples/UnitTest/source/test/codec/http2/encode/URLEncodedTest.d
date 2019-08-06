@@ -7,7 +7,7 @@ import hunt.Assert;
 import hunt.text.Common;
 import hunt.util.TypeUtils;
 
-import hunt.http.util.UrlEncoded;
+import hunt.net.util.UrlEncoded;
 
 alias assertTrue = Assert.assertTrue;
 alias assertFalse = Assert.assertFalse;

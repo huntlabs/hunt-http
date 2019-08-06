@@ -1,6 +1,6 @@
 module test.codec.http2.model.HttpURITest;
 
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 
 import hunt.Assert;
 import hunt.Exceptions;
