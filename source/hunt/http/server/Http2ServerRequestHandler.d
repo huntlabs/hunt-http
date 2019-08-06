@@ -12,7 +12,7 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.http.codec.http.stream.DataFrameHandler;
-import hunt.http.environment;
+import hunt.http.Environment;
 
 import hunt.Exceptions;
 import hunt.util.Common;

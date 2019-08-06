@@ -19,6 +19,7 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 // import hunt.http.util.Completable;
 
 import hunt.Exceptions;
+import hunt.concurrency.Future;
 import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
 
@@ -79,7 +80,7 @@ class HttpClient : AbstractLifecycle {
         start();
     }
 
-    FuturePromise!(HttpClientConnection) connect(string host, int port) {
+    Future!(HttpClientConnection) connect(string host, int port) {
         FuturePromise!(HttpClientConnection) completable = new FuturePromise!(HttpClientConnection)();
         completable.id = "httpclient";
         connect(host, port, completable);

@@ -5,7 +5,7 @@ import hunt.http.client.RequestBuilder;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpURI;
+import hunt.net.util.HttpURI;
 import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 

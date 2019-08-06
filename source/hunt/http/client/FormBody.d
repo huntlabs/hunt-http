@@ -1,7 +1,7 @@
 module hunt.http.client.FormBody;
 
 import hunt.http.client.RequestBody;
-import hunt.http.util.UrlEncoded;
+import hunt.net.util.UrlEncoded;
 import hunt.util.MimeType;
 import hunt.Exceptions;
 
