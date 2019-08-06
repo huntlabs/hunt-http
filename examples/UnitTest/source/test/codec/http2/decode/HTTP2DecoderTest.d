@@ -7,7 +7,7 @@ import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model;
 
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.CommonEncoder;
@@ -19,7 +19,7 @@ import hunt.http.server.ServerSessionListener;
 import hunt.collection;
 import hunt.Exceptions;
 import hunt.util.Common;
-import hunt.net.Session;
+import hunt.net.Connection;
 import hunt.Assert;
 import hunt.util.Common;
 
@@ -481,7 +481,7 @@ class MockSessionFactory
                 encoder.encode(message, this);
             }
 
-        int getSessionId(){ return 0; }
+        int getId(){ return 0; }
 
 version(HUNT_METRIC) {
         long getOpenTime(){ implementationMissing(false); return 0; }

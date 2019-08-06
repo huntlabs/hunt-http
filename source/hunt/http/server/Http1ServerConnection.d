@@ -27,9 +27,9 @@ import hunt.http.codec.http.stream;
 
 import hunt.http.util.Completable;
 
-import hunt.net.ConnectionType;
+import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
@@ -61,14 +61,13 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     private shared bool upgradeWebSocketComplete = false;
     private Promise!HttpTunnelConnection tunnelConnectionPromise;
 
-    this(HttpConfiguration config, TcpSession tcpSession,
-            SecureSession secureSession, Http1ServerRequestHandler requestHandler,
+    this(HttpConfiguration config, Connection tcpSession, Http1ServerRequestHandler requestHandler,
             ServerSessionListener serverSessionListener, 
             WebSocketHandler webSocketHandler) {
         
         version (HUNT_DEBUG) 
             trace("initializing Http1ServerConnection ...");
-        super(config, secureSession, tcpSession, requestHandler, null);
+        super(config, tcpSession, requestHandler, null);
         requestHandler.connection = this;
         this.serverSessionListener = serverSessionListener;
         this.serverRequestHandler = requestHandler;
@@ -80,13 +79,13 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         return new HttpParser(requestHandler, config.getMaxRequestHeadLength());
     }
 
-    override ConnectionType getConnectionType() {
+    override HttpConnectionType getConnectionType() {
         return super.getConnectionType();
     }
 
-    override bool isEncrypted() {
-        return super.isEncrypted();
-    }
+    // override bool isSecured() {
+    //     return super.isSecured();
+    // }
 
     HttpParser getParser() {
         return parser;
@@ -125,7 +124,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
     Http1ServerTunnelConnection createHttpTunnel() {
         if (tunnelConnectionPromise !is null) {
-            Http1ServerTunnelConnection tunnelConnection = new Http1ServerTunnelConnection(secureSession,
+            Http1ServerTunnelConnection tunnelConnection = new Http1ServerTunnelConnection(
                     tcpSession, httpVersion);
             tunnelConnectionPromise.succeeded(tunnelConnection);
             tcpSession.attachObject(tunnelConnection);
@@ -140,7 +139,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
         if (HttpMethod.PRI.isSame(request.getMethod())) {
             Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
-                    tcpSession, secureSession, serverSessionListener);
+                    tcpSession, serverSessionListener);
             tcpSession.attachObject(http2ServerConnection);
             http2ServerConnection.getParser().directUpgrade();
             upgradeHttp2Complete = true;
@@ -178,7 +177,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                     responseH2c();
 
                     Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
-                            tcpSession, secureSession, serverSessionListener);
+                            tcpSession,  serverSessionListener);
                     tcpSession.attachObject(http2ServerConnection);
                     upgradeHttp2Complete = true;
                     http2ServerConnection.getParser().standardUpgrade();
@@ -213,7 +212,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
                 // dfmt off
                 WebSocketConnectionImpl webSocketConnection = new WebSocketConnectionImpl(
-                        secureSession, tcpSession,
+                         tcpSession,
                         null, webSocketHandler.getWebSocketPolicy(),
                         request, response, config);
 
@@ -302,7 +301,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     override protected void generateHttpMessageSuccessfully() {
         version (HUNT_HTTP_DEBUG)
             tracef("server session %s generates the HTTP message completely",
-                    connection.getSessionId());
+                    connection.getId());
 
         HttpResponse response = connection.getResponse();
         HttpRequest request = connection.getRequest();
@@ -315,7 +314,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
             if ("keep-alive".equalsIgnoreCase(requestConnectionValue)
                     && "keep-alive".equalsIgnoreCase(responseConnectionValue)) {
                 tracef("the server %s connection %s is persistent",
-                        response.getHttpVersion(), connection.getSessionId());
+                        response.getHttpVersion(), connection.getId());
             } else {
                 connection.close();
             }
@@ -326,7 +325,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
             } else {
                 version (HUNT_HTTP_DEBUG)
                     infof("the server %s connection %d is persistent",
-                            response.getHttpVersion(), connection.getSessionId());
+                            response.getHttpVersion(), connection.getId());
             }
         } else {
             throw new IllegalStateException(
@@ -352,8 +351,8 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
                 .getMaxResponseTrailerLength());
     }
 
-    override protected TcpSession getSession() {
-        return connection.getTcpSession();
+    override protected Connection getSession() {
+        return connection.getTcpConnection();
     }
 
     override protected HttpGenerator getHttpGenerator() {

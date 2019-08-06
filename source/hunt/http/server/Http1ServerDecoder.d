@@ -7,10 +7,10 @@ import hunt.http.server.Http2ServerDecoder;
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-import hunt.net.AbstractConnection;
-import hunt.net.DecoderChain;
-import hunt.net.ConnectionType;
-import hunt.net.Session;
+import hunt.http.AbstractHttpConnection;
+import hunt.net.codec.Decoder;
+import hunt.http.HttpConnectionType;
+import hunt.net.Connection;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -31,21 +31,21 @@ class Http1ServerDecoder : DecoderChain {
         this.http2ServerDecoder = http2ServerDecoder;
     }
 
-    override void decode(ByteBuffer buffer, Session session) {
+    override void decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
         Object attachment = session.getAttachment();
         version (HUNT_HTTP_DEBUG)
             tracef("session type: %s", typeid(attachment));
 
-        AbstractConnection abstractConnection = cast(AbstractConnection) attachment;
+        AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) attachment;
         if (abstractConnection is null) {
             warningf("Bad connection instance: ", typeid(attachment));
             return;
         }
 
         switch (abstractConnection.getConnectionType()) {
-        case ConnectionType.HTTP1: {
+        case HttpConnectionType.HTTP1: {
                 Http1ServerConnection http1Connection = cast(Http1ServerConnection) attachment;
                 if (http1Connection.getTunnelConnectionPromise() is null) {
                     HttpParser parser = http1Connection.getParser();
@@ -69,15 +69,15 @@ class Http1ServerDecoder : DecoderChain {
                 }
             }
             break;
-        case ConnectionType.HTTP2: {
+        case HttpConnectionType.HTTP2: {
                 http2ServerDecoder.decode(buf, session);
             }
             break;
-        case ConnectionType.WEB_SOCKET: {
+        case HttpConnectionType.WEB_SOCKET: {
                 webSocketDecoder.decode(buf, session);
             }
             break;
-        case ConnectionType.HTTP_TUNNEL: {
+        case HttpConnectionType.HTTP_TUNNEL: {
                 Http1ServerTunnelConnection tunnelConnection = 
                     cast(Http1ServerTunnelConnection) session.getAttachment();
                 if (tunnelConnection.content != null) {

@@ -3,7 +3,7 @@ module hunt.http.server.ServerHttpHandler;
 import hunt.http.server.HttpServerConnection;
 
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpTunnelConnection;

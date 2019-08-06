@@ -18,7 +18,7 @@ public import hunt.http.codec.http.model.HttpScheme;
 public import hunt.http.codec.http.model.HttpStatus;
 public import hunt.http.codec.http.model.HttpTokens;
 public import hunt.http.codec.http.model.HttpURI;
-public import hunt.http.codec.http.model.HttpVersion;
+public import hunt.http.HttpVersion;
 public import hunt.http.codec.http.model.MetaData;
 public import hunt.http.codec.http.model.MultiPartContentProvider;
 public import hunt.http.codec.http.model.MultipartConfig;

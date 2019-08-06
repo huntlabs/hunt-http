@@ -11,7 +11,7 @@ import hunt.http.client.SimpleHttpClient;
 import hunt.http.client.SimpleResponse;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.util.MimeType;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.collection.BufferUtils;
 

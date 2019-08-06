@@ -4,7 +4,7 @@ import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.utils.concurrent.FuturePromise;
 
 import java.io.UnsupportedEncodingException;

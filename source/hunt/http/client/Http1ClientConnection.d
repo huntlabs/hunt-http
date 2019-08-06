@@ -19,9 +19,9 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
-import hunt.net.ConnectionType;
+import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.collection;
 import hunt.concurrency.Promise;
@@ -56,14 +56,14 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     private bool upgradeWebSocketComplete = false;
     private ResponseHandlerWrap wrap;
 
-    this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession) {
-        this(config, secureSession, tcpSession, new ResponseHandlerWrap());
+    this(HttpConfiguration config, Connection tcpSession) { // , SecureSession secureSession
+        this(config, tcpSession, new ResponseHandlerWrap()); // secureSession, 
     }
 
-    private this(HttpConfiguration config, SecureSession secureSession,
-            TcpSession tcpSession, ResponseHandler responseHandler) {
+    private this(HttpConfiguration config,
+            Connection tcpSession, ResponseHandler responseHandler) {
 
-        super(config, secureSession, tcpSession, null, responseHandler);
+        super(config, tcpSession, null, responseHandler);
         wrap = cast(ResponseHandlerWrap) responseHandler;
         wrap.connection = this;
     }
@@ -73,13 +73,13 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return new HttpParser(responseHandler, config.getMaxRequestHeadLength());
     }
 
-    override ConnectionType getConnectionType() {
-        return ConnectionType.HTTP1;
+    override HttpConnectionType getConnectionType() {
+        return HttpConnectionType.HTTP1;
     }
 
-    override bool isEncrypted() {
-        return super.isEncrypted();
-    }
+    // override bool isSecured() {
+    //     return super.isSecured();
+    // }
 
     HttpParser getParser() {
         return parser;
@@ -118,7 +118,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
             Promise!(HttpClientConnection) promise, Promise!(Stream) initStream,
             Stream.Listener initStreamListener,
             ClientHttp2SessionListener listener, ClientHttpHandler handler) {
-        if (isEncrypted()) {
+        if (isSecured()) {
             throw new IllegalStateException("The TLS TCP connection must use ALPN to upgrade HTTP2");
         }
 
@@ -126,13 +126,12 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         this.http2SessionListener = listener;
         http2Connection = new class Http2ClientConnection {
             this() {
-                super(getHttp2Configuration(),
-                getTcpSession(), null, http2SessionListener);
+                super(getHttp2Configuration(), this.outer.tcpSession, http2SessionListener);
             }
             override
             protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
                                                     StreamSession.Listener listener) {
-                return Http2ClientSession.initSessionForUpgradingHTTP2(null, this.tcpSession, generator,
+                return Http2ClientSession.initSessionForUpgradingHTTP2(null, this.outer.tcpSession, generator,
                         listener, flowControl, 3, config.getStreamIdleTimeout(), initStream,
                         initStreamListener);
             }
@@ -184,7 +183,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                 if (http2ConnectionPromise !is null
                         && http2SessionListener !is null && http2Connection !is null) {
                     upgradeHttp2Complete = true;
-                    getTcpSession().attachObject(http2Connection);
+                    tcpSession.attachObject(http2Connection);
                     http2SessionListener.setConnection(http2Connection);
                     http2Connection.initialize(getHttp2Configuration(),
                             http2ConnectionPromise, http2SessionListener);
@@ -197,9 +196,9 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         case HttpProtocol.WEB_SOCKET: {
                 if (webSocketConnectionPromise !is null && incomingFrames !is null && policy !is null) {
                     upgradeWebSocketComplete = true;
-                    WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(secureSession,
+                    WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
                             tcpSession, incomingFrames, policy, request, response, config);
-                    getTcpSession().attachObject(cast(Object) webSocketConnection);
+                    tcpSession.attachObject(cast(Object) webSocketConnection);
                     webSocketConnectionPromise.succeeded(webSocketConnection);
                     return true;
                 } else {
@@ -318,11 +317,11 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     private void checkWrite(HttpRequest request, Http1ClientResponseHandler handler) {
         assert(request, "The http client request is null.");
         assert(handler, "The http1 client response handler is null.");
-        assert(isOpen(), "The current connection " ~ tcpSession.getSessionId()
+        assert(isOpen(), "The current connection " ~ tcpSession.getId()
                 .to!string ~ " has been closed.");
-        assert(!upgradeHttp2Complete, "The current connection " ~ tcpSession.getSessionId()
+        assert(!upgradeHttp2Complete, "The current connection " ~ tcpSession.getId()
                 .to!string ~ " has upgraded HTTP2.");
-        assert(!upgradeWebSocketComplete, "The current connection " ~ tcpSession.getSessionId()
+        assert(!upgradeWebSocketComplete, "The current connection " ~ tcpSession.getId()
                 .to!string ~ " has upgraded WebSocket.");
 
         if (wrap.writing is null) {
@@ -342,16 +341,17 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         }
     }
 
-    override bool isClosed() {
-        return !isOpen();
-    }
+    // override bool isClosed() {
+    //     return !isOpen();
+    // }
 
-    override bool isOpen() {
+    // override 
+    bool isOpen() {
         version (HUNT_HTTP_DEBUG) {
             tracef("Connection status: isOpen=%s, upgradeHttp2Complete=%s, upgradeWebSocketComplete=%s",
-                    tcpSession.isOpen(), upgradeHttp2Complete, upgradeWebSocketComplete);
+                    tcpSession.isConnected(), upgradeHttp2Complete, upgradeWebSocketComplete);
         }
-        return tcpSession.isOpen() && !upgradeHttp2Complete && !upgradeWebSocketComplete;
+        return tcpSession.isConnected() && !upgradeHttp2Complete && !upgradeWebSocketComplete;
     }
 
     bool getUpgradeHttp2Complete() {
@@ -455,7 +455,7 @@ class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
 
 
     override protected void generateHttpMessageSuccessfully() {
-        tracef("client session %s generates the HTTP message completely", connection.getSessionId());
+        tracef("client session %s generates the HTTP message completely", connection.getId());
     }
 
     override protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,
@@ -475,8 +475,8 @@ class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
                 .getMaxRequestTrailerLength());
     }
 
-    override protected TcpSession getSession() {
-        return connection.getTcpSession();
+    override protected Connection getSession() {
+        return connection.getTcpConnection();
     }
 
     override protected HttpGenerator getHttpGenerator() {

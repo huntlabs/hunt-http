@@ -141,7 +141,7 @@ public class QuotedQualityCSVTest {
         values.addValue("=");
         values.addValue(",");
 
-        values.addValue(";;");
+        values.addValue(";");
         values.addValue(";=");
         values.addValue(";,");
         values.addValue("=;");
@@ -151,9 +151,9 @@ public class QuotedQualityCSVTest {
         values.addValue(",=");
         values.addValue(",,");
 
-        values.addValue(";;;");
-        values.addValue(";;=");
-        values.addValue(";;,");
+        values.addValue(";;");
+        values.addValue(";=");
+        values.addValue(";,");
         values.addValue(";=;");
         values.addValue(";==");
         values.addValue(";=,");
@@ -161,7 +161,7 @@ public class QuotedQualityCSVTest {
         values.addValue(";,=");
         values.addValue(";,,");
 
-        values.addValue("=;;");
+        values.addValue("=;");
         values.addValue("=;=");
         values.addValue("=;,");
         values.addValue("==;");
@@ -171,7 +171,7 @@ public class QuotedQualityCSVTest {
         values.addValue("=,=");
         values.addValue("=,,");
 
-        values.addValue(",;;");
+        values.addValue(",;");
         values.addValue(",;=");
         values.addValue(",;,");
         values.addValue(",=;");

@@ -2,8 +2,8 @@ module hunt.http.server.Http2ServerDecoder;
 
 import hunt.http.server.Http2ServerConnection;
 
-import hunt.net.DecoderChain;
-import hunt.net.Session;
+import hunt.net.codec.Decoder;
+import hunt.net.Connection;
 import hunt.logging;
 
 
@@ -16,14 +16,14 @@ class Http2ServerDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Session session) {
+    void decode(ByteBuffer buffer, Connection session) {
         if (!buffer.hasRemaining()) {
             return;
         }
 
         version(HUNT_DEBUG) {
             tracef("buffer: %s", buffer.toString());
-            tracef("the server session %s received the %s bytes", session.getSessionId(), buffer.remaining());
+            tracef("the server session %s received the %s bytes", session.getId(), buffer.remaining());
         }
 
         Http2ServerConnection connection = cast(Http2ServerConnection) session.getAttachment();

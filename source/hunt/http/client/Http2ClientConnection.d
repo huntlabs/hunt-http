@@ -18,9 +18,9 @@ import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.collection;
 import hunt.logging;
-import hunt.net.ConnectionType;
+import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.util.Common;
 import hunt.concurrency.FuturePromise;
@@ -68,20 +68,19 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
         // 
         // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() => getHttp2Session().ping(new PingFrame(false), new class Callback {
         //     void succeeded() {
-        //         info("The session %s sent ping frame success", getSessionId());
+        //         info("The session %s sent ping frame success", getId());
         //     }
 
         //     void failed(Throwable x) {
-        //         warningf("the session %s sends ping frame failure. %s", getSessionId(), x.getMessage());
+        //         warningf("the session %s sends ping frame failure. %s", getId(), x.getMessage());
         //     }
         // }), config.getHttp2PingInterval(), config.getHttp2PingInterval(), TimeUnit.MILLISECONDS);
 
         // onClose(c => pingFuture.cancel());
     }
 
-    this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession,
-                                 SessionListener listener) {
-        super(config, tcpSession, secureSession, listener);
+    this(HttpConfiguration config, Connection tcpSession, SessionListener listener) {
+        super(config, tcpSession, listener);
     }
 
     override
@@ -97,14 +96,14 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
 
     
     override
-    ConnectionType getConnectionType() {
+    HttpConnectionType getConnectionType() {
         return super.getConnectionType();
     }
 
-    override
-    bool isEncrypted() {
-        return super.isEncrypted();
-    }
+    // override
+    // bool isSecured() {
+    //     return super.isSecured();
+    // }
 
 
     Parser getParser() {

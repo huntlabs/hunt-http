@@ -19,7 +19,7 @@ module test.codec.http2.frame.ContinuationParseTest;
 // import hunt.http.codec.http.model.HttpField;
 // import hunt.http.codec.http.model.HttpFields;
 // import hunt.http.codec.http.model.HttpScheme;
-// import hunt.http.codec.http.model.HttpVersion;
+// import hunt.http.HttpVersion;
 // import hunt.http.codec.http.model.MetaData;
 
 // shared static this()

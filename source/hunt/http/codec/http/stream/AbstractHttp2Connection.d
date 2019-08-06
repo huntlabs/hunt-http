@@ -5,33 +5,31 @@ import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.model;
 
 
-import hunt.http.codec.http.stream.AbstractHttpConnection;
+import hunt.http.AbstractHttpConnection;
 import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 import hunt.http.codec.http.stream.FlowControlStrategy;
 import hunt.http.codec.http.stream.Http2Session;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.SimpleFlowControlStrategy;
 
-import hunt.net.ConnectionType;
+import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.Exceptions;
 
-// alias TcpSession = hunt.net.Session.Session;
 alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;
 
-abstract class AbstractHttp2Connection :AbstractHttpConnection  {
+abstract class AbstractHttp2Connection : AbstractHttpConnection  {
 
     protected Http2Session http2Session;
     protected Parser parser;
     protected Http2Generator generator;
 
-    this(HttpConfiguration config,TcpSession tcpSession, 
-        SecureSession secureSession, Listener listener) {
+    this(HttpConfiguration config, Connection tcpSession, Listener listener) {
             
-        super(secureSession, tcpSession, HttpVersion.HTTP_2);
+        super(tcpSession, HttpVersion.HTTP_2);
 
         FlowControlStrategy flowControl;
         switch (config.getFlowControlStrategy()) {
@@ -50,9 +48,9 @@ abstract class AbstractHttp2Connection :AbstractHttpConnection  {
         this.parser = initParser(config);
     }
 
-    // override
-    ConnectionType getConnectionType() {
-        return ConnectionType.HTTP2;
+    override
+    HttpConnectionType getConnectionType() {
+        return HttpConnectionType.HTTP2;
     }
 
     abstract protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,

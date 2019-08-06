@@ -6,10 +6,10 @@ import hunt.http.client.Http2ClientDecoder;
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-import hunt.net.AbstractConnection;
-import hunt.net.ConnectionType;
-import hunt.net.DecoderChain;
-import hunt.net.Session;
+import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnectionType;
+import hunt.net.codec.Decoder;
+import hunt.net.Connection;
 
 import hunt.Exceptions;
 
@@ -33,10 +33,11 @@ class Http1ClientDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Session session) {
+    void decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = buffer; // toHeapBuffer(buffer);
         Object attachment = session.getAttachment();
-        AbstractConnection abstractConnection = cast(AbstractConnection) session.getAttachment();
+
+        AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) session.getAttachment();
         if(abstractConnection is null)
         {
             throw new IllegalStateException("Client connection is null! The actual type is: " 
@@ -44,7 +45,7 @@ class Http1ClientDecoder : DecoderChain {
         }
 
         switch (abstractConnection.getConnectionType()) {
-            case ConnectionType.HTTP1: {
+            case HttpConnectionType.HTTP1: {
                 Http1ClientConnection http1Connection = cast(Http1ClientConnection) abstractConnection;
                 HttpParser parser = http1Connection.getParser();
                 while (buf.hasRemaining()) {
@@ -60,12 +61,12 @@ class Http1ClientDecoder : DecoderChain {
             }
             break;
 
-            case ConnectionType.HTTP2: {
+            case HttpConnectionType.HTTP2: {
                 http2ClientDecoder.decode(buf, session);
             }
             break;
 
-            case ConnectionType.WEB_SOCKET: {
+            case HttpConnectionType.WEB_SOCKET: {
                 webSocketDecoder.decode(buf, session);
             }
             break;

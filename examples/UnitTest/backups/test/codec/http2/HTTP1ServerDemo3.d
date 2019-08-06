@@ -8,8 +8,8 @@ import hunt.collection.List;
 
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpOptions;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
@@ -30,7 +30,7 @@ public class Http1ServerDemo3 {
 					override
 					public void earlyEOF(HttpRequest request, HttpResponse response, HttpOutputStream output,
 										 HttpConnection connection) {
-						writeln("the server connection " ~ connection.getSessionId() ~ " is early EOF");
+						writeln("the server connection " ~ connection.getId() ~ " is early EOF");
 					}
 
 					override

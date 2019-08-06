@@ -20,7 +20,7 @@ import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.SettingsFrame;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.utils.codec.Base64Utils;
 import hunt.collection.BufferUtils;
 import hunt.util.TypeUtils;

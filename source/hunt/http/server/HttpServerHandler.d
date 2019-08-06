@@ -8,14 +8,14 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 
-import hunt.http.codec.http.model.HttpVersion;
-import hunt.http.codec.http.stream.AbstractHttpHandler;
-import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpVersion;
+import hunt.http.AbstractHttpConnectionHandler;
+import hunt.http.HttpOptions;
+import hunt.http.HttpConnection;
 
 import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.Exceptions;
 import hunt.logging;
@@ -37,27 +37,27 @@ class HttpServerHandler : AbstractHttpHandler {
         this.webSocketHandler = webSocketHandler;
     }
 
-    override void sessionOpened(Session session) {
+    override void connectionOpened(Connection connection) {
         version (HUNT_DEBUG)
-            tracef("New http session");
-        // tracef("New http session: %s", typeid(cast(Object) session));
+            tracef("New http connection");
+        // tracef("New http connection: %s", typeid(cast(Object) connection));
         version(WITH_HUNT_SECURITY) {
             if (config.isSecureConnectionEnabled()) {
-                buildSecureSession(session);
+                buildSecureSession(connection);
             } else {
-                buildNomalSession(session);
+                buildNomalSession(connection);
             }
         } else {
-            buildNomalSession(session);
+            buildNomalSession(connection);
         }
     }
 
-    private void buildNomalSession(Session session) {
+    private void buildNomalSession(Connection connection) {
         string protocol = config.getProtocol();
         if (!protocol.empty) {
-            Http1ServerConnection httpConnection = new Http1ServerConnection(config, session, null,
+            Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection,
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
-            session.attachObject(httpConnection);
+            connection.attachObject(httpConnection);
             serverHttpHandler.acceptConnection(httpConnection);
         } else {
             enum string HTTP_1_1 = HttpVersion.HTTP_1_1.asString();
@@ -71,15 +71,15 @@ class HttpServerHandler : AbstractHttpHandler {
             // }
 
             if (icmp(HTTP_1_1, protocol) == 0) {
-                Http1ServerConnection httpConnection = new Http1ServerConnection(config, session, null,
+                Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection, 
                         new Http1ServerRequestHandler(serverHttpHandler),
                         listener, webSocketHandler);
-                session.attachObject(httpConnection);
+                connection.attachObject(httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
             } else if (icmp(HTTP_2, protocol) == 0) {
                 Http2ServerConnection httpConnection = new Http2ServerConnection(config,
-                        session, null, listener);
-                session.attachObject(httpConnection);
+                        connection, listener);
+                connection.attachObject(httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
             } else {
                 string msg = "the protocol " ~ protocol ~ " is not support.";
@@ -92,29 +92,29 @@ class HttpServerHandler : AbstractHttpHandler {
     }
 
     version(WITH_HUNT_SECURITY)
-    private void buildSecureSession(Session session) {
+    private void buildSecureSession(Connection connection) {
         string protocol = config.getProtocol();
         SecureSessionFactory factory = config.getSecureSessionFactory();
-        SecureSession secureSession = factory.create(session, false, (SecureSession sslSession) {
+        SecureSession secureSession = factory.create(connection, false, (SecureSession sslSession) {
             version (HUNT_DEBUG)
-                info("Secure session created...");
+                info("Secure connection created...");
             HttpConnection httpConnection;
             string protocol = sslSession.getApplicationProtocol();
             if (protocol.empty)
                 protocol = "http/1.1";
 
             version (HUNT_DEBUG) {
-                tracef("server session %s SSL handshake finished. Application protocol: %s",
-                    session.getSessionId(), protocol);
+                tracef("server connection %s SSL handshake finished. Application protocol: %s",
+                    connection.getId(), protocol);
             }
 
             switch (protocol) {
             case "http/1.1":
-                httpConnection = new Http1ServerConnection(config, session, sslSession,
+                httpConnection = new Http1ServerConnection(config, connection, sslSession,
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
                 break;
             case "h2":
-                httpConnection = new Http2ServerConnection(config, session, sslSession, listener);
+                httpConnection = new Http2ServerConnection(config, connection, sslSession, listener);
                 break;
             default:
                 throw new IllegalStateException(
@@ -123,12 +123,12 @@ class HttpServerHandler : AbstractHttpHandler {
             }
 
             //infof("attach http connection: %s", typeid(httpConnection));
-            session.attachObject(cast(Object) httpConnection);
+            connection.attachObject(cast(Object) httpConnection);
             serverHttpHandler.acceptConnection(httpConnection);
         });
 
-        //infof("attach secure session: %s", typeid(secureSession));
-        session.attachObject(cast(Object) secureSession);
+        //infof("attach secure connection: %s", typeid(secureSession));
+        connection.attachObject(cast(Object) secureSession);
     }
 
 }

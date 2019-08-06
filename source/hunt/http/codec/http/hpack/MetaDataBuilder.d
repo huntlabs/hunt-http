@@ -8,7 +8,7 @@ import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpScheme;
 import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.StaticTableHttpField;
 

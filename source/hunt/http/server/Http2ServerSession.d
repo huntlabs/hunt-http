@@ -12,7 +12,7 @@ import hunt.collection.Collections;
 import hunt.collection.Map;
 import hunt.util.Common;
 import hunt.logging;
-import hunt.net.Session;
+import hunt.net.Connection;
 import hunt.concurrency.Scheduler;
 import hunt.util.Common;
 
@@ -21,7 +21,7 @@ class Http2ServerSession : Http2Session , ServerParser.Listener {
     
     private ServerSessionListener listener;
 
-    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
+    this(Scheduler scheduler, Connection endPoint, Http2Generator generator,
                               ServerSessionListener listener, FlowControlStrategy flowControl, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, 2, streamIdleTimeout);
         this.listener = listener;

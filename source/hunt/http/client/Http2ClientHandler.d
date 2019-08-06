@@ -1,13 +1,13 @@
 module hunt.http.client.Http2ClientHandler;
 
 import hunt.http.client.Http1ClientConnection;
-import hunt.http.client.Http2ClientContext;
+import hunt.http.client.HttpClientContext;
 import hunt.http.client.Http2ClientConnection;
 
-import hunt.http.codec.http.model.HttpVersion;
-import hunt.http.codec.http.stream.AbstractHttpHandler;
-import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.net.Session;
+import hunt.http.HttpVersion;
+import hunt.http.AbstractHttpConnectionHandler;
+import hunt.http.HttpOptions;
+import hunt.net.Connection;
 
 import hunt.net.secure.SecureSession;
 
@@ -28,20 +28,21 @@ import std.array;
 
 class Http2ClientHandler : AbstractHttpHandler {
 
-    private Map!(int, Http2ClientContext) http2ClientContext;
+    // private Map!(int, HttpClientContext) http2ClientContext;
+    HttpClientContext http2ClientContext;
 
-    this(HttpConfiguration config, Map!(int, Http2ClientContext) http2ClientContext) {
+    this(HttpConfiguration config, HttpClientContext http2ClientContext) {
         super(config);
         this.http2ClientContext = http2ClientContext;
     }
 
     override
-    void sessionOpened(Session session) {
-        Http2ClientContext context = http2ClientContext.get(session.getSessionId());
+    void connectionOpened(Connection connection) {
+        HttpClientContext context = http2ClientContext; //.get(connection.getId());
 
         if (context is null) {
-            errorf("http2 client can not get the client context of session %s", session.getSessionId());
-            session.closeNow();
+            errorf("http2 client can not get the client context of connection %s", connection.getId());
+            connection.close();
             return;
         }
 
@@ -52,7 +53,7 @@ class Http2ClientHandler : AbstractHttpHandler {
 
             version(WITH_HUNT_SECURITY) {
                 SecureSessionFactory factory = config.getSecureSessionFactory();
-                SecureSession secureSession = factory.create(session, true, (SecureSession sslSession) {
+                SecureSession secureSession = factory.create(connection, true, (SecureSession sslSession) {
 
                     string protocol = "http/1.1";
                     string p = sslSession.getApplicationProtocol();
@@ -61,15 +62,15 @@ class Http2ClientHandler : AbstractHttpHandler {
                     else
                         protocol = p;
 
-                    version(HUNT_HTTP_DEBUG) infof("Client session %s SSL handshake finished. The app protocol is %s", 
-                        session.getSessionId(), protocol);
+                    version(HUNT_HTTP_DEBUG) infof("Client connection %s SSL handshake finished. The app protocol is %s", 
+                        connection.getId(), protocol);
 
                     switch (protocol) {
                         case "http/1.1":
-                            initializeHttp1ClientConnection(session, context, sslSession);
+                            initializeHttp1ClientConnection(connection, context, sslSession);
                             break;
                         case "h2":
-                            initializeHttp2ClientConnection(session, context, sslSession);
+                            initializeHttp2ClientConnection(connection, context, sslSession);
                             break;
                         default:
                             throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " 
@@ -77,7 +78,7 @@ class Http2ClientHandler : AbstractHttpHandler {
                     }
                 });
 
-                session.attachObject(cast(Object)secureSession);
+                connection.attachObject(cast(Object)secureSession);
             } else {
                 assert(false, "To support SSL, please read Readme.md in project hunt-net .");
             }
@@ -87,16 +88,16 @@ class Http2ClientHandler : AbstractHttpHandler {
             }
 
             if (config.getProtocol().empty) {
-                initializeHttp1ClientConnection(session, context, null);
+                initializeHttp1ClientConnection(connection, context);
             } else {
                 HttpVersion httpVersion = HttpVersion.fromString(config.getProtocol());
                 if (httpVersion == HttpVersion.Null) {
                     throw new IllegalArgumentException("the protocol " ~ config.getProtocol() ~ " is not support.");
                 }
                 if(httpVersion == HttpVersion.HTTP_1_1) {
-                        initializeHttp1ClientConnection(session, context, null);
+                        initializeHttp1ClientConnection(connection, context);
                 } else if(httpVersion == HttpVersion.HTTP_2) {
-                        initializeHttp2ClientConnection(session, context, null);
+                        initializeHttp2ClientConnection(connection, context);
                 } else {
                         throw new IllegalArgumentException("the protocol " ~ config.getProtocol() ~ " is not support.");
                 }
@@ -105,11 +106,10 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
     }
 
-    private void initializeHttp1ClientConnection(Session session, Http2ClientContext context,
-                                                 SecureSession sslSession) {
+    private void initializeHttp1ClientConnection(Connection connection, HttpClientContext context) {
         try {
-            Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, session, sslSession);
-            session.attachObject(http1ClientConnection);
+            Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
+            connection.attachObject(http1ClientConnection);
             // context.getPromise().succeeded(http1ClientConnection);
             import hunt.http.client.HttpClientConnection;
             Promise!(HttpClientConnection) promise  = context.getPromise();
@@ -119,36 +119,35 @@ class Http2ClientHandler : AbstractHttpHandler {
         } catch (Exception t) {
             context.getPromise().failed(t);
         } finally {
-            http2ClientContext.remove(session.getSessionId());
+            // http2ClientContext.remove(connection.getId());
         }
     }
 
-    private void initializeHttp2ClientConnection(Session session, Http2ClientContext context,
-                                                 SecureSession sslSession) {
+    private void initializeHttp2ClientConnection(Connection connection, HttpClientContext context) {
         try {
-            Http2ClientConnection connection = new Http2ClientConnection(config, session, sslSession, context.getListener());
-            session.attachObject(connection);
-            context.getListener().setConnection(connection);            
+            Http2ClientConnection conn = new Http2ClientConnection(config, connection, context.getListener());
+            connection.attachObject(conn);
+            context.getListener().setConnection(conn);            
             // connection.initialize(config, cast(Promise!(Http2ClientConnection))context.getPromise(), context.getListener());
-            connection.initialize(config, context.getPromise(), context.getListener());
+            conn.initialize(config, context.getPromise(), context.getListener());
         } finally {
-            http2ClientContext.remove(session.getSessionId());
+            // http2ClientContext.remove(connection.getId());
         }
     }
 
     override
-    void sessionClosed(Session session) {
+    void connectionClosed(Connection connection) {
         try {
-            super.sessionClosed(session);
+            super.connectionClosed(connection);
         } finally {
-            http2ClientContext.remove(session.getSessionId());
+            // http2ClientContext.remove(connection.getId());
         }
     }
 
     override
-    void failedOpeningSession(int sessionId, Exception t) {
+    void failedOpeningConnection(int sessionId, Exception t) {
 
-        auto c = http2ClientContext.remove(sessionId);
+        auto c = http2ClientContext; //.remove(sessionId);
         if(c !is null)
         {
             auto promise = c.getPromise();
@@ -157,16 +156,16 @@ class Http2ClientHandler : AbstractHttpHandler {
         }
         
         // Optional.ofNullable(http2ClientContext.remove(sessionId))
-        //         .map(Http2ClientContext::getPromise)
+        //         .map(HttpClientContext::getPromise)
         //         .ifPresent(promise => promise.failed(t));
     }
 
     override
-    void exceptionCaught(Session session, Exception t) {
+    void exceptionCaught(Connection connection, Exception t) {
         try {
-            super.exceptionCaught(session, t);
+            super.exceptionCaught(connection, t);
         } finally {
-            http2ClientContext.remove(session.getSessionId());
+            // http2ClientContext; //.remove(connection.getId());
         }
     }
 

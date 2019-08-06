@@ -2,8 +2,8 @@ module hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
-import hunt.net.DecoderChain;
-import hunt.net.Session;
+import hunt.net.codec.Decoder;
+import hunt.net.Connection;
 
 import hunt.collection.ByteBuffer;
 
@@ -17,7 +17,7 @@ class WebSocketDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Session session) {
+    void decode(ByteBuffer buffer, Connection session) {
         if (!buffer.hasRemaining()) {
             return;
         }

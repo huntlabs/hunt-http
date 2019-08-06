@@ -2,7 +2,7 @@ module test.codec.http2;
 
 import hunt.http.client.ClientHttpHandler;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.collection.BufferUtils;
 

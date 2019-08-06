@@ -7,7 +7,7 @@ import hunt.collection.BufferUtils;
 
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 // import hunt.http.codec.http.hpack.HpackEncoder;
 
 alias assertTrue = Assert.assertTrue;

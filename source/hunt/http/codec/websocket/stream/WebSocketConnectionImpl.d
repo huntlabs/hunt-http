@@ -2,7 +2,7 @@ module hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
@@ -17,14 +17,15 @@ import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
+import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpVersion;
+
 import hunt.net.AbstractConnection;
 import hunt.net.OutputEntry;
 
-;
-import hunt.net.ConnectionEvent;
-import hunt.net.ConnectionType;
-import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.http.HttpConnectionType;
+// import hunt.net.secure.SecureSession;
+import hunt.net.Connection;
 
 import hunt.collection;
 import hunt.Functions;
@@ -33,6 +34,8 @@ import hunt.concurrency.CompletableFuture;
 import hunt.Exceptions;
 import hunt.util.Common;
 
+import core.time;
+
 import std.random;
 import std.socket;
 import std.array;
@@ -40,9 +43,9 @@ import std.array;
 /**
  * 
  */
-class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, IncomingFrames {
+class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, IncomingFrames {
 
-    protected ConnectionEvent!(WebSocketConnection) connectionEvent;
+    // protected ConnectionEvent!(WebSocketConnection) connectionEvent;
     protected Parser parser;
     protected Generator generator;
     protected WebSocketPolicy policy;
@@ -52,13 +55,13 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
     protected HttpConfiguration config;
     protected ExtensionNegotiator extensionNegotiator;
 
-    this(SecureSession secureSession, Session tcpSession, IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
+    this(Connection tcpSession, IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
             HttpRequest upgradeRequest, HttpResponse upgradeResponse,
             HttpConfiguration config) {
-        super(secureSession, tcpSession);
+        super(tcpSession, HttpVersion.HTTP_1_1);
 
         extensionNegotiator = new ExtensionNegotiator();
-        connectionEvent = new ConnectionEvent!(WebSocketConnection)(this);
+        // connectionEvent = new ConnectionEvent!(WebSocketConnection)(this);
         parser = new Parser(policy);
         parser.setIncomingFramesHandler(this);
         generator = new Generator(policy);
@@ -104,11 +107,11 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
             //     PingFrame pingFrame = new PingFrame();
             //     outgoingFrame(pingFrame, new class NoopCallback {
             //         void succeeded() {
-            //             info("The websocket connection %s sent ping frame success", getSessionId());
+            //             info("The websocket connection %s sent ping frame success", getId());
             //         }
 
             //         void failed(Exception x) {
-            //             log.warn("the websocket connection %s sends ping frame failure. %s", getSessionId(), x.getMessage());
+            //             log.warn("the websocket connection %s sends ping frame failure. %s", getId(), x.getMessage());
             //         }
             //     });
             // }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
@@ -116,27 +119,29 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
         }
     }
 
-    override WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
-        return connectionEvent.onClose(closedListener);
-    }
+    // override WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
+    //     return connectionEvent.onClose(closedListener);
+    // }
 
-    override WebSocketConnection onException(Action2!(WebSocketConnection,
-            Exception) exceptionListener) {
-        return connectionEvent.onException(exceptionListener);
-    }
+    // override WebSocketConnection onException(Action2!(WebSocketConnection,
+    //         Exception) exceptionListener) {
+    //     return connectionEvent.onException(exceptionListener);
+    // }
 
-    void notifyClose() {
-        version(HUNT_DEBUG) tracef("closing, state: %s", ioState.getConnectionState());
-        ioState.onDisconnected();
-        connectionEvent.notifyClose();
-    }
+    // override void notifyClose() {
+    //     version(HUNT_DEBUG) tracef("closing, state: %s", ioState.getConnectionState());
+    //     ioState.onDisconnected();
+    //     // connectionEvent.notifyClose();
+    //     super.notifyClose.onClosed();
+    // }
 
-    void notifyException(Exception t) {
-        version(HUNT_DEBUG) warningf("exception, state: %s, error: %s", 
-            ioState.getConnectionState(), t.msg);
-        ioState.onReadFailure(t);
-        connectionEvent.notifyException(t);
-    }
+    // override void notifyException(Exception t) {
+    //     version(HUNT_DEBUG) warningf("exception, state: %s, error: %s", 
+    //         ioState.getConnectionState(), t.msg);
+    //     ioState.onReadFailure(t);
+    //     // connectionEvent.notifyException(t);
+    //     super.notifyException(t);
+    // }
 
     override IOState getIOState() {
         return ioState;
@@ -203,7 +208,7 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
             break;
 
         case FrameType.PONG: {
-                info("The websocket connection %s received pong frame", getSessionId());
+                info("The websocket connection %s received pong frame", getId());
             }
             break;
 
@@ -220,12 +225,12 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
         }
     }
 
-    override bool isEncrypted() {
-        return secureSession !is null;
-    }
+    // override bool isSecured() {
+    //     return secureSession !is null;
+    // }
 
-    override ConnectionType getConnectionType() {
-        return ConnectionType.WEB_SOCKET;
+    override HttpConnectionType getConnectionType() {
+        return HttpConnectionType.WEB_SOCKET;
     }
 
     override byte[] generateMask() {
@@ -302,73 +307,73 @@ class WebSocketConnectionImpl : AbstractConnection, WebSocketConnection, Incomin
         return generator;
     }
 
-    override Object getAttachment() {
-        return super.getAttachment();
-    }
+    // override Object getAttachment() {
+    //     return super.getAttachment();
+    // }
 
-    override void setAttachment(Object attachment) {
-        super.setAttachment(attachment);
-    }
+    // override void setAttachment(Object attachment) {
+    //     super.setAttachment(attachment);
+    // }
 
-    override int getSessionId() {
-        return super.getSessionId();
-    }
+    // override int getId() {
+    //     return super.getId();
+    // }
 
-version (HUNT_METRIC) {
-    override long getOpenTime() {
-        return super.getOpenTime();
-    }
+// version (HUNT_METRIC) {
+//     override long getOpenTime() {
+//         return super.getOpenTime();
+//     }
 
-    override long getCloseTime() {
-        return super.getCloseTime();
-    }
+//     override long getCloseTime() {
+//         return super.getCloseTime();
+//     }
 
-    override long getDuration() {
-        return super.getDuration();
-    }
+//     override long getDuration() {
+//         return super.getDuration();
+//     }
 
-    override long getLastReadTime() {
-        return super.getLastReadTime();
-    }
+//     override long getLastReadTime() {
+//         return super.getLastReadTime();
+//     }
 
-    override long getLastWrittenTime() {
-        return super.getLastWrittenTime();
-    }
+//     override long getLastWrittenTime() {
+//         return super.getLastWrittenTime();
+//     }
 
-    override long getLastActiveTime() {
-        return super.getLastActiveTime();
-    }
+//     override long getLastActiveTime() {
+//         return super.getLastActiveTime();
+//     }
 
-    override long getReadBytes() {
-        return super.getReadBytes();
-    }
+//     override long getReadBytes() {
+//         return super.getReadBytes();
+//     }
 
-    override long getWrittenBytes() {
-        return super.getWrittenBytes();
-    }
+//     override long getWrittenBytes() {
+//         return super.getWrittenBytes();
+//     }
 
-    override long getIdleTimeout() {
-        return super.getIdleTimeout();
-    }
-}
+//     override long getIdleTimeout() {
+//         return super.getIdleTimeout();
+//     }
+// }
 
-    override long getMaxIdleTimeout() {
-        return super.getMaxIdleTimeout();
-    }
+//     override Duration getMaxIdleTimeout() {
+//         return super.getMaxIdleTimeout();
+//     }
 
-    override bool isOpen() {
-        return super.isOpen();
-    }
+//     override bool isConnected() {
+//         return super.isConnected();
+//     }
 
-    override bool isClosed() {
-        return super.isClosed();
-    }
+//     override bool isClosing() {
+//         return super.isClosing();
+//     }
 
-    override Address getLocalAddress() {
-        return super.getLocalAddress();
-    }
+//     override Address getLocalAddress() {
+//         return super.getLocalAddress();
+//     }
 
-    override Address getRemoteAddress() {
-        return super.getRemoteAddress();
-    }
+//     override Address getRemoteAddress() {
+//         return super.getRemoteAddress();
+//     }
 }

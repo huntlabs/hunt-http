@@ -1,4 +1,4 @@
-module hunt.http.codec.http.stream.AbstractHttpHandler;
+module hunt.http.AbstractHttpConnectionHandler;
 
 import hunt.http.HttpOptions;
 import hunt.http.AbstractHttpConnection;

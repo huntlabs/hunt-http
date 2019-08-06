@@ -1,14 +1,14 @@
-module hunt.http.client.Http2ClientContext;
+module hunt.http.client.HttpClientContext;
 
 import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.ClientHttp2SessionListener;
 import hunt.http.client.HttpClientConnection;
-import hunt.http.client.Http2ClientContext;
+import hunt.http.client.HttpClientContext;
 
 import hunt.http.codec.http.stream.Session;
 import hunt.concurrency.Promise;
 
-class Http2ClientContext {
+class HttpClientContext {
     private Promise!(HttpClientConnection) promise;
     private ClientHttp2SessionListener listener;
 

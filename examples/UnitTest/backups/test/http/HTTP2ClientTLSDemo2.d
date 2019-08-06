@@ -13,9 +13,9 @@ import hunt.http.codec.http.model.HostPortHttpField;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpScheme;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.collection.BufferUtils;
 

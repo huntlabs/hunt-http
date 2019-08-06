@@ -10,9 +10,9 @@ import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientRequest;
-import hunt.http.codec.http.model.HttpVersion;
-import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpVersion;
+import hunt.http.HttpOptions;
+import hunt.http.HttpConnection;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.collection.BufferUtils;
 

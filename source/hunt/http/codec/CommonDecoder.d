@@ -4,10 +4,10 @@ import hunt.collection.ByteBuffer;
 import hunt.Exceptions;
 import hunt.logging;
 
-import hunt.net.AbstractConnection;
-import hunt.net.ConnectionType;
-import hunt.net.DecoderChain;
-import hunt.net.Session;
+import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnectionType;
+import hunt.net.codec.Decoder;
+import hunt.net.Connection;
 import hunt.net.secure.SecureSession;
 
 /**
@@ -19,23 +19,23 @@ class CommonDecoder : DecoderChain {
         super(next);
     }
 
-    override void decode(ByteBuffer buf, Session session) {
+    override void decode(ByteBuffer buf, Connection session) {
         version(HUNT_METRIC) {
             import core.time;
-            import hunt.util.DateTime;
             MonoTime startTime = MonoTime.currTime;
             debug infof("start decoding ...");
         }
+        DecoderChain next = getNext();
         Object attachment = session.getAttachment();
         version(HUNT_HTTP_DEBUG) {
             tracef("decoding with %s", typeid(attachment).name);
         }
 
-        AbstractConnection connection = cast(AbstractConnection) attachment;
+        AbstractHttpConnection connection = cast(AbstractHttpConnection) attachment;
         SecureSession secureSession = cast(SecureSession) attachment;
 
         if (connection !is null) {
-            if (connection.isEncrypted()) {
+            if (connection.isSecured()) {
                 ByteBuffer plaintext = connection.decrypt(buf);
                 if (plaintext !is null && plaintext.hasRemaining() && next !is null) {
                     next.decode(plaintext, session);
@@ -51,11 +51,11 @@ class CommonDecoder : DecoderChain {
             if (plaintext !is null && plaintext.hasRemaining()) {
                 version(HUNT_DEBUG) {
                     tracef("The session %s handshake finished and received cleartext size %s",
-                            session.getSessionId(), plaintext.remaining());
+                            session.getId(), plaintext.remaining());
                 }
 
                 // The attachment has been reset.
-                connection = cast(AbstractConnection) session.getAttachment();
+                connection = cast(AbstractHttpConnection) session.getAttachment();
                 if (connection !is null) {
                     if (next !is null) 
                         next.decode(plaintext, session);
@@ -68,9 +68,9 @@ class CommonDecoder : DecoderChain {
             } else {
                 version(HUNT_DEBUG) {
                     if (secureSession.isHandshakeFinished()) {
-                        tracef("The ssl session %s need more data", session.getSessionId());
+                        tracef("The ssl session %s need more data", session.getId());
                     } else {
-                        tracef("The ssl session %s is shaking hand", session.getSessionId());
+                        tracef("The ssl session %s is shaking hand", session.getId());
                     }
                 }
             }
@@ -81,7 +81,7 @@ class CommonDecoder : DecoderChain {
         version(HUNT_METRIC) {
             Duration timeElapsed = MonoTime.currTime - startTime;
             warningf("decoding done for session %d in: %d microseconds",
-                session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
+                session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
         }
     }
 }

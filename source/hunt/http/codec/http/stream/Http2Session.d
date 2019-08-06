@@ -25,21 +25,20 @@ import hunt.concurrency.CountingCallback;
 import hunt.concurrency.Promise;
 import hunt.concurrency.Scheduler;
 
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.logging;
 
 // import core.exception;
 
+import core.time;
 import std.algorithm;
 import std.conv;
 import std.datetime;
-// import std.exception;
 import std.format;
 import std.range;
 import std.typecons;
 
-alias TcpSession = hunt.net.Session.Session;
 alias StreamSession = hunt.http.codec.http.stream.Session.Session;
 
 
@@ -68,7 +67,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     private long bytesWritten;
 
     private Scheduler scheduler;
-    private TcpSession endPoint;
+    private Connection endPoint;
     private Http2Generator generator;
     private StreamSession.Listener listener;
     private FlowControlStrategy flowControl;
@@ -78,11 +77,11 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     private long streamIdleTimeout;
     private int initialSessionRecvWindow;
     private bool pushEnabled;
-    private long idleTime;
+    private MonoTime idleTime;
 
     alias convertToMillisecond = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond);
 
-    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
+    this(Scheduler scheduler, Connection endPoint, Http2Generator generator,
                         StreamSession.Listener listener, FlowControlStrategy flowControl,
                         int initialStreamId, int streamIdleTimeout) {
         this.scheduler = scheduler;
@@ -94,11 +93,11 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         this.maxLocalStreams = -1;
         this.maxRemoteStreams = -1;
         this.streamIds = (initialStreamId);
-        this.streamIdleTimeout = streamIdleTimeout > 0 ? streamIdleTimeout : endPoint.getMaxIdleTimeout();
+        this.streamIdleTimeout = streamIdleTimeout > 0 ? streamIdleTimeout : endPoint.getMaxIdleTimeout().total!(TimeUnit.Millisecond)();
         this.sendWindow = (FlowControlStrategy.DEFAULT_WINDOW_SIZE);
         this.recvWindow = (FlowControlStrategy.DEFAULT_WINDOW_SIZE);
         this.pushEnabled = true; // SPEC: by default, push is enabled.
-        this.idleTime = convertToMillisecond(Clock.currStdTime); //Millisecond100Clock.currentTimeMillis();
+        this.idleTime = MonoTime.currTime(); // convertToMillisecond(Clock.currStdTime); //Millisecond100Clock.currentTimeMillis();
     }
 
     FlowControlStrategy getFlowControlStrategy() {
@@ -137,7 +136,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         this.initialSessionRecvWindow = initialSessionRecvWindow;
     }
 
-    TcpSession getEndPoint() {
+    Connection getEndPoint() {
         return endPoint;
     }
 
@@ -316,7 +315,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             tracef("Received %s", frame.toString());
         }
         if (frame.isReply()) {
-            info("The session %s received ping reply", endPoint.getSessionId());
+            info("The session %s received ping reply", endPoint.getId());
             notifyPing(this, frame);
         } else {
             PingFrame reply = new PingFrame(frame.getPayload(), true);
@@ -801,9 +800,12 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     bool onIdleTimeout() {
         switch (closed) {
             case CloseState.NOT_CLOSED: {
-                long elapsed = convertToMillisecond(Clock.currStdTime) - idleTime;
-                version(HUNT_DEBUG) {
-                    tracef("HTTP2 session on idle timeout. The elapsed time is %s - %s", elapsed, endPoint.getMaxIdleTimeout());
+                // long elapsed = convertToMillisecond(Clock.currStdTime) - idleTime;
+                Duration elapsed = MonoTime.currTime() - idleTime;
+                version(HUNT_HTTP_DEBUG) {
+                    tracef("HTTP2 session on idle timeout. The elapsed time is %d - %d", 
+                        elapsed.total!(TimeUnit.Millisecond), 
+                        endPoint.getMaxIdleTimeout().total!(TimeUnit.Millisecond));
                 }
                 return elapsed >= endPoint.getMaxIdleTimeout() && notifyIdleTimeout(this);
             }
@@ -819,7 +821,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     private void notIdle() {
-        idleTime = convertToMillisecond(Clock.currStdTime);
+        idleTime = MonoTime.currTime; // convertToMillisecond(Clock.currStdTime);
     }
 
     override
@@ -870,7 +872,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     bool isDisconnected() {
-        return !endPoint.isOpen();
+        return !endPoint.isConnected();
     }
 
     private void updateLastStreamId(int streamId) {

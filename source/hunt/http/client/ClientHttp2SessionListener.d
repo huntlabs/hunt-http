@@ -4,7 +4,7 @@ import hunt.http.client.Http2ClientConnection;
 
 import hunt.http.codec.http.frame.GoAwayFrame;
 import hunt.http.codec.http.frame.ResetFrame;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.Session;
 import hunt.io;
 import hunt.logging;

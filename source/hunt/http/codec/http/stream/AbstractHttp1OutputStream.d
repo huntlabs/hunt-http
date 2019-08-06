@@ -6,7 +6,7 @@ import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
-import hunt.net.Session;
+import hunt.net.Connection;
 import hunt.Exceptions;
 import hunt.logging;
 
@@ -35,7 +35,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
 
         HttpGenerator generator = getHttpGenerator();
-        Session tcpSession = getSession();
+        Connection tcpSession = getSession();
         HttpGenerator.Result generatorResult;
         ByteBuffer header = getHeaderByteBuffer();
 
@@ -43,8 +43,10 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         if (generatorResult == HttpGenerator.Result.FLUSH && 
             generator.getState() == HttpGenerator.State.COMMITTED) {
             if (data !is null) {
-                ByteBuffer[] headerAndData = [header, data];
-                tcpSession.encode(headerAndData);
+                // ByteBuffer[] headerAndData = [header, data];
+                // tcpSession.encode(headerAndData);
+                tcpSession.encode(header);
+                tcpSession.encode(data);
             } else {
                 tcpSession.encode(header);
             }
@@ -63,7 +65,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             return;
 
         HttpGenerator generator = getHttpGenerator();
-        Session tcpSession = getSession();
+        Connection tcpSession = getSession();
         HttpGenerator.Result generatorResult;
 
         if (!committed) {
@@ -75,8 +77,10 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
                 generatorResult = generate(null, null, chunk, data, false);
                 if (generatorResult == HttpGenerator.Result.FLUSH && 
                     generator.getState() == HttpGenerator.State.COMMITTED) {
-                    ByteBuffer[] chunkAndData = [chunk, data];
-                    tcpSession.encode(chunkAndData);
+                    // ByteBuffer[] chunkAndData = [chunk, data];
+                    // tcpSession.encode(chunkAndData);
+                    tcpSession.encode(chunk);
+                    tcpSession.encode(data);
                 } else {
                     generateHttpMessageExceptionally(generatorResult, generator.getState(), 
                         HttpGenerator.Result.FLUSH, HttpGenerator.State.COMMITTED);
@@ -101,7 +105,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         try {
             version(HUNT_HTTP_DEBUG) trace("http1 output stream is closing");
             HttpGenerator generator = getHttpGenerator();
-            Session tcpSession = getSession();
+            Connection tcpSession = getSession();
             HttpGenerator.Result generatorResult;
 
             if (!committed) {
@@ -151,7 +155,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
     }
 
-    private void generateLastChunk(HttpGenerator generator, Session tcpSession) {
+    private void generateLastChunk(HttpGenerator generator, Connection tcpSession) {
         ByteBuffer chunk = BufferUtils.allocate(HttpGenerator.CHUNK_SIZE);
         HttpGenerator.Result generatorResult = generate(null, null, chunk, null, true);
         if (generatorResult == HttpGenerator.Result.FLUSH && 
@@ -164,7 +168,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
     }
 
-    private void generateTrailer(HttpGenerator generator, Session tcpSession) {
+    private void generateTrailer(HttpGenerator generator, Connection tcpSession) {
         ByteBuffer trailer = getTrailerByteBuffer();
         HttpGenerator.Result generatorResult = generate(null, null, trailer, null, true);
         if (generatorResult == HttpGenerator.Result.FLUSH && 
@@ -208,7 +212,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
 
     abstract protected ByteBuffer getTrailerByteBuffer();
 
-    abstract protected Session getSession();
+    abstract protected Connection getSession();
 
     abstract protected HttpGenerator getHttpGenerator();
 

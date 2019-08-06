@@ -10,7 +10,7 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.collection.BufferUtils;
@@ -28,7 +28,8 @@ import core.time;
 */
 class HttpServer : AbstractLifecycle {
 
-    private AbstractServer _server;
+    private NetServer _server;
+    private NetServerOptions _serverOptions;
     private HttpServerHandler httpServerHandler;
     private HttpConfiguration http2Configuration;
     private string host;
@@ -56,18 +57,48 @@ class HttpServer : AbstractLifecycle {
 
         this.host = host;
         this.port = port;
+        _serverOptions = cast(NetServerOptions)c.getTcpConfiguration();
+        if(_serverOptions is null ) {
+            _serverOptions = new NetServerOptions();
+        }
         httpServerHandler = new HttpServerHandler(c, listener,
                 serverHttpHandler, webSocketHandler);
 
-        Http1ServerDecoder httpServerDecoder = new Http1ServerDecoder(new WebSocketDecoder(),
-                new Http2ServerDecoder());
-        CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
-        c.getTcpConfiguration().setDecoder(commonDecoder);
-        c.getTcpConfiguration().setEncoder(new CommonEncoder());
-        c.getTcpConfiguration().setHandler(httpServerHandler);
+        // Http1ServerDecoder httpServerDecoder = new Http1ServerDecoder(new WebSocketDecoder(),
+        //         new Http2ServerDecoder());
+        // CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
+        // c.getTcpConfiguration().setDecoder(commonDecoder);
+        // c.getTcpConfiguration().setEncoder(new CommonEncoder());
+        // c.getTcpConfiguration().setHandler(httpServerHandler);
 
-        _server = NetUtil.createNetServer!(ServerThreadMode.Single)();
-        _server.setConfig(c.getTcpConfiguration());
+        _server = NetUtil.createNetServer!(ThreadMode.Single)(_serverOptions);
+
+        _server.setCodec(new class Codec {
+            private CommonEncoder encoder;
+            private CommonDecoder decoder;
+
+            this() {
+                encoder = new CommonEncoder();
+
+                Http1ServerDecoder httpServerDecoder = new Http1ServerDecoder(
+                            new WebSocketDecoder(),
+                            new Http2ServerDecoder());
+                decoder = new CommonDecoder(httpServerDecoder);
+            }
+
+            Encoder getEncoder() {
+                return encoder;
+            }
+
+            Decoder getDecoder() {
+                return decoder;
+            }
+        });
+
+        _server.setHandler(new HttpServerHandler(c, listener,
+                serverHttpHandler, webSocketHandler));
+
+        // _server.setConfig(c.getTcpConfiguration());
 
         //         string responseString = `HTTP/1.1 000 
         // Server: Hunt-HTTP/1.0
@@ -78,37 +109,37 @@ class HttpServer : AbstractLifecycle {
 
         // Hello, World!`;
 
-        _server.connectionHandler((NetSocket sock) {
-            version (HUNT_DEBUG)
-                infof("new http session with %s", sock.remoteAddress);
-            AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
-            session.handler((ByteBuffer buffer) {
-                version (HUNT_METRIC) {
-                    debug trace("start hadling session data ...");
-                    MonoTime startTime = MonoTime.currTime;
-                } else version (HUNT_DEBUG_MORE) {
-                    trace("start hadling session data ...");
-                }
-                commonDecoder.decode(buffer, session);
+        // _server.connectionHandler((NetSocket sock) {
+        //     version (HUNT_DEBUG)
+        //         infof("new http session with %s", sock.remoteAddress);
+        //     AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
+        //     session.handler((ByteBuffer buffer) {
+        //         version (HUNT_METRIC) {
+        //             debug trace("start hadling session data ...");
+        //             MonoTime startTime = MonoTime.currTime;
+        //         } else version (HUNT_DEBUG_MORE) {
+        //             trace("start hadling session data ...");
+        //         }
+        //         commonDecoder.decode(buffer, session);
 
-                version (HUNT_METRIC) {
-                    Duration timeElapsed = MonoTime.currTime - startTime;
-                    warningf("handling done for session %d in: %d microseconds",
-                    session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
-                    tracef("session handling done: %s.", session.toString());
-                } else version (HUNT_HTTP_DEBUG)
-                    tracef("session handling done");
+        //         version (HUNT_METRIC) {
+        //             Duration timeElapsed = MonoTime.currTime - startTime;
+        //             warningf("handling done for session %d in: %d microseconds",
+        //             session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
+        //             tracef("session handling done: %s.", session.toString());
+        //         } else version (HUNT_HTTP_DEBUG)
+        //             tracef("session handling done");
 
-                // session.write(responseString, () {
-                // version(HUNT_METRIC) {
-                //     Duration timeElapsed = MonoTime.currTime - startTime;
-                //     warningf("handling done for session %d in: %d microseconds",
-                //         session.getSessionId, timeElapsed.total!(TimeUnit.Microsecond)());
-                //     debug tracef("session handling done: %s.", session.toString());
-                // }                      
-                // });
-            });
-        });
+        //         // session.write(responseString, () {
+        //         // version(HUNT_METRIC) {
+        //         //     Duration timeElapsed = MonoTime.currTime - startTime;
+        //         //     warningf("handling done for session %d in: %d microseconds",
+        //         //         session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
+        //         //     debug tracef("session handling done: %s.", session.toString());
+        //         // }                      
+        //         // });
+        //     });
+        // });
         this.http2Configuration = c;
 
         version (HUNT_DEBUG) {
@@ -140,9 +171,9 @@ class HttpServer : AbstractLifecycle {
     }
 
     override protected void destroy() {
-        if (_server !is null) {
-            _server.stop();
-        }
+        // if (_server !is null) {
+        //     _server.stop();
+        // }
     }
 
 }

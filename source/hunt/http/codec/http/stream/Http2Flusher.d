@@ -8,13 +8,14 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 import hunt.http.codec.http.frame.WindowUpdateFrame;
 
+import hunt.collection;
 import hunt.concurrency.Locker;
 import hunt.concurrency.IteratingCallback;
 import hunt.Exceptions;
+import hunt.logging;
+import hunt.net.Connection;
 import hunt.util.Common;
 
-import hunt.collection;
-import hunt.logging;
 import std.format;
 
 
@@ -168,8 +169,10 @@ class Http2Flusher : IteratingCallback {
                     buffers.size(), BufferUtils.remaining(buffers), actives.size(), actives.toString());
         }
 
-        TcpSession tcpSession =  session.getEndPoint();
-        tcpSession.encode(buffers.toArray());
+        Connection tcpSession =  session.getEndPoint();
+        foreach(ByteBuffer buffer; buffers) {
+            tcpSession.encode(buffer);
+        }
         this.succeeded();
         return Action.SCHEDULED;
     }

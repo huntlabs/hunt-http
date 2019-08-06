@@ -1,4 +1,4 @@
-module hunt.http.codec.http.model.HttpVersion;
+module hunt.http.HttpVersion;
 
 import hunt.collection.ByteBuffer;
 

@@ -5,7 +5,7 @@ import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.stream;
 
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.util.Common;
 import hunt.concurrency.Promise;
@@ -15,12 +15,12 @@ import hunt.logging;
 
 class Http2ClientSession : Http2Session {
     
-    this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
+    this(Scheduler scheduler, Connection endPoint, Http2Generator generator,
                               Listener listener, FlowControlStrategy flowControl, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, 1, streamIdleTimeout);
     }
 
-    static Http2ClientSession initSessionForUpgradingHTTP2(Scheduler scheduler, TcpSession endPoint,
+    static Http2ClientSession initSessionForUpgradingHTTP2(Scheduler scheduler, Connection endPoint,
         Http2Generator generator, Listener listener, FlowControlStrategy flowControl, 
         int initialStreamId, int streamIdleTimeout, Promise!(Stream) initStream, 
         Stream.Listener initStreamListener) {
@@ -34,7 +34,7 @@ class Http2ClientSession : Http2Session {
         return session;
     }
 
-    private this(Scheduler scheduler, TcpSession endPoint, Http2Generator generator,
+    private this(Scheduler scheduler, Connection endPoint, Http2Generator generator,
                                Listener listener, FlowControlStrategy flowControl, int initialStreamId, int streamIdleTimeout) {
         super(scheduler, endPoint, generator, listener, flowControl, initialStreamId, streamIdleTimeout);
     }

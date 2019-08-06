@@ -4,7 +4,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 import hunt.collection.BufferUtils;
 import hunt.util.Test;
@@ -52,9 +52,9 @@ public class HttpGeneratorServerHTTPTest {
             assertEquals(t, run.result._body, this._content);
 
         if (run.httpVersion == 10)
-            assertTrue(t, gen.isPersistent() || run.result._contentLength >= 0 || EnumSet.of(ConnectionType.CLOSE, ConnectionType.KEEP_ALIVE, ConnectionType.NONE).contains(run.connection));
+            assertTrue(t, gen.isPersistent() || run.result._contentLength >= 0 || EnumSet.of(HttpConnectionType.CLOSE, HttpConnectionType.KEEP_ALIVE, HttpConnectionType.NONE).contains(run.connection));
         else
-            assertTrue(t, gen.isPersistent() || EnumSet.of(ConnectionType.CLOSE, ConnectionType.TE_CLOSE).contains(run.connection));
+            assertTrue(t, gen.isPersistent() || EnumSet.of(HttpConnectionType.CLOSE, HttpConnectionType.TE_CLOSE).contains(run.connection));
 
         assertEquals("OK??Test", _reason);
 
@@ -238,7 +238,7 @@ public class HttpGeneratorServerHTTPTest {
     public final static string CONTENT = "The quick brown fox jumped over the lazy dog.\nNow is the time for all good men to come to the aid of the party\nThe moon is blue to a fish in love.\n";
 
     private static class Run {
-        public static Run[] as(Result result, int ver, int chunks, ConnectionType connection) {
+        public static Run[] as(Result result, int ver, int chunks, HttpConnectionType connection) {
             Run run = new Run();
             run.result = result;
             run.httpVersion = ver;
@@ -248,7 +248,7 @@ public class HttpGeneratorServerHTTPTest {
         }
 
         private Result result;
-        private ConnectionType connection;
+        private HttpConnectionType connection;
         private int httpVersion;
         private int chunks;
 
@@ -258,7 +258,7 @@ public class HttpGeneratorServerHTTPTest {
         }
     }
 
-    private enum ConnectionType {
+    private enum HttpConnectionType {
         NONE(null, 9, 10, 11),
         KEEP_ALIVE("keep-alive", 9, 10, 11),
         CLOSE("close", 9, 10, 11),
@@ -267,7 +267,7 @@ public class HttpGeneratorServerHTTPTest {
         private string val;
         private int[] supportedHttpVersions;
 
-        private ConnectionType(string val, int... supportedHttpVersions) {
+        private HttpConnectionType(string val, int... supportedHttpVersions) {
             this.val = val;
             this.supportedHttpVersions = supportedHttpVersions;
         }
@@ -304,7 +304,7 @@ public class HttpGeneratorServerHTTPTest {
                 // Loop over chunks
                 for (int chunks = 1; chunks <= 6; chunks++) {
                     // Loop over Connection values
-                    for (ConnectionType connection : ConnectionType.values()) {
+                    for (HttpConnectionType connection : HttpConnectionType.values()) {
                         if (connection.isSupportedByHttp(v)) {
                             data.add(Run.as(result, v, chunks, connection));
                         }

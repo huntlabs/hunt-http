@@ -3,7 +3,7 @@ module hunt.http.client.HttpClient;
 import hunt.http.client.ClientHttp2SessionListener;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.Http1ClientDecoder;
-import hunt.http.client.Http2ClientContext;
+import hunt.http.client.HttpClientContext;
 import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.Http2ClientHandler;
 
@@ -14,7 +14,7 @@ import hunt.http.client.RealCall;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.util.Completable;
 
@@ -22,50 +22,48 @@ import hunt.Exceptions;
 import hunt.concurrency.CompletableFuture;
 import hunt.concurrency.Promise;
 
+import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 import hunt.collection.Map;
 import hunt.collection.HashMap;
 
-import hunt.logging;
-import hunt.net.AsynchronousTcpSession;
-import hunt.net.Client;
-import hunt.net.Config;
+import hunt.logging.ConsoleLogger;
 import hunt.net;
 import hunt.util.Lifecycle;
 
 import core.atomic;
-import hunt.collection.BufferUtils;
+import core.time;
 
 // dfmt off
-version ( unittest ) {} 
-else {
-    shared static this() {
-        NetUtil.startEventLoop();
-    }
+// version ( unittest ) {} 
+// else {
+//     shared static this() {
+//         NetUtil.startEventLoop();
+//     }
 
-    shared static ~this() {
-        NetUtil.stopEventLoop();
-    }
-}
+//     shared static ~this() {
+//         NetUtil.stopEventLoop();
+//     }
+// }
 // dfmt on
 
 /**
 */
 class HttpClient : AbstractLifecycle {
 
-    private string _host;
-    private int _port;
-    private AbstractClient client;
-    private Map!(int, Http2ClientContext) http2ClientContext;
-    private static shared int sessionId = 0;
+    // private string _host;
+    // private int _port;
+    // private NetClient client;
+    private NetClientOptions clientOptions;
+    private NetClient[int] _netClients;
     private HttpConfiguration httpConfiguration;
-    private Http2ClientContext clientContext;
 
     this() {
-        HttpConfiguration config = new HttpConfiguration();
-        Config tcpConfig = config.getTcpConfiguration();
-        tcpConfig.setTimeout(60 * 1000);
-        tcpConfig.setConnectionTimeout(5);
+        NetClientOptions clientOptions = new NetClientOptions();
+        clientOptions.setIdleTimeout(60.seconds);
+        clientOptions.setConnectTimeout(5.seconds);
+
+        HttpConfiguration config = new HttpConfiguration(clientOptions);
         this(config);
     }
 
@@ -73,42 +71,21 @@ class HttpClient : AbstractLifecycle {
         if (c is null) {
             throw new IllegalArgumentException("http configuration is null");
         }
-        http2ClientContext = new HashMap!(int, Http2ClientContext)();
+
+        clientOptions = cast(NetClientOptions)c.getTcpConfiguration();
+        if(clientOptions is null) {
+            clientOptions = new NetClientOptions();
+        }
+        this.httpConfiguration = c;
          // = new ConcurrentHashMap!()();
 
-        Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(new WebSocketDecoder(),
-                new Http2ClientDecoder());
-        CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
+        // CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
 
-        c.getTcpConfiguration().setDecoder(commonDecoder);
-        c.getTcpConfiguration().setEncoder(new CommonEncoder());
-        c.getTcpConfiguration().setHandler(new Http2ClientHandler(c, http2ClientContext));
+        // c.getTcpConfiguration().setDecoder(commonDecoder);
+        // c.getTcpConfiguration().setEncoder(new CommonEncoder());
+        // c.getTcpConfiguration().setHandler(new Http2ClientHandler(c, _netClients));
 
-        NetClient client = NetUtil.createNetClient();
-        this.client = client;
-        // this.client = new AsynchronousTcpClient(c.getTcpConfiguration());
-        client.setConfig(c.getTcpConfiguration());
-
-        client.connectHandler((NetSocket sock) {
-            version (HUNT_DEBUG) infof("A connection created with %s:%d", _host, _port);
-            AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
-
-            session.handler((ByteBuffer buffer) {
-                version (HUNT_HTTP_DEBUG_MORE) {
-                    byte[] data = buffer.getRemaining();
-                    tracef("data received (%d bytes): ", data.length);
-                    // if (data.length <= 64) {
-                    //     infof("%(%02X %)", data[0 .. $]);
-                    // } else {
-                    //     infof("%(%02X %) ...", data[0 .. 64]);
-                    // }
-                }
-
-                commonDecoder.decode(buffer, session);
-            });
-        });
-
-        this.httpConfiguration = c;
+        start();
     }
 
     Completable!(HttpClientConnection) connect(string host, int port) {
@@ -124,18 +101,38 @@ class HttpClient : AbstractLifecycle {
 
     void connect(string host, int port, Promise!(HttpClientConnection) promise,
             ClientHttp2SessionListener listener) {
-        _host = host;
-        _port = port;
-        start();
-        clientContext = new Http2ClientContext();
+
+        HttpClientContext clientContext = new HttpClientContext();
         clientContext.setPromise(promise);
         clientContext.setListener(listener);
 
-        int id = atomicOp!("+=")(sessionId, 1);
-        version (HUNT_HTTP_DEBUG)
-            tracef("Client sessionId = %d", id);
-        http2ClientContext.put(id, clientContext);
-        client.connect(host, port, id);
+        NetClient client = NetUtil.createNetClient(clientOptions);
+        _netClients[client.getId()] = client;
+        
+        client.setCodec(new class Codec {
+
+            private CommonEncoder encoder;
+            private CommonDecoder decoder;
+
+            this() {
+                encoder = new CommonEncoder();
+
+                Http1ClientDecoder httpClientDecoder = new Http1ClientDecoder(
+                            new WebSocketDecoder(),
+                            new Http2ClientDecoder());
+                decoder = new CommonDecoder(httpClientDecoder);
+            }
+
+            Encoder getEncoder() {
+                return encoder;
+            }
+
+            Decoder getDecoder() {
+                return decoder;
+            }
+        }).setHandler(new Http2ClientHandler(httpConfiguration, clientContext));
+
+        client.connect(host, port);
     }
 
     HttpConfiguration getHttpConfiguration() {
@@ -143,12 +140,14 @@ class HttpClient : AbstractLifecycle {
     }
 
     override protected void initialize() {
+        // do nothing;
     }
 
     override protected void destroy() {
-        if (client !is null) {
-            client.stop();
-        }
+        // if (_netClients.length > 0) {
+        //     _netClients
+        // }
+        _netClients = null;
     }
 
     /**

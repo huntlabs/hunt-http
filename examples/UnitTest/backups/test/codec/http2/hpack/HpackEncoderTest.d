@@ -4,7 +4,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 import hunt.collection.BufferUtils;
 

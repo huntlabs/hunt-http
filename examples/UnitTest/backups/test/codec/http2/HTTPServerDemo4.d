@@ -9,7 +9,7 @@ import hunt.collection.List;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HttpURI;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;

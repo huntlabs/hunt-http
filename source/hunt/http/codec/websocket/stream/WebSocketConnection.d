@@ -11,7 +11,7 @@ import hunt.collection.ByteBuffer;
 import hunt.util.Common;
 import hunt.concurrency.CompletableFuture;
 
-interface WebSocketConnection : OutgoingFrames, Connection {
+interface WebSocketConnection : OutgoingFrames { // , Connection
 
     /**
      * Register the connection close callback.
@@ -19,7 +19,7 @@ interface WebSocketConnection : OutgoingFrames, Connection {
      * @param closedListener The connection close callback.
      * @return The WebSocket connection.
      */
-    WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener);
+    // WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener);
 
     /**
      * Register the exception callback.
@@ -27,7 +27,7 @@ interface WebSocketConnection : OutgoingFrames, Connection {
      * @param exceptionListener The exception callback.
      * @return The WebSocket connection.
      */
-    WebSocketConnection onException(Action2!(WebSocketConnection, Exception) exceptionListener);
+    // WebSocketConnection onException(Action2!(WebSocketConnection, Exception) exceptionListener);
 
     /**
      * Get the read/write idle timeout.

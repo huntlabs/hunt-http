@@ -1,7 +1,7 @@
 module hunt.http.client.HttpClientResponse;
 
 import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.HttpStatus;
 

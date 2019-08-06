@@ -5,7 +5,7 @@ import hunt.http.client.Http2ClientConnection;
 
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;

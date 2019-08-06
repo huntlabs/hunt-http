@@ -1,9 +1,9 @@
-module hunt.http.codec.http.stream.HttpConfiguration;
+module hunt.http.HttpOptions;
 
 import hunt.http.codec.http.stream.FlowControlStrategy;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 
-import hunt.net.Config;
+import hunt.net.TcpSslOptions;
 
 // dfmt off
 version(WITH_HUNT_SECURITY) {
@@ -13,12 +13,15 @@ version(WITH_HUNT_SECURITY) {
 }
 // dfmt on
 
+
+alias HttpConfiguration = HttpOptions;
+
 /**
 */
-class HttpConfiguration {
+class HttpOptions {
 
     // TCP settings
-    private Config tcpConfiguration; 
+    private TcpSslOptions tcpSslOptions; 
 
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
@@ -49,13 +52,16 @@ class HttpConfiguration {
     private int websocketPingInterval = 10 * 1000;
 
     this() {
+        this(new TcpSslOptions());
+    }
+
+    this(TcpSslOptions tcpSslOptions) {
         version(WITH_HUNT_SECURITY) {
             secureSessionFactory = new ConscryptSecureSessionFactory(
                 new NoCheckConscryptSSLContextFactory(),
                 new DefaultCredentialConscryptSSLContextFactory()
             );
         }
-        tcpConfiguration = new Config();
         protocol = HttpVersion.HTTP_1_1.asString();
     }
 
@@ -64,17 +70,17 @@ class HttpConfiguration {
      *
      * @return The TCP configuration.
      */
-    Config getTcpConfiguration() {
-        return tcpConfiguration;
+    TcpSslOptions getTcpConfiguration() {
+        return tcpSslOptions;
     }
 
     /**
      * Set the TCP configuration.
      *
-     * @param tcpConfiguration The TCP configuration.
+     * @param tcpSslOptions The TCP configuration.
      */
-    void setTcpConfiguration(Config tcpConfiguration) {
-        this.tcpConfiguration = tcpConfiguration;
+    void setTcpConfiguration(TcpSslOptions tcpSslOptions) {
+        this.tcpSslOptions = tcpSslOptions;
     }
 
     /**

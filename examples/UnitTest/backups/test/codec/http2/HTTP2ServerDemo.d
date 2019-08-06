@@ -1,7 +1,7 @@
 module test.codec.http2;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.stream.HttpConfiguration;
+import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.stream.Stream.Listener;

@@ -10,14 +10,14 @@ import hunt.http.client.HttpClientRequest;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.RequestBody;
 
-import hunt.http.codec.http.stream.HttpConfiguration;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpOptions;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpMethod;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.HttpURI;
 import hunt.http.codec.http.model.MetaData;
 
@@ -27,7 +27,8 @@ import hunt.concurrency.FuturePromise;
 import hunt.Exceptions;
 // import hunt.net.NetUtil;
 import hunt.logging.ConsoleLogger;
-import hunt.net.Config;
+import hunt.net.TcpSslOptions;
+import hunt.net.NetClientOptions;
 import hunt.util.Traits;
 
 import core.atomic;
@@ -192,8 +193,8 @@ class RealCall : Call {
             HttpConnection connection;
             try {
                 client.connect(uri.getHost(), port, promise);
-                Config tcpConfig = client.getHttpConfiguration().getTcpConfiguration();
-                connection = promise.get(tcpConfig.getConnectionTimeout().seconds);
+                NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().getTcpConfiguration();
+                connection = promise.get(tcpConfig.getConnectTimeout());
             } catch(Exception ex) {
                 version(HUNT_DEBUG) {
                     warning(ex);

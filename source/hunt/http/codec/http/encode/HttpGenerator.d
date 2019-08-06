@@ -6,7 +6,7 @@ import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.HttpMethod;
 // import hunt.http.codec.http.model.HttpHeader;
 // import hunt.http.codec.http.model.HttpTokens;
-// import hunt.http.codec.http.model.HttpVersion;
+// import hunt.http.HttpVersion;
 // import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.hpack.HpackEncoder;
 

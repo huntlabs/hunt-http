@@ -11,9 +11,9 @@ import hunt.http.codec.http.encode.Http2Generator;
 
 import hunt.http.codec.http.stream;
 
-import hunt.net.ConnectionType;
+import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
-import hunt.net.Session;
+import hunt.net.Connection;
 
 import hunt.concurrency.CompletableFuture;
 import hunt.concurrency.Promise;
@@ -23,9 +23,9 @@ alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;
 
 class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
 
-    this(HttpConfiguration config, TcpSession tcpSession, SecureSession secureSession,
+    this(HttpConfiguration config, Connection tcpSession, 
                                  ServerSessionListener serverSessionListener) {
-        super(config, tcpSession, secureSession, serverSessionListener);
+        super(config, tcpSession, serverSessionListener);
         if (typeid(serverSessionListener) == typeid(Http2ServerRequestHandler)) {
             Http2ServerRequestHandler handler = cast(Http2ServerRequestHandler) serverSessionListener;
             handler.connection = this;
@@ -49,14 +49,14 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
     }
 
     override
-    ConnectionType getConnectionType() {
+    HttpConnectionType getConnectionType() {
         return super.getConnectionType();
     }
 
-    override
-    bool isEncrypted() {
-        return super.isEncrypted();
-    }
+    // override
+    // bool isSecured() {
+    //     return super.isSecured();
+    // }
 
     ServerParser getParser() {
         return cast(ServerParser) parser;

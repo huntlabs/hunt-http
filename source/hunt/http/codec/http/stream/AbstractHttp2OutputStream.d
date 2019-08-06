@@ -6,7 +6,7 @@ import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;

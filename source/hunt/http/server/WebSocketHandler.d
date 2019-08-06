@@ -1,7 +1,7 @@
 module hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.stream.HttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.websocket.frame.Frame;
@@ -26,7 +26,7 @@ class WebSocketHandler {
             HttpOutputStream output, HttpConnection connection) {
         version (HUNT_DEBUG) {
             infof("The connection %s will upgrade to WebSocket connection",
-                    connection.getSessionId());
+                    connection.getId());
         }
         return true;
     }
@@ -51,7 +51,7 @@ class WebSocketHandler {
     void onFrame(Frame frame, WebSocketConnection connection) {
         version (HUNT_DEBUG) {
             tracef("The WebSocket connection %s received a frame: %s",
-                    connection.getSessionId(), frame.to!string());
+                    connection.getId(), frame.to!string());
         }
     }
 
