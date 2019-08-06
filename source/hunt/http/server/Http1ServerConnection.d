@@ -25,7 +25,7 @@ import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 
-import hunt.http.util.Completable;
+// import hunt.http.util.Completable;
 
 import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
@@ -39,7 +39,7 @@ import hunt.io;
 import hunt.Assert;
 import hunt.Exceptions;
 import hunt.concurrency.Promise;
-import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.FuturePromise;
 import hunt.text.Common;
 import hunt.util.ConverterUtils;
 
@@ -115,9 +115,8 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         this.tunnelConnectionPromise = tunnelConnectionPromise;
     }
 
-    override CompletableFuture!HttpTunnelConnection upgradeHttpTunnel() {
-        auto c = new Completable!HttpTunnelConnection();
-        // HttpTunnelConnection c = new HttpTunnelConnection();
+    override FuturePromise!HttpTunnelConnection upgradeHttpTunnel() {
+        auto c = new FuturePromise!HttpTunnelConnection();
         tunnelConnectionPromise = c;
         return c;
     }

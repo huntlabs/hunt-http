@@ -15,7 +15,7 @@ import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 
-import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 
@@ -76,7 +76,7 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
     }
 
     override
-    CompletableFuture!HttpTunnelConnection upgradeHttpTunnel() {
+    FuturePromise!HttpTunnelConnection upgradeHttpTunnel() {
         throw new IllegalStateException("the http2 connection can not upgrade to http tunnel");
     }
 }

@@ -11,7 +11,7 @@ import std.conv;
  * </p>
  */
 class BadMessageException :RuntimeException {
-    private static long serialVersionUID = -4907256166019479626L;
+    
     int _code;
     string _reason;
 

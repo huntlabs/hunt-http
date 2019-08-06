@@ -16,10 +16,10 @@ import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
-import hunt.http.util.Completable;
+// import hunt.http.util.Completable;
 
 import hunt.Exceptions;
-import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
 
 import hunt.collection.BufferUtils;
@@ -51,16 +51,13 @@ import core.time;
 */
 class HttpClient : AbstractLifecycle {
 
-    // private string _host;
-    // private int _port;
-    // private NetClient client;
     private NetClientOptions clientOptions;
     private NetClient[int] _netClients;
     private HttpConfiguration httpConfiguration;
 
     this() {
         NetClientOptions clientOptions = new NetClientOptions();
-        clientOptions.setIdleTimeout(60.seconds);
+        clientOptions.setIdleTimeout(15.seconds);
         clientOptions.setConnectTimeout(5.seconds);
 
         HttpConfiguration config = new HttpConfiguration(clientOptions);
@@ -79,17 +76,11 @@ class HttpClient : AbstractLifecycle {
         this.httpConfiguration = c;
          // = new ConcurrentHashMap!()();
 
-        // CommonDecoder commonDecoder = new CommonDecoder(httpClientDecoder);
-
-        // c.getTcpConfiguration().setDecoder(commonDecoder);
-        // c.getTcpConfiguration().setEncoder(new CommonEncoder());
-        // c.getTcpConfiguration().setHandler(new Http2ClientHandler(c, _netClients));
-
         start();
     }
 
-    Completable!(HttpClientConnection) connect(string host, int port) {
-        Completable!(HttpClientConnection) completable = new Completable!(HttpClientConnection)();
+    FuturePromise!(HttpClientConnection) connect(string host, int port) {
+        FuturePromise!(HttpClientConnection) completable = new FuturePromise!(HttpClientConnection)();
         completable.id = "httpclient";
         connect(host, port, completable);
         return completable;
@@ -139,14 +130,20 @@ class HttpClient : AbstractLifecycle {
         return httpConfiguration;
     }
 
+    void close() {
+        stop();
+    }
+
     override protected void initialize() {
         // do nothing;
     }
 
     override protected void destroy() {
-        // if (_netClients.length > 0) {
-        //     _netClients
-        // }
+
+        foreach(NetClient client; _netClients) {
+            client.close();
+        }
+        
         _netClients = null;
     }
 
