@@ -50,8 +50,10 @@ class WebSocketHandler {
 
     void onFrame(Frame frame, WebSocketConnection connection) {
         version (HUNT_DEBUG) {
+            HttpConnection conn = cast(HttpConnection)connection;
+            assert(conn !is null);
             tracef("The WebSocket connection %s received a frame: %s",
-                    connection.getId(), frame.to!string());
+                    conn.getId(), frame.to!string());
         }
     }
 

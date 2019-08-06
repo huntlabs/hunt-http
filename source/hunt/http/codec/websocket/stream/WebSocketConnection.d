@@ -5,13 +5,14 @@ import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.net.Connection;
+import hunt.http.HttpConnection;
 
 import hunt.Functions;
 import hunt.collection.ByteBuffer;
 import hunt.util.Common;
 import hunt.concurrency.CompletableFuture;
 
-interface WebSocketConnection : OutgoingFrames { // , Connection
+interface WebSocketConnection : OutgoingFrames { // , Connection , HttpConnection
 
     /**
      * Register the connection close callback.

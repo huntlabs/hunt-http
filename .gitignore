@@ -36,3 +36,4 @@ examples/WebSocketDemo/websocket-client
 examples/WebSocketDemo/websocket-server
 examples/UnitTest/unittest-*
 *-test-default
+examples/HttpDemo/http-server

@@ -568,7 +568,8 @@ class HttpGenerator {
         }
         
         version(HUNT_HTTP_DEBUG_MORE) {
-            tracef("content: %s", cast(string)content.getRemaining());
+            if(content !is null)
+                tracef("content: %s", cast(string)content.getRemaining());
         }
 
         // default field values

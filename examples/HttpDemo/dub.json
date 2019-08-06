@@ -1,6 +1,6 @@
 {
-	"name": "h2c-demo",
-	"description": "A demo for HTTP2 (H2C) with Hunt-http.",
+	"name": "http-demo",
+	"description": "A demo for WebSocket Client/Server with Hunt-http.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
     "homepage": "https://www.huntlabs.net/",
 	"license": "Apache-2.0",
@@ -8,12 +8,12 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG"
+		"HUNT_DEBUG", "HUNT_IO_DEBUG1", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE"
 	],
 	"configurations": [
 		{
 			"name": "client",
-			"targetName": "h2c-client",
+			"targetName": "http-client",
 			"targetType": "executable",
 			"excludedSourceFiles": [
 				"source/server.d"
@@ -21,7 +21,7 @@
 		},
 		{
 			"name": "server",
-			"targetName": "h2c-server",
+			"targetName": "http-server",
 			"targetType": "executable",
 			"excludedSourceFiles": [
 				"source/client.d"

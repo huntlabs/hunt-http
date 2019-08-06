@@ -3,7 +3,7 @@ module server;
 import std.stdio;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.model.HttpVersion;
+import hunt.http.HttpVersion;
 import hunt.http.codec.http.stream;
 
 import hunt.http.server.HttpServer;
