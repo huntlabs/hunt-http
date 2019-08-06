@@ -125,10 +125,23 @@ class RealCall : Call {
 
         doRequestTask(httpHandler);
 
-        version (HUNT_HTTP_DEBUG) info("waitting response...");
-        synchronized {
-            if(hcr is null)
+        HttpConfiguration options = client.getHttpConfiguration();
+        TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
+        Duration idleTimeout = tcpOptions.getIdleTimeout();     
+
+        if(hcr is null) {
+            if(idleTimeout.isNegative()) {
                 responseCondition.wait();
+            } else {  
+                version (HUNT_HTTP_DEBUG) infof("waitting for response in %s ...", idleTimeout);
+                bool r = responseCondition.wait(idleTimeout);
+                if(!r) {
+                    warningf("No any response in %s", idleTimeout);
+
+                    client.close();
+                    throw new TimeoutException();
+                }
+            }
         }
         version (HUNT_HTTP_DEBUG) info("response normally");
         return hcr;
@@ -182,7 +195,7 @@ class RealCall : Call {
             string scheme = uri.getScheme();
             int port = uri.getPort();
 
-            version(HUNT_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
+            version(HUNT_HTTP_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
                 scheme, uri.getHost(), port);
 
             FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
@@ -199,6 +212,7 @@ class RealCall : Call {
                 version(HUNT_DEBUG) {
                     warning(ex);
                 }
+                client.close();
                 throw new IOException("Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string());
             }
             
