@@ -97,7 +97,13 @@ class HttpClientTest {
         encoder.put("password", "test");
         // string content = "email=test%40putao.com&password=test";
         string content = encoder.encode();
-        string response = post("http://127.0.0.1:8080/testpost", "application/x-www-form-urlencoded", content);
+        string response = post("http://10.1.222.120:8080/testpost", "application/x-www-form-urlencoded", content);
+
+        // string content = `{"type":"news", "offset": "0", "count": "20"}`;
+        // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
+        
+        // string response = post(url, MimeType.APPLICATION_JSON_UTF_8.toString(), content);
+
         trace(response);
     }
 
@@ -138,7 +144,8 @@ class HttpClientTest {
             .build();
 
         Response response = client.newCall(request).execute();
-        return response.getBody().asString();
+        if(response.haveBody())
+            return response.getBody().asString();
   	}
 
 }

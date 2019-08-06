@@ -40,6 +40,10 @@ class HttpClientResponse : HttpResponse {
 		_body = b;
 	}	
 
+	bool haveBody() {
+		return _body !is null;
+	}
+
 	/** Returns true if this response redirects to another resource. */
 	bool isRedirect() {
 		switch (_status) {
