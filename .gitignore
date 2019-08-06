@@ -28,12 +28,11 @@ __dummy.html
 
 # Examples
 examples/UnitTest/unittest
-examples/HttpServerDemo/server-demo*
-examples/HttpClientDemo/client-demo
 examples/H2C-Demo/h2c-client
 examples/H2C-Demo/h2c-server
+examples/HttpDemo/http-client
+examples/HttpDemo/http-server
 examples/WebSocketDemo/websocket-client
 examples/WebSocketDemo/websocket-server
 examples/UnitTest/unittest-*
 *-test-default
-examples/HttpDemo/http-server

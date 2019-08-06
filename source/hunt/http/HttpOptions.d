@@ -62,6 +62,7 @@ class HttpOptions {
                 new DefaultCredentialConscryptSSLContextFactory()
             );
         }
+        this.tcpSslOptions = tcpSslOptions;
         protocol = HttpVersion.HTTP_1_1.asString();
     }
 
