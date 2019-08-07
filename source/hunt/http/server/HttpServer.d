@@ -47,9 +47,9 @@ class HttpServer : AbstractLifecycle {
                 serverHttpHandler, webSocketHandler);
     }
 
-    this(string host, int port, HttpConfiguration c, ServerSessionListener listener,
+    this(string host, int port, HttpConfiguration config, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
-        if (c is null)
+        if (config is null)
             throw new IllegalArgumentException("the http2 configuration is null");
 
         if (host is null)
@@ -57,19 +57,37 @@ class HttpServer : AbstractLifecycle {
 
         this.host = host;
         this.port = port;
-        _serverOptions = cast(NetServerOptions)c.getTcpConfiguration();
+        _serverOptions = cast(NetServerOptions)config.getTcpConfiguration();
         if(_serverOptions is null ) {
             _serverOptions = new NetServerOptions();
+            config.setTcpConfiguration(_serverOptions);
         }
-        httpServerHandler = new HttpServerHandler(c, listener,
+        httpServerHandler = new HttpServerHandler(config, listener,
                 serverHttpHandler, webSocketHandler);
 
-        // Http1ServerDecoder httpServerDecoder = new Http1ServerDecoder(new WebSocketDecoder(),
-        //         new Http2ServerDecoder());
-        // CommonDecoder commonDecoder = new CommonDecoder(httpServerDecoder);
-        // c.getTcpConfiguration().setDecoder(commonDecoder);
-        // c.getTcpConfiguration().setEncoder(new CommonEncoder());
-        // c.getTcpConfiguration().setHandler(httpServerHandler);
+        version(WITH_HUNT_SECURITY) {
+            import hunt.net.secure.SecureUtils;
+            import std.file;
+            import std.path;
+            
+            if (config.isSecureConnectionEnabled()) {
+                string sslCertificate = config.sslCertificate();
+                string sslPrivateKey = config.sslPrivateKey();
+                if(sslCertificate.empty() || sslPrivateKey.empty()) {
+                    warningf("No certificate files found. Using the defaults.");
+                } else {
+	                string currentRootPath = dirName(thisExePath);
+                    sslCertificate = buildpath(currentRootPath, sslCertificate);
+                    sslPrivateKey = buildpath(currentRootPath, sslPrivateKey);
+                    if(!sslCertificate.exists() || !sslPrivateKey.exists()) {
+                        warningf("No certificate files found. Using the defaults.");
+                    } else {
+                        SecureUtils.setServerCertificate(sslCertificate, sslPrivateKey, 
+                            config.keystorePassword(), config.keyPassword());
+                    }
+                }
+            }
+        }
 
         _server = NetUtil.createNetServer!(ThreadMode.Single)(_serverOptions);
 
@@ -95,10 +113,10 @@ class HttpServer : AbstractLifecycle {
             }
         });
 
-        _server.setHandler(new HttpServerHandler(c, listener,
+        _server.setHandler(new HttpServerHandler(config, listener,
                 serverHttpHandler, webSocketHandler));
 
-        // _server.setConfig(c.getTcpConfiguration());
+        // _server.setConfig(config.getTcpConfiguration());
 
         //         string responseString = `HTTP/1.1 000 
         // Server: Hunt-HTTP/1.0
@@ -140,10 +158,10 @@ class HttpServer : AbstractLifecycle {
         //         // });
         //     });
         // });
-        this.http2Configuration = c;
+        this.http2Configuration = config;
 
         version (HUNT_DEBUG) {
-            if (c.isSecureConnectionEnabled)
+            if (config.isSecureConnectionEnabled())
                 tracef("Listing at: https://%s:%d", host, port);
             else
                 tracef("Listing at: http://%s:%d", host, port);

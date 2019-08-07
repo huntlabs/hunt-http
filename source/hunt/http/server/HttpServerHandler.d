@@ -22,7 +22,10 @@ import hunt.logging;
 import hunt.text.Common;
 
 import std.range.primitives;
+import std.string;
 
+/**
+*/
 class HttpServerHandler : AbstractHttpHandler {
 
     private ServerSessionListener listener;
@@ -62,7 +65,6 @@ class HttpServerHandler : AbstractHttpHandler {
         } else {
             enum string HTTP_1_1 = HttpVersion.HTTP_1_1.asString();
             enum string HTTP_2 = HttpVersion.HTTP_2.asString();
-            import std.string;
             // HttpVersion httpVersion = HttpVersion.fromString(protocol);
             // if (httpVersion == HttpVersion.Null) {
             //     string msg = "the protocol " ~ protocol ~ " is not support.";
@@ -93,16 +95,19 @@ class HttpServerHandler : AbstractHttpHandler {
 
     version(WITH_HUNT_SECURITY)
     private void buildSecureSession(Connection connection) {
-        string protocol = config.getProtocol();
-        SecureSessionFactory factory = config.getSecureSessionFactory();
-        SecureSession secureSession = factory.create(connection, false, (SecureSession sslSession) {
+
+        import hunt.net.secure.SecureUtils;
+        connection.setState(ConnectionState.Securing);
+        SecureSession secureSession = SecureUtils.createServerSession(connection, (SecureSession sslSession) {
             version (HUNT_DEBUG)
                 info("Secure connection created...");
 
-            connection.setAttribute("SSL_CONNECTION", cast(Object)sslSession);
+            connection.setAttribute(SecureSession.NAME, cast(Object)sslSession);
 
             HttpConnection httpConnection;
             string protocol = sslSession.getApplicationProtocol();
+            if (protocol.empty)
+                protocol = config.getProtocol();
             if (protocol.empty)
                 protocol = "http/1.1";
 
@@ -127,7 +132,7 @@ class HttpServerHandler : AbstractHttpHandler {
 
             //infof("attach http connection: %s", typeid(httpConnection));
             connection.attachObject(cast(Object) httpConnection);
-            connection.setAttribute("HTTP_CONNECTION", cast(Object)httpConnection);
+            connection.setAttribute(HttpConnection.NAME, cast(Object)httpConnection);
 
             serverHttpHandler.acceptConnection(httpConnection);
         });

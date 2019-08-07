@@ -26,11 +26,10 @@ class HttpOptions {
     // SSL/TLS settings
     private bool _isSecureConnectionEnabled;
 
-    version(WITH_HUNT_SECURITY) {
-        private SecureSessionFactory secureSessionFactory; 
-    }
-    // private string _sslCertificate;
-    // private string _sslPrivateKey;
+    private string _sslCertificate;
+    private string _sslPrivateKey;
+    private string _keystorePassword;
+    private string _keyPassword;
 
     // HTTP settings
     private int maxDynamicTableSize = 4096;
@@ -56,12 +55,6 @@ class HttpOptions {
     }
 
     this(TcpSslOptions tcpSslOptions) {
-        version(WITH_HUNT_SECURITY) {
-            secureSessionFactory = new ConscryptSecureSessionFactory(
-                new NoCheckConscryptSSLContextFactory(),
-                new DefaultCredentialConscryptSSLContextFactory()
-            );
-        }
         this.tcpSslOptions = tcpSslOptions;
         protocol = HttpVersion.HTTP_1_1.asString();
     }
@@ -326,24 +319,6 @@ version(WITH_HUNT_SECURITY) {
         this._isSecureConnectionEnabled = status;
     }
 
-    /**
-     * Get the SSL/TLS connection factory.
-     *
-     * @return the SSL/TLS connection factory.
-     */
-    SecureSessionFactory getSecureSessionFactory() {
-        return secureSessionFactory;
-    }
-
-    /**
-     * Set the SSL/TLS connection factory.
-     *
-     * @param secureSessionFactory the SSL/TLS connection factory.
-     */
-    void setSecureSessionFactory(SecureSessionFactory secureSessionFactory) {
-        this.secureSessionFactory = secureSessionFactory;
-    }
-
 } else {
 
     void setSecureConnectionEnabled(bool status) {
@@ -352,22 +327,37 @@ version(WITH_HUNT_SECURITY) {
         this._isSecureConnectionEnabled = status;
     }    
 }
-    // string sslCertificate() {
-    //     return _sslCertificate;
-    // }
+    string sslCertificate() {
+        return _sslCertificate;
+    }
 
-    // void sslCertificate(string fileName) {
-    //     _sslCertificate = fileName;
-    // }
+    void sslCertificate(string fileName) {
+        _sslCertificate = fileName;
+    }
 
-    // string sslPrivateKey() {
-    //     return _sslPrivateKey;
-    // }
+    string sslPrivateKey() {
+        return _sslPrivateKey;
+    }
 
-    // void sslPrivateKey(string fileName) {
-    //     _sslPrivateKey = fileName;
-    // }
+    void sslPrivateKey(string fileName) {
+        _sslPrivateKey = fileName;
+    }
 
+    string keystorePassword() {
+        return _keystorePassword;
+    }
+
+    void keystorePassword(string password) {
+        _keystorePassword = password;
+    }
+
+    string keyPassword() {
+        return _keyPassword;
+    }
+
+    void keyPassword(string password) {
+        _keyPassword = password;
+    }
 
     /**
      * Get the default HTTP protocol version. The value is "HTTP/2.0" or "HTTP/1.1". If the value is null,

@@ -8,6 +8,8 @@ import hunt.util.Common;
 
 interface HttpConnection : Closeable { // : Connection 
 
+    enum string NAME = typeof(this).stringof;
+
     int getId();
 
     Connection getTcpConnection();

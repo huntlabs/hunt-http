@@ -6,9 +6,10 @@ import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.Http2ClientConnection;
 import hunt.http.HttpVersion;
 import hunt.http.AbstractHttpConnectionHandler;
+import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
-import hunt.net.Connection;
 
+import hunt.net.Connection;
 import hunt.net.secure.SecureSession;
 
 
@@ -27,6 +28,8 @@ import hunt.collection.Map;
 import hunt.logging;
 import std.array;
 
+/**
+*/
 class Http2ClientHandler : AbstractHttpHandler {
 
     // private Map!(int, HttpClientContext) http2ClientContext;
@@ -53,11 +56,11 @@ class Http2ClientHandler : AbstractHttpHandler {
             }
 
             version(WITH_HUNT_SECURITY) {
+                import hunt.net.secure.SecureUtils;
                 connection.setState(ConnectionState.Securing);
-                SecureSessionFactory factory = config.getSecureSessionFactory();
-                SecureSession secureSession = factory.create(connection, true, (SecureSession sslSession) {
+                SecureSession secureSession = SecureUtils.createClientSession(connection, (SecureSession sslSession) {
 
-                    // connection.setAttribute("SSL_CONNECTION", cast(Object)sslSession);
+                    // connection.setAttribute(SecureSession.NAME, cast(Object)sslSession);
 
                     string protocol = "http/1.1";
                     string p = sslSession.getApplicationProtocol();
@@ -87,7 +90,7 @@ class Http2ClientHandler : AbstractHttpHandler {
 
                 connection.attachObject(cast(Object)secureSession);
 
-                connection.setAttribute("SSL_CONNECTION", cast(Object)secureSession);
+                connection.setAttribute(SecureSession.NAME, cast(Object)secureSession);
             } else {
                 assert(false, "To support SSL, please read the Readme.md in project hunt-net.");
             }
@@ -122,7 +125,7 @@ class Http2ClientHandler : AbstractHttpHandler {
         try {
             Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
             connection.attachObject(http1ClientConnection);
-            connection.setAttribute("HTTP_CONNECTION", http1ClientConnection);
+            connection.setAttribute(HttpConnection.NAME, http1ClientConnection);
             // context.getPromise().succeeded(http1ClientConnection);
 
             // infof("Promise id = %s", promise.id);
