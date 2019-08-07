@@ -1,15 +1,16 @@
 module hunt.http.client.Http2ClientHandler;
 
-import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.HttpClientContext;
+import hunt.http.client.HttpClientConnection;
+import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.Http2ClientConnection;
-
 import hunt.http.HttpVersion;
 import hunt.http.AbstractHttpConnectionHandler;
 import hunt.http.HttpOptions;
 import hunt.net.Connection;
 
 import hunt.net.secure.SecureSession;
+
 
 // dfmt off
 version(WITH_HUNT_SECURITY) {
@@ -48,29 +49,35 @@ class Http2ClientHandler : AbstractHttpHandler {
 
         if (config.isSecureConnectionEnabled()) {
             version(HUNT_DEBUG) {
-                info("initilizing a secure connection");
+                infof("initilizing a secure connection: %s", connection.getState());
             }
 
             version(WITH_HUNT_SECURITY) {
+                connection.setState(ConnectionState.Securing);
                 SecureSessionFactory factory = config.getSecureSessionFactory();
                 SecureSession secureSession = factory.create(connection, true, (SecureSession sslSession) {
+
+                    // connection.setAttribute("SSL_CONNECTION", cast(Object)sslSession);
 
                     string protocol = "http/1.1";
                     string p = sslSession.getApplicationProtocol();
                     if(p.empty)
-                        warningf("The selected application protocol is empty. now use default: %s", protocol);
+                        warningf("The selected application protocol is empty. Now using the default: %s", protocol);
                     else
                         protocol = p;
 
                     version(HUNT_HTTP_DEBUG) infof("Client connection %s SSL handshake finished. The app protocol is %s", 
                         connection.getId(), protocol);
 
+                    infof("connection state: %s", connection.getState());
+                    connection.setState(ConnectionState.Secured);
+
                     switch (protocol) {
                         case "http/1.1":
-                            initializeHttp1ClientConnection(connection, context, sslSession);
+                            initializeHttp1ClientConnection(connection, context);
                             break;
                         case "h2":
-                            initializeHttp2ClientConnection(connection, context, sslSession);
+                            initializeHttp2ClientConnection(connection, context);
                             break;
                         default:
                             throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " 
@@ -79,8 +86,10 @@ class Http2ClientHandler : AbstractHttpHandler {
                 });
 
                 connection.attachObject(cast(Object)secureSession);
+
+                connection.setAttribute("SSL_CONNECTION", cast(Object)secureSession);
             } else {
-                assert(false, "To support SSL, please read Readme.md in project hunt-net .");
+                assert(false, "To support SSL, please read the Readme.md in project hunt-net.");
             }
         } else {
             version(HUNT_HTTP_DEBUG) {
@@ -107,17 +116,21 @@ class Http2ClientHandler : AbstractHttpHandler {
     }
 
     private void initializeHttp1ClientConnection(Connection connection, HttpClientContext context) {
+        Promise!(HttpClientConnection) promise  = context.getPromise();
+        assert(promise !is null);
+        
         try {
             Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
             connection.attachObject(http1ClientConnection);
+            connection.setAttribute("HTTP_CONNECTION", http1ClientConnection);
             // context.getPromise().succeeded(http1ClientConnection);
-            import hunt.http.client.HttpClientConnection;
-            Promise!(HttpClientConnection) promise  = context.getPromise();
-            infof("Promise id = %s", promise.id);
+
+            // infof("Promise id = %s", promise.id);
             promise.succeeded(http1ClientConnection);
 
         } catch (Exception t) {
-            context.getPromise().failed(t);
+            warning(t);
+            promise.failed(t);
         } finally {
             // http2ClientContext.remove(connection.getId());
         }

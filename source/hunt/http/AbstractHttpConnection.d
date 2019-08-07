@@ -88,32 +88,32 @@ abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
 
 
 
-    ByteBuffer decrypt(ByteBuffer buffer) {
+    // ByteBuffer decrypt(ByteBuffer buffer) {
 
-        implementationMissing(false);
-        return null;
+    //     implementationMissing(false);
+    //     return null;
         
-        // if (isEncrypted()) {
-        //     try {
-        //         return secureSession.read(buffer);
-        //     } catch (IOException e) {
-        //         throw new SecureNetException("decrypt exception", e);
-        //     }
-        // } else {
-        //     return null;
-        // }
-    }
+    //     // if (isEncrypted()) {
+    //     //     try {
+    //     //         return secureSession.read(buffer);
+    //     //     } catch (IOException e) {
+    //     //         throw new SecureNetException("decrypt exception", e);
+    //     //     }
+    //     // } else {
+    //     //     return null;
+    //     // }
+    // }
 
-    void encrypt(ByteBufferOutputEntry entry) {
-        implementationMissing(false);
-        // encrypt!(ByteBuffer)(entry, (buffers, callback) {
-        //     try {
-        //         secureSession.write(buffers, callback);
-        //     } catch (IOException e) {
-        //         throw new SecureNetException("encrypt exception", e);
-        //     }
-        // });
-    }
+    // void encrypt(ByteBufferOutputEntry entry) {
+    //     implementationMissing(false);
+    //     // encrypt!(ByteBuffer)(entry, (buffers, callback) {
+    //     //     try {
+    //     //         secureSession.write(buffers, callback);
+    //     //     } catch (IOException e) {
+    //     //         throw new SecureNetException("encrypt exception", e);
+    //     //     }
+    //     // });
+    // }
 
     // void encrypt(ByteBufferArrayOutputEntry entry) {
     //     encrypt(entry, (buffers, callback) {
@@ -125,32 +125,32 @@ abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
     //     });
     // }
 
-    void encrypt(ByteBuffer buffer) {
-        // try {
-        //     secureSession.write(buffer, Callback.NOOP);
-        // } catch (IOException e) {
-        //     errorf(e.toString());
-        //     throw new SecureNetException("encrypt exception", e);
-        // }
+    // void encrypt(ByteBuffer buffer) {
+    //     // try {
+    //     //     secureSession.write(buffer, Callback.NOOP);
+    //     // } catch (IOException e) {
+    //     //     errorf(e.toString());
+    //     //     throw new SecureNetException("encrypt exception", e);
+    //     // }
 
-        implementationMissing(false);
-    }
+    //     implementationMissing(false);
+    // }
 
-    void encrypt(ByteBuffer[] buffers) {
-        // try {
-        //     secureSession.write(buffers, Callback.NOOP);
-        // } catch (IOException e) {
-        //     throw new SecureNetException("encrypt exception", e);
-        // }
-        implementationMissing(false);
-    }
+    // void encrypt(ByteBuffer[] buffers) {
+    //     // try {
+    //     //     secureSession.write(buffers, Callback.NOOP);
+    //     // } catch (IOException e) {
+    //     //     throw new SecureNetException("encrypt exception", e);
+    //     // }
+    //     implementationMissing(false);
+    // }
 
-    private void encrypt(T)(OutputEntry!T entry, Action2!(T, Callback) et) {
+    // private void encrypt(T)(OutputEntry!T entry, Action2!(T, Callback) et) {
 
-        implementationMissing(false);
-        // if (isEncrypted()) {
-        //     et(entry.getData(), entry.getCallback());
-        // }
-    }
+    //     implementationMissing(false);
+    //     // if (isEncrypted()) {
+    //     //     et(entry.getData(), entry.getCallback());
+    //     // }
+    // }
 
 }

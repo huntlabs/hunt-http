@@ -98,6 +98,9 @@ class HttpServerHandler : AbstractHttpHandler {
         SecureSession secureSession = factory.create(connection, false, (SecureSession sslSession) {
             version (HUNT_DEBUG)
                 info("Secure connection created...");
+
+            connection.setAttribute("SSL_CONNECTION", cast(Object)sslSession);
+
             HttpConnection httpConnection;
             string protocol = sslSession.getApplicationProtocol();
             if (protocol.empty)
@@ -110,11 +113,11 @@ class HttpServerHandler : AbstractHttpHandler {
 
             switch (protocol) {
             case "http/1.1":
-                httpConnection = new Http1ServerConnection(config, connection, sslSession,
+                httpConnection = new Http1ServerConnection(config, connection, 
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
                 break;
             case "h2":
-                httpConnection = new Http2ServerConnection(config, connection, sslSession, listener);
+                httpConnection = new Http2ServerConnection(config, connection,listener);
                 break;
             default:
                 throw new IllegalStateException(
@@ -124,6 +127,8 @@ class HttpServerHandler : AbstractHttpHandler {
 
             //infof("attach http connection: %s", typeid(httpConnection));
             connection.attachObject(cast(Object) httpConnection);
+            connection.setAttribute("HTTP_CONNECTION", cast(Object)httpConnection);
+
             serverHttpHandler.acceptConnection(httpConnection);
         });
 

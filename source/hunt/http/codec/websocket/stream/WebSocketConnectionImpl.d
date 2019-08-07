@@ -100,7 +100,8 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         setNextIncomingFrames(nextIncomingFrames);
 
         if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
-
+// TODO: Tasks pending completion -@zxp at 8/6/2019, 5:48:02 PM
+// 
             implementationMissing(false);
 
             // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {

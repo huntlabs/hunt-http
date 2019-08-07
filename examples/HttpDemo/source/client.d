@@ -25,8 +25,8 @@ void main(string[] args) {
 
     HttpClientTest test = new HttpClientTest();
     try {
-    test.testGet();
-    // test.testGetHttps();
+    // test.testGet();
+    test.testGetHttps();
     // test.testAsynchronousGet();
     // test.testPost();
     // test.testFormPost();
@@ -62,7 +62,7 @@ class HttpClientTest {
     //
     void testGetHttps() {
 		
-        // string url = "https://10.1.222.120:6677/index";
+        // string url = "https://10.1.222.120:440/";
         string url = "https://publicobject.com/helloworld.txt";
         string str = runGet(url);
 
