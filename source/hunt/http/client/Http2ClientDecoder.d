@@ -1,6 +1,7 @@
 module hunt.http.client.Http2ClientDecoder;
 
 import hunt.http.client.Http2ClientConnection;
+import hunt.http.HttpConnection;
 
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
@@ -21,11 +22,11 @@ class Http2ClientDecoder : DecoderChain {
         if (!buffer.hasRemaining())
             return;
 
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("the client session %s received the %s bytes", session.getId(), buffer.remaining());
         }
 
-        Http2ClientConnection http2ClientConnection = cast(Http2ClientConnection) session.getAttachment();
+        Http2ClientConnection http2ClientConnection = cast(Http2ClientConnection) session.getAttribute(HttpConnection.NAME); // session.getAttachment();
         http2ClientConnection.getParser().parse(buffer);
     }
 

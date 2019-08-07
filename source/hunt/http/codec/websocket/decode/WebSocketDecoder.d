@@ -1,5 +1,6 @@
 module hunt.http.codec.websocket.decode.WebSocketDecoder;
 
+import hunt.http.HttpConnection;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.net.codec.Decoder;
@@ -22,7 +23,7 @@ class WebSocketDecoder : DecoderChain {
             return;
         }
 
-        WebSocketConnectionImpl webSocketConnection = cast(WebSocketConnectionImpl) session.getAttachment();
+        WebSocketConnectionImpl webSocketConnection = cast(WebSocketConnectionImpl) session.getAttribute(HttpConnection.NAME); // session.getAttachment();
         while (buffer.hasRemaining()) {
             webSocketConnection.getParser().parse(buffer);
         }

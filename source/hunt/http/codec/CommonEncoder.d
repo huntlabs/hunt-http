@@ -20,11 +20,11 @@ class CommonEncoder : EncoderChain {
     override void encode(Object message, Connection session) {
 
         ConnectionState connState = session.getState();
-        errorf("State: %s, isSecured: %s", 
-            connState, session.isSecured() );        
+        version(HUNT_HTTP_DEBUG) {
+            infof("ConnectionState: %s", connState);        
+        }
 
         auto messageTypeInfo = typeid(message);
-
         version(HUNT_HTTP_DEBUG_MORE) {
             tracef("encoding... message: %s", messageTypeInfo.name);
         }
@@ -50,14 +50,6 @@ class CommonEncoder : EncoderChain {
                 }
             }
         } else {
-
-            // AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) session.getAttribute(HttpConnection.NAME);
-
-            // version(HUNT_HTTP_DEBUG) {
-            //     if(httpConnection !is null) {
-            //         tracef("http connection: %s", typeid(httpConnection).name);
-            //     }
-            // }   
 
             ByteBuffer messageBuffer = cast(ByteBuffer) message;
             if(messageBuffer !is null) {

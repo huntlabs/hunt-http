@@ -183,7 +183,8 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                 if (http2ConnectionPromise !is null
                         && http2SessionListener !is null && http2Connection !is null) {
                     upgradeHttp2Complete = true;
-                    tcpSession.attachObject(http2Connection);
+                    // tcpSession.attachObject(http2Connection);
+                    tcpSession.setAttribute(HttpConnection.NAME, http2Connection);
                     http2SessionListener.setConnection(http2Connection);
                     http2Connection.initialize(getHttp2Configuration(),
                             http2ConnectionPromise, http2SessionListener);
@@ -198,7 +199,8 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                     upgradeWebSocketComplete = true;
                     WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
                             tcpSession, incomingFrames, policy, request, response, config);
-                    tcpSession.attachObject(cast(Object) webSocketConnection);
+                    // tcpSession.attachObject(cast(Object) webSocketConnection);
+                    tcpSession.setAttribute(HttpConnection.NAME, cast(Object)webSocketConnection);
                     webSocketConnectionPromise.succeeded(webSocketConnection);
                     return true;
                 } else {

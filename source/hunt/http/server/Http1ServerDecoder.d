@@ -8,6 +8,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.net.codec.Decoder;
 import hunt.http.HttpConnectionType;
 import hunt.net.Connection;
@@ -34,13 +35,14 @@ class Http1ServerDecoder : DecoderChain {
     override void decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
-        Object attachment = session.getAttachment();
-        version (HUNT_HTTP_DEBUG)
-            tracef("session type: %s", typeid(attachment));
+        Object attachment = session.getAttribute(HttpConnection.NAME); // session.getAttachment();
+        version (HUNT_HTTP_DEBUG) {
+            tracef("session type: %s", attachment is null ? "null" : typeid(attachment).name);
+        }
 
         AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) attachment;
         if (abstractConnection is null) {
-            warningf("Bad connection instance: ", typeid(attachment));
+            warningf("Bad connection instance: %s", attachment is null ? "null" : typeid(attachment).name);
             return;
         }
 
@@ -79,7 +81,7 @@ class Http1ServerDecoder : DecoderChain {
             break;
         case HttpConnectionType.HTTP_TUNNEL: {
                 Http1ServerTunnelConnection tunnelConnection = 
-                    cast(Http1ServerTunnelConnection) session.getAttachment();
+                    cast(Http1ServerTunnelConnection) session.getAttribute(HttpConnection.NAME); // session.getAttachment();
                 if (tunnelConnection.content != null) {
                     tunnelConnection.content(buf);
                 }

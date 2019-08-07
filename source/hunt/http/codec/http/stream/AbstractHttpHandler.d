@@ -2,8 +2,8 @@ module hunt.http.codec.http.stream.AbstractHttpHandler;
 
 import hunt.http.HttpOptions;
 import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 
-import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 import hunt.net.Connection;
 
 import hunt.Exceptions;
@@ -30,7 +30,7 @@ abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
     void exceptionCaught(Connection connection, Exception t) {
         try {
             errorf("HTTP handler exception: %s", t.toString());
-            Object attachment = connection.getAttachment();
+            Object attachment = connection.getAttribute(HttpConnection.NAME); // connection.getAttachment();
             if (attachment is null) {
                 version(HUNT_DEBUG) warningf("attachment is null");
             } else {
@@ -42,14 +42,6 @@ abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
                         errorf("The http connection exception listener error: %s", e.message);
                     }
                 } 
-                else if (typeid(attachment) == typeid(WebSocketConnectionImpl)) {
-                    try {
-                        WebSocketConnectionImpl webSocketConnection = cast(WebSocketConnectionImpl) attachment;
-                        webSocketConnection.notifyException(t);
-                    } catch (Exception e) {
-                        errorf("The websocket connection exception listener error", e);
-                    }
-                }
             }
         } finally {
             connection.close();
@@ -60,25 +52,17 @@ abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
     void connectionClosed(Connection connection) {
         version(HUNT_HTTP_DEBUG) 
             tracef("The HTTP handler received the connection %s closed event.", connection.getId());
-        Object attachment = connection.getAttachment();
+        Object attachment = connection.getAttribute(HttpConnection.NAME); // connection.getAttachment();
         if (attachment is null) {
             version(HUNT_HTTP_DEBUG) warningf("attachment is null");
         } else {
             version(HUNT_HTTP_DEBUG) tracef("attachment is %s", typeid(attachment).name);
-            if (typeid(attachment) == typeid(AbstractHttpConnection)) {
+            AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
+            if (httpConnection !is null) {
                 try {
-                    AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
                     httpConnection.notifyClose();
                 } catch (Exception e) {
-                    errorf("The http2 connection close exception", e);
-                }
-            } 
-            else if (typeid(attachment) == typeid(WebSocketConnectionImpl)) {
-                try {
-                    WebSocketConnectionImpl webSocketConnection = cast(WebSocketConnectionImpl) attachment;
-                    webSocketConnection.notifyClose();
-                } catch (Exception e) {
-                    errorf("The websocket connection close exception", e);
+                    errorf("The http connection close exception", e);
                 }
             }
         }

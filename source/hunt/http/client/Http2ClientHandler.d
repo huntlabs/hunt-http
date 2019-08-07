@@ -88,7 +88,7 @@ class Http2ClientHandler : AbstractHttpHandler {
                     }
                 });
 
-                connection.attachObject(cast(Object)secureSession);
+                // connection.attachObject(cast(Object)secureSession);
 
                 connection.setAttribute(SecureSession.NAME, cast(Object)secureSession);
             } else {
@@ -124,7 +124,7 @@ class Http2ClientHandler : AbstractHttpHandler {
         
         try {
             Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
-            connection.attachObject(http1ClientConnection);
+            // connection.attachObject(http1ClientConnection);
             connection.setAttribute(HttpConnection.NAME, http1ClientConnection);
             // context.getPromise().succeeded(http1ClientConnection);
 
@@ -142,7 +142,8 @@ class Http2ClientHandler : AbstractHttpHandler {
     private void initializeHttp2ClientConnection(Connection connection, HttpClientContext context) {
         try {
             Http2ClientConnection conn = new Http2ClientConnection(config, connection, context.getListener());
-            connection.attachObject(conn);
+            // connection.attachObject(conn);
+            connection.setAttribute(HttpConnection.NAME, conn);
             context.getListener().setConnection(conn);            
             // connection.initialize(config, cast(Promise!(Http2ClientConnection))context.getPromise(), context.getListener());
             conn.initialize(config, context.getPromise(), context.getListener());

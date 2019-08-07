@@ -567,12 +567,12 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     private bool handleHeaderContentMessage() {
-        version (HUNT_HTTP_DEBUG) trace("handling headers ...");
+        version (HUNT_HTTP_DEBUG_MORE) trace("handling headers ...");
         bool handle_header = _handler.headerComplete();
         _headerComplete = true;
-        version (HUNT_HTTP_DEBUG) trace("handling content ...");
+        version (HUNT_HTTP_DEBUG_MORE) trace("handling content ...");
         bool handle_content = _handler.contentComplete();
-        version (HUNT_HTTP_DEBUG) trace("handling message ...");
+        version (HUNT_HTTP_DEBUG_MORE) trace("handling message ...");
         bool handle_message = _handler.messageComplete();
         return handle_header || handle_content || handle_message;
     }
@@ -1254,7 +1254,7 @@ class HttpParser {
      * @return True if an {@link RequestHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
-        version(HUNT_HTTP_DEBUG) {
+        version(HUNT_HTTP_DEBUG_MORE) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
             // tracef("buffer: %s", BufferUtils.toHexString(buffer));
 
@@ -1292,7 +1292,7 @@ class HttpParser {
             // parse headers
             if (_state == State.HEADER) {
                 if (parseFields(buffer)) {
-                    version(HUNT_HTTP_DEBUG) tracef("after parseFields =>%s", buffer.toString());
+                    version(HUNT_HTTP_DEBUG_MORE) tracef("after parseFields =>%s", buffer.toString());
                     return true;
                 }
             }
@@ -1555,7 +1555,7 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     void reset() {
-        version(HUNT_HTTP_DEBUG)
+        version(HUNT_HTTP_DEBUG_MORE)
             tracef("reset %s", this);
 
         // reset state

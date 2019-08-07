@@ -23,6 +23,7 @@ import hunt.net;
 import hunt.util.Lifecycle;
 
 import core.time;
+import std.array;
 
 /**
 */
@@ -77,8 +78,8 @@ class HttpServer : AbstractLifecycle {
                     warningf("No certificate files found. Using the defaults.");
                 } else {
 	                string currentRootPath = dirName(thisExePath);
-                    sslCertificate = buildpath(currentRootPath, sslCertificate);
-                    sslPrivateKey = buildpath(currentRootPath, sslPrivateKey);
+                    sslCertificate = buildPath(currentRootPath, sslCertificate);
+                    sslPrivateKey = buildPath(currentRootPath, sslPrivateKey);
                     if(!sslCertificate.exists() || !sslPrivateKey.exists()) {
                         warningf("No certificate files found. Using the defaults.");
                     } else {

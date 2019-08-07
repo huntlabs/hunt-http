@@ -41,8 +41,6 @@ class HttpServerHandler : AbstractHttpHandler {
     }
 
     override void connectionOpened(Connection connection) {
-        version (HUNT_DEBUG)
-            tracef("New http connection");
         // tracef("New http connection: %s", typeid(cast(Object) connection));
         version(WITH_HUNT_SECURITY) {
             if (config.isSecureConnectionEnabled()) {
@@ -56,11 +54,18 @@ class HttpServerHandler : AbstractHttpHandler {
     }
 
     private void buildNomalSession(Connection connection) {
+
+        connection.setState(ConnectionState.Opening);
+
+        version (HUNT_HTTP_DEBUG)
+            info("Building a new http connection...");
         string protocol = config.getProtocol();
+        
         if (!protocol.empty) {
             Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection,
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
-            connection.attachObject(httpConnection);
+            connection.setAttribute(HttpConnection.NAME, httpConnection);
+
             serverHttpHandler.acceptConnection(httpConnection);
         } else {
             enum string HTTP_1_1 = HttpVersion.HTTP_1_1.asString();
@@ -76,69 +81,80 @@ class HttpServerHandler : AbstractHttpHandler {
                 Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection, 
                         new Http1ServerRequestHandler(serverHttpHandler),
                         listener, webSocketHandler);
-                connection.attachObject(httpConnection);
+                // connection.attachObject(httpConnection);
+                connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
+                connection.setState(ConnectionState.Opened);
             } else if (icmp(HTTP_2, protocol) == 0) {
                 Http2ServerConnection httpConnection = new Http2ServerConnection(config,
                         connection, listener);
-                connection.attachObject(httpConnection);
+                // connection.attachObject(httpConnection);
+                connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
+
+                connection.setState(ConnectionState.Opened);
+
             } else {
                 string msg = "the protocol " ~ protocol ~ " is not support.";
-                version (HUNT_DEBUG) {
+                version (HUNT_HTTP_DEBUG) {
                     warningf(msg);
                 }
+                connection.setState(ConnectionState.Error);
                 throw new IllegalArgumentException(msg);
             }
         }
     }
 
-    version(WITH_HUNT_SECURITY)
+    version(WITH_HUNT_SECURITY) {
     private void buildSecureSession(Connection connection) {
 
         import hunt.net.secure.SecureUtils;
         connection.setState(ConnectionState.Securing);
+        version(HUNT_HTTP_DEBUG) info("building SecureSession ...");
+
         SecureSession secureSession = SecureUtils.createServerSession(connection, (SecureSession sslSession) {
+            connection.setState(ConnectionState.Secured);
             version (HUNT_DEBUG)
                 info("Secure connection created...");
 
-            connection.setAttribute(SecureSession.NAME, cast(Object)sslSession);
+            enum string HTTP_1_1 = HttpVersion.HTTP_1_1.asString();
+            enum string HTTP_2 = HttpVersion.HTTP_2.asString();
 
             HttpConnection httpConnection;
             string protocol = sslSession.getApplicationProtocol();
             if (protocol.empty)
                 protocol = config.getProtocol();
             if (protocol.empty)
-                protocol = "http/1.1";
+                protocol = HTTP_1_1;
 
-            version (HUNT_DEBUG) {
+            version (HUNT_HTTP_DEBUG) {
                 tracef("server connection %s SSL handshake finished. Application protocol: %s",
                     connection.getId(), protocol);
             }
 
             switch (protocol) {
-            case "http/1.1":
+            case HTTP_1_1:
                 httpConnection = new Http1ServerConnection(config, connection, 
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
                 break;
-            case "h2":
+
+            case HTTP_2:
                 httpConnection = new Http2ServerConnection(config, connection,listener);
                 break;
+
             default:
                 throw new IllegalStateException(
                     "SSL application protocol negotiates failure. The protocol "
                     ~ protocol ~ " is not supported");
             }
 
-            //infof("attach http connection: %s", typeid(httpConnection));
-            connection.attachObject(cast(Object) httpConnection);
             connection.setAttribute(HttpConnection.NAME, cast(Object)httpConnection);
+            version (HUNT_HTTP_DEBUG_MORE) infof("attach http connection: %s", typeid(httpConnection));
 
             serverHttpHandler.acceptConnection(httpConnection);
         });
 
-        //infof("attach secure connection: %s", typeid(secureSession));
-        connection.attachObject(cast(Object) secureSession);
+        connection.setAttribute(SecureSession.NAME, cast(Object)secureSession);
     }
-
+    }
 }

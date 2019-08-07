@@ -26,8 +26,15 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 */
 
 void main(string[] args) {
-    HttpServer server = new HttpServer("0.0.0.0", 8080,
-        new HttpConfiguration(), 
+    HttpConfiguration config = new HttpConfiguration();
+    config.sslCertificate = "cert/server.crt";
+    config.sslPrivateKey = "cert/server.key";
+    config.keystorePassword = "hunt2018";
+    config.keyPassword = "hunt2018";
+    config.setSecureConnectionEnabled(true);
+
+
+    HttpServer server = new HttpServer("0.0.0.0", 8080, config, 
 
         new class ServerHttpHandlerAdapter {
 

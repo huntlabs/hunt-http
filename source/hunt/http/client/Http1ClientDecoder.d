@@ -7,6 +7,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.HttpConnectionType;
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
@@ -35,9 +36,9 @@ class Http1ClientDecoder : DecoderChain {
     override
     void decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = buffer; // toHeapBuffer(buffer);
-        Object attachment = session.getAttachment();
+        Object attachment = session.getAttribute(HttpConnection.NAME); // session.getAttachment();
 
-        AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) session.getAttachment();
+        AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) attachment;
         if(abstractConnection is null)
         {
             throw new IllegalStateException("Client connection is null! The actual type is: " 

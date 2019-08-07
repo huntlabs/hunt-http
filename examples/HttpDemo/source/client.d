@@ -62,8 +62,8 @@ class HttpClientTest {
     //
     void testGetHttps() {
 		
-        // string url = "https://10.1.222.120:440/";
-        string url = "https://publicobject.com/helloworld.txt";
+        string url = "https://10.1.222.120:440/";
+        // string url = "https://publicobject.com/helloworld.txt";
         string str = runGet(url);
 
         trace(str);
