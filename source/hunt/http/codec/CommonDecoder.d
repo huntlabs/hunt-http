@@ -66,12 +66,12 @@ class CommonDecoder : DecoderChain {
     private void decodeSecureSession(ByteBuffer buf, Connection session) {
         ConnectionState connState = session.getState();
             
-        DecoderChain next = getNext();
         version(HUNT_HTTP_DEBUG) {
             infof("ConnectionState: %s", connState);
         }
 
         if(connState == ConnectionState.Secured) {
+            DecoderChain next = getNext();
             SecureSession secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);     
             assert(secureSession !is null)  ;
 
@@ -82,55 +82,99 @@ class CommonDecoder : DecoderChain {
                 warning("The next decoder is null.");
             }
         } else if(connState == ConnectionState.Securing) {
-
             version(HUNT_DEBUG) {
                 warning("TLS handshaking...");
             }
+            // TLS handshake
+            enum int MaxTimes = 5;
+            SecureSession secureSession = waitForSecureSession(MaxTimes, session);
 
-            SecureSession secureSession;
-            // Waiting until the SecureSession is avaliable.
+            if(secureSession is null) {
+                warning("Run handshake in another thread.");
+                import std.parallelism;
+                // auto handshakeTask = task(&handleTlsHandshake, buf, session, secureSession, next);
+                auto handshakeTask = task(() {
+                    // 
+                    // FIXME: Needing refactor or cleanup -@zxp at 8/8/2019, 4:29:49 PM
+                    // Maybe buf need copied.
+                    SecureSession s = waitForSecureSession(0, session);
+                    if(s is null) {
+                        warning("No SecureSession created");
+                    } else {
+                        handleTlsHandshake(buf, session, s);
+                    }
+                });
+                taskPool.put(handshakeTask);
+            } else {
+                handleTlsHandshake(buf, session, secureSession);
+            }
+
+        } else {
+            decodePlaintextSession(buf, session);
+        }
+    }
+
+    private SecureSession waitForSecureSession(int maxTimes, Connection session) {
+        SecureSession secureSession;
+
+        int count = 0;
+        if(maxTimes>0) {
             do {
                 secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);
+                count++;
+                version(HUNT_HTTP_DEBUG_MORE) {
+                    if(secureSession is null)
+                        warningf("Waiting for a secure session...%d", count);
+                }
+            } while(count < maxTimes && secureSession is null); 
+        } else {
+            // Waiting until the SecureSession is avaliable.
+            do {
                 version(HUNT_HTTP_DEBUG_MORE) {
                     if(secureSession is null)
                         warning("Waiting for a secure session...");
                 }
-            } while(secureSession is null && session.getState() != ConnectionState.Error);
+                secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);
+            } while(secureSession is null && session.getState() != ConnectionState.Error); 
+        }
 
-            // TLS handshake
-            ByteBuffer plaintext = secureSession.read(buf);
+        return secureSession;
+    }
 
-            if (plaintext !is null && plaintext.hasRemaining()) {
-                version(HUNT_DEBUG) {
-                    tracef("The session %s handshake finished and received cleartext size %s",
-                            session.getId(), plaintext.remaining());
-                }
+    private void handleTlsHandshake(ByteBuffer buf, Connection session, 
+        SecureSession secureSession) {
 
-                AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) session.getAttribute(HttpConnection.NAME);
-                version(HUNT_HTTP_DEBUG) {
-                    tracef("http connection: %s", httpConnection is null ? "null" : typeid(httpConnection).name);
-                }
+        DecoderChain next = getNext();
+        ByteBuffer plaintext = secureSession.read(buf);
 
-                if (httpConnection !is null) {
-                    if (next !is null) 
-                        next.decode(plaintext, session);
-                    else 
-                        warning("The next decoder is null.");
-                } else {
-                    warningf("httpConnection is null");
-                    throw new IllegalStateException("the http connection has not been created");
-                }
+        if (plaintext !is null && plaintext.hasRemaining()) {
+            version(HUNT_DEBUG) {
+                tracef("The session %s handshake finished and received cleartext size %s",
+                        session.getId(), plaintext.remaining());
+            }
+
+            AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) session.getAttribute(HttpConnection.NAME);
+            version(HUNT_HTTP_DEBUG) {
+                tracef("http connection: %s", httpConnection is null ? "null" : typeid(httpConnection).name);
+            }
+
+            if (httpConnection !is null) {
+                if (next !is null) 
+                    next.decode(plaintext, session);
+                else 
+                    warning("The next decoder is null.");
             } else {
-                version(HUNT_DEBUG) {
-                    if (secureSession.isHandshakeFinished()) {
-                        tracef("The ssl session %s need more data", session.getId());
-                    } else {
-                        tracef("The ssl session %s is shaking hand", session.getId());
-                    }
-                }
+                warningf("httpConnection is null");
+                throw new IllegalStateException("the http connection has not been created");
             }
         } else {
-            decodePlaintextSession(buf, session);
+            version(HUNT_DEBUG) {
+                if (secureSession.isHandshakeFinished()) {
+                    tracef("The ssl session %s need more data", session.getId());
+                } else {
+                    tracef("The ssl session %s is shaking hand", session.getId());
+                }
+            }
         }
     }
 }
