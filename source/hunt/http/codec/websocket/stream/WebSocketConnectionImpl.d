@@ -75,27 +75,41 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         //dfmt off
         extensionNegotiator.setNextOutgoingFrames(
             new class OutgoingFrames { 
+
                 void outgoingFrame(Frame frame, Callback callback) {
-                WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
-                if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
-                    if (!webSocketFrame.isMasked()) {
-                        webSocketFrame.setMask(generateMask());
+
+                    WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
+                    if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
+                        if (!webSocketFrame.isMasked()) {
+                            webSocketFrame.setMask(generateMask());
+                        }
                     }
-                }
-                ByteBuffer buf = BufferUtils.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
-                generator.generateWholeFrame(frame, buf);
-                BufferUtils.flipToFlush(buf, 0);
-                tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
-                if (frame.getType() == Frame.Type.CLOSE) {
-                    CloseFrame closeFrame = cast(CloseFrame) frame;
-                    if(closeFrame !is null) {
-                        CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
-                        getIOState().onCloseLocal(closeInfo);
-                        this.outer.close();
+                    ByteBuffer buf = BufferUtils.allocate(Generator.MAX_HEADER_LENGTH + frame.getPayloadLength());
+                    generator.generateWholeFrame(frame, buf);
+                    BufferUtils.flipToFlush(buf, 0);
+
+                    // error(buf.toString());
+                    
+                    // tcpSession.encode(new ByteBufferOutputEntry(callback, buf));
+                    try {
+                        tcpSession.encode(buf);
+                        callback.succeeded();
+                    } catch(Exception ex ){
+                        warning(ex);
+                        callback.failed(ex);
+                    }
+
+                    if (frame.getType() == Frame.Type.CLOSE) {
+                        CloseFrame closeFrame = cast(CloseFrame) frame;
+                        if(closeFrame !is null) {
+                            CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
+                            getIOState().onCloseLocal(closeInfo);
+                            this.outer.close();
+                        }
                     }
                 }
             }
-        });
+        );
 //dfmt on
         setNextIncomingFrames(nextIncomingFrames);
 

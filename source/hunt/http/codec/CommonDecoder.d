@@ -88,7 +88,7 @@ class CommonDecoder : DecoderChain {
             }
 
             SecureSession secureSession;
-            // Waiting until the secureSession becames avaliable.
+            // Waiting until the SecureSession is avaliable.
             do {
                 secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);
                 version(HUNT_HTTP_DEBUG_MORE) {

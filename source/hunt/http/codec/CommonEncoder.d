@@ -35,36 +35,34 @@ class CommonEncoder : EncoderChain {
             if(messageBuffer !is null) {
                 // connection.encrypt(messageBuffer);
                 secureSession.write(messageBuffer, Callback.NOOP);
-            // } else if (message instanceof ByteBuffer[]) {
-            //     connection.encrypt(cast(ByteBuffer[]) message);
             } else {
 
-                ByteBufferOutputEntry entry = cast(ByteBufferOutputEntry) message;
-                if (entry !is null)  {
-                    implementationMissing(false);
-                    // connection.encrypt(cast(ByteBufferOutputEntry) message);
-                // } else if (message instanceof ByteBufferArrayOutputEntry) {
-                //     connection.encrypt(cast(ByteBufferArrayOutputEntry) message);
-                } else {
-                    throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
-                }
+                throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
+                // ByteBufferOutputEntry entry = cast(ByteBufferOutputEntry) message;
+                // if (entry !is null)  {
+                //     implementationMissing(false);
+                //     // connection.encrypt(cast(ByteBufferOutputEntry) message);
+                // // } else if (message instanceof ByteBufferArrayOutputEntry) {
+                // //     connection.encrypt(cast(ByteBufferArrayOutputEntry) message);
+                // } else {
+                //     throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
+                // }
             }
         } else {
 
             ByteBuffer messageBuffer = cast(ByteBuffer) message;
             if(messageBuffer !is null) {
                 session.write(messageBuffer); // , Callback.NOOP
-            // } else if (messageTypeInfo == typeid(ByteBuffer[])) {
-            //     session.write(cast(ByteBuffer[]) message, Callback.NOOP);
             } else { 
-                ByteBufferOutputEntry entry = cast(ByteBufferOutputEntry) message;
-                if (entry !is null) 
-                    session.write(entry.getData()); // , entry.getCallback()
-            // } else if (message instanceof ByteBufferArrayOutputEntry) {
-            //     session.write(cast(ByteBufferArrayOutputEntry) message);
-                else {
-                    throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
-                }
+            //     ByteBufferOutputEntry entry = cast(ByteBufferOutputEntry) message;
+            //     if (entry !is null) {
+            //         session.write(entry.getData()); // , entry.getCallback()
+            // // } else if (message instanceof ByteBufferArrayOutputEntry) {
+            // //     session.write(cast(ByteBufferArrayOutputEntry) message);
+            //    } else {
+            //         throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
+            //     }
+                throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
             } 
         }
     }
