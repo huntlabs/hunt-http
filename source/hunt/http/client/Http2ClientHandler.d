@@ -113,7 +113,6 @@ class Http2ClientHandler : AbstractHttpHandler {
             // context.getPromise().succeeded(http1ClientConnection);
             import hunt.http.client.HttpClientConnection;
             Promise!(HttpClientConnection) promise  = context.getPromise();
-            infof("Promise id = %s", promise.id);
             promise.succeeded(http1ClientConnection);
 
         } catch (Exception t) {
