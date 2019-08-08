@@ -49,7 +49,7 @@ class CommonDecoder : DecoderChain {
                 if(connState == ConnectionState.Opening)
                     warning("Waiting for a http session...");
             }
-        } while(connState != ConnectionState.Opening);
+        } while(connState == ConnectionState.Opening);
             
         DecoderChain next = getNext();
         version(HUNT_HTTP_DEBUG) {

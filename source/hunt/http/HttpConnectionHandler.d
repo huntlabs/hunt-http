@@ -53,7 +53,7 @@ abstract class HttpConnectionHandler : ConnectionEventHandler {
     override
     void connectionClosed(Connection connection) {
         version(HUNT_HTTP_DEBUG) {
-            tracef("The HTTP handler received the connection %s closed event. %s", 
+            infof("The HTTP handler received the connection %s closed event. Remote peer: %s", 
                 connection.getId(), connection.getRemoteAddress());
         }
 
