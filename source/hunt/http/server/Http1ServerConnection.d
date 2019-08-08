@@ -91,7 +91,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         return parser;
     }
 
-    HttpOptions getHttp2Configuration() {
+    HttpOptions getHttpOptions() {
         return config;
     }
 
@@ -346,11 +346,11 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     }
 
     override protected ByteBuffer getHeaderByteBuffer() {
-        return BufferUtils.allocate(connection.getHttp2Configuration().getMaxResponseHeadLength());
+        return BufferUtils.allocate(connection.getHttpOptions().getMaxResponseHeadLength());
     }
 
     override protected ByteBuffer getTrailerByteBuffer() {
-        return BufferUtils.allocate(connection.getHttp2Configuration()
+        return BufferUtils.allocate(connection.getHttpOptions()
                 .getMaxResponseTrailerLength());
     }
 

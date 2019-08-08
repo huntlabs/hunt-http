@@ -85,7 +85,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return parser;
     }
 
-    HttpOptions getHttp2Configuration() {
+    HttpOptions getHttpOptions() {
         return config;
     }
 
@@ -126,7 +126,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         this.http2SessionListener = listener;
         http2Connection = new class Http2ClientConnection {
             this() {
-                super(getHttp2Configuration(), this.outer.tcpSession, http2SessionListener);
+                super(getHttpOptions(), this.outer.tcpSession, http2SessionListener);
             }
             override
             protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
@@ -186,7 +186,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                     // tcpSession.attachObject(http2Connection);
                     tcpSession.setAttribute(HttpConnection.NAME, http2Connection);
                     http2SessionListener.setConnection(http2Connection);
-                    http2Connection.initialize(getHttp2Configuration(),
+                    http2Connection.initialize(getHttpOptions(),
                             http2ConnectionPromise, http2SessionListener);
                     return true;
                 } else {
@@ -469,11 +469,11 @@ class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
     }
 
     override protected ByteBuffer getHeaderByteBuffer() {
-        return BufferUtils.allocate(connection.getHttp2Configuration().getMaxRequestHeadLength());
+        return BufferUtils.allocate(connection.getHttpOptions().getMaxRequestHeadLength());
     }
 
     override protected ByteBuffer getTrailerByteBuffer() {
-        return BufferUtils.allocate(connection.getHttp2Configuration()
+        return BufferUtils.allocate(connection.getHttpOptions()
                 .getMaxRequestTrailerLength());
     }
 

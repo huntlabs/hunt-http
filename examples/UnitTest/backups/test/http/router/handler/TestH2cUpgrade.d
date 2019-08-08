@@ -44,7 +44,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
         client.connect(host, port, promise);
 
         final HttpClientConnection httpConnection = promise.get();
-        final Http2ClientConnection clientConnection = upgradeHttp2(client.getHttp2Configuration(), httpConnection);
+        final Http2ClientConnection clientConnection = upgradeHttp2(client.getHttpOptions(), httpConnection);
 
         Phaser phaser = new Phaser(loop * 3 + 1);
         clientConnection.onClose(c -> {

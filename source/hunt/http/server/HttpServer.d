@@ -32,19 +32,19 @@ class HttpServer : AbstractLifecycle {
     private NetServer _server;
     private NetServerOptions _serverOptions;
     private HttpServerHandler httpServerHandler;
-    private HttpOptions http2Configuration;
+    private HttpOptions _httpOptions;
     private string host;
     private int port;
 
-    this(string host, int port, HttpOptions http2Configuration,
+    this(string host, int port, HttpOptions _httpOptions,
             ServerHttpHandler serverHttpHandler) {
-        this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
+        this(host, port, _httpOptions, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, new WebSocketHandler());
     }
 
-    this(string host, int port, HttpOptions http2Configuration,
+    this(string host, int port, HttpOptions _httpOptions,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
-        this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
+        this(host, port, _httpOptions, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, webSocketHandler);
     }
 
@@ -63,6 +63,8 @@ class HttpServer : AbstractLifecycle {
             _serverOptions = new NetServerOptions();
             config.setTcpConfiguration(_serverOptions);
         }
+        this._httpOptions = config;
+        
         httpServerHandler = new HttpServerHandler(config, listener,
                 serverHttpHandler, webSocketHandler);
 
@@ -117,9 +119,7 @@ class HttpServer : AbstractLifecycle {
         _server.setHandler(new HttpServerHandler(config, listener,
                 serverHttpHandler, webSocketHandler));
 
-        // _server.setConfig(config.getTcpConfiguration());
-
-        //         string responseString = `HTTP/1.1 000 
+        // string responseString = `HTTP/1.1 000 
         // Server: Hunt-HTTP/1.0
         // Date: Tue, 11 Dec 2018 08:17:36 GMT
         // Content-Type: text/plain
@@ -128,38 +128,6 @@ class HttpServer : AbstractLifecycle {
 
         // Hello, World!`;
 
-        // _server.connectionHandler((NetSocket sock) {
-        //     version (HUNT_DEBUG)
-        //         infof("new http session with %s", sock.remoteAddress);
-        //     AsynchronousTcpSession session = cast(AsynchronousTcpSession) sock;
-        //     session.handler((ByteBuffer buffer) {
-        //         version (HUNT_METRIC) {
-        //             debug trace("start hadling session data ...");
-        //             MonoTime startTime = MonoTime.currTime;
-        //         } else version (HUNT_DEBUG_MORE) {
-        //             trace("start hadling session data ...");
-        //         }
-        //         commonDecoder.decode(buffer, session);
-
-        //         version (HUNT_METRIC) {
-        //             Duration timeElapsed = MonoTime.currTime - startTime;
-        //             warningf("handling done for session %d in: %d microseconds",
-        //             session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
-        //             tracef("session handling done: %s.", session.toString());
-        //         } else version (HUNT_HTTP_DEBUG)
-        //             tracef("session handling done");
-
-        //         // session.write(responseString, () {
-        //         // version(HUNT_METRIC) {
-        //         //     Duration timeElapsed = MonoTime.currTime - startTime;
-        //         //     warningf("handling done for session %d in: %d microseconds",
-        //         //         session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
-        //         //     debug tracef("session handling done: %s.", session.toString());
-        //         // }                      
-        //         // });
-        //     });
-        // });
-        this.http2Configuration = config;
 
         version (HUNT_DEBUG) {
             if (config.isSecureConnectionEnabled())
@@ -169,8 +137,8 @@ class HttpServer : AbstractLifecycle {
         }
     }
 
-    HttpOptions getHttp2Configuration() {
-        return http2Configuration;
+    HttpOptions getHttpOptions() {
+        return _httpOptions;
     }
 
     string getHost() {

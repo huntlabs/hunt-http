@@ -12,6 +12,7 @@ import hunt.logging;
 
 import std.exception;
 
+deprecated("Using AbstractHttpConnectionHandler instead.")
 alias AbstractHttpHandler = AbstractHttpConnectionHandler;
 
 abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
