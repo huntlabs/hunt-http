@@ -83,14 +83,14 @@ class CommonDecoder : DecoderChain {
             }
         } else if(connState == ConnectionState.Securing) {
             version(HUNT_DEBUG) {
-                warning("TLS handshaking...");
+                info("TLS handshaking...");
             }
             // TLS handshake
             enum int MaxTimes = 5;
             SecureSession secureSession = waitForSecureSession(MaxTimes, session);
 
             if(secureSession is null) {
-                warning("Run handshake in another thread.");
+                version(HUNT_DEBUG) warning("Run handshake in another thread.");
                 import std.parallelism;
                 // auto handshakeTask = task(&handleTlsHandshake, buf, session, secureSession, next);
                 auto handshakeTask = task(() {
@@ -122,9 +122,9 @@ class CommonDecoder : DecoderChain {
             do {
                 secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);
                 count++;
-                version(HUNT_HTTP_DEBUG_MORE) {
+                version(HUNT_HTTP_DEBUG) {
                     if(secureSession is null)
-                        warningf("Waiting for a secure session...%d", count);
+                        tracef("Waiting for a secure session...%d", count);
                 }
             } while(count < maxTimes && secureSession is null); 
         } else {
@@ -132,7 +132,7 @@ class CommonDecoder : DecoderChain {
             do {
                 version(HUNT_HTTP_DEBUG_MORE) {
                     if(secureSession is null)
-                        warning("Waiting for a secure session...");
+                        trace("Waiting for a secure session...");
                 }
                 secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);
             } while(secureSession is null && session.getState() != ConnectionState.Error); 
