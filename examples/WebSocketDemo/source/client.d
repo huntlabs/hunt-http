@@ -35,7 +35,7 @@ void main(string[] args) {
 
     NetUtil.startEventLoop();
 
-    HttpClient client = new HttpClient(new HttpConfiguration());
+    HttpClient client = new HttpClient(new HttpOptions());
     Future!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
 
     HttpClientRequest request = new HttpClientRequest("GET", "/index");

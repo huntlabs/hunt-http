@@ -21,9 +21,9 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
 
     protected HttpParser parser;
     protected Http2Generator http2Generator;
-    protected HttpConfiguration config;
+    protected HttpOptions config;
 
-    this(HttpConfiguration config, Connection tcpSession,
+    this(HttpOptions config, Connection tcpSession,
                                    HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         version (HUNT_HTTP_DEBUG) trace("initializing Http1Connection");
         super(tcpSession, HttpVersion.HTTP_1_1);
@@ -36,7 +36,7 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
         return HttpConnectionType.HTTP1;
     }
 
-    protected HttpParser initHttpParser(HttpConfiguration config, HttpRequestHandler requestHandler,
+    protected HttpParser initHttpParser(HttpOptions config, HttpRequestHandler requestHandler,
                                                  ResponseHandler responseHandler);
 
 }

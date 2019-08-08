@@ -41,7 +41,7 @@ class Http2DecoderTest {
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        HttpConfiguration http2Configuration = new HttpConfiguration();
+        HttpOptions http2Configuration = new HttpOptions();
         http2Configuration.setFlowControlStrategy("simple");
 
         Map!(int, int) settings = new HashMap!(int, int)();
@@ -228,7 +228,7 @@ class Http2DecoderTest {
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
         TcpSession session = factory.create();
-        HttpConfiguration http2Configuration = new HttpConfiguration();
+        HttpOptions http2Configuration = new HttpOptions();
         Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
                 new class ServerSessionListener {
 

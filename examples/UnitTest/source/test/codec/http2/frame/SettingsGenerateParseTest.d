@@ -28,7 +28,7 @@ import std.stdio;
 class SettingsGenerateParseTest {
 	
 	void testSettingsWithBase64() {
-		HttpConfiguration http2Configuration = new HttpConfiguration();
+		HttpOptions http2Configuration = new HttpOptions();
 		Http2Generator http2Generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map!(int, int) settings = new HashMap!(int, int)();

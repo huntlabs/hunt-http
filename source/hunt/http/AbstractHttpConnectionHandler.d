@@ -16,9 +16,9 @@ alias AbstractHttpHandler = AbstractHttpConnectionHandler;
 
 abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
 
-    protected HttpConfiguration config;
+    protected HttpOptions config;
 
-    this(HttpConfiguration config) {
+    this(HttpOptions config) {
         this.config = config;
     }
 
@@ -64,9 +64,9 @@ abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
             tracef("The HTTP handler received the connection %s closed event.", connection.getId());
         Object attachment = connection.getAttribute(HttpConnection.NAME); // connection.getAttachment();
         if (attachment is null) {
-            version(HUNT_HTTP_DEBUG) warningf("attachment is null");
+            version(HUNT_HTTP_DEBUG) warningf("no connection attached");
         } else {
-            version(HUNT_HTTP_DEBUG) tracef("attachment is %s", typeid(attachment).name);
+            version(HUNT_HTTP_DEBUG) tracef("attached connection: %s", typeid(attachment).name);
             AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
             if (httpConnection !is null) {
                 try {

@@ -33,7 +33,7 @@ import std.conv;
 alias SessionListener = StreamSession.Listener;
 
 class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
-    void initialize(HttpConfiguration config, Promise!(HttpClientConnection) promise,
+    void initialize(HttpOptions config, Promise!(HttpClientConnection) promise,
                            SessionListener listener) {
         Map!(int, int) settings = listener.onPreface(getHttp2Session());
         if (settings is null) {
@@ -79,18 +79,18 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
         // onClose(c => pingFuture.cancel());
     }
 
-    this(HttpConfiguration config, Connection tcpSession, SessionListener listener) {
+    this(HttpOptions config, Connection tcpSession, SessionListener listener) {
         super(config, tcpSession, listener);
     }
 
     override
-    protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
+    protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                             SessionListener listener) {
         return new Http2ClientSession(null, this.tcpSession, this.generator, listener, flowControl, config.getStreamIdleTimeout());
     }
 
     override
-    protected Parser initParser(HttpConfiguration config) {
+    protected Parser initParser(HttpOptions config) {
         return new Parser(http2Session, config.getMaxDynamicTableSize(), config.getMaxRequestHeadLength());
     }
 

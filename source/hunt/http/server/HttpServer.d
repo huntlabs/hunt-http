@@ -32,23 +32,23 @@ class HttpServer : AbstractLifecycle {
     private NetServer _server;
     private NetServerOptions _serverOptions;
     private HttpServerHandler httpServerHandler;
-    private HttpConfiguration http2Configuration;
+    private HttpOptions http2Configuration;
     private string host;
     private int port;
 
-    this(string host, int port, HttpConfiguration http2Configuration,
+    this(string host, int port, HttpOptions http2Configuration,
             ServerHttpHandler serverHttpHandler) {
         this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, new WebSocketHandler());
     }
 
-    this(string host, int port, HttpConfiguration http2Configuration,
+    this(string host, int port, HttpOptions http2Configuration,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         this(host, port, http2Configuration, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, webSocketHandler);
     }
 
-    this(string host, int port, HttpConfiguration config, ServerSessionListener listener,
+    this(string host, int port, HttpOptions config, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         if (config is null)
             throw new IllegalArgumentException("the http2 configuration is null");
@@ -169,7 +169,7 @@ class HttpServer : AbstractLifecycle {
         }
     }
 
-    HttpConfiguration getHttp2Configuration() {
+    HttpOptions getHttp2Configuration() {
         return http2Configuration;
     }
 

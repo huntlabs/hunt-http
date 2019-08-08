@@ -125,7 +125,7 @@ class RealCall : Call {
 
         doRequestTask(httpHandler);
 
-        HttpConfiguration options = client.getHttpConfiguration();
+        HttpOptions options = client.getHttpConfiguration();
         TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
         Duration idleTimeout = tcpOptions.getIdleTimeout();     
 

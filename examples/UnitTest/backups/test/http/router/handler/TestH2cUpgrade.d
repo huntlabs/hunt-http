@@ -127,13 +127,13 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
     }
 
     private HttpClient createClient() {
-        final HttpConfiguration config = new HttpConfiguration();
+        final HttpOptions config = new HttpOptions();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
         return new HttpClient(config);
     }
 
-    private Http2ClientConnection upgradeHttp2(HttpConfiguration http2Configuration, HttpClientConnection httpConnection) {
+    private Http2ClientConnection upgradeHttp2(HttpOptions http2Configuration, HttpClientConnection httpConnection) {
         HttpClientRequest request = new HttpClientRequest("GET", "/index");
 
         Map<Integer, Integer> settings = new HashMap<>();
@@ -250,7 +250,7 @@ public class TestH2cUpgrade extends AbstractHttpHandlerTest {
     }
 
     private HttpServer createServer() {
-        final HttpConfiguration config = new HttpConfiguration();
+        final HttpOptions config = new HttpOptions();
         config.getTcpConfiguration().setTimeout(timeout);
         config.getTcpConfiguration().setAsynchronousCorePoolSize(corePoolSize);
         HttpServer server = new HttpServer(host, port, config, new ServerHttpHandlerAdapter() {

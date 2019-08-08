@@ -47,7 +47,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
     }
 
     public HttpServer createServerLowLevelAPI() {
-        final HttpConfiguration http2Configuration = new HttpConfiguration();
+        final HttpOptions http2Configuration = new HttpOptions();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 
@@ -118,7 +118,7 @@ public class TestH2cLowLevelAPI extends AbstractHttpHandlerTest {
     }
 
     public HttpClient createClientLowLevelClient(Phaser phaser) {
-        final HttpConfiguration http2Configuration = new HttpConfiguration();
+        final HttpOptions http2Configuration = new HttpOptions();
         http2Configuration.setFlowControlStrategy("simple");
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
         HttpClient client = new HttpClient(http2Configuration);

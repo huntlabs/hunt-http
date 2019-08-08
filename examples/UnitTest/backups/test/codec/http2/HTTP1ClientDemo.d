@@ -31,7 +31,7 @@ import hunt.collection.BufferUtils;
 public class Http1ClientDemo {
 
 	public static void main(string[] args) throws InterruptedException, ExecutionException, IOException {
-		final HttpConfiguration http2Configuration = new HttpConfiguration();
+		final HttpOptions http2Configuration = new HttpOptions();
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
 		HttpClient client = new HttpClient(http2Configuration);
 

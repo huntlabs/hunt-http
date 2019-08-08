@@ -32,7 +32,7 @@ class HttpServerHandler : AbstractHttpHandler {
     private ServerHttpHandler serverHttpHandler;
     private WebSocketHandler webSocketHandler;
 
-    this(HttpConfiguration config, ServerSessionListener listener,
+    this(HttpOptions config, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         super(config);
         this.listener = listener;

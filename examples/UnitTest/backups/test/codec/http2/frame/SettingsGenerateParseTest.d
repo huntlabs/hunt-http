@@ -29,7 +29,7 @@ public class SettingsGenerateParseTest {
 	
 	
 	public void testSettingsWithBase64() {
-		final HttpConfiguration http2Configuration = new HttpConfiguration();
+		final HttpOptions http2Configuration = new HttpOptions();
 		final Http2Generator http2Generator = new Http2Generator(http2Configuration.getMaxDynamicTableSize(), http2Configuration.getMaxHeaderBlockFragment());
 		
 		Map<Integer, Integer> settings = new HashMap<>();

@@ -35,7 +35,7 @@ class Http2ClientHandler : AbstractHttpHandler {
     // private Map!(int, HttpClientContext) http2ClientContext;
     HttpClientContext http2ClientContext;
 
-    this(HttpConfiguration config, HttpClientContext http2ClientContext) {
+    this(HttpOptions config, HttpClientContext http2ClientContext) {
         super(config);
         this.http2ClientContext = http2ClientContext;
     }

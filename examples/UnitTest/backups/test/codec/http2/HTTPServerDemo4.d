@@ -26,7 +26,7 @@ public class HttpServerDemo4 {
 		}
 		final string data = s.toString();
 
-		HttpConfiguration http2Configuration = new HttpConfiguration();
+		HttpOptions http2Configuration = new HttpOptions();
 		HttpServer server = new HttpServer("localhost", 7777, http2Configuration,
 				new ServerHttpHandlerAdapter().messageComplete((request, response, outputStream, connection) -> {
 

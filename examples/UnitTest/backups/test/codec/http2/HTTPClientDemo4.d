@@ -19,7 +19,7 @@ import hunt.collection.BufferUtils;
 public class HttpClientDemo4 {
 
 	public static void main(string[] args) throws InterruptedException, ExecutionException, IOException {
-		final HttpConfiguration http2Configuration = new HttpConfiguration();
+		final HttpOptions http2Configuration = new HttpOptions();
 		HttpClient client = new HttpClient(http2Configuration);
 		FuturePromise<HttpClientConnection> promise = new FuturePromise<>();
 		client.connect("localhost", 7777, promise);

@@ -26,7 +26,7 @@ void main(string[] args) {
 	enum host = "127.0.0.1";
 	enum port = 8080;
 
-	HttpConfiguration httpConfiguration = new HttpConfiguration();
+	HttpOptions httpConfiguration = new HttpOptions();
 	httpConfiguration.setSecureConnectionEnabled(false);
 	httpConfiguration.setFlowControlStrategy("simple");
 	httpConfiguration.getTcpConfiguration().setTimeout(60 * 1000);

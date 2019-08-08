@@ -29,7 +29,7 @@ public class Http2ClientDemo {
 
 	public static void main(string[] args)
 			throws InterruptedException, ExecutionException, UnsupportedEncodingException {
-		final HttpConfiguration http2Configuration = new HttpConfiguration();
+		final HttpOptions http2Configuration = new HttpOptions();
 		http2Configuration.setSecureConnectionEnabled(true);
 		http2Configuration.setFlowControlStrategy("simple");
 		http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);

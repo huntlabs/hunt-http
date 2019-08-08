@@ -20,7 +20,7 @@ import hunt.collection.BufferUtils;
 public class Http1ServerChunkOutputDemo3 {
 
 	public static void main(string[] args) {
-		final HttpConfiguration http2Configuration = new HttpConfiguration();
+		final HttpOptions http2Configuration = new HttpOptions();
 		http2Configuration.getTcpConfiguration().setTimeout(10 * 60 * 1000);
 
 		HttpServer server = new HttpServer("localhost", 6678, http2Configuration, new ServerSessionListener.Adapter(),

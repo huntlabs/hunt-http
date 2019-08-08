@@ -54,18 +54,18 @@ class HttpClient : AbstractLifecycle {
 
     private NetClientOptions clientOptions;
     private NetClient[int] _netClients;
-    private HttpConfiguration httpConfiguration;
+    private HttpOptions httpConfiguration;
 
     this() {
         NetClientOptions clientOptions = new NetClientOptions();
         clientOptions.setIdleTimeout(15.seconds);
         clientOptions.setConnectTimeout(5.seconds);
 
-        HttpConfiguration config = new HttpConfiguration(clientOptions);
+        HttpOptions config = new HttpOptions(clientOptions);
         this(config);
     }
 
-    this(HttpConfiguration c) {
+    this(HttpOptions c) {
         if (c is null) {
             throw new IllegalArgumentException("http configuration is null");
         }
@@ -127,7 +127,7 @@ class HttpClient : AbstractLifecycle {
         client.connect(host, port);
     }
 
-    HttpConfiguration getHttpConfiguration() {
+    HttpOptions getHttpConfiguration() {
         return httpConfiguration;
     }
 

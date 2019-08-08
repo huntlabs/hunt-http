@@ -61,7 +61,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     private shared bool upgradeWebSocketComplete = false;
     private Promise!HttpTunnelConnection tunnelConnectionPromise;
 
-    this(HttpConfiguration config, Connection tcpSession, Http1ServerRequestHandler requestHandler,
+    this(HttpOptions config, Connection tcpSession, Http1ServerRequestHandler requestHandler,
             ServerSessionListener serverSessionListener, 
             WebSocketHandler webSocketHandler) {
         
@@ -74,7 +74,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         this.webSocketHandler = webSocketHandler;
     }
 
-    override protected HttpParser initHttpParser(HttpConfiguration config,
+    override protected HttpParser initHttpParser(HttpOptions config,
             RequestHandler requestHandler, ResponseHandler responseHandler) {
         return new HttpParser(requestHandler, config.getMaxRequestHeadLength());
     }
@@ -91,7 +91,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
         return parser;
     }
 
-    HttpConfiguration getHttp2Configuration() {
+    HttpOptions getHttp2Configuration() {
         return config;
     }
 

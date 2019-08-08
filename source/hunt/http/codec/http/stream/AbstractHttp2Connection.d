@@ -27,7 +27,7 @@ abstract class AbstractHttp2Connection : AbstractHttpConnection  {
     protected Parser parser;
     protected Http2Generator generator;
 
-    this(HttpConfiguration config, Connection tcpSession, Listener listener) {
+    this(HttpOptions config, Connection tcpSession, Listener listener) {
             
         super(tcpSession, HttpVersion.HTTP_2);
 
@@ -53,10 +53,10 @@ abstract class AbstractHttp2Connection : AbstractHttpConnection  {
         return HttpConnectionType.HTTP2;
     }
 
-    abstract protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
+    abstract protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                                      Listener listener);
 
-    abstract protected Parser initParser(HttpConfiguration config);
+    abstract protected Parser initParser(HttpOptions config);
 
     StreamSession getHttp2Session() {
         return http2Session;

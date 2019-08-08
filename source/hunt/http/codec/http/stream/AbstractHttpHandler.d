@@ -15,9 +15,9 @@ alias AbstractHttpHandler = AbstractHttpConnectionHandler;
 
 abstract class AbstractHttpConnectionHandler : ConnectionEventHandler {
 
-    protected HttpConfiguration config;
+    protected HttpOptions config;
 
-    this(HttpConfiguration config) {
+    this(HttpOptions config) {
         this.config = config;
     }
 

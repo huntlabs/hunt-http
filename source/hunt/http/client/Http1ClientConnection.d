@@ -56,11 +56,11 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     private bool upgradeWebSocketComplete = false;
     private ResponseHandlerWrap wrap;
 
-    this(HttpConfiguration config, Connection tcpSession) { // , SecureSession secureSession
+    this(HttpOptions config, Connection tcpSession) { // , SecureSession secureSession
         this(config, tcpSession, new ResponseHandlerWrap()); // secureSession, 
     }
 
-    private this(HttpConfiguration config,
+    private this(HttpOptions config,
             Connection tcpSession, ResponseHandler responseHandler) {
 
         super(config, tcpSession, null, responseHandler);
@@ -68,7 +68,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         wrap.connection = this;
     }
 
-    override protected HttpParser initHttpParser(HttpConfiguration config,
+    override protected HttpParser initHttpParser(HttpOptions config,
             HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
         return new HttpParser(responseHandler, config.getMaxRequestHeadLength());
     }
@@ -85,7 +85,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
         return parser;
     }
 
-    HttpConfiguration getHttp2Configuration() {
+    HttpOptions getHttp2Configuration() {
         return config;
     }
 
@@ -129,7 +129,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                 super(getHttp2Configuration(), this.outer.tcpSession, http2SessionListener);
             }
             override
-            protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
+            protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                                     StreamSession.Listener listener) {
                 return Http2ClientSession.initSessionForUpgradingHTTP2(null, this.outer.tcpSession, generator,
                         listener, flowControl, 3, config.getStreamIdleTimeout(), initStream,

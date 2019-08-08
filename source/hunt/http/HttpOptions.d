@@ -14,6 +14,7 @@ version(WITH_HUNT_SECURITY) {
 // dfmt on
 
 
+deprecated("Using HttpOptions instead.")
 alias HttpConfiguration = HttpOptions;
 
 /**
@@ -24,8 +25,6 @@ class HttpOptions {
     private TcpSslOptions tcpSslOptions; 
 
     // SSL/TLS settings
-    private bool _isSecureConnectionEnabled;
-
     private string _sslCertificate;
     private string _sslPrivateKey;
     private string _keystorePassword;
@@ -305,10 +304,8 @@ class HttpOptions {
      * @return If return true, the server or client enable the SSL/TLS connection.
      */
     bool isSecureConnectionEnabled() {
-        return _isSecureConnectionEnabled;
+        return tcpSslOptions.isSsl();
     }
-
-version(WITH_HUNT_SECURITY) {  
 
     /**
      * If set true, the server or client enable the SSL/TLS connection.
@@ -316,17 +313,9 @@ version(WITH_HUNT_SECURITY) {
      * @param isSecureConnectionEnabled If set true, the server or client enable the SSL/TLS connection.
      */
     void setSecureConnectionEnabled(bool status) {
-        this._isSecureConnectionEnabled = status;
+        this.tcpSslOptions.setSsl(status);
     }
 
-} else {
-
-    void setSecureConnectionEnabled(bool status) {
-        assert(!status, "Please add the dependency of hunt-security.");
-
-        this._isSecureConnectionEnabled = status;
-    }    
-}
     string sslCertificate() {
         return _sslCertificate;
     }

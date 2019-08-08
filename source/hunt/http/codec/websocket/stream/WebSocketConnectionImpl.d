@@ -52,12 +52,12 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
     protected HttpRequest upgradeRequest;
     protected HttpResponse upgradeResponse;
     protected IOState ioState;
-    protected HttpConfiguration config;
+    protected HttpOptions config;
     protected ExtensionNegotiator extensionNegotiator;
 
     this(Connection tcpSession, IncomingFrames nextIncomingFrames, WebSocketPolicy policy,
             HttpRequest upgradeRequest, HttpResponse upgradeResponse,
-            HttpConfiguration config) {
+            HttpOptions config) {
         super(tcpSession, HttpVersion.HTTP_1_1);
 
         extensionNegotiator = new ExtensionNegotiator();

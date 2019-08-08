@@ -17,7 +17,7 @@ public class Http2ClientTLSDemo {
 
     public static void main(string[] args)
             throws InterruptedException, ExecutionException, UnsupportedEncodingException {
-        final HttpConfiguration http2Configuration = new HttpConfiguration();
+        final HttpOptions http2Configuration = new HttpOptions();
         http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
         http2Configuration.setSecureConnectionEnabled(true);
         HttpClient client = new HttpClient(http2Configuration);

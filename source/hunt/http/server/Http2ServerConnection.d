@@ -23,7 +23,7 @@ alias Listener = hunt.http.codec.http.stream.Session.Session.Listener;
 
 class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
 
-    this(HttpConfiguration config, Connection tcpSession, 
+    this(HttpOptions config, Connection tcpSession, 
                                  ServerSessionListener serverSessionListener) {
         super(config, tcpSession, serverSessionListener);
         if (typeid(serverSessionListener) == typeid(Http2ServerRequestHandler)) {
@@ -33,7 +33,7 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
     }
 
     override
-    protected Http2Session initHttp2Session(HttpConfiguration config, FlowControlStrategy flowControl,
+    protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                             Listener listener) {
         Http2ServerSession http2ServerSession = new Http2ServerSession(null, this.tcpSession, this.generator,
                 cast(ServerSessionListener) listener, flowControl, config.getStreamIdleTimeout());
@@ -44,7 +44,7 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
     }
 
     override
-    protected Parser initParser(HttpConfiguration config) {
+    protected Parser initParser(HttpOptions config) {
         return new ServerParser(cast(Http2ServerSession) http2Session, config.getMaxDynamicTableSize(), config.getMaxRequestHeadLength());
     }
 
