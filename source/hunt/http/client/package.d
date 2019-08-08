@@ -13,6 +13,7 @@ public import hunt.http.client.Http2ClientHandler;
 public import hunt.http.client.Http2ClientResponseHandler;
 public import hunt.http.client.Http2ClientSession;
 public import hunt.http.client.HttpClientConnection;
+public import hunt.http.client.HttpClientOptions;
 public import hunt.http.client.HttpClientRequest;
 public import hunt.http.client.HttpClientResponse;
 

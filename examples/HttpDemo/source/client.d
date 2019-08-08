@@ -25,8 +25,8 @@ void main(string[] args) {
 
     HttpClientTest test = new HttpClientTest();
     try {
-    // test.testGet();
-    test.testGetHttps();
+    test.testGet();
+    // test.testGetHttps();
     // test.testAsynchronousGet();
     // test.testPost();
     // test.testFormPost();

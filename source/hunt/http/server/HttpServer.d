@@ -3,6 +3,7 @@ module hunt.http.server.HttpServer;
 import hunt.http.server.Http1ServerDecoder;
 import hunt.http.server.Http2ServerDecoder;
 import hunt.http.server.HttpServerHandler;
+import hunt.http.server.HttpServerOptions;
 import hunt.http.server.Http2ServerRequestHandler;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
@@ -10,7 +11,6 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.collection.BufferUtils;
@@ -32,23 +32,23 @@ class HttpServer : AbstractLifecycle {
     private NetServer _server;
     private NetServerOptions _serverOptions;
     private HttpServerHandler httpServerHandler;
-    private HttpOptions _httpOptions;
+    private HttpServerOptions _httpOptions;
     private string host;
     private int port;
 
-    this(string host, int port, HttpOptions _httpOptions,
+    this(string host, int port, HttpServerOptions _httpOptions,
             ServerHttpHandler serverHttpHandler) {
         this(host, port, _httpOptions, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, new WebSocketHandler());
     }
 
-    this(string host, int port, HttpOptions _httpOptions,
+    this(string host, int port, HttpServerOptions _httpOptions,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         this(host, port, _httpOptions, new Http2ServerRequestHandler(serverHttpHandler),
                 serverHttpHandler, webSocketHandler);
     }
 
-    this(string host, int port, HttpOptions config, ServerSessionListener listener,
+    this(string host, int port, HttpServerOptions config, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         if (config is null)
             throw new IllegalArgumentException("the http2 configuration is null");
@@ -58,7 +58,7 @@ class HttpServer : AbstractLifecycle {
 
         this.host = host;
         this.port = port;
-        _serverOptions = cast(NetServerOptions)config.getTcpConfiguration();
+        _serverOptions = config.getTcpConfiguration();
         if(_serverOptions is null ) {
             _serverOptions = new NetServerOptions();
             config.setTcpConfiguration(_serverOptions);
@@ -137,7 +137,7 @@ class HttpServer : AbstractLifecycle {
         }
     }
 
-    HttpOptions getHttpOptions() {
+    HttpServerOptions getHttpOptions() {
         return _httpOptions;
     }
 

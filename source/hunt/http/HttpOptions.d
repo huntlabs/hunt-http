@@ -49,9 +49,9 @@ class HttpOptions {
     // WebSocket settings
     private int websocketPingInterval = 10 * 1000;
 
-    this() {
-        this(new TcpSslOptions());
-    }
+    // this() {
+    //     this(new TcpSslOptions());
+    // }
 
     this(TcpSslOptions tcpSslOptions) {
         this.tcpSslOptions = tcpSslOptions;

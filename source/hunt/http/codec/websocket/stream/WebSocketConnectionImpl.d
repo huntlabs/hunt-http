@@ -21,7 +21,6 @@ import hunt.http.AbstractHttpConnection;
 import hunt.http.HttpVersion;
 
 import hunt.net.AbstractConnection;
-import hunt.net.OutputEntry;
 
 import hunt.http.HttpConnectionType;
 // import hunt.net.secure.SecureSession;

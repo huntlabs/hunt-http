@@ -7,6 +7,7 @@ import hunt.http.client.HttpClientContext;
 import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.Http2ClientHandler;
 
+import hunt.http.client.HttpClientOptions;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.client.Call;
@@ -14,7 +15,6 @@ import hunt.http.client.RealCall;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 // import hunt.http.util.Completable;
 
@@ -35,44 +35,32 @@ import hunt.util.Lifecycle;
 import core.atomic;
 import core.time;
 
-// dfmt off
-// version ( unittest ) {} 
-// else {
-//     shared static this() {
-//         NetUtil.startEventLoop();
-//     }
-
-//     shared static ~this() {
-//         NetUtil.stopEventLoop();
-//     }
-// }
-// dfmt on
-
 /**
 */
 class HttpClient : AbstractLifecycle {
 
     private NetClientOptions clientOptions;
     private NetClient[int] _netClients;
-    private HttpOptions httpConfiguration;
+    private HttpClientOptions httpConfiguration;
 
     this() {
         NetClientOptions clientOptions = new NetClientOptions();
         clientOptions.setIdleTimeout(15.seconds);
         clientOptions.setConnectTimeout(5.seconds);
 
-        HttpOptions config = new HttpOptions(clientOptions);
+        HttpClientOptions config = new HttpClientOptions(clientOptions);
         this(config);
     }
 
-    this(HttpOptions c) {
+    this(HttpClientOptions c) {
         if (c is null) {
             throw new IllegalArgumentException("http configuration is null");
         }
 
-        clientOptions = cast(NetClientOptions)c.getTcpConfiguration();
+        clientOptions = c.getTcpConfiguration();
         if(clientOptions is null) {
             clientOptions = new NetClientOptions();
+            c.setTcpConfiguration(clientOptions);
         }
         this.httpConfiguration = c;
          // = new ConcurrentHashMap!()();
@@ -127,7 +115,7 @@ class HttpClient : AbstractLifecycle {
         client.connect(host, port);
     }
 
-    HttpOptions getHttpConfiguration() {
+    HttpClientOptions getHttpConfiguration() {
         return httpConfiguration;
     }
 

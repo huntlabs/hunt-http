@@ -1,16 +1,15 @@
 module hunt.http.codec.CommonEncoder;
 
-import hunt.net.OutputEntry;
 import hunt.http.AbstractHttpConnection;
+
+import hunt.collection.ByteBuffer;
+import hunt.Exceptions;
+import hunt.logging;
 import hunt.net.codec.Encoder;
 import hunt.net.Connection;
 import hunt.net.secure.SecureSession;
-
-import hunt.Exceptions;
 import hunt.util.Common;
 
-import hunt.collection.ByteBuffer;
-import hunt.logging;
 
 /**
  * 

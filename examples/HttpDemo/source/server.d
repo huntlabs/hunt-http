@@ -5,6 +5,7 @@ import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.server.HttpServer;
+import hunt.http.server.HttpServerOptions;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.WebSocketHandler;
 
@@ -26,12 +27,14 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 */
 
 void main(string[] args) {
-    HttpOptions config = new HttpOptions();
+    HttpServerOptions config = new HttpServerOptions();
     config.sslCertificate = "cert/server.crt";
     config.sslPrivateKey = "cert/server.key";
     config.keystorePassword = "hunt2018";
     config.keyPassword = "hunt2018";
     config.setSecureConnectionEnabled(true);
+
+    write(config.isSecureConnectionEnabled);
 
 
     HttpServer server = new HttpServer("0.0.0.0", 8080, config, 
@@ -110,8 +113,11 @@ void main(string[] args) {
             }
         }
     );
-
-	writefln("listening on http://%s:%d", server.getHost, server.getPort);
+    
+    if(config.isSecureConnectionEnabled())
+	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
+    else 
+	    writefln("listening on http://%s:%d", server.getHost, server.getPort);
 
     server.start();
 }

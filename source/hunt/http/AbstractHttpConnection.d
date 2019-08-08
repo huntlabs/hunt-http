@@ -10,7 +10,6 @@ import hunt.net.AbstractConnection;
 import hunt.net.Connection;
 import hunt.net.secure.SecureSession;
 import hunt.net.Exceptions;
-import hunt.net.OutputEntry;
 
 import hunt.Exceptions;
 import hunt.Functions;
