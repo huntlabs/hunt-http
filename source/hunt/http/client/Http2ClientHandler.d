@@ -5,7 +5,7 @@ import hunt.http.client.HttpClientConnection;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.Http2ClientConnection;
 import hunt.http.HttpVersion;
-import hunt.http.AbstractHttpConnectionHandler;
+import hunt.http.HttpConnectionHandler;
 import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 
@@ -30,10 +30,10 @@ import std.array;
 
 /**
 */
-class Http2ClientHandler : AbstractHttpHandler {
+class Http2ClientHandler : HttpConnectionHandler {
 
     // private Map!(int, HttpClientContext) http2ClientContext;
-    HttpClientContext http2ClientContext;
+    private HttpClientContext http2ClientContext;
 
     this(HttpOptions config, HttpClientContext http2ClientContext) {
         super(config);

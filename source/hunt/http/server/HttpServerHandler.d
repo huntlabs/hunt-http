@@ -9,7 +9,7 @@ import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 
 import hunt.http.HttpVersion;
-import hunt.http.AbstractHttpConnectionHandler;
+import hunt.http.HttpConnectionHandler;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
 
@@ -26,7 +26,7 @@ import std.string;
 
 /**
 */
-class HttpServerHandler : AbstractHttpHandler {
+class HttpServerHandler : HttpConnectionHandler {
 
     private ServerSessionListener listener;
     private ServerHttpHandler serverHttpHandler;
@@ -105,7 +105,7 @@ class HttpServerHandler : AbstractHttpHandler {
         }
     }
 
-    version(WITH_HUNT_SECURITY) {
+version(WITH_HUNT_SECURITY) {
     private void buildSecureSession(Connection connection) {
 
         import hunt.net.secure.SecureUtils;
@@ -156,5 +156,5 @@ class HttpServerHandler : AbstractHttpHandler {
 
         connection.setAttribute(SecureSession.NAME, cast(Object)secureSession);
     }
-    }
+}
 }

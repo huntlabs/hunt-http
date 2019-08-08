@@ -86,7 +86,7 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     override
     protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                             SessionListener listener) {
-        return new Http2ClientSession(null, this.tcpSession, this.generator, listener, flowControl, config.getStreamIdleTimeout());
+        return new Http2ClientSession(null, this._tcpSession, this.generator, listener, flowControl, config.getStreamIdleTimeout());
     }
 
     override

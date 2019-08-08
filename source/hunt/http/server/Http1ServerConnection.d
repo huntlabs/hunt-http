@@ -124,10 +124,9 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     Http1ServerTunnelConnection createHttpTunnel() {
         if (tunnelConnectionPromise !is null) {
             Http1ServerTunnelConnection tunnelConnection = new Http1ServerTunnelConnection(
-                    tcpSession, httpVersion);
+                    _tcpSession, _httpVersion);
+            _tcpSession.setAttribute(HttpConnection.NAME, tunnelConnection);
             tunnelConnectionPromise.succeeded(tunnelConnection);
-            // tcpSession.attachObject(tunnelConnection);
-            tcpSession.setAttribute(HttpConnection.NAME, tunnelConnection);
             return tunnelConnection;
         } else {
             return null;
@@ -139,9 +138,8 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
         if (HttpMethod.PRI.isSame(request.getMethod())) {
             Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
-                    tcpSession, serverSessionListener);
-            // tcpSession.attachObject(http2ServerConnection);
-            tcpSession.setAttribute(HttpConnection.NAME, http2ServerConnection);
+                    _tcpSession, serverSessionListener);
+            _tcpSession.setAttribute(HttpConnection.NAME, http2ServerConnection);
             http2ServerConnection.getParser().directUpgrade();
             upgradeHttp2Complete = true;
             return true;
@@ -178,9 +176,8 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                     responseH2c();
 
                     Http2ServerConnection http2ServerConnection = new Http2ServerConnection(config,
-                            tcpSession,  serverSessionListener);
-                    // tcpSession.attachObject(http2ServerConnection);
-                    tcpSession.setAttribute(HttpConnection.NAME, http2ServerConnection);
+                            _tcpSession,  serverSessionListener);
+                    _tcpSession.setAttribute(HttpConnection.NAME, http2ServerConnection);
                     upgradeHttp2Complete = true;
                     http2ServerConnection.getParser().standardUpgrade();
 
@@ -214,7 +211,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
                 // dfmt off
                 WebSocketConnectionImpl webSocketConnection = new WebSocketConnectionImpl(
-                         tcpSession,
+                         _tcpSession,
                         null, webSocketHandler.getWebSocketPolicy(),
                         request, response, config);
 
@@ -252,8 +249,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
 
                 IOUtils.close(output);
                 // output.close();
-                // tcpSession.attachObject(webSocketConnection);
-                tcpSession.setAttribute(HttpConnection.NAME, webSocketConnection);
+                _tcpSession.setAttribute(HttpConnection.NAME, webSocketConnection);
                 upgradeWebSocketComplete = true;
                 webSocketHandler.onConnect(webSocketConnection);
                 return true;

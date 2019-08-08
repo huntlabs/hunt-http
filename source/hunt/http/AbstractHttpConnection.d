@@ -17,49 +17,35 @@ import hunt.Functions;
 
 abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
 
-    // protected SecureSession secureSession;
-    Connection tcpSession;
-    protected HttpVersion httpVersion;
-    // protected Object attachment;
+    protected Connection _tcpSession;
+    protected HttpVersion _httpVersion;
     // protected ConnectionEvent!HttpConnection connectionEvent;
 
     this(Connection tcpSession, HttpVersion httpVersion) {
-        // super(secureSession, tcpSession);
-        this.tcpSession = tcpSession;
-        this.httpVersion = httpVersion;
+        this._tcpSession = tcpSession;
+        this._httpVersion = httpVersion;
         // connectionEvent = new ConnectionEvent!(HttpConnection)(this);
     }
 
-    alias tcpSession this ;
-
-    int getId() {
-        return tcpSession.getId();
-    }
-
+    // alias tcpSession this ;
     Connection getTcpConnection() {
-        return tcpSession;
+        return _tcpSession;
     }
 
-    // override
-    // Object getAttachment() {
-    //     return tcpSession.getAttachment();
-    // }
-
-    // override
-    // void attachObject(Object attachment) {
-    //     tcpSession.attachObject(attachment);
-    // }
 
     abstract HttpConnectionType getConnectionType();
 
     override HttpVersion getHttpVersion() {
-        return httpVersion;
+        return _httpVersion;
     }
 
-    // override
-    // bool isSecured() {
-    //     return tcpSession.isSecured();
-    // }
+    int getId() {
+        return _tcpSession.getId();
+    }
+
+    bool isSecured() {
+        return _tcpSession.isSecured();
+    }
 
     // override
     // HttpConnection onClose(Action1!HttpConnection closedListener) {
@@ -71,19 +57,19 @@ abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
     //     return connectionEvent.onException(exceptionListener);
     // }
 
-    void notifyClose() {
-        implementationMissing(false);
-        // connectionEvent.notifyClose();
-    }
+    // void notifyClose() {
+    //     implementationMissing(false);
+    //     // connectionEvent.notifyClose();
+    // }
 
-    void notifyException(Exception t) {
-        implementationMissing(false);
-        // connectionEvent.notifyException(t);
-    }
+    // void notifyException(Exception t) {
+    //     implementationMissing(false);
+    //     // connectionEvent.notifyException(t);
+    // }
 
     ///
     void close() {
-        tcpSession.close();
+        _tcpSession.close();
     }
 
 

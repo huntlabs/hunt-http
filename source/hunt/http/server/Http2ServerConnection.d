@@ -35,7 +35,7 @@ class Http2ServerConnection : AbstractHttp2Connection , HttpServerConnection {
     override
     protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                             Listener listener) {
-        Http2ServerSession http2ServerSession = new Http2ServerSession(null, this.tcpSession, this.generator,
+        Http2ServerSession http2ServerSession = new Http2ServerSession(null, this._tcpSession, this.generator,
                 cast(ServerSessionListener) listener, flowControl, config.getStreamIdleTimeout());
         http2ServerSession.setMaxLocalStreams(config.getMaxConcurrentStreams());
         http2ServerSession.setMaxRemoteStreams(config.getMaxConcurrentStreams());

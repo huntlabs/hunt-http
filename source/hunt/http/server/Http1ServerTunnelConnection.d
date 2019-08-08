@@ -28,7 +28,7 @@ class Http1ServerTunnelConnection : AbstractHttpConnection , HttpTunnelConnectio
 
     override
     void write(ByteBuffer byteBuffer, Callback callback) {
-        tcpSession.write(byteBuffer); // , callback
+        _tcpSession.write(byteBuffer); // , callback
     }
 
     // override
