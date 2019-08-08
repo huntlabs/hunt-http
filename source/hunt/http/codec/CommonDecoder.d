@@ -50,12 +50,12 @@ class CommonDecoder : DecoderChain {
                     warning("Waiting for a http session...");
             }
         } while(connState == ConnectionState.Opening);
-            
-        DecoderChain next = getNext();
+        
         version(HUNT_HTTP_DEBUG) {
             infof("ConnectionState: %s", connState);
         }
-
+            
+        DecoderChain next = getNext();
         if (next !is null) {
             next.decode(buf, session);
         } else {

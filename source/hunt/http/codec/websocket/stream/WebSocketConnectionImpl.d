@@ -219,7 +219,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
 
         IncomingFrames e = extensionNegotiator.getIncomingFrames();
         if (e !is null) {
-            version(HUNT_HTTP_DEBUG) {
+            version(HUNT_HTTP_DEBUG_MORE) {
                 trace(BufferUtils.toDetailString(frame.getPayload()));
             }
             e.incomingFrame(frame);

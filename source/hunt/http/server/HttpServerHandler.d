@@ -65,8 +65,8 @@ class HttpServerHandler : HttpConnectionHandler {
             Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection,
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
             connection.setAttribute(HttpConnection.NAME, httpConnection);
-
             serverHttpHandler.acceptConnection(httpConnection);
+            connection.setState(ConnectionState.Opened);
         } else {
             enum string HTTP_1_1 = HttpVersion.HTTP_1_1.asString();
             enum string HTTP_2 = HttpVersion.HTTP_2.asString();
@@ -81,7 +81,6 @@ class HttpServerHandler : HttpConnectionHandler {
                 Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection, 
                         new Http1ServerRequestHandler(serverHttpHandler),
                         listener, webSocketHandler);
-                // connection.attachObject(httpConnection);
                 connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
                 connection.setState(ConnectionState.Opened);
@@ -91,7 +90,6 @@ class HttpServerHandler : HttpConnectionHandler {
                 // connection.attachObject(httpConnection);
                 connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
-
                 connection.setState(ConnectionState.Opened);
 
             } else {
