@@ -797,9 +797,9 @@ class HttpGenerator {
         TRANSFER_ENCODING_CHUNKED = StringUtils.getBytes("Transfer-Encoding: chunked\015\012");
         SEND = [
             new byte[0],
-            StringUtils.getBytes("Server: Hunt(" ~ Version ~ ")\015\012"),
-            StringUtils.getBytes("X-Powered-By: Hunt(" ~ Version ~ ")\015\012"),
-            StringUtils.getBytes("Server: Hunt(" ~ Version ~ ")\015\012X-Powered-By: Hunt(" ~ Version ~ ")\015\012")
+            StringUtils.getBytes("Server: hunt-http " ~ Version ~ "\015\012"),
+            StringUtils.getBytes("X-Powered-By: hunt-http " ~ Version ~ "\015\012"),
+            StringUtils.getBytes("Server: hunt-http " ~ Version ~ "\015\012X-Powered-By: hunt-http " ~ Version ~ "\015\012")
         ];
         
         __preprepared = new PreparedResponse[HttpStatus.MAX_CODE + 1];
