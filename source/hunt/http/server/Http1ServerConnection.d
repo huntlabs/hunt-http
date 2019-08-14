@@ -283,7 +283,7 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     this(HttpResponse response, Http1ServerConnection connection) {
         super(response, false);
         this.connection = connection;
-        httpGenerator = new HttpGenerator(true);
+        httpGenerator = new HttpGenerator(true, false);
     }
 
     Http1ServerConnection getHttp1ServerConnection() {

@@ -30,7 +30,7 @@ abstract class PredefinedHttp1Response {
             H2C_BYTES = BufferUtils.toArray(header);
 
             header = BufferUtils.allocate(128);
-            gen = new HttpGenerator(true);
+            gen = new HttpGenerator(true, false);
             result = gen.generateResponse(HttpGenerator.CONTINUE_100_INFO, false, header, null, null, false);
             assert(result == HttpGenerator.Result.FLUSH && 
                     gen.getState() == HttpGenerator.State.COMPLETING_1XX,
