@@ -1,3 +1,3 @@
 module hunt.http.Environment;
 
-enum Version = "0.3.0";
+enum Version = "0.4.0";
