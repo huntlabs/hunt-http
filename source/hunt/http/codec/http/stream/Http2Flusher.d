@@ -109,6 +109,7 @@ class Http2Flusher : IteratingCallback {
             }
 
             while (!windows.isEmpty()) {
+                //logInfo("!isEmpty--------------------------------");
                 WindowEntry entry = windows.poll();
                 entry.perform();
             }

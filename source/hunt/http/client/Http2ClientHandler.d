@@ -162,14 +162,14 @@ class Http2ClientHandler : HttpConnectionHandler {
     }
 
     override
-    void failedOpeningConnection(int sessionId, Exception t) {
+    void failedOpeningConnection(int sessionId, Throwable t) {
 
         auto c = http2ClientContext; //.remove(sessionId);
         if(c !is null)
         {
             auto promise = c.getPromise();
             if(promise !is null)
-                promise.failed(t);
+                promise.failed(cast(Exception)t);
         }
         
         // Optional.ofNullable(http2ClientContext.remove(sessionId))
@@ -178,7 +178,7 @@ class Http2ClientHandler : HttpConnectionHandler {
     }
 
     override
-    void exceptionCaught(Connection connection, Exception t) {
+    void exceptionCaught(Connection connection, Throwable t) {
         try {
             super.exceptionCaught(connection, t);
         } finally {

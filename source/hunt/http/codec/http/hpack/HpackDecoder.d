@@ -61,7 +61,8 @@ class HpackDecoder {
     }
 
     MetaData decode(ByteBuffer buffer) {
-        tracef("CtxTbl[%x] decoding %d octets", _context.toHash(), buffer.remaining());
+        version(HUNT_HTTP_DEBUG)
+            tracef("CtxTbl[%x] decoding %d octets", _context.toHash(), buffer.remaining());
 
         // If the buffer is big, don't even think about decoding it
         if (buffer.remaining() > _builder.getMaxSize())
@@ -173,7 +174,10 @@ class HpackDecoder {
                 else
                     value = toASCIIString(buffer, length);
 
-                tracef("header, name=%s, value=%s ", name, value);
+                version(HUNT_DEBUG){
+                    tracef("header, name=%s, value=%s ", name, value);
+                }
+
 
                 // Make the new field
                 HttpField field;
@@ -207,7 +211,7 @@ class HpackDecoder {
                     
                 }
 
-                // version(HUNT_DEBUG) 
+                 version(HUNT_DEBUG)
                 {
                     tracef("decoded '%s' by %s/%s/%s",
                             field,

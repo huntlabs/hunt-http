@@ -24,7 +24,7 @@ import hunt.concurrency.atomic;
 import hunt.concurrency.CountingCallback;
 import hunt.concurrency.Promise;
 import hunt.concurrency.Scheduler;
-
+import core.atomic : atomicOp, atomicLoad;
 import hunt.net.Connection;
 
 import hunt.logging;
@@ -61,8 +61,8 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     private int lastStreamId ;
     private int localStreamCount ;
     private long remoteStreamCount ;
-    private int sendWindow ;
-    private int recvWindow ;
+    private shared int sendWindow ;
+    private shared int recvWindow ;
     private CloseState closed = CloseState.NOT_CLOSED;
     private long bytesWritten;
 
@@ -183,16 +183,14 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             }
         }
 
-        if (stream !is null) {
+        if (stream !is null && !isClosed) {
             if (getRecvWindow() < 0) {
                 close(cast(int)ErrorCode.FLOW_CONTROL_ERROR, "session_window_exceeded", Callback.NOOP);
             } else {
                 stream.process(frame, new DataCallback() );
             }
         } else {
-            version(HUNT_DEBUG) {
-                tracef("Ignoring %s, stream #%s not found", frame.toString(), streamId);
-            }
+            tracef("Ignoring %s, stream #%s not found", frame.toString(), streamId);
             // We must enlarge the session flow control window,
             // otherwise other requests will be stalled.
             flowControl.onDataConsumed(this, null, flowControlLength);
@@ -371,7 +369,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     override
     void onWindowUpdate(WindowUpdateFrame frame) {
         version(HUNT_DEBUG) {
-            tracef("Received %s", frame.toString());
+            tracef("Received %s ^^^^ ", frame.toString());
         }
         int streamId = frame.getStreamId();
         if (streamId > 0) {
@@ -544,6 +542,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
         int length = cast(int)frames.length;
         if (length == 0) {
+            tracef("ength == 0") ;
             onFrame(new ControlEntry(frame, stream, callback), true);
         } else {
             callback = new CountingCallback(callback, 1 + length);
@@ -556,7 +555,10 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     override
     void data(StreamSPI stream, Callback callback, DataFrame frame) {
         // We want to generate as late as possible to allow re-prioritization.
-        onFrame(new DataEntry(frame, stream, callback), true);
+        if (!isClosed())
+        {
+            onFrame(new DataEntry(frame, stream, callback), true);
+        }
     }
 
     private void onFrame(Http2Flusher.Entry entry, bool flush) {
@@ -567,7 +569,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         bool queued = entry.frame.getType() == FrameType.PING ? flusher.prepend(entry) : flusher.append(entry);
         if (queued && flush) {
             if (entry.stream !is null) {
-                // entry.stream.notIdle();
+                 //entry.stream.notIdle();
             }
             flusher.iterate();
         }
@@ -679,30 +681,31 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     override
-    StreamSPI getStream(int streamId) {
-        return streams[streamId];
+    StreamSPI getStream(int streamId)
+    {
+        return streams.get(streamId, null);
     }
 
     int getSendWindow() {
-        return sendWindow;
+        return sendWindow.atomicLoad!();
     }
 
     int getRecvWindow() {
-        return recvWindow;
+        return recvWindow.atomicLoad!();
     }
 
     override
     int updateSendWindow(int delta) {
-        int old = sendWindow;
-        sendWindow += delta;
-        return old; 
+        //int old = sendWindow.atomicLoad!();
+        return sendWindow.atomicOp!"+="(delta);
+        //return old;
     }
 
     override
     int updateRecvWindow(int delta) {
-        int old = recvWindow;
-        recvWindow += delta;
-        return old; 
+        //int old = recvWindow.atomicLoad!();
+        return  recvWindow.atomicOp!"+="(delta);
+        //return old;
     }
 
     override
@@ -1104,10 +1107,26 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             int remaining = dataRemaining();
 
             int sessionSendWindow = getSendWindow();
+            if (sessionSendWindow <= 0)
+            {
+                updateSendWindow(65535);
+                sessionSendWindow = 65535;
+            }
             int streamSendWindow = stream.updateSendWindow(0);
+            if (streamSendWindow <= 0)
+            {
+                stream.updateSendWindow(sessionSendWindow);
+                streamSendWindow = sessionSendWindow;
+            }
             int window = min(streamSendWindow, sessionSendWindow);
+            //tracef("&&&&&&&&&&&&&&&&& %d &&&& %d" ,sessionSendWindow , streamSendWindow) ;
+
             if (window <= 0 && remaining > 0)
-                return false;
+            {
+                tracef("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %d &&&& %d" ,sessionSendWindow , streamSendWindow) ;
+                 return false;
+            }
+
 
             int length = min(remaining, window);
 
@@ -1121,7 +1140,9 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
                 tracef("Generated %s, length/window/data=%s/%s/%s", dataFrame, written, window, remaining);
             }
             this.dataWritten = written;
+            //tracef("&&&&&&&&^^^^^ %d ^^^^^^ %d ^^^^^^%d",  written, _dataRemaining , bytes);
             this._dataRemaining -= written;
+
 
             flowControl.onDataSending(stream, written);
             stream.updateClose(dataFrame.isEndStream(), CloseStateEvent.BEFORE_SEND);

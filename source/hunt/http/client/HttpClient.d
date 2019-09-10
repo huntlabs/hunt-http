@@ -6,7 +6,7 @@ import hunt.http.client.Http1ClientDecoder;
 import hunt.http.client.HttpClientContext;
 import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.Http2ClientHandler;
-
+import hunt.http.HttpOptions;
 import hunt.http.client.HttpClientOptions;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
@@ -39,15 +39,18 @@ import core.time;
 */
 class HttpClient : AbstractLifecycle {
 
+    alias void delegate() Callback;
+
     private NetClientOptions clientOptions;
     private NetClient[int] _netClients;
     private HttpClientOptions httpConfiguration;
+    private Callback _onClosed = null;
+    private bool _isConnected = false;
 
     this() {
         NetClientOptions clientOptions = new NetClientOptions();
         clientOptions.setIdleTimeout(15.seconds);
         clientOptions.setConnectTimeout(5.seconds);
-
         HttpClientOptions config = new HttpClientOptions(clientOptions);
         this(config);
     }
@@ -112,7 +115,11 @@ class HttpClient : AbstractLifecycle {
             }
         }).setHandler(new Http2ClientHandler(httpConfiguration, clientContext));
 
+        client.setOnClosed(_onClosed);
+
         client.connect(host, port);
+
+        _isConnected = client.isConnected();
     }
 
     HttpClientOptions getHttpConfiguration() {
@@ -123,12 +130,16 @@ class HttpClient : AbstractLifecycle {
         stop();
     }
 
+    void setOnClosed(Callback callback)
+    {
+        _onClosed = callback;
+    }
+
     override protected void initialize() {
         // do nothing;
     }
 
-    override protected void destroy() {
-
+    override  void destroy() {
         foreach(NetClient client; _netClients) {
             client.close();
         }
@@ -136,7 +147,11 @@ class HttpClient : AbstractLifecycle {
         _netClients = null;
     }
 
-    /**
+    bool isConnected() {
+        return _isConnected;
+    }
+
+   /**
      * Prepares the {@code request} to be executed at some point in the future.
      */
     Call newCall(Request request) {

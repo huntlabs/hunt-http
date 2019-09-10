@@ -18,11 +18,13 @@ import hunt.Exceptions;
 import hunt.logging;
 import std.format;
 
+import core.atomic : atomicOp, atomicLoad;
+
 alias Listener = hunt.http.codec.http.stream.Stream.Stream.Listener;
 
 /**
 */
-class Http2Stream : StreamSPI { // IdleTimeout, 
+class Http2Stream : StreamSPI { // IdleTimeout,
 
     // private AtomicReference<ConcurrentMap<string, Object>> attributes = new AtomicReference<>();
     // private AtomicReference<CloseState> closeState = new AtomicReference<>(CloseState.NOT_CLOSED);
@@ -31,8 +33,8 @@ class Http2Stream : StreamSPI { // IdleTimeout,
 
     private Object[string] attributes;
     private CloseState closeState;
-    private int sendWindow;
-    private int recvWindow;
+    private shared int sendWindow;
+    private shared int recvWindow;
 
     private SessionSPI session;
     private int streamId;
@@ -354,23 +356,23 @@ class Http2Stream : StreamSPI { // IdleTimeout,
     }
 
     int getSendWindow() {
-        return sendWindow;
+        return sendWindow.atomicLoad!();
     }
 
     int getRecvWindow() {
-        return recvWindow;
+        return recvWindow.atomicLoad!();
     }
 
     override
     int updateSendWindow(int delta) {
-        int r = sendWindow; sendWindow += delta;
+        int r = sendWindow.atomicLoad!(); sendWindow.atomicOp!"+="(delta);
         return r;
         // return sendWindow.getAndAdd(delta);
     }
 
     override
     int updateRecvWindow(int delta) {
-        int r = recvWindow; recvWindow += delta;
+        int r = recvWindow.atomicLoad!(); recvWindow.atomicOp!"+="(delta);
         return r;
     }
 

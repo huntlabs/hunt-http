@@ -245,7 +245,10 @@ class HpackContext {
     }
 
     Entry get(HttpHeader header) {
-        tracef("header:%s, ordinal=%d",header, header.ordinal());
+        version(HUNT_DEBUG) {
+            tracef("header:%s, ordinal=%d",header, header.ordinal());
+        }
+
         int o = header.ordinal();
         Entry e = __staticTableByHeader.get(o, null);
         if (e is null)

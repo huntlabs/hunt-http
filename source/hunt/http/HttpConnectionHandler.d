@@ -29,7 +29,7 @@ abstract class HttpConnectionHandler : ConnectionEventHandler {
     }
 
     override
-    void exceptionCaught(Connection connection, Exception t) {
+    void exceptionCaught(Connection connection, Throwable t) {
         try {
             warningf("HTTP handler exception: %s", t.toString());
             Object attachment = connection.getAttribute(HttpConnection.NAME); 
@@ -73,4 +73,14 @@ abstract class HttpConnectionHandler : ConnectionEventHandler {
         // }
     }
 
+    override
+    void connectionOpened(Connection connection) {}
+
+
+
+    override
+    void failedOpeningConnection(int connectionId, Throwable t) { }
+
+    override
+    void failedAcceptingConnection(int connectionId, Throwable t) { }
 }

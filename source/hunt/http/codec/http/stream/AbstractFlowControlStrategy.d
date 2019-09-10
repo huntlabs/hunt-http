@@ -94,8 +94,8 @@ abstract class AbstractFlowControlStrategy : FlowControlStrategy {
             }
         } else {
             int oldSize = session.updateSendWindow(delta);
-            version(HUNT_DEBUG)
-                tracef("Updated session send window %s -> %s for %s", oldSize, oldSize + delta, session);
+            //version(HUNT_DEBUG)
+            //tracef("Updated session send window %s -> %s for %s", oldSize, oldSize + delta, session);
             if (oldSize <= 0)
                 onSessionUnstalled(session);
         }

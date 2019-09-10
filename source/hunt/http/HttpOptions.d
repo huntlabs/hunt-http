@@ -4,6 +4,7 @@ import hunt.http.codec.http.stream.FlowControlStrategy;
 import hunt.http.HttpVersion;
 
 import hunt.net.TcpSslOptions;
+import std.datetime;
 
 // dfmt off
 version(WITH_HUNT_SECURITY) {
@@ -402,5 +403,15 @@ class HttpOptions {
      */
     void setWebsocketPingInterval(int websocketPingInterval) {
         this.websocketPingInterval = websocketPingInterval;
+    }
+
+
+    void setRetryTimes(int times) {
+        tcpSslOptions.setRetryTimes(times);
+    }
+
+
+    void setRetryInterval(Duration timeout) {
+        tcpSslOptions.setRetryInterval(timeout);
     }
 }
