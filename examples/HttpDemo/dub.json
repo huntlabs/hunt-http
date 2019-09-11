@@ -8,8 +8,11 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG", "HUNT_IO_DEBUG1", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE"
+		"HUNT_DEBUG", "HUNT_IO_DEBUG1", "HUNT_NET_DEBUG", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE1"
 	],
+	"subConfigurations": {
+		"hunt-http" : "tls"
+	},
 	"configurations": [
 		{
 			"name": "client",
