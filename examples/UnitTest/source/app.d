@@ -105,6 +105,7 @@ void testHpackDecoder() {
 	import hunt.http.codec.http.hpack.HpackDecoder;
 	import hunt.http.codec.http.model;
 	import hunt.util.TypeUtils;
+	import hunt.util.ConverterUtils;
 
 	import hunt.Assert;
 	import hunt.util.UnitTest;
@@ -117,7 +118,7 @@ void testHpackDecoder() {
 	// Response encoded by nghttpx
 	string encoded = "886196C361Be940b6a65B6850400B8A00571972e080a62D1Bf5f87497cA589D34d1f9a0f0d0234327690Aa69D29aFcA954D3A5358980Ae112e0f7c880aE152A9A74a6bF3";
 	encoded = "885f87497cA589D34d1f"; // ok 
-	ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+	ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
 	tracef("%(%02X %)", buffer.array());
 

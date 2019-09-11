@@ -2,21 +2,17 @@ module test.codec.http2.hpack.HpackDecoderTest;
 
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.model;
+import hunt.util.ConverterUtils;
 import hunt.util.TypeUtils;
+import hunt.util.UnitTest;
+
 
 import hunt.Assert;
-import hunt.util.UnitTest;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
 import hunt.collection.Iterator;
 
-
-alias assertTrue = Assert.assertTrue;
-alias assertFalse = Assert.assertFalse;
-alias assertThat = Assert.assertThat;
-alias assertEquals = Assert.assertEquals;
-alias assertNull = Assert.assertNull;
 
 
 public class HpackDecoderTest {
@@ -27,7 +23,7 @@ public class HpackDecoderTest {
 
         // First request
         string encoded = "828684410f7777772e6578616d706c652e636f6d";
-        ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         HttpRequest request = cast(HttpRequest) decoder.decode(buffer);
 
@@ -39,7 +35,7 @@ public class HpackDecoderTest {
 
         // Second request
         encoded = "828684be58086e6f2d6361636865";
-        buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         request = cast(HttpRequest) decoder.decode(buffer);
 
@@ -54,7 +50,7 @@ public class HpackDecoderTest {
 
         // Third request
         encoded = "828785bf400a637573746f6d2d6b65790c637573746f6d2d76616c7565";
-        buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         request = cast(HttpRequest) decoder.decode(buffer);
 
@@ -74,7 +70,7 @@ public class HpackDecoderTest {
 
         // First request
         string encoded = "828684418cf1e3c2e5f23a6ba0ab90f4ff";
-        ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         HttpRequest request = cast(HttpRequest) decoder.decode(buffer);
 
@@ -86,7 +82,7 @@ public class HpackDecoderTest {
 
         // Second request
         encoded = "828684be5886a8eb10649cbf";
-        buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         request = cast(HttpRequest) decoder.decode(buffer);
 
@@ -106,7 +102,7 @@ public class HpackDecoderTest {
 
         HpackDecoder decoder = new HpackDecoder(4096, 8192);
         string encoded = "8682418cF1E3C2E5F23a6bA0Ab90F4Ff841f0822426173696320515778685a475270626a70766347567549484e6c633246745a513d3d";
-        byte[] bytes = TypeUtils.fromHexString(encoded);
+        byte[] bytes = ConverterUtils.fromHexString(encoded);
         byte[] array = new byte[bytes.length + 1];
         // System.arraycopy(bytes, 0, array, 1, bytes.length);
         int len = cast(int)bytes.length;
@@ -130,7 +126,7 @@ public class HpackDecoderTest {
         HpackDecoder decoder = new HpackDecoder(4096, 8192);
 
         string encoded = "8286418cf1e3c2e5f23a6ba0ab90f4ff84";
-        byte[] bytes = TypeUtils.fromHexString(encoded);
+        byte[] bytes = ConverterUtils.fromHexString(encoded);
         byte[] array = new byte[bytes.length + 1];
         // System.arraycopy(bytes, 0, array, 1, bytes.length);
         int len = cast(int)bytes.length;
@@ -151,7 +147,7 @@ public class HpackDecoderTest {
     public void testNghttpx() {
         // Response encoded by nghttpx
         string encoded = "886196C361Be940b6a65B6850400B8A00571972e080a62D1Bf5f87497cA589D34d1f9a0f0d0234327690Aa69D29aFcA954D3A5358980Ae112e0f7c880aE152A9A74a6bF3";
-        ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         HpackDecoder decoder = new HpackDecoder(4096, 8192);
         HttpResponse response = cast(HttpResponse) decoder.decode(buffer);
@@ -172,7 +168,7 @@ public class HpackDecoderTest {
     
     public void testTooBigToIndex() {
         string encoded = "44FfEc02Df3990A190A0D4Ee5b3d2940Ec98Aa4a62D127D29e273a0aA20dEcAa190a503b262d8a2671D4A2672a927aA874988a2471D05510750c951139EdA2452a3a548cAa1aA90bE4B228342864A9E0D450A5474a92992a1aA513395448E3A0Aa17B96cFe3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f14E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F3E7Cf9f3e7cF9F353F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F54f";
-        ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         HpackDecoder decoder = new HpackDecoder(128, 8192);
         try {
@@ -187,7 +183,7 @@ public class HpackDecoderTest {
     
     public void testUnknownIndex() {
         string encoded = "BE";
-        ByteBuffer buffer = BufferUtils.toBuffer(TypeUtils.fromHexString(encoded));
+        ByteBuffer buffer = BufferUtils.toBuffer(ConverterUtils.fromHexString(encoded));
 
         HpackDecoder decoder = new HpackDecoder(128, 8192);
         try {

@@ -1,12 +1,12 @@
 {
     "name": "hunt-http",
-    "targetType": "sourceLibrary",
+    "targetType": "staticLibrary",
     "description": "http module for hunt.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
     "homepage": "https://www.huntlabs.net",
     "license": "Apache-2.0",
     "dependencies": {
-        "hunt-net": "~>0.4.0-rc.2"
+        "hunt-net": "~>0.4.0-rc.4"
     },
     "configurations": [
         {

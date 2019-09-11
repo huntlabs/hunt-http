@@ -124,11 +124,7 @@ class Http2ClientHandler : HttpConnectionHandler {
         
         try {
             Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
-            // connection.attachObject(http1ClientConnection);
             connection.setAttribute(HttpConnection.NAME, http1ClientConnection);
-            // context.getPromise().succeeded(http1ClientConnection);
-
-            // infof("Promise id = %s", promise.id);
             promise.succeeded(http1ClientConnection);
 
         } catch (Exception t) {

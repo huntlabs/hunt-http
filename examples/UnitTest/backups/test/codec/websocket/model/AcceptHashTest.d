@@ -11,7 +11,7 @@ import hunt.util.Test;
 public class AcceptHashTest {
     
     public void testHash() {
-        byte key[] = TypeUtils.fromHexString("00112233445566778899AABBCCDDEEFF");
+        byte key[] = ConverterUtils.fromHexString("00112233445566778899AABBCCDDEEFF");
         Assert.assertThat("Key size", key.length, is(16));
 
         // what the client sends
