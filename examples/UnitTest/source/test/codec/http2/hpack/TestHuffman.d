@@ -9,6 +9,7 @@ import hunt.http.codec.http.hpack.Huffman;
 
 import hunt.Assert;
 import hunt.Exceptions;
+import hunt.util.ConverterUtils;
 import hunt.util.TypeUtils;
 
 import hunt.logging;
@@ -36,7 +37,7 @@ class TestHuffman
     {
         foreach (string[] test; tests)
         {
-            byte[] encoded=TypeUtils.fromHexString(test[1]);
+            byte[] encoded=ConverterUtils.fromHexString(test[1]);
             string decoded=Huffman.decode(BufferUtils.toBuffer(encoded));
             Assert.assertEquals(test[0],test[2],decoded);
         }
@@ -47,7 +48,7 @@ class TestHuffman
     {
         foreach (string[] test; tests)
         {
-            byte[] encoded=TypeUtils.fromHexString(test[1]~"FF");
+            byte[] encoded=ConverterUtils.fromHexString(test[1]~"FF");
             string decoded=Huffman.decode(BufferUtils.toBuffer(encoded));
             Assert.assertEquals(test[0],test[2],decoded);
         }
@@ -62,7 +63,7 @@ class TestHuffman
             int pos=BufferUtils.flipToFill(buf);
             Huffman.encode(buf,test[2]);
             BufferUtils.flipToFlush(buf,pos);
-            string encoded=TypeUtils.toHexString(BufferUtils.toArray(buf)).toLower();
+            string encoded = ConverterUtils.toHexString(BufferUtils.toArray(buf)).toLower();
             Assert.assertEquals(test[0],test[1],encoded);
             Assert.assertEquals(test[1].length/2, Huffman.octetsNeeded(test[2]));
         }

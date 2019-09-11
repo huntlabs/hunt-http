@@ -61,7 +61,7 @@ public class ExtensionTool {
 
             for (int i = 0; i < parts; i++) {
                 string hex = rawhex[i].replaceAll("\\s*(0x)?", "");
-                net = TypeUtils.fromHexString(hex);
+                net = ConverterUtils.fromHexString(hex);
                 parser.parse(BufferUtils.toBuffer(net));
             }
         }

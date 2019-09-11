@@ -33,7 +33,7 @@ import hunt.Assert.assertThat;
 public class PerMessageDeflateExtensionTest extends AbstractExtensionTest {
 
     private void assertEndsWithTail(string hexStr, bool expectedResult) {
-        ByteBuffer buf = BufferUtils.toBuffer(TypeUtils.fromHexString(hexStr));
+        ByteBuffer buf = BufferUtils.toBuffer(ConverterUtils.fromHexString(hexStr));
         assertThat("endsWithTail([" ~ hexStr ~ "])", CompressExtension.endsWithTail(buf), is(expectedResult));
     }
 

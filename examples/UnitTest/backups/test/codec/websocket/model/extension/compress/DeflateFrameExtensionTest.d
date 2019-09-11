@@ -277,7 +277,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
     
     public void testInflateBasics() {
         // should result in "info:" text if properly inflated
-        byte rawbuf[] = TypeUtils.fromHexString("CaCc4bCbB70200"); // what pywebsocket produces
+        byte rawbuf[] = ConverterUtils.fromHexString("CaCc4bCbB70200"); // what pywebsocket produces
         // byte rawbuf[] = TypeUtil.fromHexString("CbCc4bCbB70200"); // what java produces
 
         Inflater inflater = new Inflater(true);
@@ -296,14 +296,14 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
     
     public void testPyWebSocketServer_Hello() {
         // Captured from PyWebSocket - "Hello" (echo from server)
-        byte rawbuf[] = TypeUtils.fromHexString("c107f248cdc9c90700");
+        byte rawbuf[] = ConverterUtils.fromHexString("c107f248cdc9c90700");
         assertIncoming(rawbuf, "Hello");
     }
 
     
     public void testPyWebSocketServer_Long() {
         // Captured from PyWebSocket - Long Text (echo from server)
-        byte rawbuf[] = TypeUtils.fromHexString("c1421cca410a80300c44d1abccce9df7" ~ "f018298634d05631138ab7b7b8fdef1f" ~ "dc0282e2061d575a45f6f2686bab25e1"
+        byte rawbuf[] = ConverterUtils.fromHexString("c1421cca410a80300c44d1abccce9df7" ~ "f018298634d05631138ab7b7b8fdef1f" ~ "dc0282e2061d575a45f6f2686bab25e1"
                 ~ "3fb7296fa02b5885eb3b0379c394f461" ~ "98cafd03");
         assertIncoming(rawbuf, "It's a big enough umbrella but it's always me that ends up getting wet.");
     }
@@ -311,7 +311,7 @@ public class DeflateFrameExtensionTest extends AbstractExtensionTest {
     
     public void testPyWebSocketServer_Medium() {
         // Captured from PyWebSocket - "stackoverflow" (echo from server)
-        byte rawbuf[] = TypeUtils.fromHexString("c10f2a2e494ccece2f4b2d4acbc92f0700");
+        byte rawbuf[] = ConverterUtils.fromHexString("c10f2a2e494ccece2f4b2d4acbc92f0700");
         assertIncoming(rawbuf, "stackoverflow");
     }
 
