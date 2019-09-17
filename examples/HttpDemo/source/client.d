@@ -166,6 +166,7 @@ class HttpClientTest {
         Response response = client.newCall(request).execute();
         if(response.haveBody())
             return response.getBody().asString();
+        return "";
   	}
 
 }

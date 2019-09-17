@@ -3,8 +3,6 @@ import std.stdio;
 import hunt.util.UnitTest;
 
 import test.codec.http2.model.HttpFieldsTest;
-import test.codec.http2.model.HttpURIParseTest;
-import test.codec.http2.model.HttpURITest;
 import test.codec.http2.model.MultipartFormInputStreamTest;
 import test.codec.http2.model.MultipartParserTest;
 import test.codec.http2.model.QuotedCSVTest;
@@ -55,8 +53,6 @@ void main() {
 
 	testUnits!CookieTest(); 
 	testUnits!HttpFieldsTest();
-	// testUnits!HttpURIParseTest();
-	testUnits!HttpURITest();
 	testUnits!MultipartFormInputStreamTest(); 
 	testUnits!MultipartParserTest(); 
 	testUnits!QuotedCSVTest();

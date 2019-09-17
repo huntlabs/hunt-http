@@ -12,9 +12,10 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.CommonEncoder;
 
-import hunt.http.server.Http2ServerConnection;
-import hunt.http.server.Http2ServerDecoder;
-import hunt.http.server.ServerSessionListener;
+// import hunt.http.server.Http2ServerConnection;
+// import hunt.http.server.Http2ServerDecoder;
+// import hunt.http.server.ServerSessionListener;
+import hunt.http.server;
 
 import hunt.collection;
 import hunt.Exceptions;
@@ -23,6 +24,20 @@ import hunt.net.Connection;
 import hunt.Assert;
 import hunt.util.Common;
 
+import hunt.net.Connection;
+import hunt.net.codec;
+
+import hunt.Boolean;
+import hunt.collection.ByteBuffer;
+import hunt.Exceptions;
+import hunt.Functions;
+import hunt.io.channel;
+import hunt.io.TcpStream;
+import hunt.logging.ConsoleLogger;
+import hunt.net.TcpSslOptions;
+import hunt.util.Common;
+
+import core.time;
 import std.conv;
 import std.random;
 import std.stdio;
@@ -40,8 +55,8 @@ class Http2DecoderTest {
 
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
-        TcpSession session = factory.create();
-        HttpOptions http2Configuration = new HttpOptions();
+        Connection session = factory.create();
+        HttpOptions http2Configuration = new HttpServerOptions();
         http2Configuration.setFlowControlStrategy("simple");
 
         Map!(int, int) settings = new HashMap!(int, int)();
@@ -186,10 +201,10 @@ class Http2DecoderTest {
             }
         }
 
-        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
+        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session,
                 new ServerSessionListenerTester() );
 
-        session.attachObject(http2ServerConnection);
+        session.setAttribute("conn", http2ServerConnection);
 
         int streamId = 5;
         HttpFields fields = new HttpFields();
@@ -227,9 +242,9 @@ class Http2DecoderTest {
     void testHeaders() {
         MockSessionFactory factory = new MockSessionFactory();
         Http2ServerDecoder decoder = new Http2ServerDecoder();
-        TcpSession session = factory.create();
-        HttpOptions http2Configuration = new HttpOptions();
-        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, null,
+        Connection session = factory.create();
+        HttpOptions http2Configuration = new HttpServerOptions();
+        Http2ServerConnection http2ServerConnection = new Http2ServerConnection(http2Configuration, session, 
                 new class ServerSessionListener {
 
                     override
@@ -355,7 +370,7 @@ class Http2DecoderTest {
                         return false;
                     }
                 });
-        session.attachObject(http2ServerConnection);
+        session.setAttribute("conn", http2ServerConnection);
 
         int streamId = 5;
         HttpFields fields = new HttpFields();
@@ -405,131 +420,63 @@ class MockSessionFactory
         output = new LinkedList!ByteBuffer();
     }
 
-    static class AbstractMockSession : TcpSession {
-        Object attachment;
-        bool _isOpen = true;
-        LinkedList!(ByteBuffer) outboundData;
 
-        this(LinkedList!(ByteBuffer) outboundData) {
-            this.outboundData = outboundData;
-        }
-
-        override
-        void attachObject(Object attachment) {
-            this.attachment = attachment;
-        }
-
-        override
-        Object getAttachment() {
-            return attachment;
-        }
-
-        override
-        void encode(Object message) {
-            encoder.encode(message, this);
-        }
-
-        override
-        bool isOpen() {
-            return _isOpen;
-        }
-
-        override
-        void write(ByteBuffer byteBuffer, Callback callback) {
-            outboundData.offer(byteBuffer);
-            byteBuffer.flip();
-            callback.succeeded();
-        }
-
-        override
-        void write(ByteBuffer[] buffers, Callback callback) {
-            foreach (ByteBuffer buffer ; buffers) {
-                outboundData.offer(buffer);
-                buffer.flip();
-            }
-            callback.succeeded();
-
-        }
-
-        override
-        void write(Collection!(ByteBuffer) buffers, Callback callback) {
-            write(buffers.toArray(), callback); // BufferUtils.EMPTY_BYTE_BUFFER_ARRAY
-        }
-
-        // override
-        // void write(OutputEntry!(?) entry) {
-        //     if (entry instanceof ByteBufferOutputEntry) {
-        //         ByteBufferOutputEntry outputEntry = (ByteBufferOutputEntry) entry;
-        //         write(outputEntry.getData(), outputEntry.getCallback());
-        //     } else {
-        //         ByteBufferArrayOutputEntry outputEntry = (ByteBufferArrayOutputEntry) entry;
-        //         write(outputEntry.getData(), outputEntry.getCallback());
-        //     }
-        // }
-
-        override
-        void closeNow() {
-            _isOpen = false;
-        }
-
-
-        void notifyMessageReceived(Object message){ implementationMissing(false); }
-
-        void encode(ByteBuffer[] messages){ 
-            // implementationMissing(false); 
-            foreach(ByteBuffer message; messages)
-                encoder.encode(message, this);
-            }
-
-        int getId(){ return 0; }
-
-version(HUNT_METRIC) {
-        long getOpenTime(){ implementationMissing(false); return 0; }
-
-        long getCloseTime(){ implementationMissing(false); return 0; }
-
-        long getDuration(){ implementationMissing(false); return 0; }
-
-        long getLastReadTime(){ implementationMissing(false); return 0; }
-
-        long getLastWrittenTime(){ implementationMissing(false); return 0; }
-
-        long getLastActiveTime(){ implementationMissing(false); return 0; }
-
-        size_t getReadBytes(){ implementationMissing(false); return 0; }
-
-        size_t getWrittenBytes(){ implementationMissing(false); return 0; }
-
-        long getIdleTimeout() { implementationMissing(false); return 0; }
-
-        override string toString() { return ""; }
-}
-        void close(){  }
-
-        void shutdownOutput(){ implementationMissing(false); }
-
-        void shutdownInput(){ implementationMissing(false); }
-
-        bool isClosed(){ implementationMissing(false); return false; }
-
-        bool isShutdownOutput(){ implementationMissing(false); return false; }
-
-        bool isShutdownInput(){ implementationMissing(false); return false; }
-
-        bool isWaitingForClose(){ implementationMissing(false); return false; }
-
-        Address getLocalAddress(){ return new InternetAddress("127.0.0.1", 8080); }
-
-        Address getRemoteAddress(){ return new InternetAddress("127.0.0.1", 0); }
-
-        long getMaxIdleTimeout() { implementationMissing(false); return 0; }
-
-    }
-
-    TcpSession create()
+    Connection create()
     {
         AbstractMockSession s = new AbstractMockSession(output);
         return s;
     }
 }
 
+
+import hunt.net.AbstractConnection;
+
+static class AbstractMockSession : AbstractConnection {
+
+    this(LinkedList!(ByteBuffer) outboundData) {
+
+        super(0, null);
+    }
+
+version(HUNT_METRIC) {
+    long getOpenTime(){ implementationMissing(false); return 0; }
+
+    long getCloseTime(){ implementationMissing(false); return 0; }
+
+    long getDuration(){ implementationMissing(false); return 0; }
+
+    long getLastReadTime(){ implementationMissing(false); return 0; }
+
+    long getLastWrittenTime(){ implementationMissing(false); return 0; }
+
+    long getLastActiveTime(){ implementationMissing(false); return 0; }
+
+    size_t getReadBytes(){ implementationMissing(false); return 0; }
+
+    size_t getWrittenBytes(){ implementationMissing(false); return 0; }
+
+    long getIdleTimeout() { implementationMissing(false); return 0; }
+
+    override string toString() { return ""; }
+}
+    override void close(){  }
+
+    void shutdownOutput(){ implementationMissing(false); }
+
+    void shutdownInput(){ implementationMissing(false); }
+
+    bool isClosed(){ implementationMissing(false); return false; }
+
+    bool isShutdownOutput(){ implementationMissing(false); return false; }
+
+    bool isShutdownInput(){ implementationMissing(false); return false; }
+
+    bool isWaitingForClose(){ implementationMissing(false); return false; }
+
+    Address getLocalAddress(){ return new InternetAddress("127.0.0.1", 8080); }
+
+    Address getRemoteAddress(){ return new InternetAddress("127.0.0.1", 0); }
+
+    Duration getMaxIdleTimeout() { implementationMissing(false); return Duration.zero(); }
+
+}
