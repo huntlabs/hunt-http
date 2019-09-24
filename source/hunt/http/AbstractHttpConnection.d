@@ -13,8 +13,12 @@ import hunt.net.Exceptions;
 
 import hunt.Exceptions;
 import hunt.Functions;
+import std.socket;
 
-abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
+/**
+ * 
+ */
+abstract class AbstractHttpConnection : HttpConnection { 
 
     protected Connection _tcpSession;
     protected HttpVersion _httpVersion;
@@ -31,8 +35,16 @@ abstract class AbstractHttpConnection : HttpConnection { // AbstractConnection,
         return _tcpSession;
     }
 
-
     abstract HttpConnectionType getConnectionType();
+
+
+    Address getLocalAddress() {
+        return _tcpSession.getLocalAddress();
+    }
+
+    Address getRemoteAddress() {
+        return _tcpSession.getRemoteAddress();
+    }
 
     override HttpVersion getHttpVersion() {
         return _httpVersion;

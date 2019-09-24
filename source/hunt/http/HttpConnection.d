@@ -5,6 +5,8 @@ import hunt.net.Connection;
 import hunt.Functions;
 import hunt.util.Common;
 
+import std.socket;
+
 
 interface HttpConnection : Closeable { // : Connection 
 
@@ -15,6 +17,10 @@ interface HttpConnection : Closeable { // : Connection
     Connection getTcpConnection();
 
     HttpVersion getHttpVersion();
+
+    Address getLocalAddress();
+
+    Address getRemoteAddress();
 
     // HttpConnection onClose(Action1!(HttpConnection) closedCallback);
 

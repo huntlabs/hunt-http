@@ -12,7 +12,7 @@ import hunt.collection.ByteBuffer;
 import hunt.util.Common;
 import hunt.concurrency.CompletableFuture;
 
-interface WebSocketConnection : OutgoingFrames { // , Connection , HttpConnection
+interface WebSocketConnection : OutgoingFrames, HttpConnection {
 
     /**
      * Register the connection close callback.

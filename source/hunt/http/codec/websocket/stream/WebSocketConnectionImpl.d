@@ -329,9 +329,25 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
     //     super.setAttachment(attachment);
     // }
 
-    // override int getId() {
-    //     return super.getId();
-    // }
+    override int getId() {
+        return super.getId();
+    }
+
+    override Connection getTcpConnection() {
+        return super.getTcpConnection();
+    }
+    
+    override Address getLocalAddress() {
+        return  super.getLocalAddress();
+    }
+
+    override Address getRemoteAddress() {
+        return super.getRemoteAddress();
+    }
+
+    override HttpVersion getHttpVersion() {
+        return super.getHttpVersion();
+    }
 
 // version (HUNT_METRIC) {
 //     override long getOpenTime() {
