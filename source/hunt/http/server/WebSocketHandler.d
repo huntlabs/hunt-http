@@ -49,7 +49,7 @@ class WebSocketHandler {
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
-        version (HUNT_DEBUG) {
+        version (HUNT_HTTP_DEBUG) {
             HttpConnection conn = cast(HttpConnection)connection;
             assert(conn !is null);
             tracef("The WebSocket connection %s received a frame: %s",

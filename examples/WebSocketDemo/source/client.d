@@ -1,9 +1,6 @@
 import hunt.http.codec.http.model;
 
-import hunt.http.client.ClientHttpHandler;
-import hunt.http.client.HttpClient;
-import hunt.http.client.HttpClientConnection;
-import hunt.http.client.HttpClientRequest;
+import hunt.http.client;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -35,7 +32,7 @@ void main(string[] args) {
 
     NetUtil.startEventLoop();
 
-    HttpClient client = new HttpClient(new HttpOptions());
+    HttpClient client = new HttpClient();
     Future!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
 
     HttpClientRequest request = new HttpClientRequest("GET", "/index");

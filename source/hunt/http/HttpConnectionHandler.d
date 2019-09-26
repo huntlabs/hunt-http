@@ -31,20 +31,24 @@ abstract class HttpConnectionHandler : ConnectionEventHandler {
     override
     void exceptionCaught(Connection connection, Throwable t) {
         try {
-            warningf("HTTP handler exception: %s", t.toString());
+            version(HUNT_DEBUG) warningf("HTTP handler exception: %s", t.toString());
             Object attachment = connection.getAttribute(HttpConnection.NAME); 
-            // if (attachment is null) {
-            //     version(HUNT_DEBUG) warningf("attachment is null");
-            // } else {
-            //     AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
-            //     if (httpConnection !is null ) {
-            //         try {
-            //             httpConnection.notifyException(t);
-            //         } catch (Exception e) {
-            //             errorf("The http connection exception listener error: %s", e.message);
-            //         }
-            //     } 
-            // }
+            if (attachment is null) {
+                version(HUNT_DEBUG) warningf("attachment is null");
+            } else {
+                AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
+                if (httpConnection !is null ) {
+                    try {
+                        Exception ex = cast(Exception)t;
+                        if(ex is null && t !is null) {
+                            warningf("Can't handle a exception. Exception: %s", t.msg);
+                        }
+                        httpConnection.notifyException(ex);
+                    } catch (Exception e) {
+                        errorf("The http connection exception listener error: %s", e.message);
+                    }
+                } 
+            }
         } finally {
             connection.close();
         }
@@ -53,34 +57,34 @@ abstract class HttpConnectionHandler : ConnectionEventHandler {
     override
     void connectionClosed(Connection connection) {
         version(HUNT_HTTP_DEBUG) {
-            infof("The HTTP handler received the connection %s closed event. Remote host: %s", 
+            infof("Connection %s closed event. Remote host: %s", 
                 connection.getId(), connection.getRemoteAddress());
         }
 
-        // Object attachment = connection.getAttribute(HttpConnection.NAME);
-        // if (attachment is null) {
-        //     version(HUNT_HTTP_DEBUG) warningf("no connection attached");
-        // } else {
-        //     version(HUNT_HTTP_DEBUG) tracef("attached connection: %s", typeid(attachment).name);
-        //     AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
-        //     if (httpConnection !is null) {
-        //         try {
-        //             httpConnection.notifyClose();
-        //         } catch (Exception e) {
-        //             errorf("The http connection close exception", e);
-        //         }
-        //     } 
-        // }
+        Object attachment = connection.getAttribute(HttpConnection.NAME);
+        if (attachment is null) {
+            version(HUNT_HTTP_DEBUG) warningf("no connection attached");
+        } else {
+            version(HUNT_HTTP_DEBUG) tracef("attached connection: %s", typeid(attachment).name);
+            AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
+            if (httpConnection !is null) {
+                try {
+                    httpConnection.notifyClose();
+                } catch (Exception e) {
+                    errorf("The http connection close exception", e);
+                }
+            } 
+        }
     }
 
     override
-    void connectionOpened(Connection connection) {}
-
-
-
-    override
-    void failedOpeningConnection(int connectionId, Throwable t) { }
+    void connectionOpened(Connection connection) {
+        implementationMissing(false);
+    }
 
     override
-    void failedAcceptingConnection(int connectionId, Throwable t) { }
+    void failedOpeningConnection(int connectionId, Throwable t) { implementationMissing(false); }
+
+    override
+    void failedAcceptingConnection(int connectionId, Throwable t) { implementationMissing(false); }
 }

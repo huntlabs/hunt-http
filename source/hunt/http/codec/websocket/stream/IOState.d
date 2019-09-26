@@ -101,6 +101,7 @@ class IOState {
     }
 
     void addListener(ConnectionStateListener listener) {
+        assert(listener !is null);
         listeners.add(listener);
     }
 

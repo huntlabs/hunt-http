@@ -5,9 +5,7 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.server.HttpServer;
-import hunt.http.server.ServerHttpHandler;
-import hunt.http.server.WebSocketHandler;
+import hunt.http.server;
 import hunt.collection.ByteBuffer;
 
 
@@ -28,7 +26,7 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args)
 {
-    HttpServer server = new HttpServer("0.0.0.0", 8080, new HttpOptions(), 
+    HttpServer server = new HttpServer("0.0.0.0", 8080, new HttpServerOptions(), 
         new class ServerHttpHandlerAdapter {
 
             override
@@ -42,8 +40,15 @@ void main(string[] args)
         new class WebSocketHandler {
             override
             void onConnect(WebSocketConnection webSocketConnection) {
+                webSocketConnection.onClose((HttpConnection conn) {
+                    warningf("Remote host shutdown: %s", 
+                        webSocketConnection.getRemoteAddress().toString());
+                });
+
                 webSocketConnection.sendText("Say hello from Hunt.HTTP.").thenAccept( 
-                    (r) { tracef("Server sends text frame success."); }
+                    (r) { 
+                        tracef("Server sends text frame success."); 
+                    }
                 );
             }
 
@@ -64,6 +69,11 @@ void main(string[] args)
                         ByteBuffer buf = bf.getPayload;
                         byte[] data = buf.getRemaining();
                         tracef("%(%02X %)", data);
+                        break;
+                    }
+
+                    case FrameType.CLOSE: {
+                        infof("Client [%s] closed normally.", connection.getRemoteAddress().toString());
                         break;
                     }
 

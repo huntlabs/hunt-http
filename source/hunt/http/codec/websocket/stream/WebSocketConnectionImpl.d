@@ -2,7 +2,6 @@ module hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.HttpOptions;
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
@@ -18,11 +17,13 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
 import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
+import hunt.http.HttpConnectionType;
+import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 
 import hunt.net.AbstractConnection;
 
-import hunt.http.HttpConnectionType;
 // import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 
@@ -133,29 +134,33 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         }
     }
 
-    // override WebSocketConnection onClose(Action1!(WebSocketConnection) closedListener) {
-    //     return connectionEvent.onClose(closedListener);
-    // }
+    override WebSocketConnection onClose(Action1!(HttpConnection) handler) {
+        // return connectionEvent.onClose(closedListener);
+        super.onClose(handler);
+        return this;
+    }
 
-    // override WebSocketConnection onException(Action2!(WebSocketConnection,
-    //         Exception) exceptionListener) {
-    //     return connectionEvent.onException(exceptionListener);
-    // }
+    override WebSocketConnection onException(Action2!(HttpConnection,
+            Exception) handler) {
+        // return connectionEvent.onException(exceptionListener);
+        super.onException(handler);
+        return this;
+    }
 
-    // override void notifyClose() {
-    //     version(HUNT_DEBUG) tracef("closing, state: %s", ioState.getConnectionState());
-    //     ioState.onDisconnected();
-    //     // connectionEvent.notifyClose();
-    //     super.notifyClose.onClosed();
-    // }
+    override void notifyClose() {
+        version(HUNT_DEBUG) tracef("closing, state: %s", ioState.getConnectionState());
+        ioState.onDisconnected();
+        // connectionEvent.notifyClose();
+        super.notifyClose();
+    }
 
-    // override void notifyException(Exception t) {
-    //     version(HUNT_DEBUG) warningf("exception, state: %s, error: %s", 
-    //         ioState.getConnectionState(), t.msg);
-    //     ioState.onReadFailure(t);
-    //     // connectionEvent.notifyException(t);
-    //     super.notifyException(t);
-    // }
+    override void notifyException(Exception t) {
+        version(HUNT_DEBUG) warningf("exception, state: %s, error: %s", 
+            ioState.getConnectionState(), t.msg);
+        ioState.onReadFailure(t);
+        // connectionEvent.notifyException(t);
+        super.notifyException(t);
+    }
 
     override IOState getIOState() {
         return ioState;

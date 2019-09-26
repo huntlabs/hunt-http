@@ -22,8 +22,8 @@ interface HttpConnection : Closeable { // : Connection
 
     Address getRemoteAddress();
 
-    // HttpConnection onClose(Action1!(HttpConnection) closedCallback);
+    HttpConnection onClose(Action1!(HttpConnection) handler);
 
-    // HttpConnection onException(Action2!(HttpConnection, Exception) exceptionCallback);
+    HttpConnection onException(Action2!(HttpConnection, Exception) handler);
 
 }

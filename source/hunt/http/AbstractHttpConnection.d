@@ -23,6 +23,8 @@ abstract class AbstractHttpConnection : HttpConnection {
     protected Connection _tcpSession;
     protected HttpVersion _httpVersion;
     // protected ConnectionEvent!HttpConnection connectionEvent;
+    protected Action1!HttpConnection _closeHandler;
+    protected Action2!(HttpConnection, Exception) _exceptionHandler;
 
     this(Connection tcpSession, HttpVersion httpVersion) {
         this._tcpSession = tcpSession;
@@ -58,25 +60,35 @@ abstract class AbstractHttpConnection : HttpConnection {
         return _tcpSession.isSecured();
     }
 
-    // override
-    // HttpConnection onClose(Action1!HttpConnection closedListener) {
-    //     return connectionEvent.onClose(closedListener);
-    // }
+    override
+    HttpConnection onClose(Action1!HttpConnection handler) {
+        _closeHandler = handler;
+        return this;
+        // return connectionEvent.onClose(closedListener);
+    }
 
-    // override
-    // HttpConnection onException(Action2!(HttpConnection, Exception) exceptionListener) {
-    //     return connectionEvent.onException(exceptionListener);
-    // }
+    override
+    HttpConnection onException(Action2!(HttpConnection, Exception) handler) {
+        _exceptionHandler = handler;
+        return this;
+        // return connectionEvent.onException(exceptionListener);
+    }
 
-    // void notifyClose() {
-    //     implementationMissing(false);
-    //     // connectionEvent.notifyClose();
-    // }
+    void notifyClose() {
+        // implementationMissing(false);
+        // connectionEvent.notifyClose();
+        if(_closeHandler !is null) {
+            _closeHandler(this);
+        }
+    }
 
-    // void notifyException(Exception t) {
-    //     implementationMissing(false);
-    //     // connectionEvent.notifyException(t);
-    // }
+    void notifyException(Exception t) {
+        // implementationMissing(false);
+        if(_exceptionHandler !is null) {
+            _exceptionHandler(this, t);
+        }
+        // connectionEvent.notifyException(t);
+    }
 
     ///
     void close() {
