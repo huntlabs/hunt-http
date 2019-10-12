@@ -7,9 +7,11 @@ import hunt.Exceptions;
 import hunt.logging;
 import hunt.net.codec.Encoder;
 import hunt.net.Connection;
+import hunt.net.Exceptions;
 import hunt.net.secure.SecureSession;
 import hunt.util.Common;
 
+import std.format;
 
 /**
  * 
@@ -47,8 +49,7 @@ class CommonEncoder : EncoderChain {
                 //     throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
                 // }
             }
-        } else {
-
+        } else if(connState == ConnectionState.Opened) {
             ByteBuffer messageBuffer = cast(ByteBuffer) message;
             if(messageBuffer !is null) {
                 session.write(messageBuffer); // , Callback.NOOP
@@ -63,6 +64,14 @@ class CommonEncoder : EncoderChain {
             //     }
                 throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
             } 
+        } else if(connState == ConnectionState.Closed) {
+            string msg = format("connection [id=%d] closed.", session.getId());
+            debug warningf(msg);
+            throw new Exception(msg);
+        } else {
+            string msg = format("Unhandled connection [id=%d] state: %s", session.getId(), connState);
+            debug warningf(msg);
+            throw new Exception(msg);
         }
     }
 }

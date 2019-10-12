@@ -10,6 +10,8 @@ import hunt.net.Connection;
 import hunt.Exceptions;
 import hunt.logging;
 
+import std.format;
+
 
 /**
 */
@@ -24,18 +26,24 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
     }
 
     protected void commit(ByteBuffer data) {
-        if (closed)
+        if (committed || closed) {
+            debug warning("connection closed already, or data committed already.");
             return;
+        }
 
-        if (committed)
+        Connection tcpSession = getSession();
+        if(!tcpSession.isConnected()) {
+            closed = true;
+            string msg = format("connection [id=%d] closed.", tcpSession.getId());
+            debug warningf(msg);
             return;
+        }
         
         version(HUNT_HTTP_DEBUG) {
             infof("committing data: %s", data.toString());
         }
 
         HttpGenerator generator = getHttpGenerator();
-        Connection tcpSession = getSession();
         HttpGenerator.Result generatorResult;
         ByteBuffer header = getHeaderByteBuffer();
 
@@ -58,14 +66,24 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
     }
 
     override void write(ByteBuffer data){
-        if (closed)
+        if (closed) {
+            warningf("connection closed!");
             return;
+        }
 
         if (!data.hasRemaining())
             return;
 
-        HttpGenerator generator = getHttpGenerator();
+        // The browser may close the connection forcely before receiving all data of favicon.ico.
         Connection tcpSession = getSession();
+        if(!tcpSession.isConnected()) {
+            closed = true;
+            string msg = format("connection [id=%d] closed.", tcpSession.getId());
+            debug warningf(msg);
+            return;
+        }            
+
+        HttpGenerator generator = getHttpGenerator();
         HttpGenerator.Result generatorResult;
 
         if (!committed) {
