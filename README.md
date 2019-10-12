@@ -13,7 +13,7 @@ To support request tracing, you must add these packages to your project:
 
 ## TODO
 - [ ] Reorganize modules
-- [ ] Improving HttpClient
+- [ ] Improving HttpServer
 - [ ] More unit tests
 
 ## References
