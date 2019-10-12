@@ -14,7 +14,6 @@ import hunt.logging;
 import hunt.util.MimeType;
 
 import std.conv;
-import std.datetime;
 import std.json;
 import std.stdio;
 
@@ -53,7 +52,7 @@ void main(string[] args) {
 
                 HttpFields responsFields = response.getFields();
                 responsFields.put(HttpHeader.SERVER, "Hunt-HTTP/1.0");
-                responsFields.put(HttpHeader.DATE, DateTimeHelper.getTimeAsGMT());
+                responsFields.put(HttpHeader.DATE, DateTime.getTimeAsGMT());
                     
                 switch (path) {
                     case "/plaintext": {
@@ -81,7 +80,7 @@ void main(string[] args) {
 
                     default:
                         response.setStatus(HttpStatus.NOT_FOUND_404);
-                        outputStream.write("resource not found");
+                        outputStream.write("Resource not found: " ~ DateTime.getTimeAsGMT());
                         break;
                 }
                     

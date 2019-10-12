@@ -49,7 +49,7 @@ class CommonEncoder : EncoderChain {
                 //     throw new IllegalArgumentException("the encoder object type error: " ~ messageTypeInfo.toString());
                 // }
             }
-        } else if(connState == ConnectionState.Opened) {
+        } else if(connState == ConnectionState.Opened || connState == ConnectionState.Ready) {
             ByteBuffer messageBuffer = cast(ByteBuffer) message;
             if(messageBuffer !is null) {
                 session.write(messageBuffer); // , Callback.NOOP
