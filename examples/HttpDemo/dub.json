@@ -10,9 +10,6 @@
 	"versions": [
 		"HUNT_DEBUG", "HUNT_IO_DEBUG", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE"
 	],
-	"subConfigurations": {
-		"hunt-http" : "tls"
-	},
 	"configurations": [
 		{
 			"name": "client",
