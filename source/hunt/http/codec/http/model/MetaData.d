@@ -176,6 +176,8 @@ class HttpRequest : MetaData {
     private string _method;
     private HttpURI _uri;
     private Object attachment;
+    private List!(ByteBuffer) _requestBody; 
+    private string _stringBody;
 
     this(HttpFields fields) {
         this("", null, HttpVersion.Null, fields);
@@ -189,6 +191,8 @@ class HttpRequest : MetaData {
         super(ver, fields, contentLength);
         _method = method;
         _uri = uri;
+        
+        _requestBody = new ArrayList!(ByteBuffer)();
     }
 
     // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields) {
@@ -267,6 +271,24 @@ class HttpRequest : MetaData {
     void setAttachment(Object attachment) {
         this.attachment = attachment;
     }
+
+    string getStringBody(string charset) {
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-15T09:49:13+08:00
+        // 
+        if (_stringBody is null) {
+            Appender!string buffer;
+            foreach(ByteBuffer b; _requestBody) {
+                buffer.put(cast(string)b.array);
+            }
+            _stringBody = buffer.data; // BufferUtils.toString(_requestBody, charset);
+        } 
+        return _stringBody;
+    }
+
+    string getStringBody() {
+        return getStringBody("UTF-8");
+    }
+
 
     override string toString() {
         HttpFields fields = getFields();

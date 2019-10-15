@@ -12,8 +12,6 @@ import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 import hunt.logging;
 
-alias HttpRequestHandler = HttpParser.RequestHandler;
-alias ResponseHandler = HttpParser.ResponseHandler;
 
 /**
 */
@@ -24,7 +22,7 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
     protected HttpOptions config;
 
     this(HttpOptions config, Connection tcpSession,
-                                   HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
+                                   HttpRequestHandler requestHandler, HttpResponseHandler responseHandler) {
         version (HUNT_HTTP_DEBUG) trace("initializing Http1Connection");
         super(tcpSession, HttpVersion.HTTP_1_1);
         this.config = config;
@@ -37,6 +35,6 @@ abstract class AbstractHttp1Connection : AbstractHttpConnection {
     }
 
     protected HttpParser initHttpParser(HttpOptions config, HttpRequestHandler requestHandler,
-                                                 ResponseHandler responseHandler);
+                                                 HttpResponseHandler responseHandler);
 
 }

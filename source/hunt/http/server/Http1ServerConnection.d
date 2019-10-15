@@ -75,7 +75,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
     }
 
     override protected HttpParser initHttpParser(HttpOptions config,
-            RequestHandler requestHandler, ResponseHandler responseHandler) {
+            HttpRequestHandler requestHandler, HttpResponseHandler responseHandler) {
         return new HttpParser(requestHandler, config.getMaxRequestHeadLength());
     }
 

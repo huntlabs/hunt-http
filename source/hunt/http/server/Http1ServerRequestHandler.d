@@ -14,7 +14,7 @@ import hunt.text.Common;
 import hunt.logging;
 import std.string : icmp;
 
-alias RequestHandler = HttpParser.RequestHandler;
+// alias RequestHandler = HttpParser.RequestHandler;
 
 
 class HttpServerRequest : HttpRequest {
@@ -30,7 +30,7 @@ class HttpServerRequest : HttpRequest {
 
 /**
 */
-class Http1ServerRequestHandler : RequestHandler {
+class Http1ServerRequestHandler : HttpRequestHandler {
     package(hunt.http.server) HttpRequest request;
     package(hunt.http.server) HttpResponse response;
     package(hunt.http.server) Http1ServerConnection connection;

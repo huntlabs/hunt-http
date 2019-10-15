@@ -32,9 +32,9 @@ class HttpServerHandler : HttpConnectionHandler {
     private ServerHttpHandler serverHttpHandler;
     private WebSocketHandler webSocketHandler;
 
-    this(HttpOptions config, ServerSessionListener listener,
+    this(HttpOptions options, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
-        super(config);
+        super(options);
         this.listener = listener;
         this.serverHttpHandler = serverHttpHandler;
         this.webSocketHandler = webSocketHandler;

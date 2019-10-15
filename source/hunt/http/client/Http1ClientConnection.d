@@ -61,7 +61,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     }
 
     private this(HttpOptions config,
-            Connection tcpSession, ResponseHandler responseHandler) {
+            Connection tcpSession, HttpResponseHandler responseHandler) {
 
         super(config, tcpSession, null, responseHandler);
         wrap = cast(ResponseHandlerWrap) responseHandler;
@@ -69,7 +69,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
     }
 
     override protected HttpParser initHttpParser(HttpOptions config,
-            HttpRequestHandler requestHandler, ResponseHandler responseHandler) {
+            HttpRequestHandler requestHandler, HttpResponseHandler responseHandler) {
         return new HttpParser(responseHandler, config.getMaxRequestHeadLength());
     }
 
@@ -367,7 +367,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
 /**
 */
-private class ResponseHandlerWrap : ResponseHandler {
+private class ResponseHandlerWrap : HttpResponseHandler {
 
     private Http1ClientResponseHandler writing; // = new AtomicReference<)();
     private int status;

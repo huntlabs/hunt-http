@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 import std.conv;
 
 /**
@@ -32,7 +32,7 @@ class WebSocketHandler {
     }
 
     void onConnect(WebSocketConnection webSocketConnection) {
-
+        warning("do nothing");
     }
 
     WebSocketPolicy getWebSocketPolicy() {
@@ -61,4 +61,9 @@ class WebSocketHandler {
         errorf("The WebSocket error", t);
     }
 
+}
+
+
+class DefaultWebSocketHandler : WebSocketHandler {
+    
 }
