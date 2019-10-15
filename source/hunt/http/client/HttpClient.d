@@ -2,11 +2,10 @@ module hunt.http.client.HttpClient;
 
 import hunt.http.client.ClientHttp2SessionListener;
 import hunt.http.client.HttpClientConnection;
+import hunt.http.client.HttpClientHandler;
 import hunt.http.client.Http1ClientDecoder;
 import hunt.http.client.HttpClientContext;
 import hunt.http.client.Http2ClientDecoder;
-import hunt.http.client.Http2ClientHandler;
-import hunt.http.HttpOptions;
 import hunt.http.client.HttpClientOptions;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
@@ -17,6 +16,7 @@ import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 // import hunt.http.util.Completable;
+import hunt.http.HttpOptions;
 
 import hunt.Exceptions;
 import hunt.concurrency.Future;
@@ -113,7 +113,7 @@ class HttpClient : AbstractLifecycle {
             Decoder getDecoder() {
                 return decoder;
             }
-        }).setHandler(new Http2ClientHandler(httpConfiguration, clientContext));
+        }).setHandler(new HttpClientHandler(httpConfiguration, clientContext));
 
         client.setOnClosed(_onClosed);
 

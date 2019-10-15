@@ -8,7 +8,11 @@ import hunt.http.client.HttpClientContext;
 import hunt.http.codec.http.stream.Session;
 import hunt.concurrency.Promise;
 
+/**
+ * 
+ */
 class HttpClientContext {
+
     private Promise!(HttpClientConnection) promise;
     private ClientHttp2SessionListener listener;
 

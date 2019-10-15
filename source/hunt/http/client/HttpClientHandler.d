@@ -1,4 +1,4 @@
-module hunt.http.client.Http2ClientHandler;
+module hunt.http.client.HttpClientHandler;
 
 import hunt.http.client.HttpClientContext;
 import hunt.http.client.HttpClientConnection;
@@ -30,19 +30,19 @@ import std.array;
 
 /**
 */
-class Http2ClientHandler : HttpConnectionHandler {
+class HttpClientHandler : HttpConnectionHandler {
 
-    // private Map!(int, HttpClientContext) http2ClientContext;
-    private HttpClientContext http2ClientContext;
+    // private Map!(int, HttpClientContext) _httpClientContext;
+    private HttpClientContext _httpClientContext;
 
-    this(HttpOptions config, HttpClientContext http2ClientContext) {
+    this(HttpOptions config, HttpClientContext httpClientContext) {
         super(config);
-        this.http2ClientContext = http2ClientContext;
+        this._httpClientContext = httpClientContext;
     }
 
     override
     void connectionOpened(Connection connection) {
-        HttpClientContext context = http2ClientContext; //.get(connection.getId());
+        HttpClientContext context = _httpClientContext; //.get(connection.getId());
 
         if (context is null) {
             errorf("http2 client can not get the client context of connection %s", connection.getId());
@@ -131,7 +131,7 @@ class Http2ClientHandler : HttpConnectionHandler {
             warning(t);
             promise.failed(t);
         } finally {
-            // http2ClientContext.remove(connection.getId());
+            // _httpClientContext.remove(connection.getId());
         }
     }
 
@@ -144,7 +144,7 @@ class Http2ClientHandler : HttpConnectionHandler {
             // connection.initialize(config, cast(Promise!(Http2ClientConnection))context.getPromise(), context.getListener());
             conn.initialize(config, context.getPromise(), context.getListener());
         } finally {
-            // http2ClientContext.remove(connection.getId());
+            // _httpClientContext.remove(connection.getId());
         }
     }
 
@@ -153,14 +153,14 @@ class Http2ClientHandler : HttpConnectionHandler {
         try {
             super.connectionClosed(connection);
         } finally {
-            // http2ClientContext.remove(connection.getId());
+            // _httpClientContext.remove(connection.getId());
         }
     }
 
     override
     void failedOpeningConnection(int sessionId, Throwable t) {
 
-        auto c = http2ClientContext; //.remove(sessionId);
+        auto c = _httpClientContext; //.remove(sessionId);
         if(c !is null)
         {
             auto promise = c.getPromise();
@@ -168,7 +168,7 @@ class Http2ClientHandler : HttpConnectionHandler {
                 promise.failed(cast(Exception)t);
         }
         
-        // Optional.ofNullable(http2ClientContext.remove(sessionId))
+        // Optional.ofNullable(_httpClientContext.remove(sessionId))
         //         .map(HttpClientContext::getPromise)
         //         .ifPresent(promise => promise.failed(t));
     }
@@ -178,7 +178,7 @@ class Http2ClientHandler : HttpConnectionHandler {
         try {
             super.exceptionCaught(connection, t);
         } finally {
-            // http2ClientContext; //.remove(connection.getId());
+            // _httpClientContext; //.remove(connection.getId());
         }
     }
 
