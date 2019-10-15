@@ -69,8 +69,9 @@ class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
         }
         
 
-        ctx.setStatus(status).put(HttpHeader.CONTENT_TYPE, "text/html")
-           .write("<!DOCTYPE html>")
+        ctx.setStatus(status);
+        ctx.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, "text/html");
+        ctx.write("<!DOCTYPE html>")
            .write("<html>")
            .write("<head>")
            .write("<title>")

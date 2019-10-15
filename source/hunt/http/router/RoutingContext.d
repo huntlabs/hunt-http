@@ -9,6 +9,7 @@ import hunt.http.router.handler.DefaultErrorResponseHandler;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
+import hunt.logging.ConsoleLogger;
 import hunt.util.Common;
 
 import hunt.collection.ByteBuffer;
@@ -134,9 +135,13 @@ abstract class RoutingContext : Closeable {
     // }
 
     
-    void succeed(bool t) { implementationMissing(false); }
+    void succeed(bool t) { 
+        version(HUNT_HTTP_DEBUG) trace("do nothing");
+    }
 
-    void fail(Exception x) { implementationMissing(false); }
+    void fail(Exception x) { 
+        version(HUNT_DEBUG) warning(x);
+    }
 
 
     // request wrap
@@ -181,24 +186,28 @@ abstract class RoutingContext : Closeable {
         return this;
     }
 
-    RoutingContext put(HttpHeader header, string value) {
-        getFields().put(header, value);
-        return this;
-    }
+    // RoutingContext put(HttpHeader header, string value) {
+    //     getResponse().getFields().put(header, value);
+    //     return this;
+    // }
 
-    RoutingContext put(string header, string value) {
-        getFields().put(header, value);
-        return this;
-    }
+    // RoutingContext put(string header, string value) {
+    //     getResponse().getFields().put(header, value);
+    //     return this;
+    // }
 
-    RoutingContext add(HttpHeader header, string value) {
-        getFields().add(header, value);
-        return this;
-    }
+    // RoutingContext add(HttpHeader header, string value) {
+    //     getResponse().getFields().add(header, value);
+    //     return this;
+    // }
 
-    RoutingContext add(string name, string value) {
-        getFields().add(name, value);
-        return this;
+    // RoutingContext add(string name, string value) {
+    //     getResponse().getFields().add(name, value);
+    //     return this;
+    // }
+
+    HttpFields getResponseHeaders() {
+        return getResponse().getFields();
     }
 
     // RoutingContext addCookie(Cookie cookie) {
@@ -234,7 +243,8 @@ abstract class RoutingContext : Closeable {
     bool isCommitted();
 
     void redirect(string url) {
-        setStatus(HttpStatus.FOUND_302).put(HttpHeader.LOCATION, url);
+        setStatus(HttpStatus.FOUND_302);
+        getResponseHeaders().put(HttpHeader.LOCATION, url);
         DefaultErrorResponseHandler.Default().render(this, HttpStatus.FOUND_302, null);
     }
 

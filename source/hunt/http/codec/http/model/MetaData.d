@@ -272,6 +272,10 @@ class HttpRequest : MetaData {
         this.attachment = attachment;
     }
 
+    void addBody(ByteBuffer buffer) {
+        _requestBody.add(buffer);
+    }
+
     string getStringBody(string charset) {
         // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-15T09:49:13+08:00
         // 
