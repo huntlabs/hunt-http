@@ -137,7 +137,6 @@ class RouterManagerImpl : RouterManager {
             }
 
         }
-
     }
 
     override Router register() {

@@ -1,5 +1,6 @@
 module hunt.http.router.handler.HttpBodyOptions;
 
+import std.file;
 
 /**
  * 
@@ -9,9 +10,13 @@ class HttpBodyOptions {
     private int bodyBufferThreshold = 512 * 1024;
     private int maxRequestSize = 64 * 1024 * 1024;
     private int maxFileSize = 64 * 1024 * 1024;
-    private string tempFilePath = "./temp"; //System.getProperty("java.io.tmpdir");
+    private string tempFilePath = "./temp";
     private string charset = "UTF-8";
     // private MultipartConfigElement multipartConfigElement = new MultipartConfigElement(tempFilePath, maxFileSize, maxRequestSize, bodyBufferThreshold);
+
+    this() {
+        tempFilePath = tempDir();
+    }
 
     int getBodyBufferThreshold() {
         return bodyBufferThreshold;

@@ -1,6 +1,7 @@
 module hunt.http.router.handler.HttpBodyHandler;
 
 import hunt.http.router.handler.HttpBodyOptions;
+import hunt.http.router.HttpRequestBody;
 import hunt.http.router.RoutingHandler;
 import hunt.http.router.RoutingContext;
 import hunt.http.router.impl.RoutingContextImpl;
@@ -42,18 +43,17 @@ class HttpBodyHandler : IRoutingHandler {
     }
 
     override void handle(RoutingContext context) {
-        version(HUNT_HTTP_DEBUG) trace("handling: ", context.toString());
-
-        RoutingContextImpl ctx = cast(RoutingContextImpl) context;
+        // RoutingContextImpl ctx = cast(RoutingContextImpl) context;
+        RoutingContext ctx =  context;
         HttpRequest request = ctx.getRequest();
-        HttpBodyHandlerSPIImpl httpBodyHandlerSPI = new HttpBodyHandlerSPIImpl();
-        httpBodyHandlerSPI.urlEncodedMap = new UrlEncoded();
-        httpBodyHandlerSPI.charset = _options.getCharset();
-        ctx.setHttpBodyHandlerSPI(httpBodyHandlerSPI);
+        HttpRequestBodyImpl httpBody = new HttpRequestBodyImpl();
+        httpBody.urlEncodedMap = new UrlEncoded();
+        httpBody.charset = _options.getCharset();
+        ctx.setHttpBody(httpBody);
 
         string queryString = request.getURI().getQuery();
         if (!queryString.empty()) {
-            httpBodyHandlerSPI.urlEncodedMap.decode(queryString);
+            httpBody.urlEncodedMap.decode(queryString);
         }
 
         // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-15T09:50:01+08:00
@@ -64,8 +64,7 @@ class HttpBodyHandler : IRoutingHandler {
         }
 
         if (isChunked(request)) {
-            // httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(4 * 1024);
-            implementationMissing(false);
+            httpBody.pipedStream = new ByteArrayPipedStream(4 * 1024);
         } else {
             long contentLength = request.getContentLength();
             if (contentLength <= 0) { // no content
@@ -73,64 +72,63 @@ class HttpBodyHandler : IRoutingHandler {
                 return;
             } else {
                 if (contentLength > _options.getBodyBufferThreshold()) {
-                    // httpBodyHandlerSPI.pipedStream = new FilePipedStream(_options.getTempFilePath());
-                    implementationMissing(false);
+                    httpBody.pipedStream = new FilePipedStream(_options.getTempFilePath());
                 } else {
-                    httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(cast(int) contentLength);
+                    httpBody.pipedStream = new ByteArrayPipedStream(cast(int) contentLength);
                 }
             }
         }
 
-        // long chunkedEncodingContentLength;
-        // ctx.onContent( (ByteBuffer buf) {
-        //     version(HUNT_HTTP_DEBUG) {
-        //         tracef("http body handler received content size -> %s", buf.remaining());
-        //     }
+        long chunkedEncodingContentLength;
+        ctx.onContent( (ByteBuffer buf) {
+            version(HUNT_HTTP_DEBUG) {
+                tracef("http body handler received content size -> %s", buf.remaining());
+            }
 
-        //     try {
-        //         if (isChunked(request)) {
+            try {
+                if (isChunked(request)) {
 
-        //             implementationMissing(false);
-        //             // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > _options.getBodyBufferThreshold()
-        //             //         && httpBodyHandlerSPI.pipedStream instanceof ByteArrayPipedStream) {
-        //             //     // chunked encoding content dump to temp file
-        //             //     IOUtils.close(httpBodyHandlerSPI.pipedStream.getOutputStream());
-        //             //     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
-        //             //     IO.copy(httpBodyHandlerSPI.pipedStream.getInputStream(), filePipedStream.getOutputStream());
-        //             //     filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //             //     httpBodyHandlerSPI.pipedStream = filePipedStream;
-        //             // } else {
-        //             //     httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //             // }
-        //         } else {
-        //             httpBodyHandlerSPI.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-        //         }
-        //     } catch (IOException e) {
-        //         errorf("http server receives http body exception", e);
-        //     }
-        // }).onContentComplete( (HttpRequest req) {
-        //     try {
-        //         string contentType = MimeTypeUtils.getContentTypeMIMEType(request.getFields().get(HttpHeader.CONTENT_TYPE));
-        //         httpBodyHandlerSPI.pipedStream.getOutputStream().close();
+                    implementationMissing(false);
+                    // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > _options.getBodyBufferThreshold()
+                    //         && httpBody.pipedStream instanceof ByteArrayPipedStream) {
+                    //     // chunked encoding content dump to temp file
+                    //     IOUtils.close(httpBody.pipedStream.getOutputStream());
+                    //     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
+                    //     IO.copy(httpBody.pipedStream.getInputStream(), filePipedStream.getOutputStream());
+                    //     filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                    //     httpBody.pipedStream = filePipedStream;
+                    // } else {
+                    //     httpBody.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                    // }
+                } else {
+                    httpBody.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
+                }
+            } catch (IOException e) {
+                errorf("http server receives http body exception", e);
+            }
+        }).onContentComplete( (HttpRequest req) {
+            try {
+                string contentType = MimeTypeUtils.getContentTypeMIMEType(request.getFields().get(HttpHeader.CONTENT_TYPE));
+                httpBody.pipedStream.getOutputStream().close();
 
-        //         if ("application/x-www-form-urlencoded".equalsIgnoreCase(contentType)) {
-        //             implementationMissing(false);
-        //                 // InputStream inputStream = httpBodyHandlerSPI.pipedStream.getInputStream();
-        //                 // httpBodyHandlerSPI.urlEncodedMap.decode(IO.toString(inputStream, _options.getCharset()),
-        //                 //         Charset.forName(_options.getCharset()));
-        //         } else if ("multipart/form-data".equalsIgnoreCase(contentType)) {
+                if ("application/x-www-form-urlencoded".equalsIgnoreCase(contentType)) {
+                    implementationMissing(false);
+                        // InputStream inputStream = httpBody.pipedStream.getInputStream();
+                        // httpBody.urlEncodedMap.decode(IO.toString(inputStream, _options.getCharset()),
+                        //         Charset.forName(_options.getCharset()));
+                } else if ("multipart/form-data".equalsIgnoreCase(contentType)) {
 
-        //             implementationMissing(false);
-        //             // httpBodyHandlerSPI.multiPartFormInputStream = new MultiPartFormInputStream(
-        //             //         httpBodyHandlerSPI.getInputStream(),
-        //             //         request.getFields().get(HttpHeader.CONTENT_TYPE),
-        //             //         _options.getMultipartConfigElement(),
-        //             //         new File(_options.getTempFilePath()));
-        //         }
-        //     } catch (IOException e) {
-        //         errorf("http server ends receiving data exception", e);
-        //     }
-        // }).onMessageComplete((HttpRequest req) { ctx.next(); });
+                    implementationMissing(false);
+                    // httpBody.multiPartFormInputStream = new MultiPartFormInputStream(
+                    //         httpBody.getInputStream(),
+                    //         request.getFields().get(HttpHeader.CONTENT_TYPE),
+                    //         _options.getMultipartConfigElement(),
+                    //         new File(_options.getTempFilePath()));
+                }
+            } catch (IOException e) {
+                errorf("http server ends receiving data exception", e);
+            }
+        }).onMessageComplete((HttpRequest req) { ctx.next(); });
     }
 
     bool isChunked(HttpRequest request) {
@@ -141,48 +139,15 @@ class HttpBodyHandler : IRoutingHandler {
 }
 
 
-/**
- * 
- */
-interface HttpBodyHandlerSPI {
-
-    string getParameter(string name);
-
-    List!(string) getParameterValues(string name);
-
-    Map!(string, List!(string)) getParameterMap();
-
-    // Collection<Part> getParts();
-
-    // Part getPart(string name);
-
-    InputStream getInputStream();
-
-    // BufferedReader getBufferedReader();
-
-    string getStringBody(string charset);
-
-    string getStringBody();
-
-    // <T> T getJsonBody(Class<T> clazz);
-
-    // <T> T getJsonBody(GenericTypeReference<T> typeReference);
-
-    // JsonObject getJsonObjectBody();
-
-    // JsonArray getJsonArrayBody();
-
-}
-
 /*
  * 
  */
-class HttpBodyHandlerSPIImpl : HttpBodyHandlerSPI {
+class HttpRequestBodyImpl : HttpRequestBody {
 
-    PipedStream pipedStream;
+    private PipedStream pipedStream;
     // MultiPartFormInputStream multiPartFormInputStream;
-    UrlEncoded urlEncodedMap;
-    string charset;
+    private UrlEncoded urlEncodedMap;
+    private string charset;
     // private BufferedReader bufferedReader;
     private string stringBody;
 
@@ -272,9 +237,12 @@ class HttpBodyHandlerSPIImpl : HttpBodyHandlerSPI {
                 return null;
             } else {
                 try  {
-                    ByteArrayInputStream stream = cast(ByteArrayInputStream)inputStream;
                     // stringBody = IO.toString(inputStream, Charset.forName(charset));
-                    stringBody = cast(string)stream.getRawBuffer();
+                    int size = inputStream.available();
+                    warningf("available: %d", size);
+                    byte[] buffer = new byte[size];
+                    inputStream.read(buffer);
+                    stringBody = cast(string)buffer;
                     return stringBody;
                 } catch (IOException e) {
                     errorf("get string body exception", e);

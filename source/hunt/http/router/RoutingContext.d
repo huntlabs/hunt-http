@@ -1,6 +1,7 @@
 module hunt.http.router.RoutingContext;
 
 import hunt.http.router.HttpSession;
+import hunt.http.router.HttpRequestBody;
 
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -31,7 +32,6 @@ import std.conv;
  * 
  */
 abstract class RoutingContext : Closeable {
-    protected  bool asynchronousRead = false;
 
     // string getAttribute(string key) { implementationMissing(false); return null;}
 
@@ -41,19 +41,17 @@ abstract class RoutingContext : Closeable {
 
     // string[string] getAttributes() { implementationMissing(false); return null;}
 
-    HttpResponse getResponse() { implementationMissing(false); return null;}
+    HttpResponse getResponse();
 
     // HttpResponse getAsyncResponse() { implementationMissing(false); return null;}
 
-    HttpRequest getRequest() { implementationMissing(false); return null; }
+    HttpRequest getRequest();
 
     // HttpOutputStream getOutputStream();   
 
-    int getConnectionId() {
-        // return getRequest().getConnection().getSessionId();
-        implementationMissing(false);
-        return 0;
-    }
+    int getConnectionId();
+
+    void setHttpBody(HttpRequestBody requestBody);
 
     string getRouterParameter(string name);
 
@@ -79,7 +77,7 @@ abstract class RoutingContext : Closeable {
      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
      * @return RoutingContext
      */
-    // RoutingContext onContent(Action1!ByteBuffer content); // { implementationMissing(false); return null;}
+    RoutingContext onContent(Action1!ByteBuffer content); // { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP body packet complete callback.
@@ -87,7 +85,7 @@ abstract class RoutingContext : Closeable {
      * @param contentComplete The HTTP body packet complete callback.
      * @return RoutingContext
      */
-    // RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete); // { implementationMissing(false); return null;}
+    RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete); // { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP message complete callback.
@@ -95,14 +93,14 @@ abstract class RoutingContext : Closeable {
      * @param messageComplete the HTTP message complete callback.
      * @return RoutingContext
      */
-    // RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete); // { implementationMissing(false); return null;}
+    RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete); // { implementationMissing(false); return null;}
 
     /**
      * If return true, it represents you has set a HTTP body data receiving callback.
      *
      * @return If return true, it represents you has set a HTTP body data receiving callback
      */
-    bool isAsynchronousRead() { return asynchronousRead;}
+    bool isAsynchronousRead();
 
     /**
      * Execute the next handler.
@@ -267,9 +265,9 @@ abstract class RoutingContext : Closeable {
 
     // BufferedReader getBufferedReader();
 
-    string getStringBody(string charset) { implementationMissing(false); return null; }
+    string getStringBody(string charset); // { implementationMissing(false); return null; }
 
-    string getStringBody() { implementationMissing(false); return null; }
+    string getStringBody(); // { implementationMissing(false); return null; }
 
     // <T> T getJsonBody(Class<T> clazz);
 

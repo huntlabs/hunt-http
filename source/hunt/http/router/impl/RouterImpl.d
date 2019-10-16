@@ -33,7 +33,7 @@ class RouterImpl : Router {
     private RouterManagerImpl routerManager;
     private Set!(MatchType) matchTypes;
 
-    private Handler _handler;
+    private IRoutingHandler _handler;
     private RoutingHandler _routingHandler;
     private bool _isEnable = true;
     private List!(string) urlList; // = new ArrayList!(string)();
@@ -174,14 +174,14 @@ class RouterImpl : Router {
         return this;
     }
 
-    Router handler(Handler h) {
+    Router handler(IRoutingHandler h) {
         this._handler = h;
         return this;
     }
 
     Router handler(RoutingHandler h) {
         this._routingHandler = h;
-        this._handler = new class Handler {
+        this._handler = new class IRoutingHandler {
              void handle(RoutingContext ctx) { 
                  if(this.outer._routingHandler !is null) {
                      this.outer._routingHandler(ctx);
@@ -218,7 +218,7 @@ class RouterImpl : Router {
         return matchTypes;
     }
 
-    Handler getHandler() {
+    IRoutingHandler getHandler() {
         return _handler;
     }
 

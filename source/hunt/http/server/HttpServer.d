@@ -229,6 +229,9 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
+        /**
+         * register a new router
+         */
         Router newRouter() {
             return routerManager.register();
         }
@@ -304,21 +307,19 @@ class HttpServer : AbstractLifecycle {
             ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter();
 
             adapter.acceptHttpTunnelConnection((request, response, ot, connection) {
-                    info("do nothing");
-                    // HttpServerContext context = new HttpServerContext(request, response, ot, connection);
-                    // request.setAttachment(context);
-                    // SimpleRequest r = new SimpleRequest(request, response, ot, cast(HttpConnection)connection);
-                    // request.setAttachment(r);
+                    version(HUNT_HTTP_DEBUG) info("acceptHttpTunnelConnection!!!");
                     // if (tunnel !is null) {
                     //     tunnel(r, connection);
                     // }
                     return true;
                 })
                 .headerComplete((request, response, ot, connection) {
-
-                    info("headerComplete!!!!!");
-                    // SimpleRequest r = new SimpleRequest(request, response, ot, connection);
-                    // request.setAttachment(r);
+                    version(HUNT_HTTP_DEBUG) info("headerComplete!!!!!");
+                    
+                    HttpServerContext context = new HttpServerContext(request, response, 
+                        ot, cast(HttpServerConnection)connection);
+                    request.setAttachment(context);
+                    routerManager.accept(context);
                     // if (_headerComplete != null) {
                     //     _headerComplete(r);
                     // }
@@ -326,11 +327,11 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .content((buffer, request, response, ot, connection) {
-                    import hunt.collection.BufferUtils;
-                    warning(BufferUtils.toDetailString(buffer));
-
-                    string str = cast(string)buffer.getRemaining();
-                    info(str);
+                    version(HUNT_HTTP_DEBUG) {
+                        warning(BufferUtils.toDetailString(buffer));
+                        string str = cast(string)buffer.getRemaining();
+                        info(str);
+                    }
 
                     if(_canCopyBuffer) {
                         ByteBuffer newBuffer = BufferUtils.allocate(buffer.remaining());
@@ -338,56 +339,35 @@ class HttpServer : AbstractLifecycle {
                         buffer = newBuffer;
                     }
 
-                    request.addBody(buffer);
+                    request.onContent(buffer);
+
+                    // request.addBody(buffer);
                     return false;
                 })
                 .contentComplete((request, response, ot, connection)  {
-                    // SimpleRequest r = cast(SimpleRequest) request.getAttachment();
+                    version(HUNT_HTTP_DEBUG) info("contentComplete!!!!!");
+                    request.onContentComplete();
+                    // HttpServerContext context = cast(HttpServerContext) request.getAttachment();
+                    // context.onContentComplete();
                     // if (r.contentComplete !is null) {
                     //     r.contentComplete(r);
                     // }
-                    info("contentComplete!!!!!");
-                    HttpServerContext context = new HttpServerContext(request, response, 
-                        ot, cast(HttpServerConnection)connection);
-                    routerManager.accept(context);
                     return false;
                 })
                 .messageComplete((request, response, ot, connection)  {
-                    // SimpleRequest r = cast(SimpleRequest) request.getAttachment();
-                    // if (r.messageComplete != null) {
-                    //     r.messageComplete(r);
-                    // }
+                    request.onMessageComplete();
                     // if (!r.getResponse().isAsynchronous()) {
                     //     IOUtils.close(r.getResponse());
                     // }
-                    info("messageComplete!!!!!");
+                    version(HUNT_HTTP_DEBUG) info("messageComplete!!!!!");
                     return true;
                 })
                 .badMessage((status, reason, request, response, ot, connection)  {
-                    // if (_badMessage !is null) {
-                    //     if (request.getAttachment() !is null) {
-                    //         SimpleRequest r = cast(SimpleRequest) request.getAttachment();
-                    //         _badMessage(status, reason, r);
-                    //     } else {
-                    //         SimpleRequest r = new SimpleRequest(request, response, ot, connection);
-                    //         request.setAttachment(r);
-                    //         _badMessage(status, reason, r);
-                    //     }
-                    // }
+                    version(HUNT_HTTP_DEBUG) warning("badMessage: status=%d reason=%s", status, reason);
                 })
                 .earlyEOF((request, response, ot, connection)  {
                     
-                    info("earlyEOF!!!!!");
-                    // if (_earlyEof != null) {
-                    //     if (request.getAttachment() !is null) {
-                    //         SimpleRequest r = cast(SimpleRequest) request.getAttachment();
-                    //         _earlyEof(r);
-                    //     } else {
-                    //         SimpleRequest r = new SimpleRequest(request, response, ot, connection);
-                    //         request.setAttachment(r);
-                    //         _earlyEof(r);
-                    //     }
-                    // }
+                    version(HUNT_HTTP_DEBUG) info("earlyEOF!!!!!");
                 });
 
             return adapter;

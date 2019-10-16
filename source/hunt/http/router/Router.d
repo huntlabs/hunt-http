@@ -44,7 +44,7 @@ interface Router : Comparable!Router {
 
     Router produces(string accept);
 
-    Router handler(Handler handler);
+    Router handler(IRoutingHandler handler);
 
     Router handler(RoutingHandler handler);
 

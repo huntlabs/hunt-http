@@ -1,17 +1,20 @@
 module hunt.http.router.impl.RoutingContextImpl;
 
-import hunt.http.server.HttpServerContext;
-import hunt.http.router.handler;
 import hunt.http.router.impl.RouterImpl;
+
+import hunt.http.router.handler;
+import hunt.http.router.HttpSession;
+import hunt.http.router.HttpRequestBody;
 import hunt.http.router.RoutingHandler;
+import hunt.http.router.RouterManager;
+import hunt.http.router.RoutingContext;
 
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpOutputStream;
 // import hunt.http.server.HttpRequest;
 // import hunt.http.server.HttpResponse;
-import hunt.http.router.HttpSession;
-import hunt.http.router.RouterManager;
-import hunt.http.router.RoutingContext;
+
+import hunt.http.server.HttpServerContext;
 
 import hunt.collection;
 import hunt.util.Common;
@@ -29,10 +32,10 @@ class RoutingContextImpl : RoutingContext {
     private HttpRequest request;
     private NavigableSet!(RouterMatchResult) routers;
     private RouterMatchResult current;
-    private HttpBodyHandlerSPI httpBodyHandlerSPI;
+    private HttpRequestBody httpRequestBody;
     private HttpSessionHandlerSPI httpSessionHandlerSPI;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
-    private  bool asynchronousRead;
+    private  bool asynchronousRead = false;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
     private HttpServerContext _context;
 
@@ -83,31 +86,31 @@ class RoutingContextImpl : RoutingContext {
         return current.getParameters().get(name);
     }
 
-    // override
-    // RoutingContext onContent(Action1!ByteBuffer c) {
-    //     request.onContent(c);
-    //     asynchronousRead = true;
-    //     return this;
-    // }
+    override
+    RoutingContext onContent(Action1!ByteBuffer handler) {
+        getRequest().onContent(handler);
+        asynchronousRead = true;
+        return this;
+    }
 
-    // override
-    // RoutingContext onContentComplete(Action1!HttpRequest contentComplete) {
-    //     request.onContentComplete(contentComplete);
-    //     asynchronousRead = true;
-    //     return this;
-    // }
+    override
+    RoutingContext onContentComplete(Action1!HttpRequest handler) {
+        getRequest().onContentComplete(handler);
+        asynchronousRead = true;
+        return this;
+    }
 
-    // override
-    // RoutingContext onMessageComplete(Action1!HttpRequest messageComplete) {
-    //     request.onMessageComplete(messageComplete);
-    //     asynchronousRead = true;
-    //     return this;
-    // }
+    override
+    RoutingContext onMessageComplete(Action1!HttpRequest handler) {
+        getRequest().onMessageComplete(handler);
+        asynchronousRead = true;
+        return this;
+    }
 
-    // override
-    // bool isAsynchronousRead() {
-    //     return asynchronousRead;
-    // }
+    override
+    bool isAsynchronousRead() {
+        return asynchronousRead;
+    }
 
     override
     bool next() {
@@ -116,8 +119,8 @@ class RoutingContextImpl : RoutingContext {
             return false;
 
         RouterImpl r = cast(RouterImpl)current.getRouter();
-        Handler handler = r.getHandler();
-        version(HUNT_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
+        IRoutingHandler handler = r.getHandler();
+        version(HUNT_HTTP_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
         handler.handle(this);
         return true;
     }
@@ -163,112 +166,101 @@ class RoutingContextImpl : RoutingContext {
     //     return (ConcurrentLinkedDeque) handlerPromiseQueue;
     // }
 
+    override int getConnectionId() {
+        return _context.getConnectionId();
+    }
+
     void close() {
         _context.end();
     }
 
     override
     string getParameter(string name) {
-        // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(s -> s.getParameter(name))
-        //                .orElse(null);
-        if(httpBodyHandlerSPI is null) {
+        if(httpRequestBody is null) {
             return null;
         } else {
-            return httpBodyHandlerSPI.getParameter(name);
+            return httpRequestBody.getParameter(name);
         }
     }
 
     override
     List!string getParameterValues(string name) {
-        // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(s -> s.getParameterValues(name))
-        //                .orElse(Collections.emptyList());
-        if(httpBodyHandlerSPI is null)
-            return new EmptyList!string(); // Collections.emptyList!string();
+        if(httpRequestBody is null)
+            return new EmptyList!string();
         else
-            return httpBodyHandlerSPI.getParameterValues(name);
+            return httpRequestBody.getParameterValues(name);
     }
 
     override
     Map!(string, List!string) getParameterMap() {
-        // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(HttpBodyHandlerSPI::getParameterMap)
-        //                .orElse(Collections.emptyMap());
-        if(httpBodyHandlerSPI is null)
+        if(httpRequestBody is null)
             return null;
         else
-            return httpBodyHandlerSPI.getParameterMap();
+            return httpRequestBody.getParameterMap();
     }
 
     // override
     // Collection!Part getParts() {
-    //     // return Optional.ofNullable(httpBodyHandlerSPI)
-    //     //                .map(HttpBodyHandlerSPI::getParts)
+    //     // return Optional.ofNullable(httpRequestBody)
+    //     //                .map(HttpRequestBody::getParts)
     //     //                .orElse(Collections.emptyList());
-    //     if(httpBodyHandlerSPI is null)
+    //     if(httpRequestBody is null)
     //         return null;
     //     else
-    //         return httpBodyHandlerSPI.getParts();
+    //         return httpRequestBody.getParts();
     // }
 
     // override
     // Part getPart(string name) {
-    //     // return Optional.ofNullable(httpBodyHandlerSPI)
+    //     // return Optional.ofNullable(httpRequestBody)
     //     //                .map(s -> s.getPart(name))
     //     //                .orElse(null);
-    //     if(httpBodyHandlerSPI is null)
+    //     if(httpRequestBody is null)
     //         return null;
     //     else
-    //         return httpBodyHandlerSPI.getPart(name);
+    //         return httpRequestBody.getPart(name);
     // }
 
     // override
     // InputStream getInputStream() {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HttpBodyHandlerSPI::getInputStream)
+    //     return Optional.ofNullable(httpRequestBody)
+    //                    .map(HttpRequestBody::getInputStream)
     //                    .orElse(null);
     // }
 
     // override
     // BufferedReader getBufferedReader() {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HttpBodyHandlerSPI::getBufferedReader)
+    //     return Optional.ofNullable(httpRequestBody)
+    //                    .map(HttpRequestBody::getBufferedReader)
     //                    .orElse(null);
     // }
 
     override
     string getStringBody(string charset) {
-        // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(s -> s.getStringBody(charset))
-        //                .orElseGet(() -> request.getStringBody(charset));
-        if(httpBodyHandlerSPI is null)
+        if(httpRequestBody is null)
             return request.getStringBody(charset);
         else
-            return httpBodyHandlerSPI.getStringBody(charset);
+            return httpRequestBody.getStringBody(charset);
     }
 
     override
     string getStringBody() {
-        // return Optional.ofNullable(httpBodyHandlerSPI)
-        //                .map(HttpBodyHandlerSPI::getStringBody)
-        //                .orElseGet(request::getStringBody);
-        if(httpBodyHandlerSPI is null)
+        if(httpRequestBody is null)
             return request.getStringBody();
         else
-            return httpBodyHandlerSPI.getStringBody();
+            return httpRequestBody.getStringBody();
     }
 
     // override
     // <T> T getJsonBody(Class<T> clazz) {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
+    //     return Optional.ofNullable(httpRequestBody)
     //                    .map(s -> s.getJsonBody(clazz))
     //                    .orElseGet(() -> request.getJsonBody(clazz));
     // }
 
     // override
     // <T> T getJsonBody(GenericTypeReference<T> typeReference) {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
+    //     return Optional.ofNullable(httpRequestBody)
     //                    .map(s -> s.getJsonBody(typeReference))
     //                    .orElseGet(() -> request.getJsonBody(typeReference));
 
@@ -276,20 +268,20 @@ class RoutingContextImpl : RoutingContext {
 
     // override
     // JsonObject getJsonObjectBody() {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HttpBodyHandlerSPI::getJsonObjectBody)
+    //     return Optional.ofNullable(httpRequestBody)
+    //                    .map(HttpRequestBody::getJsonObjectBody)
     //                    .orElseGet(request::getJsonObjectBody);
     // }
 
     // override
     // JsonArray getJsonArrayBody() {
-    //     return Optional.ofNullable(httpBodyHandlerSPI)
-    //                    .map(HttpBodyHandlerSPI::getJsonArrayBody)
+    //     return Optional.ofNullable(httpRequestBody)
+    //                    .map(HttpRequestBody::getJsonArrayBody)
     //                    .orElseGet(request::getJsonArrayBody);
     // }
     
-    void setHttpBodyHandlerSPI(HttpBodyHandlerSPI httpBodyHandlerSPI) {
-        this.httpBodyHandlerSPI = httpBodyHandlerSPI;
+    override void setHttpBody(HttpRequestBody requestBody) {
+        this.httpRequestBody = requestBody;
     }
 
     // override

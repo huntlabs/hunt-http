@@ -36,6 +36,8 @@ class AbstractServerHttpHandler : AbstractHttpHandler, ServerHttpHandler {
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _accept100Continue;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpServerConnection, bool) _acceptHttpTunnelConnection;
 
+    // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-16T11:46:06+08:00
+    // refactor to use HttpServerContext 
     AbstractServerHttpHandler headerComplete(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) h) {
         this._headerComplete = h;

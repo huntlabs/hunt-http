@@ -4,6 +4,7 @@ import hunt.http.router.RoutingContext;
 
 alias RoutingHandler =  void delegate(RoutingContext routingContext);
 
+deprecated("Using IRoutingHandler instead.")
 alias Handler = IRoutingHandler;
 
 /**

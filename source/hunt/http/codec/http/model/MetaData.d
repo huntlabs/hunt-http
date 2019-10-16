@@ -177,7 +177,11 @@ class HttpRequest : MetaData {
     private HttpURI _uri;
     private Object attachment;
     private List!(ByteBuffer) _requestBody; 
-    private string _stringBody;
+    private string _stringBody; 
+
+    private Action1!ByteBuffer _contentHandler;
+    private Action1!HttpRequest _contentCompleteHandler;
+    private Action1!HttpRequest _messageCompleteHandler;    
 
     this(HttpFields fields) {
         this("", null, HttpVersion.Null, fields);
@@ -272,9 +276,9 @@ class HttpRequest : MetaData {
         this.attachment = attachment;
     }
 
-    void addBody(ByteBuffer buffer) {
-        _requestBody.add(buffer);
-    }
+    // void addBody(ByteBuffer buffer) {
+    //     _requestBody.add(buffer);
+    // }
 
     string getStringBody(string charset) {
         // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-15T09:49:13+08:00
@@ -293,12 +297,44 @@ class HttpRequest : MetaData {
         return getStringBody("UTF-8");
     }
 
-
     override string toString() {
         HttpFields fields = getFields();
         return format("%s{u=%s,%s,h=%d,cl=%d}",
                 getMethod(), getURI(), getHttpVersion(), fields is null ? -1 : fields.size(), getContentLength());
     }
+
+    void onContent(ByteBuffer buffer) {
+        if(_contentHandler is null) {
+            _requestBody.add(buffer);
+        } else {
+            _contentHandler(buffer);
+        }
+    }
+
+    void onContentComplete() {
+        if(_contentCompleteHandler !is null)
+            _contentCompleteHandler(this);
+    }
+
+    void onMessageComplete() {
+        if(_messageCompleteHandler !is null)
+            _messageCompleteHandler(this);
+    }
+
+    HttpRequest onContent(Action1!ByteBuffer handler) {
+        _contentHandler = handler;
+        return this;
+    }
+
+    HttpRequest onContentComplete(Action1!HttpRequest handler) {
+        _contentCompleteHandler = handler;
+        return this;
+    }
+
+    HttpRequest onMessageComplete(Action1!HttpRequest handler) {
+        _messageCompleteHandler = handler;
+        return this;
+    }    
 }
 
 /**
