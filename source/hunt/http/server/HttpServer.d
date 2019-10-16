@@ -13,6 +13,7 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
+import hunt.http.codec.http.model.HttpMethod;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.http.router;
@@ -28,6 +29,7 @@ import hunt.util.Lifecycle;
 
 import core.time;
 import std.array;
+import std.algorithm;
 
 
 /**
@@ -191,7 +193,8 @@ class HttpServer : AbstractLifecycle {
     static final class Builder {
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
-        private Router currentRouter;        
+        private Router currentRouter;
+        private bool _canCopyBuffer = false;        
 
         this() {
             _httpOptions = new HttpServerOptions();
@@ -216,14 +219,67 @@ class HttpServer : AbstractLifecycle {
         /**
          * set default route handler
          */
+        Builder enableBufferCopy(bool flag) {
+            _canCopyBuffer = flag;
+            return this;
+        }
+
         Builder setHandler(RoutingHandler handler) {
             addRoute("*", handler);
             return this;
         }
-        
+
+        Router newRouter() {
+            return routerManager.register();
+        }
+
         Builder addRoute(string path, RoutingHandler handler) {
+            return addRoute([path], cast(string[])null, handler);
+        }
+
+        Builder addRoute(string path, HttpMethod method, RoutingHandler handler) {
+            return addRoute([path], [method], handler);
+        }
+        
+        Builder addRoute(string path, HttpMethod[] methods, RoutingHandler handler) {
+            string[] ms = map!((m) => m.asString())(methods).array;
+            return addRoute([path], ms, handler);
+        }
+
+        Builder addRoute(string path, string[] methods, RoutingHandler handler) {
+            return addRoute([path], methods, handler);
+        }
+
+        Builder addRoute(string[] paths, HttpMethod[] methods, RoutingHandler handler) {
+            string[] ms = map!((m) => m.asString())(methods).array;
+            return addRoute(paths, ms, handler);
+        }
+
+        Builder addRoute(string[] paths, string[] methods, RoutingHandler handler) {
             currentRouter = routerManager.register();
-            currentRouter.path(path);
+            currentRouter.paths(paths);
+            foreach(string m; methods) {
+                currentRouter.method(m);
+            }
+            currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            return this;
+        }
+        
+        Builder addRegexRoute(string regex, RoutingHandler handler) {
+            return addRegexRoute(regex, cast(string[])null, handler);
+        }
+
+        Builder addRegexRoute(string regex, HttpMethod[] methods, RoutingHandler handler) {
+            string[] ms = map!((m) => m.asString())(methods).array;
+            return addRegexRoute(regex, ms, handler);
+        }
+
+        Builder addRegexRoute(string regex, string[] methods, RoutingHandler handler) {
+            currentRouter = routerManager.register();
+            currentRouter.pathRegex(regex);
+            foreach(string m; methods) {
+                currentRouter.method(m);
+            }
             currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
             return this;
         }
@@ -232,7 +288,7 @@ class HttpServer : AbstractLifecycle {
         //     return this;
         // }
 
-        protected void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
+        private void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
             try {
                 // currentCtx = ctx;
                 if(handler !is null) handler(ctx);
@@ -271,13 +327,17 @@ class HttpServer : AbstractLifecycle {
                 })
                 .content((buffer, request, response, ot, connection) {
                     import hunt.collection.BufferUtils;
-                    trace(BufferUtils.toDetailString(buffer));
-                    // SimpleRequest r = cast(SimpleRequest) request.getAttachment();
-                    // if (r.content !is null) {
-                    //     r.content(buffer);
-                    // } else {
-                    //     r.requestBody.add(buffer);
-                    // }
+                    warning(BufferUtils.toDetailString(buffer));
+
+                    string str = cast(string)buffer.getRemaining();
+                    info(str);
+
+                    if(_canCopyBuffer) {
+                        ByteBuffer newBuffer = BufferUtils.allocate(buffer.remaining());
+                        newBuffer.put(buffer).flip();
+                        buffer = newBuffer;
+                    }
+
                     request.addBody(buffer);
                     return false;
                 })
