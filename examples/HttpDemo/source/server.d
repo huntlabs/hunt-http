@@ -29,6 +29,17 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args) {
 
+    HttpServer server = buildServerWithoutDefaultRoute();
+    
+    if(server.isTLS())
+	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
+    else 
+	    writefln("listening on http://%s:%d", server.getHost, server.getPort);
+
+    server.start();
+}
+
+HttpServer buildSimpleServer() {
     HttpServer server = HttpServer.builder()
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
@@ -38,12 +49,52 @@ void main(string[] args) {
             context.write("<br>Hello World!<br>");
             context.end();
         })
-        .build();
-    
-    if(server.isTLS())
-	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
-    else 
-	    writefln("listening on http://%s:%d", server.getHost, server.getPort);
+        .build();  
+    return server; 
+}
 
-    server.start();
+HttpServer buildServerWithMultiRoutes() {
+
+    HttpServer server = HttpServer.builder()
+        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        .setListener(8080, "0.0.0.0")
+        .addRoute("/plain*", (RoutingContext context) {
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Hello World! " ~ DateTime.getTimeAsGMT());
+        })
+        .addRoute("/testpost", HttpMethod.POST, (RoutingContext context) {
+            HttpRequest request = context.getRequest();
+            string content = request.getStringBody();
+            warning(content);
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Post: " ~ content ~ ", " ~ DateTime.getTimeAsGMT());
+        })
+        .setHandler((RoutingContext context) {
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.write(DateTime.getTimeAsGMT());
+            context.write("<br>Hello World!<br>");
+            context.end();
+        })
+        .build();
+    return server;    
+}
+
+
+HttpServer buildServerWithoutDefaultRoute() {
+
+    HttpServer server = HttpServer.builder()
+        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        .setListener(8080, "0.0.0.0")
+        .addRoute("/plain*", (RoutingContext context) {
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Hello World! " ~ DateTime.getTimeAsGMT());
+        })
+        .addRoute("/testpost", HttpMethod.POST, (RoutingContext context) {
+            HttpRequest request = context.getRequest();
+            string content = context.getStringBody();
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Post: " ~ content ~ ", " ~ DateTime.getTimeAsGMT());
+        })
+        .build();
+    return server;    
 }
