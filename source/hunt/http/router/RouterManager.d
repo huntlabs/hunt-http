@@ -2,11 +2,12 @@ module hunt.http.router.RouterManager;
 
 import hunt.http.router.Matcher;
 import hunt.http.router.Router;
-
 import hunt.http.router.RequestAcceptor;
 
-import hunt.http.router.handler.HttpBodyHandler;
 import hunt.http.router.handler.DefaultErrorResponseHandler;
+import hunt.http.router.handler.HttpBodyHandler;
+import hunt.http.router.handler.HttpBodyOptions;
+
 import hunt.http.router.impl.RouterManagerImpl;
 
 import hunt.collection;
@@ -80,10 +81,10 @@ interface RouterManager : RequestAcceptor {
     NavigableSet!(RouterMatchResult) findRouter(string method, string path, string contentType, string accept);
 
     static RouterManager create() {
-        return create(new HttpBodyConfiguration());
+        return create(new HttpBodyOptions());
     }
 
-    static RouterManager create(HttpBodyConfiguration configuration) {
+    static RouterManager create(HttpBodyOptions configuration) {
         RouterManagerImpl routerManager = new RouterManagerImpl();
         routerManager.register().path("*").handler(new HttpBodyHandler(configuration));
         routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*").

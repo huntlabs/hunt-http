@@ -1,20 +1,18 @@
 module hunt.http.router.handler.HttpBodyHandler;
 
+import hunt.http.router.handler.HttpBodyOptions;
 import hunt.http.router.RoutingHandler;
-
-import hunt.http.codec.http.model;
-// import hunt.http.server.HttpRequest;
 import hunt.http.router.RoutingContext;
 import hunt.http.router.impl.RoutingContextImpl;
 // import hunt.http.utils.io.ByteArrayPipedStream;
 // import hunt.http.utils.io.FilePipedStream;
-
-import hunt.net.util.UrlEncoded;
+import hunt.http.codec.http.model;
 
 import hunt.collection;
 import hunt.io;
 import hunt.Exceptions;
 import hunt.logging;
+import hunt.net.util.UrlEncoded;
 import hunt.text;
 import hunt.util.MimeTypeUtils;
 
@@ -25,32 +23,32 @@ import std.array;
  */
 class HttpBodyHandler : IRoutingHandler {
 
-    private HttpBodyConfiguration configuration;
+    private HttpBodyOptions _options;
 
     this() {
-        this(new HttpBodyConfiguration());
+        this(new HttpBodyOptions());
     }
 
-    this(HttpBodyConfiguration configuration) {
-        this.configuration = configuration;
+    this(HttpBodyOptions options) {
+        this._options = options;
     }
 
-    HttpBodyConfiguration getConfiguration() {
-        return configuration;
+    HttpBodyOptions getConfiguration() {
+        return _options;
     }
 
-    void setConfiguration(HttpBodyConfiguration configuration) {
-        this.configuration = configuration;
+    void setConfiguration(HttpBodyOptions options) {
+        this._options = options;
     }
 
     override void handle(RoutingContext context) {
-        version(HUNT_DEBUG) trace("handling: ", context.toString());
+        version(HUNT_HTTP_DEBUG) trace("handling: ", context.toString());
 
         RoutingContextImpl ctx = cast(RoutingContextImpl) context;
         HttpRequest request = ctx.getRequest();
         HttpBodyHandlerSPIImpl httpBodyHandlerSPI = new HttpBodyHandlerSPIImpl();
         httpBodyHandlerSPI.urlEncodedMap = new UrlEncoded();
-        httpBodyHandlerSPI.charset = configuration.getCharset();
+        httpBodyHandlerSPI.charset = _options.getCharset();
         ctx.setHttpBodyHandlerSPI(httpBodyHandlerSPI);
 
         string queryString = request.getURI().getQuery();
@@ -74,8 +72,8 @@ class HttpBodyHandler : IRoutingHandler {
                 ctx.next();
                 return;
             } else {
-                if (contentLength > configuration.getBodyBufferThreshold()) {
-                    // httpBodyHandlerSPI.pipedStream = new FilePipedStream(configuration.getTempFilePath());
+                if (contentLength > _options.getBodyBufferThreshold()) {
+                    // httpBodyHandlerSPI.pipedStream = new FilePipedStream(_options.getTempFilePath());
                     implementationMissing(false);
                 } else {
                     httpBodyHandlerSPI.pipedStream = new ByteArrayPipedStream(cast(int) contentLength);
@@ -85,7 +83,7 @@ class HttpBodyHandler : IRoutingHandler {
 
         // long chunkedEncodingContentLength;
         // ctx.onContent( (ByteBuffer buf) {
-        //     version(HUNT_DEBUG) {
+        //     version(HUNT_HTTP_DEBUG) {
         //         tracef("http body handler received content size -> %s", buf.remaining());
         //     }
 
@@ -93,11 +91,11 @@ class HttpBodyHandler : IRoutingHandler {
         //         if (isChunked(request)) {
 
         //             implementationMissing(false);
-        //             // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > configuration.getBodyBufferThreshold()
+        //             // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > _options.getBodyBufferThreshold()
         //             //         && httpBodyHandlerSPI.pipedStream instanceof ByteArrayPipedStream) {
         //             //     // chunked encoding content dump to temp file
         //             //     IOUtils.close(httpBodyHandlerSPI.pipedStream.getOutputStream());
-        //             //     FilePipedStream filePipedStream = new FilePipedStream(configuration.getTempFilePath());
+        //             //     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
         //             //     IO.copy(httpBodyHandlerSPI.pipedStream.getInputStream(), filePipedStream.getOutputStream());
         //             //     filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
         //             //     httpBodyHandlerSPI.pipedStream = filePipedStream;
@@ -118,16 +116,16 @@ class HttpBodyHandler : IRoutingHandler {
         //         if ("application/x-www-form-urlencoded".equalsIgnoreCase(contentType)) {
         //             implementationMissing(false);
         //                 // InputStream inputStream = httpBodyHandlerSPI.pipedStream.getInputStream();
-        //                 // httpBodyHandlerSPI.urlEncodedMap.decode(IO.toString(inputStream, configuration.getCharset()),
-        //                 //         Charset.forName(configuration.getCharset()));
+        //                 // httpBodyHandlerSPI.urlEncodedMap.decode(IO.toString(inputStream, _options.getCharset()),
+        //                 //         Charset.forName(_options.getCharset()));
         //         } else if ("multipart/form-data".equalsIgnoreCase(contentType)) {
 
         //             implementationMissing(false);
         //             // httpBodyHandlerSPI.multiPartFormInputStream = new MultiPartFormInputStream(
         //             //         httpBodyHandlerSPI.getInputStream(),
         //             //         request.getFields().get(HttpHeader.CONTENT_TYPE),
-        //             //         configuration.getMultipartConfigElement(),
-        //             //         new File(configuration.getTempFilePath()));
+        //             //         _options.getMultipartConfigElement(),
+        //             //         new File(_options.getTempFilePath()));
         //         }
         //     } catch (IOException e) {
         //         errorf("http server ends receiving data exception", e);
@@ -311,57 +309,4 @@ class HttpBodyHandlerSPIImpl : HttpBodyHandlerSPI {
     //     return Json.toJsonArray(getStringBody());
     // }
 
-}
-
-/**
- * 
- */
-class HttpBodyConfiguration {
-
-    private int bodyBufferThreshold = 512 * 1024;
-    private int maxRequestSize = 64 * 1024 * 1024;
-    private int maxFileSize = 64 * 1024 * 1024;
-    private string tempFilePath = "./temp"; //System.getProperty("java.io.tmpdir");
-    private string charset = "UTF-8";
-    // private MultipartConfigElement multipartConfigElement = new MultipartConfigElement(tempFilePath, maxFileSize, maxRequestSize, bodyBufferThreshold);
-
-    int getBodyBufferThreshold() {
-        return bodyBufferThreshold;
-    }
-
-    void setBodyBufferThreshold(int bodyBufferThreshold) {
-        this.bodyBufferThreshold = bodyBufferThreshold;
-    }
-
-    int getMaxRequestSize() {
-        return maxRequestSize;
-    }
-
-    void setMaxRequestSize(int maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
-    }
-
-    string getTempFilePath() {
-        return tempFilePath;
-    }
-
-    void setTempFilePath(string tempFilePath) {
-        this.tempFilePath = tempFilePath;
-    }
-
-    string getCharset() {
-        return charset;
-    }
-
-    void setCharset(string charset) {
-        this.charset = charset;
-    }
-
-    // MultipartConfigElement getMultipartConfigElement() {
-    //     return multipartConfigElement;
-    // }
-
-    // void setMultipartConfigElement(MultipartConfigElement multipartConfigElement) {
-    //     this.multipartConfigElement = multipartConfigElement;
-    // }
 }
