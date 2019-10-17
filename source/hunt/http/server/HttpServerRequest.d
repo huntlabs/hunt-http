@@ -130,7 +130,7 @@ class HttpServerRequest : HttpRequest {
             } else {
                 try  {
                     int size = inputStream.available();
-                    version(HUNT_HTTP_DEBUG) warningf("available: %d", size);
+                    version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
                     byte[] buffer = new byte[size];
                     inputStream.read(buffer);
                     _stringBody = cast(string)buffer;
