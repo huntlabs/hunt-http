@@ -21,7 +21,7 @@ public import hunt.net.util.HttpURI;
 public import hunt.http.HttpVersion;
 public import hunt.http.codec.http.model.MetaData;
 public import hunt.http.codec.http.model.MultiPartContentProvider;
-public import hunt.http.codec.http.model.MultipartConfig;
+public import hunt.http.codec.http.model.MultipartOptions;
 public import hunt.http.codec.http.model.MultipartFormInputStream;
 public import hunt.http.codec.http.model.MultipartParser;
 public import hunt.http.codec.http.model.Protocol;

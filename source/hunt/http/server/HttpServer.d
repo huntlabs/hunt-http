@@ -1,5 +1,6 @@
 module hunt.http.server.HttpServer;
 
+import hunt.http.server.GlobalSettings;
 import hunt.http.server.Http1ServerDecoder;
 import hunt.http.server.Http2ServerDecoder;
 import hunt.http.server.Http2ServerRequestHandler;
@@ -190,6 +191,10 @@ class HttpServer : AbstractLifecycle {
         return new Builder();
     }
 
+    static Builder builder(HttpServerOptions serverOptions) {
+        return new Builder(serverOptions);
+    }
+
     static final class Builder {
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
@@ -197,8 +202,15 @@ class HttpServer : AbstractLifecycle {
         private bool _canCopyBuffer = false;        
 
         this() {
-            _httpOptions = new HttpServerOptions();
+            this(new HttpServerOptions());
+        }
+
+        this(HttpServerOptions options) {
+            _httpOptions = options;
             routerManager = RouterManager.create();
+            
+            // set the server options as a global variable
+            GlobalSettings.httpServerOptions = _httpOptions;
         }
 
         Builder setListener(int port, string host) {
@@ -327,11 +339,9 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .content((buffer, request, response, ot, connection) {
-                    version(HUNT_HTTP_DEBUG) {
-                        warning(BufferUtils.toDetailString(buffer));
-                        string str = cast(string)buffer.getRemaining();
-                        info(str);
-                    }
+                    // version(HUNT_HTTP_DEBUG) {
+                    //     warning(BufferUtils.toDetailString(buffer));
+                    // }
 
                     if(_canCopyBuffer) {
                         ByteBuffer newBuffer = BufferUtils.allocate(buffer.remaining());
@@ -340,8 +350,6 @@ class HttpServer : AbstractLifecycle {
                     }
 
                     request.onContent(buffer);
-
-                    // request.addBody(buffer);
                     return false;
                 })
                 .contentComplete((request, response, ot, connection)  {

@@ -1,18 +1,20 @@
-module hunt.http.router.handler.HttpBodyOptions;
+module hunt.http.server.HttpRequestOptions;
+
+import hunt.http.codec.http.model.MultipartOptions;
 
 import std.file;
 
 /**
  * 
  */
-class HttpBodyOptions {
+class HttpRequestOptions {
 
     private int bodyBufferThreshold = 512 * 1024;
     private int maxRequestSize = 64 * 1024 * 1024;
     private int maxFileSize = 64 * 1024 * 1024;
     private string tempFilePath = "./temp";
     private string charset = "UTF-8";
-    // private MultipartConfigElement multipartConfigElement = new MultipartConfigElement(tempFilePath, maxFileSize, maxRequestSize, bodyBufferThreshold);
+    private MultipartOptions _multipartOptions;
 
     this() {
         tempFilePath = tempDir();
@@ -50,11 +52,14 @@ class HttpBodyOptions {
         this.charset = charset;
     }
 
-    // MultipartConfigElement getMultipartConfigElement() {
-    //     return multipartConfigElement;
-    // }
+    MultipartOptions getMultipartOptions() {
+        if(_multipartOptions is null) {
+            _multipartOptions = new MultipartOptions(tempFilePath, maxFileSize, maxRequestSize, bodyBufferThreshold); 
+        }
+        return _multipartOptions;
+    }
 
-    // void setMultipartConfigElement(MultipartConfigElement multipartConfigElement) {
-    //     this.multipartConfigElement = multipartConfigElement;
-    // }
+    void setMultipartConfig(MultipartOptions options) {
+        this._multipartOptions = options;
+    }
 }

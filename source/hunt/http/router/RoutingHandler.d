@@ -11,5 +11,5 @@ alias Handler = IRoutingHandler;
  * 
  */
 interface IRoutingHandler {
-    void handle(RoutingContext routingContext);
+    void handle(RoutingContext context);
 }

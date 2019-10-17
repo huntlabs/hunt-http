@@ -11,9 +11,10 @@ import hunt.http.router.Router;
 import hunt.http.router.impl.RouterManagerImpl;
 
 import hunt.collection;
-import hunt.util.Comparator;
+import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 import hunt.text;
+import hunt.util.Comparator;
 
 import std.algorithm;
 import std.array;
@@ -33,7 +34,7 @@ class RouterImpl : Router {
     private RouterManagerImpl routerManager;
     private Set!(MatchType) matchTypes;
 
-    private IRoutingHandler _handler;
+    // private IRoutingHandler _handler;
     private RoutingHandler _routingHandler;
     private bool _isEnable = true;
     private List!(string) urlList; // = new ArrayList!(string)();
@@ -174,21 +175,32 @@ class RouterImpl : Router {
         return this;
     }
 
-    Router handler(IRoutingHandler h) {
-        this._handler = h;
+    Router handler(IRoutingHandler handler) {
+        this._routingHandler = (RoutingContext ctx) {
+            if(handler !is null)  {
+                version(HUNT_HTTP_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
+                handler.handle(ctx); 
+            }
+        };
         return this;
     }
 
     Router handler(RoutingHandler h) {
         this._routingHandler = h;
-        this._handler = new class IRoutingHandler {
-             void handle(RoutingContext ctx) { 
-                 if(this.outer._routingHandler !is null) {
-                     this.outer._routingHandler(ctx);
-                 }
-              }
-        };
+        // this._handler = new class IRoutingHandler {
+        //      void handle(RoutingContext ctx) { 
+        //          if(this.outer._routingHandler !is null) {
+        //              this.outer._routingHandler(ctx);
+        //          }
+        //       }
+        // };
         return this;
+    }
+
+    void handle(RoutingContext context) {
+        if(_routingHandler !is null) {
+            _routingHandler(context);
+        }
     }
 
     override
@@ -218,9 +230,9 @@ class RouterImpl : Router {
         return matchTypes;
     }
 
-    IRoutingHandler getHandler() {
-        return _handler;
-    }
+    // IRoutingHandler getHandler() {
+    //     return _handler;
+    // }
 
     int opCmp(Router o)
     {

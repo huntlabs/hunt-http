@@ -1,7 +1,7 @@
 module hunt.http.router.RoutingContext;
 
 import hunt.http.router.HttpSession;
-import hunt.http.router.HttpRequestBody;
+import hunt.http.router.HttpServerRequest;
 
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -51,7 +51,7 @@ abstract class RoutingContext : Closeable {
 
     int getConnectionId();
 
-    void setHttpBody(HttpRequestBody requestBody);
+    // void setHttpBody(HttpServerRequest requestBody);
 
     string getRouterParameter(string name);
 
@@ -77,7 +77,7 @@ abstract class RoutingContext : Closeable {
      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
      * @return RoutingContext
      */
-    RoutingContext onContent(Action1!ByteBuffer content); // { implementationMissing(false); return null;}
+    // RoutingContext onContent(Action1!ByteBuffer content); // { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP body packet complete callback.
@@ -85,7 +85,7 @@ abstract class RoutingContext : Closeable {
      * @param contentComplete The HTTP body packet complete callback.
      * @return RoutingContext
      */
-    RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete); // { implementationMissing(false); return null;}
+    // RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete); // { implementationMissing(false); return null;}
 
     /**
      * Set the HTTP message complete callback.

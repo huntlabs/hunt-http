@@ -3,24 +3,36 @@ module hunt.http.server.HttpServerOptions;
 import hunt.http.HttpOptions;
 import hunt.net.TcpSslOptions;
 import hunt.net.NetServerOptions;
+import hunt.http.server.HttpRequestOptions;
 
+/**
+ * 
+ */
 class HttpServerOptions : HttpOptions {
     private NetServerOptions _netServerOptions;
+    private HttpRequestOptions _httpRequestOptions;
 
     this() {
-        _netServerOptions = new NetServerOptions();
-        this(_netServerOptions);
+        this(new NetServerOptions(), new HttpRequestOptions());
     }
 
     this(NetServerOptions options) {
-        _netServerOptions = options;
-        super(options);
+        this(options, new HttpRequestOptions());
+    }
+
+    this(NetServerOptions serverOptions, HttpRequestOptions requestOptions) {
+        _netServerOptions = serverOptions;
+        _httpRequestOptions = requestOptions;
+        super(serverOptions);
     }
 
     override NetServerOptions getTcpConfiguration() {
         return _netServerOptions;
     }
 
+    HttpRequestOptions requestOptions() {
+        return _httpRequestOptions;
+    }
 
     /**
      *

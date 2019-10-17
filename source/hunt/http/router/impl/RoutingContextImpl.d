@@ -4,10 +4,11 @@ import hunt.http.router.impl.RouterImpl;
 
 import hunt.http.router.handler;
 import hunt.http.router.HttpSession;
-import hunt.http.router.HttpRequestBody;
-import hunt.http.router.RoutingHandler;
+import hunt.http.router.HttpServerRequest;
+import hunt.http.router.Router;
 import hunt.http.router.RouterManager;
 import hunt.http.router.RoutingContext;
+import hunt.http.router.RoutingHandler;
 
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -32,7 +33,7 @@ class RoutingContextImpl : RoutingContext {
     private HttpRequest request;
     private NavigableSet!(RouterMatchResult) routers;
     private RouterMatchResult current;
-    private HttpRequestBody httpRequestBody;
+    // private HttpServerRequest httpRequestBody;
     private HttpSessionHandlerSPI httpSessionHandlerSPI;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private  bool asynchronousRead = false;
@@ -86,19 +87,19 @@ class RoutingContextImpl : RoutingContext {
         return current.getParameters().get(name);
     }
 
-    override
-    RoutingContext onContent(Action1!ByteBuffer handler) {
-        getRequest().onContent(handler);
-        asynchronousRead = true;
-        return this;
-    }
+    // override
+    // RoutingContext onContent(Action1!ByteBuffer handler) {
+    //     getRequest().onContent(handler);
+    //     asynchronousRead = true;
+    //     return this;
+    // }
 
-    override
-    RoutingContext onContentComplete(Action1!HttpRequest handler) {
-        getRequest().onContentComplete(handler);
-        asynchronousRead = true;
-        return this;
-    }
+    // override
+    // RoutingContext onContentComplete(Action1!HttpRequest handler) {
+    //     getRequest().onContentComplete(handler);
+    //     asynchronousRead = true;
+    //     return this;
+    // }
 
     override
     RoutingContext onMessageComplete(Action1!HttpRequest handler) {
@@ -118,10 +119,8 @@ class RoutingContextImpl : RoutingContext {
         if(current is null) 
             return false;
 
-        RouterImpl r = cast(RouterImpl)current.getRouter();
-        IRoutingHandler handler = r.getHandler();
-        version(HUNT_HTTP_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
-        handler.handle(this);
+        Router r = current.getRouter();
+        r.handle(this);
         return true;
     }
 
@@ -176,33 +175,37 @@ class RoutingContextImpl : RoutingContext {
 
     override
     string getParameter(string name) {
-        if(httpRequestBody is null) {
-            return null;
-        } else {
-            return httpRequestBody.getParameter(name);
-        }
+        // if(httpRequestBody is null) {
+        //     return null;
+        // } else {
+        //     return httpRequestBody.getParameter(name);
+        // }
+        return getRequest().getParameter(name);
     }
 
     override
     List!string getParameterValues(string name) {
-        if(httpRequestBody is null)
-            return new EmptyList!string();
-        else
-            return httpRequestBody.getParameterValues(name);
+        // if(httpRequestBody is null)
+        //     return new EmptyList!string();
+        // else
+        //     return httpRequestBody.getParameterValues(name);
+        return getRequest().getParameterValues(name);
     }
 
     override
     Map!(string, List!string) getParameterMap() {
-        if(httpRequestBody is null)
-            return null;
-        else
-            return httpRequestBody.getParameterMap();
+        // if(httpRequestBody is null)
+        //     return null;
+        // else
+        //     return httpRequestBody.getParameterMap();
+        
+        return getRequest().getParameterMap();
     }
 
     // override
     // Collection!Part getParts() {
     //     // return Optional.ofNullable(httpRequestBody)
-    //     //                .map(HttpRequestBody::getParts)
+    //     //                .map(HttpServerRequest::getParts)
     //     //                .orElse(Collections.emptyList());
     //     if(httpRequestBody is null)
     //         return null;
@@ -224,31 +227,34 @@ class RoutingContextImpl : RoutingContext {
     // override
     // InputStream getInputStream() {
     //     return Optional.ofNullable(httpRequestBody)
-    //                    .map(HttpRequestBody::getInputStream)
+    //                    .map(HttpServerRequest::getInputStream)
     //                    .orElse(null);
     // }
 
     // override
     // BufferedReader getBufferedReader() {
     //     return Optional.ofNullable(httpRequestBody)
-    //                    .map(HttpRequestBody::getBufferedReader)
+    //                    .map(HttpServerRequest::getBufferedReader)
     //                    .orElse(null);
     // }
 
     override
     string getStringBody(string charset) {
-        if(httpRequestBody is null)
-            return request.getStringBody(charset);
-        else
-            return httpRequestBody.getStringBody(charset);
+        // if(httpRequestBody is null)
+        //     return request.getStringBody(charset);
+        // else
+        //     return httpRequestBody.getStringBody(charset);
+        
+        return getRequest().getStringBody(charset);
     }
 
     override
     string getStringBody() {
-        if(httpRequestBody is null)
-            return request.getStringBody();
-        else
-            return httpRequestBody.getStringBody();
+        // if(httpRequestBody is null)
+        //     return request.getStringBody();
+        // else
+        //     return httpRequestBody.getStringBody();
+        return getRequest().getStringBody();
     }
 
     // override
@@ -269,20 +275,20 @@ class RoutingContextImpl : RoutingContext {
     // override
     // JsonObject getJsonObjectBody() {
     //     return Optional.ofNullable(httpRequestBody)
-    //                    .map(HttpRequestBody::getJsonObjectBody)
+    //                    .map(HttpServerRequest::getJsonObjectBody)
     //                    .orElseGet(request::getJsonObjectBody);
     // }
 
     // override
     // JsonArray getJsonArrayBody() {
     //     return Optional.ofNullable(httpRequestBody)
-    //                    .map(HttpRequestBody::getJsonArrayBody)
+    //                    .map(HttpServerRequest::getJsonArrayBody)
     //                    .orElseGet(request::getJsonArrayBody);
     // }
     
-    override void setHttpBody(HttpRequestBody requestBody) {
-        this.httpRequestBody = requestBody;
-    }
+    // override void setHttpBody(HttpServerRequest requestBody) {
+    //     this.httpRequestBody = requestBody;
+    // }
 
     // override
     // CompletableFuture<HttpSession> getSessionById(string id) {

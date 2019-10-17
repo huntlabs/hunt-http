@@ -1,7 +1,7 @@
 module hunt.http.codec.http.model.MultipartFormInputStream;
 
 import hunt.http.codec.http.model.MultiException;
-import hunt.http.codec.http.model.MultipartConfig;
+import hunt.http.codec.http.model.MultipartOptions;
 import hunt.http.codec.http.model.MultipartParser;
 
 import hunt.collection;
@@ -40,10 +40,10 @@ void deleteOnExit(string file) {
 class MultipartFormInputStream {
     
     private int _bufferSize = 16 * 1024;
-    __gshared MultipartConfig __DEFAULT_MULTIPART_CONFIG;
+    __gshared MultipartOptions __DEFAULT_MULTIPART_CONFIG;
     __gshared MultiMap!(Part) EMPTY_MAP;
     protected InputStream _in;
-    protected MultipartConfig _config;
+    protected MultipartOptions _config;
     protected string _contentType;
     protected MultiMap!(Part) _parts;
     protected Exception _err;
@@ -54,7 +54,7 @@ class MultipartFormInputStream {
     protected bool _parsed;
 
     shared static this() {
-        __DEFAULT_MULTIPART_CONFIG = new MultipartConfig(tempDir());
+        __DEFAULT_MULTIPART_CONFIG = new MultipartOptions(tempDir());
         EMPTY_MAP = new MultiMap!(Part)(Collections.emptyMap!(string, List!(Part))());
     }
 
@@ -93,7 +93,7 @@ class MultipartFormInputStream {
                 createFile();
             } else {
                 // Write to a buffer in memory until we discover we've exceed the
-                // MultipartConfig fileSizeThreshold
+                // MultipartOptions fileSizeThreshold
                 _out = _bout = new ByteArrayOutputStream();
             }
         }
@@ -324,10 +324,10 @@ class MultipartFormInputStream {
     /**
      * @param input            Request input stream
      * @param contentType   Content-Type header
-     * @param config        MultipartConfig
+     * @param config        MultipartOptions
      * @param contextTmpDir javax.servlet.context.tempdir
      */
-    this(InputStream input, string contentType, MultipartConfig config, string contextTmpDir) {
+    this(InputStream input, string contentType, MultipartOptions config, string contextTmpDir) {
         _contentType = contentType;
         _config = config;
         if (contextTmpDir.empty)
@@ -336,7 +336,7 @@ class MultipartFormInputStream {
             _contextTmpDir = contextTmpDir;
 
         if (_config is null)
-            _config = new MultipartConfig(_contextTmpDir.asAbsolutePath().array);
+            _config = new MultipartOptions(_contextTmpDir.asAbsolutePath().array);
 
         // if (input instanceof ServletInputStream) {
         //     if (((ServletInputStream) input).isFinished()) {
@@ -493,7 +493,7 @@ class MultipartFormInputStream {
         if (location.empty())
             _tmpDir = _contextTmpDir;
         else 
-                _tmpDir = buildPath(_contextTmpDir, location);
+            _tmpDir = buildPath(_contextTmpDir, location);
 
         if (!_tmpDir.exists())
             _tmpDir.mkdirRecurse();
@@ -513,13 +513,11 @@ class MultipartFormInputStream {
         byte[] data = new byte[_bufferSize];
         int len = 0;
 
-        /*
-            * keep running total of size of bytes read from input and throw an exception if exceeds MultipartConfig._maxRequestSize
-            */
+        /**
+         * keep running total of size of bytes read from input and throw an exception if exceeds MultipartOptions._maxRequestSize
+         */
         long total = 0;
-
         while (true) {
-
             len = _in.read(data);
 
             if (len > 0) {
@@ -542,7 +540,6 @@ class MultipartFormInputStream {
                 parser.parse(BufferUtils.EMPTY_BUFFER, true);
                 break;
             }
-
         }
 
         // check for exceptions
@@ -807,7 +804,7 @@ interface Part {
      *
      * @param fileName the name of the file to which the stream will be
      * written. The file is created relative to the location as
-     * specified in the MultipartConfig
+     * specified in the MultipartOptions
      *
      * @throws IOException if an error occurs.
      */

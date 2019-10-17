@@ -6,13 +6,13 @@ import hunt.http.router.RequestAcceptor;
 
 import hunt.http.router.handler.DefaultErrorResponseHandler;
 import hunt.http.router.handler.HttpBodyHandler;
-import hunt.http.router.handler.HttpBodyOptions;
-
 import hunt.http.router.impl.RouterManagerImpl;
 
+import hunt.http.server.HttpRequestOptions;
+
 import hunt.collection;
-import hunt.util.Common;
 import hunt.Exceptions;
+import hunt.util.Common;
 
 
 class RouterMatchResult : Comparable!RouterMatchResult {
@@ -81,10 +81,10 @@ interface RouterManager : RequestAcceptor {
     NavigableSet!(RouterMatchResult) findRouter(string method, string path, string contentType, string accept);
 
     static RouterManager create() {
-        return create(new HttpBodyOptions());
+        return create(new HttpRequestOptions());
     }
 
-    static RouterManager create(HttpBodyOptions configuration) {
+    static RouterManager create(HttpRequestOptions configuration) {
         RouterManagerImpl routerManager = new RouterManagerImpl();
         routerManager.register().path("*").handler(new HttpBodyHandler(configuration));
         routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*").
