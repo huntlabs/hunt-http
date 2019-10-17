@@ -665,9 +665,7 @@ private class IllegalCharacterException : IllegalArgumentException {
     }
 }
 
-/* ------------------------------------------------------------ */
-/* ------------------------------------------------------------ */
-/* ------------------------------------------------------------ */
+
 /*
  * Event Handler interface These methods return true if the caller should process the events so far received (eg return from parseNext and call
  * HttpChannel.handle). If multiple callbacks are called in sequence (eg headerComplete then messageComplete) from the same point in the parsing then it is

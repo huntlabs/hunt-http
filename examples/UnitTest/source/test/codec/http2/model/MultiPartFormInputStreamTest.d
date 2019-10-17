@@ -1,9 +1,10 @@
 module test.codec.http2.model.MultipartFormInputStreamTest;
 
 import hunt.http.codec.http.model.MultiException;
+import hunt.http.codec.http.model.MultipartForm;
 import hunt.http.codec.http.model.MultipartOptions;
 import hunt.http.codec.http.model.MultipartParser;
-import hunt.http.codec.http.model.MultipartFormInputStream;
+import hunt.http.codec.http.model.MultipartFormParser;
 
 import hunt.collection;
 import hunt.util.DateTime;
@@ -17,21 +18,11 @@ import std.algorithm;
 import std.array;
 import std.base64;
 import std.conv;
-import std.datetime;
 import std.file;
 import std.path;
 import std.regex;
 import std.string;
 import std.uni;
-
-
-alias assertTrue = Assert.assertTrue;
-alias assertFalse = Assert.assertFalse;
-alias assertThat = Assert.assertThat;
-alias assertEquals = Assert.assertEquals;
-alias assertNull = Assert.assertNull;
-alias assertNotNull = Assert.assertNotNull;
-alias assertContain = Assert.assertContain;
 
 
 /**
@@ -46,7 +37,7 @@ class MultipartFormInputStreamTest {
 
     this() {
         _multi = createMultipartRequestString(FILENAME);
-        _dirname = tempDir() ~ dirSeparator ~ "myfiles-" ~ DateTimeHelper.currentTimeMillis().to!string();
+        _dirname = tempDir() ~ dirSeparator ~ "myfiles-" ~ DateTime.currentTimeMillis().to!string();
         _tmpDir = this._dirname;
     }
     
@@ -60,14 +51,14 @@ class MultipartFormInputStreamTest {
     //             "--TheBoundary--\r\n";
 
     //     MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-    //     MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+    //     MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
     //             contentType,
     //             config,
     //             _tmpDir);
     //     mpis.setDeleteOnExit(true);
     //     Part[] parts = mpis.getParts();
     //     assertThat(parts.length, 1);
-    //     // MultipartFormInputStream.MultiPart mp = cast(MultipartFormInputStream.MultiPart)parts[0];
+    //     // MultipartForm mp = cast(MultipartForm)parts[0];
     //     // byte[] c = mp.getBytes();
     //     // trace(cast(string)c);
     // }
@@ -82,14 +73,14 @@ class MultipartFormInputStreamTest {
                 "--TheBoundary--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 contentType,
                 config,
                 _tmpDir);
         mpis.setDeleteOnExit(true);
         Part[] parts = mpis.getParts();
         assertThat(parts.length, 1);
-        // MultipartFormInputStream.MultiPart mp = cast(MultipartFormInputStream.MultiPart)parts[0];
+        // MultipartForm mp = cast(MultipartForm)parts[0];
         // byte[] c = mp.getBytes();
         // trace(cast(string)c);
     }
@@ -105,7 +96,7 @@ class MultipartFormInputStreamTest {
                 ~ "\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 "multipart/form-data, boundary=" ~ boundary,
                 config,
                 _tmpDir);
@@ -129,7 +120,7 @@ class MultipartFormInputStreamTest {
                         "--" ~ boundary ~ "--" ~ delimiter;
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 "multipart/form-data, boundary=" ~ boundary,
                 config,
                 _tmpDir);
@@ -147,7 +138,7 @@ class MultipartFormInputStreamTest {
         string str = delimiter ~ "--" ~ boundary ~ "--" ~ delimiter;
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 "multipart/form-data, boundary=" ~ boundary,
                 config,
                 _tmpDir);
@@ -184,7 +175,7 @@ class MultipartFormInputStreamTest {
                 "----\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 "multipart/form-data",
                 config,
                 _tmpDir);
@@ -217,7 +208,7 @@ class MultipartFormInputStreamTest {
     
     void testNonMultiPartRequest() {
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 "Content-type: text/plain",
                 config,
                 _tmpDir);
@@ -230,7 +221,7 @@ class MultipartFormInputStreamTest {
         string bodyContent = "";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])bodyContent),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])bodyContent),
                 _contentType,
                 config,
                 _tmpDir);
@@ -268,7 +259,7 @@ class MultipartFormInputStreamTest {
     //     };
 
     //     MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-    //     MultipartFormInputStream mpis = new MultipartFormInputStream(input,
+    //     MultipartFormParser mpis = new MultipartFormParser(input,
     //             _contentType,
     //             config,
     //             _tmpDir);
@@ -280,7 +271,7 @@ class MultipartFormInputStreamTest {
     void testWhitespaceBodyWithCRLF() {
         string whitespace = "              \n\n\n\r\n\r\n\r\n\r\n";
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])whitespace),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])whitespace),
                 _contentType,
                 config,
                 _tmpDir);
@@ -298,7 +289,7 @@ class MultipartFormInputStreamTest {
         string whitespace = " ";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])whitespace),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])whitespace),
                 _contentType,
                 config,
                 _tmpDir);
@@ -327,7 +318,7 @@ class MultipartFormInputStreamTest {
 
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])bodyContent),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])bodyContent),
                 _contentType,
                 config,
                 _tmpDir);
@@ -365,7 +356,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])bodyContent),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])bodyContent),
                 _contentType,
                 config,
                 _tmpDir);
@@ -385,7 +376,7 @@ class MultipartFormInputStreamTest {
 
     void testNoLimits() {
         MultipartOptions config = new MultipartOptions(_dirname);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -396,7 +387,7 @@ class MultipartFormInputStreamTest {
     
     void testRequestTooBig() {
         MultipartOptions config = new MultipartOptions(_dirname, 60, 100, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -412,7 +403,7 @@ class MultipartFormInputStreamTest {
 
     void testRequestTooBigThrowsErrorOnGetParts() {
         MultipartOptions config = new MultipartOptions(_dirname, 60, 100, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -439,7 +430,7 @@ class MultipartFormInputStreamTest {
     
     void testFileTooBig() {
         MultipartOptions config = new MultipartOptions(_dirname, 40, 1024, 30);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -456,7 +447,7 @@ class MultipartFormInputStreamTest {
     
     void testFileTooBigThrowsErrorOnGetParts() {
         MultipartOptions config = new MultipartOptions(_dirname, 40, 1024, 30);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])_multi),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])_multi),
                 _contentType,
                 config,
                 _tmpDir);
@@ -481,7 +472,7 @@ class MultipartFormInputStreamTest {
     
     void testPartFileNotDeleted() {
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(
+        MultipartFormParser mpis = new MultipartFormParser(
                 new ByteArrayInputStream(cast(byte[])createMultipartRequestString("tptfd")),
                 _contentType,
                 config,
@@ -489,7 +480,7 @@ class MultipartFormInputStreamTest {
         mpis.setDeleteOnExit(true);
         Part[] parts = mpis.getParts();
 
-        MultipartFormInputStream.MultiPart part = cast(MultipartFormInputStream.MultiPart) mpis.getPart("stuff");
+        MultipartForm part = cast(MultipartForm) mpis.getPart("stuff");
         string stuff = part.getFile();
         assert(!stuff.empty()); // longer than 100 bytes, should already be a tmp file
         part.write("tptfd.txt");
@@ -504,7 +495,7 @@ class MultipartFormInputStreamTest {
     
     void testPartTmpFileDeletion() {
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(
+        MultipartFormParser mpis = new MultipartFormParser(
                 new ByteArrayInputStream(cast(byte[])createMultipartRequestString("tptfd")),
                 _contentType,
                 config,
@@ -512,7 +503,7 @@ class MultipartFormInputStreamTest {
         mpis.setDeleteOnExit(true);
         Part[] parts = mpis.getParts();
 
-        MultipartFormInputStream.MultiPart part = cast(MultipartFormInputStream.MultiPart) mpis.getPart("stuff");
+        MultipartForm part = cast(MultipartForm) mpis.getPart("stuff");
         string stuff = part.getFile();
         assert(!stuff.empty()); // longer than 100 bytes, should already be a tmp file
         assertThat(stuff.exists(), true);
@@ -533,7 +524,7 @@ class MultipartFormInputStreamTest {
                 "\r\n--AaB03x--\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 _contentType,
                 config,
                 _tmpDir);
@@ -565,7 +556,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 _contentType,
                 config,
                 _tmpDir);
@@ -608,7 +599,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])str),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])str),
                 _contentType,
                 config,
                 _tmpDir);
@@ -648,7 +639,7 @@ class MultipartFormInputStreamTest {
         // _tmpDir = this._dirname;
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(baos.toByteArray()),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(baos.toByteArray()),
                 _contentType,
                 config,
                 _tmpDir);
@@ -671,7 +662,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])contents),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])contents),
                 _contentType,
                 config,
                 _tmpDir);
@@ -691,7 +682,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])contents),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])contents),
                 _contentType,
                 config,
                 _tmpDir);
@@ -711,7 +702,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])contents),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])contents),
                 _contentType,
                 config,
                 _tmpDir);
@@ -742,27 +733,28 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
         //all default values for multipartconfig, ie file size threshold 0
         MultipartOptions config = new MultipartOptions(_dirname);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])s),
+        config.setWriteFilesWithFilenames(true);
+
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])s),
                 _contentType,
                 config,
                 _tmpDir);
         mpis.setDeleteOnExit(true);
-        mpis.setWriteFilesWithFilenames(true);
         Part[] parts = mpis.getParts();
         assertThat(parts.length, 2);
         Part field1 = mpis.getPart("field1"); //has a filename, should be written to a file
-        string f = (cast(MultipartFormInputStream.MultiPart) field1).getFile();
+        string f = (cast(MultipartForm) field1).getFile();
         assert(!f.empty()); // longer than 100 bytes, should already be a tmp file
 
         Part stuff = mpis.getPart("stuff");
-        f = (cast(MultipartFormInputStream.MultiPart)stuff).getFile(); //should only be in memory, no filename
+        f = (cast(MultipartForm)stuff).getFile(); //should only be in memory, no filename
         assert(f.empty());
     }
 
 
     private void testMulti(string filename) {
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(
+        MultipartFormParser mpis = new MultipartFormParser(
                 new ByteArrayInputStream(cast(byte[])createMultipartRequestString(filename)),
                 _contentType,
                 config,
@@ -779,9 +771,9 @@ class MultipartFormInputStreamTest {
         assertEquals("Joe Blow", cast(string)(os.toByteArray()));
         assertEquals(8, field1.getSize());
 
-        assertNotNull((cast(MultipartFormInputStream.MultiPart) field1).getBytes());//in internal buffer
+        assertNotNull((cast(MultipartForm) field1).getBytes());//in internal buffer
         field1.write("field1.txt");
-        assertNull((cast(MultipartFormInputStream.MultiPart) field1).getBytes());//no longer in internal buffer
+        assertNull((cast(MultipartForm) field1).getBytes());//no longer in internal buffer
         string f = _dirname ~ dirSeparator ~ "field1.txt";
         assertTrue(f.exists());
         field1.write("another_field1.txt"); //write after having already written
@@ -792,7 +784,7 @@ class MultipartFormInputStreamTest {
         assertFalse(f.exists()); //original file was renamed
         assertFalse(f2.exists()); //2nd written file was explicitly deleted
 
-        MultipartFormInputStream.MultiPart stuff = cast(MultipartFormInputStream.MultiPart) mpis.getPart("stuff");
+        MultipartForm stuff = cast(MultipartForm) mpis.getPart("stuff");
         assertThat(stuff.getSubmittedFileName(), filename);
         assertThat(stuff.getContentType(), "text/plain");
         assertThat(stuff.getHeader("Content-Type"), "text/plain");
@@ -833,7 +825,7 @@ class MultipartFormInputStreamTest {
                 "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])sameNames),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])sameNames),
                 _contentType,
                 config,
                 _tmpDir);
@@ -872,7 +864,7 @@ class MultipartFormInputStreamTest {
                         "--AaB03x--\r\n";
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(
+        MultipartFormParser mpis = new MultipartFormParser(
                 new ByteArrayInputStream(cast(byte[])contentWithEncodedPart),
                 _contentType,
                 config,
@@ -915,7 +907,7 @@ class MultipartFormInputStreamTest {
                         "truth=3Dbeauty" ~ "\r\n" ~
                         "--AaB03x--\r\n";
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])contentWithEncodedPart),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])contentWithEncodedPart),
                 _contentType,
                 config,
                 _tmpDir);
@@ -952,7 +944,7 @@ class MultipartFormInputStreamTest {
 
 
         MultipartOptions config = new MultipartOptions(_dirname, 1024, 3072, 50);
-        MultipartFormInputStream mpis = new MultipartFormInputStream(new ByteArrayInputStream(cast(byte[])bodyContent),
+        MultipartFormParser mpis = new MultipartFormParser(new ByteArrayInputStream(cast(byte[])bodyContent),
                 contentType,
                 config,
                 _tmpDir);

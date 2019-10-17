@@ -1,5 +1,8 @@
 module hunt.http.codec.http.model.MultipartOptions;
 
+import std.concurrency : initOnce;
+import std.file;
+
 deprecated("Using MultipartOptions instead.")
 alias MultipartConfig = MultipartOptions;
 
@@ -8,10 +11,16 @@ alias MultipartConfig = MultipartOptions;
  */
 class MultipartOptions {
 
+    static MultipartOptions Default() {
+        __gshared MultipartOptions inst;
+        return initOnce!inst(new MultipartOptions(tempDir()));
+    }
+
     private string location;
     private long maxFileSize;
     private long maxRequestSize;
     private int fileSizeThreshold;
+    private bool _writeFilesWithFilenames;
 
     /**
      * Constructs an instance with defaults for all but location.
@@ -87,4 +96,14 @@ class MultipartOptions {
     int getFileSizeThreshold() {
         return this.fileSizeThreshold;
     }
+
+    
+    void setWriteFilesWithFilenames(bool writeFilesWithFilenames) {
+        _writeFilesWithFilenames = writeFilesWithFilenames;
+    }
+
+    bool isWriteFilesWithFilenames() {
+        return _writeFilesWithFilenames;
+    }
+
 }

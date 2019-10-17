@@ -6,8 +6,9 @@ import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.http.codec.http.model.HostPortHttpField;
 import hunt.http.codec.http.model.HttpScheme;
-import hunt.http.codec.http.model.MultipartFormInputStream;
+import hunt.http.codec.http.model.MultipartFormParser;
 import hunt.http.codec.http.model.MultipartOptions;
+import hunt.http.codec.http.model.MultipartForm;
 
 import hunt.http.server.HttpRequestOptions;
 import hunt.http.server.GlobalSettings;
@@ -201,7 +202,7 @@ class HttpRequest : MetaData {
     private string _mimeType;
 
     private PipedStream pipedStream;
-    private MultipartFormInputStream multipartFormInputStream;
+    private MultipartFormParser multipartFormInputStream;
     private UrlEncoded urlEncodedMap;
     private string charset;
 
@@ -457,7 +458,7 @@ class HttpRequest : MetaData {
                 import hunt.http.server.GlobalSettings;
 
                 HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
-                multipartFormInputStream = new MultipartFormInputStream(
+                multipartFormInputStream = new MultipartFormParser(
                         pipedStream.getInputStream(),
                         getContentType(),
                         _options.getMultipartOptions(),

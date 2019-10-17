@@ -117,7 +117,8 @@ HttpServer buildServerWithForm() {
             warning("mimeType: ", mimeType);
             if(mimeType == "multipart/form-data") {
                 foreach (Part part; request.getParts()) {
-                    MultipartFormInputStream.MultiPart multipart = cast(MultipartFormInputStream.MultiPart) part;
+                    // MultipartForm multipart = cast(MultipartForm) part;
+                    Part multipart = part;
                     warning("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content=%s",
                         multipart.getName(), multipart.getSubmittedFileName(), 
                         multipart.getFile(), multipart.getContentType(), cast(string) multipart.getBytes());
