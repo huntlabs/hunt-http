@@ -2,7 +2,7 @@ module hunt.http.router.handler.DefaultErrorResponseHandler;
 
 import hunt.http.router.RoutingHandler;
 
-import hunt.http.Environment;
+import hunt.http.Version;
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.router.RoutingContext;

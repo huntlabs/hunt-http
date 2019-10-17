@@ -25,7 +25,7 @@ import std.conv;
 
 /**
 */
-class Http1ClientResponseHandler : HttpResponseParserHandler {
+class Http1ClientResponseHandler : HttpResponseParsingHandler {
     package(hunt.http.client)  Http1ClientConnection connection;
     package(hunt.http.client)  HttpResponse response;
     package(hunt.http.client)  HttpRequest request;

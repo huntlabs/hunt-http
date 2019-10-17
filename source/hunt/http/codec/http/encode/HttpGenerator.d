@@ -10,7 +10,7 @@ import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
-import hunt.http.Environment;
+import hunt.http.Version;
 import hunt.collection;
 import hunt.util.DateTime;
 import hunt.Exceptions;

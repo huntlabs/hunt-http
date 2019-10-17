@@ -21,7 +21,7 @@ import std.string : icmp;
 /**
  * 
  */
-class Http1ServerRequestHandler : HttpRequestParserHandler {
+class Http1ServerRequestHandler : HttpRequestParsingHandler {
     package HttpServerRequest request;
     package HttpServerResponse response;
     package Http1ServerConnection connection;

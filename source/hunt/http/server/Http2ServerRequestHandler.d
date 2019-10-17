@@ -12,7 +12,7 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.http.codec.http.stream.DataFrameHandler;
-import hunt.http.Environment;
+import hunt.http.Version;
 
 import hunt.Exceptions;
 import hunt.util.Common;
@@ -136,9 +136,6 @@ class Http2ServerRequestHandler : ServerSessionListener.Adapter {
     }
 
     static class ServerHttp2OutputStream : AbstractHttp2OutputStream {
-
-        enum string X_POWERED_BY_VALUE = "Hunt " ~ Version;
-        enum string SERVER_VALUE = "Hunt " ~ Version;
 
         private Stream stream;
 

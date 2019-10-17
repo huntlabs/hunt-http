@@ -128,10 +128,10 @@ class HttpParser {
     private static State[] __idleStates = [State.START, State.END, State.CLOSE, State.CLOSED];
     private static State[] __completeStates = [State.END, State.CLOSE, State.CLOSED];
 
-    private HttpParserHandler _handler;
-    private HttpRequestParserHandler _requestHandler;
-    private HttpResponseParserHandler _responseHandler;
-    private ComplianceParserHandler _complianceHandler;
+    private HttpParsingHandler _handler;
+    private HttpRequestParsingHandler _requestHandler;
+    private HttpResponseParsingHandler _responseHandler;
+    private ComplianceParsingHandler _complianceHandler;
     private int _maxHeaderBytes;
     private HttpCompliance _compliance;
     private HttpComplianceSection[] _compliances;
@@ -241,42 +241,42 @@ class HttpParser {
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpRequestParserHandler handler) {
+    this(HttpRequestParsingHandler handler) {
         this(handler, -1, getCompliance());
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpResponseParserHandler handler) {
+    this(HttpResponseParsingHandler handler) {
         this(handler, -1, getCompliance());
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpRequestParserHandler handler, int maxHeaderBytes) {
+    this(HttpRequestParsingHandler handler, int maxHeaderBytes) {
         this(handler, maxHeaderBytes, getCompliance());
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpResponseParserHandler handler, int maxHeaderBytes) {
+    this(HttpResponseParsingHandler handler, int maxHeaderBytes) {
         this(handler, maxHeaderBytes, getCompliance());
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpRequestParserHandler handler, HttpCompliance compliance) {
+    this(HttpRequestParsingHandler handler, HttpCompliance compliance) {
         this(handler, -1, compliance);
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpRequestParserHandler handler, int maxHeaderBytes, HttpCompliance compliance) {
+    this(HttpRequestParsingHandler handler, int maxHeaderBytes, HttpCompliance compliance) {
         this(handler, null, maxHeaderBytes, compliance is null ? getCompliance() : compliance);
     }
 
     /* ------------------------------------------------------------------------------- */
-    this(HttpResponseParserHandler handler, int maxHeaderBytes, HttpCompliance compliance) {
+    this(HttpResponseParsingHandler handler, int maxHeaderBytes, HttpCompliance compliance) {
         this(null, handler, maxHeaderBytes, compliance is null ? getCompliance() : compliance);
     }
 
     /* ------------------------------------------------------------------------------- */
-    private this(HttpRequestParserHandler requestHandler, HttpResponseParserHandler responseHandler, 
+    private this(HttpRequestParsingHandler requestHandler, HttpResponseParsingHandler responseHandler, 
         int maxHeaderBytes, HttpCompliance compliance) {
         version (HUNT_HTTP_DEBUG) {
             trace("create http parser");
@@ -293,11 +293,11 @@ class HttpParser {
         _maxHeaderBytes = maxHeaderBytes;
         _compliance = compliance;
         _compliances = compliance.sections();
-        _complianceHandler = cast(ComplianceParserHandler)_handler;
+        _complianceHandler = cast(ComplianceParsingHandler)_handler;
     }
 
     /* ------------------------------------------------------------------------------- */
-    HttpParserHandler getHandler() {
+    HttpParsingHandler getHandler() {
         return _handler;
     }
 
@@ -1255,7 +1255,7 @@ class HttpParser {
      * Parse until next Event.
      *
      * @param buffer the buffer to parse
-     * @return True if an {@link HttpRequestParserHandler} method was called and it returned true;
+     * @return True if an {@link HttpRequestParsingHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
         version(HUNT_HTTP_DEBUG_MORE) {
@@ -1618,107 +1618,19 @@ class HttpParser {
                 _contentLength);
     }
 
-    // /* ------------------------------------------------------------ */
-    // /* ------------------------------------------------------------ */
-    // /* ------------------------------------------------------------ */
-    // /* Event Handler interface
-    //  * These methods return true if the caller should process the events
-    //  * so far received (eg return from parseNext and call HttpChannel.handle).
-    //  * If multiple callbacks are called in sequence (eg
-    //  * headerComplete then messageComplete) from the same point in the parsing
-    //  * then it is sufficient for the caller to process the events only once.
-    //  */
-    // interface HttpHandler {
+    deprecated("Using HttpParsingHandler instead.")
+    alias HttpHandler = HttpParsingHandler;
 
-    //     bool content(ByteBuffer item);
+    deprecated("Using HttpRequestParsingHandler instead.")
+    alias RequestHandler = HttpRequestParsingHandler;
 
-    //     bool headerComplete();
+    deprecated("Using HttpResponseParsingHandler instead.")
+    alias ResponseHandler = HttpResponseParsingHandler;
 
-    //     bool contentComplete();
+    deprecated("Using ComplianceParsingHandler instead.")
+    alias ComplianceHandler = ComplianceParsingHandler;
 
-    //     bool messageComplete();
 
-    //     /**
-    //      * This is the method called by parser when a HTTP Header name and value is found
-    //      *
-    //      * @param field The field parsed
-    //      */
-    //     void parsedHeader(HttpField field);
-
-    //     /**
-    //      * This is the method called by parser when a HTTP Trailer name and value is found
-    //      *
-    //      * @param field The field parsed
-    //      */
-    //     void parsedTrailer(HttpField field);
-
-    //     /* ------------------------------------------------------------ */
-
-    //     /**
-    //      * Called to signal that an EOF was received unexpectedly
-    //      * during the parsing of a HTTP message
-    //      */
-    //     void earlyEOF();
-
-    //     /* ------------------------------------------------------------ */
-
-    //     /**
-    //      * Called to signal that a bad HTTP message has been received.
-    //      *
-    //      * @param failure the failure with the bad message information
-    //      */
-    //     void badMessage(BadMessageException failure);
-    //     // {
-    //     //     // badMessage(failure.getCode(), failure.getReason());
-    //     //     throw new BadMessageException(failure.getCode(), failure.getReason());
-    //     // }
-
-    //     /**
-    //      * @deprecated use {@link #badMessage(BadMessageException)} instead
-    //      */
-    //     // deprecated("")
-    //     void badMessage(int status, string reason);
-
-    //     /* ------------------------------------------------------------ */
-
-    //     /**
-    //      * @return the size in bytes of the per parser header cache
-    //      */
-    //     int getHeaderCacheSize();
-
-    //     string toString();
-    // }
-
-    // /* ------------------------------------------------------------------------------- */
-    // /* ------------------------------------------------------------------------------- */
-    // /* ------------------------------------------------------------------------------- */
-    // interface RequestHandler : HttpHandler {
-    //     /**
-    //      * This is the method called by parser when the HTTP request line is parsed
-    //      *
-    //      * @param method  The method
-    //      * @param uri     The raw bytes of the URI.  These are copied into a ByteBuffer that will not be changed until this parser is reset and reused.
-    //      * @param version the http version in use
-    //      * @return true if handling parsing should return.
-    //      */
-    //     bool startRequest(string method, string uri, HttpVersion ver);
-
-    // }
-
-    // /* ------------------------------------------------------------------------------- */
-    // /* ------------------------------------------------------------------------------- */
-    // /* ------------------------------------------------------------------------------- */
-    // interface ResponseHandler : HttpHandler {
-    //     /**
-    //      * This is the method called by parser when the HTTP request line is parsed
-    //      *
-    //      * @param version the http version in use
-    //      * @param status  the response status
-    //      * @param reason  the response reason phrase
-    //      * @return true if handling parsing should return
-    //      */
-    //     bool startResponse(HttpVersion ver, int status, string reason);
-    // }
 
     // /* ------------------------------------------------------------------------------- */
     // /* ------------------------------------------------------------------------------- */
@@ -1750,14 +1662,14 @@ class HttpParser {
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
 /* ------------------------------------------------------------ */
-/* Event Handler interface
+/* Event producing interface while parsing http 
  * These methods return true if the caller should process the events
  * so far received (eg return from parseNext and call HttpChannel.handle).
  * If multiple callbacks are called in sequence (eg
  * headerComplete then messageComplete) from the same point in the parsing
  * then it is sufficient for the caller to process the events only once.
  */
-interface HttpParserHandler {
+interface HttpParsingHandler {
 
     bool content(ByteBuffer item);
 
@@ -1821,7 +1733,7 @@ interface HttpParserHandler {
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
-interface HttpRequestParserHandler : HttpParserHandler {
+interface HttpRequestParsingHandler : HttpParsingHandler {
     /**
      * This is the method called by parser when the HTTP request line is parsed
      *
@@ -1837,7 +1749,7 @@ interface HttpRequestParserHandler : HttpParserHandler {
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
-interface HttpResponseParserHandler : HttpParserHandler {
+interface HttpResponseParsingHandler : HttpParsingHandler {
     /**
      * This is the method called by parser when the HTTP request line is parsed
      *
@@ -1852,7 +1764,7 @@ interface HttpResponseParserHandler : HttpParserHandler {
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------------- */
-interface ComplianceParserHandler : HttpParserHandler {
+interface ComplianceParsingHandler : HttpParsingHandler {
     // deprecated("")
     // default void onComplianceViolation(HttpCompliance compliance, HttpCompliance required, string reason) {
     // }
@@ -1864,8 +1776,8 @@ interface ComplianceParserHandler : HttpParserHandler {
     // }
 }
 
-deprecated("Using HttpRequestParserHandler instead.")
-alias HttpRequestHandler = HttpRequestParserHandler;
+deprecated("Using HttpRequestParsingHandler instead.")
+alias HttpRequestHandler = HttpRequestParsingHandler;
 
-deprecated("Using HttpResponseParserHandler instead.")
-alias HttpResponseHandler = HttpResponseParserHandler;
+deprecated("Using HttpResponseParsingHandler instead.")
+alias HttpResponseHandler = HttpResponseParsingHandler;
