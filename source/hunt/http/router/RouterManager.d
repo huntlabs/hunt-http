@@ -5,7 +5,7 @@ import hunt.http.router.Router;
 import hunt.http.router.RequestAcceptor;
 
 import hunt.http.router.handler.DefaultErrorResponseHandler;
-import hunt.http.router.handler.HttpBodyHandler;
+import hunt.http.router.handler.DefaultHttpRouteHandler;
 import hunt.http.router.impl.RouterManagerImpl;
 
 import hunt.http.server.HttpRequestOptions;
@@ -86,7 +86,7 @@ interface RouterManager : RequestAcceptor {
 
     static RouterManager create(HttpRequestOptions configuration) {
         RouterManagerImpl routerManager = new RouterManagerImpl();
-        routerManager.register().path("*").handler(new HttpBodyHandler(configuration));
+        routerManager.register().path("*").handler(new DefaultHttpRouteHandler(configuration));
         routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*").
             handler(DefaultErrorResponseHandler.Default());
         return routerManager;

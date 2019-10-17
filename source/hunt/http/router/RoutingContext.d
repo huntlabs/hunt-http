@@ -93,7 +93,7 @@ abstract class RoutingContext : Closeable {
      * @param messageComplete the HTTP message complete callback.
      * @return RoutingContext
      */
-    RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete); // { implementationMissing(false); return null;}
+    // RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete); // { implementationMissing(false); return null;}
 
     /**
      * If return true, it represents you has set a HTTP body data receiving callback.
@@ -101,6 +101,7 @@ abstract class RoutingContext : Closeable {
      * @return If return true, it represents you has set a HTTP body data receiving callback
      */
     bool isAsynchronousRead();
+    void enableAsynchronousRead();
 
     /**
      * Execute the next handler.

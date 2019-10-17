@@ -99,16 +99,20 @@ class RoutingContextImpl : RoutingContext {
     //     return this;
     // }
 
-    override
-    RoutingContext onMessageComplete(Action1!HttpRequest handler) {
-        getRequest().onMessageComplete(handler);
-        asynchronousRead = true;
-        return this;
-    }
+    // override
+    // RoutingContext onMessageComplete(Action1!HttpRequest handler) {
+    //     getRequest().onMessageComplete(handler);
+    //     asynchronousRead = true;
+    //     return this;
+    // }
 
     override
     bool isAsynchronousRead() {
         return asynchronousRead;
+    }
+
+    override void enableAsynchronousRead() {
+        asynchronousRead = true;
     }
 
     override

@@ -1,4 +1,4 @@
-module hunt.http.router.handler.HttpBodyHandler;
+module hunt.http.router.handler.DefaultHttpRouteHandler;
 
 import hunt.http.router.RoutingHandler;
 import hunt.http.router.RoutingContext;
@@ -23,7 +23,7 @@ import std.array;
 /**
  * 
  */
-class HttpBodyHandler : IRoutingHandler {
+class DefaultHttpRouteHandler : IRoutingHandler {
 
     private HttpRequestOptions _options;
 
@@ -76,6 +76,9 @@ class HttpBodyHandler : IRoutingHandler {
             }
         }
 
-        context.onMessageComplete((HttpRequest req) { context.next(); });
+        request.onMessageComplete((HttpServerRequest req) { context.next(); });
+        context.enableAsynchronousRead();
+
+        // context.onMessageComplete((HttpServerRequest req) { context.next(); });
     }
 }

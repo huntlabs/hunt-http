@@ -38,8 +38,8 @@ class HttpServerRequest : HttpRequest {
     private string charset;
 
     // private Action1!ByteBuffer _contentHandler;
-    private Action1!HttpRequest _contentCompleteHandler;
-    private Action1!HttpRequest _messageCompleteHandler;  
+    // private Action1!HttpServerRequest _contentCompleteHandler;
+    private Action1!HttpServerRequest _messageCompleteHandler;  
 
     this(string method, string uri, HttpVersion ver) {
         enum string connect = HttpMethod.CONNECT.asString();
@@ -255,7 +255,7 @@ class HttpServerRequest : HttpRequest {
     //     return this;
     // }
 
-    HttpRequest onMessageComplete(Action1!HttpRequest handler) {
+    HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
         _messageCompleteHandler = handler;
         return this;
     }
