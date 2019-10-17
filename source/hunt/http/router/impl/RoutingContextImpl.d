@@ -4,7 +4,6 @@ import hunt.http.router.impl.RouterImpl;
 
 import hunt.http.router.handler;
 import hunt.http.router.HttpSession;
-import hunt.http.router.HttpServerRequest;
 import hunt.http.router.Router;
 import hunt.http.router.RouterManager;
 import hunt.http.router.RoutingContext;
@@ -12,10 +11,10 @@ import hunt.http.router.RoutingHandler;
 
 import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpOutputStream;
-// import hunt.http.server.HttpRequest;
 // import hunt.http.server.HttpResponse;
 
 import hunt.http.server.HttpServerContext;
+import hunt.http.server.HttpServerRequest;
 
 import hunt.collection;
 import hunt.util.Common;
@@ -30,10 +29,9 @@ import std.container;
  * 
  */
 class RoutingContextImpl : RoutingContext {
-    private HttpRequest request;
+    private HttpServerRequest request;
     private NavigableSet!(RouterMatchResult) routers;
     private RouterMatchResult current;
-    // private HttpServerRequest httpRequestBody;
     private HttpSessionHandlerSPI httpSessionHandlerSPI;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private  bool asynchronousRead = false;
@@ -78,7 +76,7 @@ class RoutingContextImpl : RoutingContext {
     // }
 
     override
-    HttpRequest getRequest() {
+    HttpServerRequest getRequest() {
         return request;
     }
 

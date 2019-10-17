@@ -64,7 +64,7 @@ HttpServer buildServerWithMultiRoutes() {
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
-            HttpRequest request = context.getRequest();
+            HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
             warning(content);
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
@@ -90,7 +90,7 @@ HttpServer buildServerWithoutDefaultRoute() {
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
-            HttpRequest request = context.getRequest();
+            HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
@@ -111,7 +111,7 @@ HttpServer buildServerWithForm() {
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
-            HttpRequest request = context.getRequest();
+            HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
             string mimeType = request.getMimeType();
             warning("mimeType: ", mimeType);

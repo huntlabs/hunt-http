@@ -1,6 +1,9 @@
 module hunt.http.server.HttpServerContext;
 
 import hunt.http.server.HttpServerConnection;
+import hunt.http.server.HttpServerRequest;
+import hunt.http.server.HttpServerResponse;
+
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.model.MetaData;
 
@@ -15,8 +18,8 @@ import hunt.logging.ConsoleLogger;
  */
 class HttpServerContext {
 
-    private HttpRequest _httpRequest;
-    private HttpResponse _httpResponse; 
+    private HttpServerRequest _httpRequest;
+    private HttpServerResponse _httpResponse; 
     private HttpOutputStream _httpOutputStream;
     private HttpServerConnection _connection;
     private BufferedOutputStream _bufferedOutputStream; 
@@ -26,7 +29,7 @@ class HttpServerContext {
     // Action1!HttpRequest _contentCompleteHandler;
     // Action1!HttpRequest _messageCompleteHandler;
 
-    this(HttpRequest request, HttpResponse response, 
+    this(HttpServerRequest request, HttpServerResponse response, 
             HttpOutputStream outputStream, HttpServerConnection connection) {
         _httpRequest = request;
         _httpResponse = response;
@@ -34,19 +37,19 @@ class HttpServerContext {
         _connection = connection;
     }
 
-    HttpRequest httpRequest() {
+    HttpServerRequest httpRequest() {
         return _httpRequest;
     }
 
-    void httpRequest(HttpRequest request) {
+    void httpRequest(HttpServerRequest request) {
         _httpRequest = request;
     }
 
-    HttpResponse httpResponse() {
+    HttpServerResponse httpResponse() {
         return _httpResponse;
     } 
 
-    void httpResponse(HttpResponse response) {
+    void httpResponse(HttpServerResponse response) {
         _httpResponse = response;
     }
 

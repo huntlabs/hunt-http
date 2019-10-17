@@ -2,6 +2,7 @@ module hunt.http.server.Http1ServerRequestHandler;
 
 import hunt.http.server.Http1ServerConnection;
 // import hunt.http.server.HttpServerHandler;
+import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
 
@@ -17,26 +18,17 @@ import std.string : icmp;
 // alias RequestHandler = HttpParser.RequestHandler;
 
 
-class HttpServerRequest : HttpRequest {
-
-    this(string method, string uri, HttpVersion ver) {
-        enum string connect = HttpMethod.CONNECT.asString();
-        super(method, 
-            new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
-            ver, new HttpFields());        
-        // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
-    }
-}
 
 /**
-*/
+ * 
+ */
 class Http1ServerRequestHandler : HttpRequestHandler {
-    package(hunt.http.server) HttpRequest request;
-    package(hunt.http.server) HttpResponse response;
-    package(hunt.http.server) Http1ServerConnection connection;
-    package(hunt.http.server) Http1ServerResponseOutputStream outputStream;
-    package(hunt.http.server) ServerHttpHandler serverHttpHandler;
-    package(hunt.http.server) HttpFields trailer;
+    package HttpRequest request;
+    package HttpResponse response;
+    package Http1ServerConnection connection;
+    package Http1ServerResponseOutputStream outputStream;
+    package ServerHttpHandler serverHttpHandler;
+    package HttpFields trailer;
 
     this(ServerHttpHandler serverHttpHandler) {
         this.serverHttpHandler = serverHttpHandler;

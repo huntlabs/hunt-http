@@ -25,5 +25,4 @@ interface HttpConnection : Closeable { // : Connection
     HttpConnection onClose(Action1!(HttpConnection) handler);
 
     HttpConnection onException(Action2!(HttpConnection, Exception) handler);
-
 }

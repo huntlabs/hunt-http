@@ -8,6 +8,8 @@ import hunt.http.server.HttpServerConnection;
 import hunt.http.server.HttpServerContext;
 import hunt.http.server.HttpServerHandler;
 import hunt.http.server.HttpServerOptions;
+import hunt.http.server.HttpServerRequest;
+import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
@@ -328,9 +330,11 @@ class HttpServer : AbstractLifecycle {
                 .headerComplete((request, response, ot, connection) {
                     version(HUNT_HTTP_DEBUG) info("headerComplete!!!!!");
                     
-                    HttpServerContext context = new HttpServerContext(request, response, 
+                    HttpServerContext context = new HttpServerContext(
+                        cast(HttpServerRequest)request, 
+                        cast(HttpServerResponse)response, 
                         ot, cast(HttpServerConnection)connection);
-                    request.setAttachment(context);
+                    // request.setAttachment(context);
                     routerManager.accept(context);
                     // if (_headerComplete != null) {
                     //     _headerComplete(r);
@@ -339,6 +343,7 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .content((buffer, request, response, ot, connection) {
+                    version(HUNT_HTTP_DEBUG) info("content!!!!!");
                     // version(HUNT_HTTP_DEBUG) {
                     //     warning(BufferUtils.toDetailString(buffer));
                     // }
@@ -348,13 +353,14 @@ class HttpServer : AbstractLifecycle {
                         newBuffer.put(buffer).flip();
                         buffer = newBuffer;
                     }
-
-                    request.onContent(buffer);
+                    HttpServerRequest serverRequest = cast(HttpServerRequest)request;
+                    serverRequest.onContent(buffer);
                     return false;
                 })
                 .contentComplete((request, response, ot, connection)  {
                     version(HUNT_HTTP_DEBUG) info("contentComplete!!!!!");
-                    request.onContentComplete();
+                    HttpServerRequest serverRequest = cast(HttpServerRequest)request;
+                    serverRequest.onContentComplete();
                     // HttpServerContext context = cast(HttpServerContext) request.getAttachment();
                     // context.onContentComplete();
                     // if (r.contentComplete !is null) {
@@ -363,18 +369,18 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .messageComplete((request, response, ot, connection)  {
-                    request.onMessageComplete();
+                    version(HUNT_HTTP_DEBUG) info("messageComplete!!!!!");
+                    HttpServerRequest serverRequest = cast(HttpServerRequest)request;
+                    serverRequest.onMessageComplete();
                     // if (!r.getResponse().isAsynchronous()) {
                     //     IOUtils.close(r.getResponse());
                     // }
-                    version(HUNT_HTTP_DEBUG) info("messageComplete!!!!!");
                     return true;
                 })
                 .badMessage((status, reason, request, response, ot, connection)  {
                     version(HUNT_HTTP_DEBUG) warning("badMessage: status=%d reason=%s", status, reason);
                 })
                 .earlyEOF((request, response, ot, connection)  {
-                    
                     version(HUNT_HTTP_DEBUG) info("earlyEOF!!!!!");
                 });
 

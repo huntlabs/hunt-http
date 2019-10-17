@@ -1,7 +1,7 @@
 module hunt.http.router.RoutingContext;
 
 import hunt.http.router.HttpSession;
-import hunt.http.router.HttpServerRequest;
+import hunt.http.server.HttpServerRequest;
 
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
@@ -45,7 +45,7 @@ abstract class RoutingContext : Closeable {
 
     // HttpResponse getAsyncResponse() { implementationMissing(false); return null;}
 
-    HttpRequest getRequest();
+    HttpServerRequest getRequest();
 
     // HttpOutputStream getOutputStream();   
 
