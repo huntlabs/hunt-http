@@ -39,46 +39,22 @@ class DefaultHttpRouteHandler : IRoutingHandler {
         return _options;
     }
 
-    void setConfiguration(HttpRequestOptions options) {
-        this._options = options;
-    }
+    // void setConfiguration(HttpRequestOptions options) {
+    //     this._options = options;
+    // }
 
     override void handle(RoutingContext context) {
         HttpServerRequest request = context.getRequest();
-        // HttpServerRequestImpl httpBody = new HttpServerRequestImpl();
-        // httpBody.urlEncodedMap = new UrlEncoded();
-        // httpBody.charset = _options.getCharset();
-        // context.setHttpBody(httpBody);
-
-        // string queryString = request.getURI().getQuery();
-        // if (!queryString.empty()) {
-        //     httpBody.urlEncodedMap.decode(queryString);
-        // }
-
-        if (context.isAsynchronousRead()) { // receive content event has been listened
+        
+        if (context.isAsynchronousRead() || // receive content event has been listened
+            (!request.isChunked() && request.getContentLength()<=0)) { // Or request is not chunked and have no content
             context.next();
             return;
         }
 
-        if (request.isChunked()) {
-            request.setPipedStream(new ByteArrayPipedStream(4 * 1024));
-        } else {
-            long contentLength = request.getContentLength();
-            if (contentLength <= 0) { // no content
-                context.next();
-                return;
-            } else {
-                if (contentLength > _options.getBodyBufferThreshold()) {
-                    request.setPipedStream(new FilePipedStream(_options.getTempFilePath()));
-                } else {
-                    request.setPipedStream(new ByteArrayPipedStream(cast(int) contentLength));
-                }
-            }
-        }
-
+        request.onHeaderComplete(_options);
         request.onMessageComplete((HttpServerRequest req) { context.next(); });
         context.enableAsynchronousRead();
 
-        // context.onMessageComplete((HttpServerRequest req) { context.next(); });
     }
 }

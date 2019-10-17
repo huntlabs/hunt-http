@@ -1,19 +1,22 @@
 module hunt.http.server.ServerHttpHandler;
 
 import hunt.http.server.HttpServerConnection;
+import hunt.http.server.HttpServerOptions;
 
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
-import hunt.Functions;
+import hunt.http.HttpConnection;
 
 import hunt.collection.ByteBuffer;
+import hunt.Functions;
+
 
 /**
-*/
+ * 
+ */
 interface ServerHttpHandler : HttpHandler {
 
     void acceptConnection(HttpConnection connection);
@@ -36,9 +39,19 @@ interface ServerHttpHandler : HttpHandler {
  */
 class ServerHttpHandlerAdapter : AbstractHttpHandler, ServerHttpHandler {
 
+    private HttpServerOptions _httpOptions;
+
     protected Action1!HttpConnection _acceptConnection;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _accept100Continue;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpServerConnection, bool) _acceptHttpTunnelConnection;
+
+    this(HttpServerOptions options) {
+        _httpOptions = options;
+    }
+
+    HttpServerOptions serverOptions() {
+        return _httpOptions;
+    }
 
     // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-16T11:46:06+08:00
     // refactor to use HttpServerContext 

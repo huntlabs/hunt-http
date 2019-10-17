@@ -197,6 +197,9 @@ class HttpServer : AbstractLifecycle {
         return new Builder(serverOptions);
     }
 
+    /**
+     * 
+     */
     static final class Builder {
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
@@ -209,7 +212,7 @@ class HttpServer : AbstractLifecycle {
 
         this(HttpServerOptions options) {
             _httpOptions = options;
-            routerManager = RouterManager.create();
+            routerManager = RouterManager.create(_httpOptions.requestOptions());
             
             // set the server options as a global variable
             GlobalSettings.httpServerOptions = _httpOptions;
@@ -318,7 +321,7 @@ class HttpServer : AbstractLifecycle {
         }
 
         private ServerHttpHandler buildServerHttpHandler() {
-            ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter();
+            ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter(_httpOptions);
 
             adapter.acceptHttpTunnelConnection((request, response, ot, connection) {
                     version(HUNT_HTTP_DEBUG) info("acceptHttpTunnelConnection!!!");
@@ -330,29 +333,20 @@ class HttpServer : AbstractLifecycle {
                 .headerComplete((request, response, ot, connection) {
                     version(HUNT_HTTP_DEBUG) info("headerComplete!!!!!");
                     
+                    HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     HttpServerContext context = new HttpServerContext(
-                        cast(HttpServerRequest)request, 
+                        serverRequest, 
                         cast(HttpServerResponse)response, 
                         ot, cast(HttpServerConnection)connection);
                     // request.setAttachment(context);
                     routerManager.accept(context);
-                    // if (_headerComplete != null) {
-                    //     _headerComplete(r);
-                    // }
-                    // requestMeter.mark();
+                    // serverRequest.onHeaderComplete(_httpOptions.requestOptions());
+
                     return false;
                 })
                 .content((buffer, request, response, ot, connection) {
-                    version(HUNT_HTTP_DEBUG) info("content!!!!!");
-                    // version(HUNT_HTTP_DEBUG) {
-                    //     warning(BufferUtils.toDetailString(buffer));
-                    // }
+                    version(HUNT_HTTP_DEBUG) infof("content: %s", BufferUtils.toDetailString(buffer));
 
-                    if(_canCopyBuffer) {
-                        ByteBuffer newBuffer = BufferUtils.allocate(buffer.remaining());
-                        newBuffer.put(buffer).flip();
-                        buffer = newBuffer;
-                    }
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     serverRequest.onContent(buffer);
                     return false;

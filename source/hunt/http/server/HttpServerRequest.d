@@ -10,6 +10,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 
 import hunt.collection;
+import hunt.concurrency.atomic;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.io.Common;
@@ -28,14 +29,13 @@ import std.range;
  */
 class HttpServerRequest : HttpRequest {
     
-    // private List!(ByteBuffer) _requestBody; 
     private string _stringBody; 
     private string _mimeType;
+    private HttpRequestOptions _options;
 
-    private PipedStream pipedStream;
-    private MultipartFormParser multipartFormInputStream;
-    private UrlEncoded urlEncodedMap;
-    private string charset;
+    private PipedStream _pipedStream;
+    private MultipartFormParser _multipartFormParser;
+    private UrlEncoded _urlEncodedMap;
 
     // private Action1!ByteBuffer _contentHandler;
     // private Action1!HttpServerRequest _contentCompleteHandler;
@@ -46,7 +46,6 @@ class HttpServerRequest : HttpRequest {
         super(method, 
             new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
             ver, new HttpFields());        
-        // _requestBody = new ArrayList!(ByteBuffer)();
 
         // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
     }
@@ -54,17 +53,17 @@ class HttpServerRequest : HttpRequest {
 
     string getParameter(string name) {
         decodeUrl();
-        return urlEncodedMap.getString(name);
+        return _urlEncodedMap.getString(name);
     }
 
     List!(string) getParameterValues(string name) {
         decodeUrl();
-        return urlEncodedMap.getValues(name);
+        return _urlEncodedMap.getValues(name);
     }
 
     Map!(string, List!(string)) getParameterMap() {
         decodeUrl();
-        return urlEncodedMap;
+        return _urlEncodedMap;
     }
 
     string getMimeType() {
@@ -75,56 +74,42 @@ class HttpServerRequest : HttpRequest {
         return _mimeType;
     }
     
-
     private void decodeUrl() {
-        if(urlEncodedMap !is null)
+        if(_urlEncodedMap !is null)
             return;
 
-        urlEncodedMap = new UrlEncoded();
+        _urlEncodedMap = new UrlEncoded();
 
         string queryString = getURI().getQuery();
         if (!queryString.empty()) {
-            urlEncodedMap.decode(queryString);
+            _urlEncodedMap.decode(queryString);
         }
 
         if ("application/x-www-form-urlencoded".equalsIgnoreCase(getMimeType())) {
-            HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
+            // HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
             string bodyString = getStringBody(_options.getCharset());
-            urlEncodedMap.decode(bodyString);
+            _urlEncodedMap.decode(bodyString);
         }
     }
 
-    void setPipedStream(PipedStream stream) {
-        this.pipedStream = stream;
-    }
+    // void setPipedStream(PipedStream stream) {
+    //     this._pipedStream = stream;
+    // }
 
     // void closeOutputStream() {
-    //     if(this.pipedStream !is null)
-    //         this.pipedStream.getOutputStream().close();
+    //     if(this._pipedStream !is null)
+    //         this._pipedStream.getOutputStream().close();
     // }
 
     OutputStream getOutputStream() {
-        return this.pipedStream.getOutputStream();
+        return this._pipedStream.getOutputStream();
     }
-
-    // string getStringBody(string charset) {
-    //     // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-15T09:49:13+08:00
-    //     // 
-    //     if (_stringBody is null) {
-    //         Appender!string buffer;
-    //         foreach(ByteBuffer b; _requestBody) {
-    //             buffer.put(cast(string)b.array);
-    //         }
-    //         _stringBody = buffer.data; // BufferUtils.toString(_requestBody, charset);
-    //     } 
-    //     return _stringBody;
-    // }
 
     string getStringBody(string charset) {
         if (_stringBody != null) {
             return _stringBody;
         } else {
-            InputStream inputStream = this.pipedStream.getInputStream();
+            InputStream inputStream = this._pipedStream.getInputStream();
             if (inputStream is null) {
                 return null;
             } else {
@@ -148,36 +133,49 @@ class HttpServerRequest : HttpRequest {
         return getStringBody("UTF-8");
     }
 
+    package(hunt.http) void onHeaderComplete(HttpRequestOptions options) {
+        _options = options;
+        if (isChunked()) {
+            this._pipedStream = new ByteArrayPipedStream(4 * 1024);
+        } else {
+            long contentLength = getContentLength();
+           
+            if (contentLength > options.getBodyBufferThreshold()) {
+                this._pipedStream = new FilePipedStream(options.getTempFilePath());
+            } else if(contentLength > 0) {
+                this._pipedStream = new ByteArrayPipedStream(cast(int) contentLength);
+            }
+        }
+    }
+
     private shared long chunkedEncodingContentLength;
 
-    void onContent(ByteBuffer buffer) {
-        // if(_contentHandler is null) {
-        //     _requestBody.add(buffer);
-        // } else {
-        //     _contentHandler(buffer);
-        // }
-
+    package(hunt.http) void onContent(ByteBuffer buffer) {
         version(HUNT_HTTP_DEBUG) {
             tracef("http body handler received content size -> %s", buffer.remaining());
         }
 
         try {
+            OutputStream outStream = getOutputStream();
             if (isChunked()) {
-                implementationMissing(false);
-                // if (chunkedEncodingContentLength.addAndGet(buf.remaining()) > _options.getBodyBufferThreshold()
-                //         && httpBody.pipedStream instanceof ByteArrayPipedStream) {
-                //     // chunked encoding content dump to temp file
-                //     IOUtils.close(httpBody.pipedStream.getOutputStream());
-                //     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
-                //     IO.copy(httpBody.pipedStream.getInputStream(), filePipedStream.getOutputStream());
-                //     filePipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-                //     httpBody.pipedStream = filePipedStream;
-                // } else {
-                //     httpBody.pipedStream.getOutputStream().write(BufferUtils.toArray(buf));
-                // }
+                long length = AtomicHelper.increment(chunkedEncodingContentLength, buffer.remaining());
+                ByteArrayPipedStream bytesStream = cast(ByteArrayPipedStream)_pipedStream;
+                if (length > _options.getBodyBufferThreshold() && bytesStream !is null) {
+                    // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-17T23:05:10+08:00
+                    // better performance.
+                    // chunked encoding content dump to temp file
+                    _pipedStream.getOutputStream().close();
+                    FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
+                    byte[] bufferedBytes = bytesStream.getOutputStream().asByteArray();
+                    OutputStream fileOutStream = filePipedStream.getOutputStream();
+                    fileOutStream.write(bufferedBytes);
+                    fileOutStream.write(BufferUtils.toArray(buffer, false));
+                    _pipedStream = filePipedStream;
+                } else {
+                    outStream.write(BufferUtils.toArray(buffer, false));
+                }
             } else {
-                getOutputStream().write(BufferUtils.toArray(buffer));
-
+                outStream.write(BufferUtils.toArray(buffer, false));
             }
         } catch (IOException e) {
             version(HUNT_DEBUG) warning("http server receives http body exception: ", e.msg);
@@ -185,10 +183,8 @@ class HttpServerRequest : HttpRequest {
         }        
     }
 
-    void onContentComplete() {
-        // if(_contentCompleteHandler !is null)
-        //     _contentCompleteHandler(this);
-        if(pipedStream is null || getContentLength() <=0)
+    package(hunt.http) void onContentComplete() {
+        if(_pipedStream is null || getContentLength() <=0)
             return;
             
         try {
@@ -201,8 +197,8 @@ class HttpServerRequest : HttpRequest {
                 import hunt.http.server.GlobalSettings;
 
                 HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
-                multipartFormInputStream = new MultipartFormParser(
-                        pipedStream.getInputStream(),
+                _multipartFormParser = new MultipartFormParser(
+                        _pipedStream.getInputStream(),
                         getContentType(),
                         _options.getMultipartOptions(),
                         _options.getTempFilePath());
@@ -211,36 +207,9 @@ class HttpServerRequest : HttpRequest {
             version(HUNT_DEBUG) warning("http server ends receiving data exception: ", e.msg);
             version(HUNT_HTTP_DEBUG) warning(e);
         }
-    }
+    } 
 
-
-    Part[] getParts() {
-        if (multipartFormInputStream is null) 
-            return null;
-
-        try {
-            return multipartFormInputStream.getParts();
-        } catch (IOException e) {
-            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
-            version(HUNT_HTTP_DEBUG) warning(e);
-            return null;
-        }
-    }
-
-    Part getPart(string name) {
-        if (multipartFormInputStream is null) 
-            return null;
-
-        try {
-            return multipartFormInputStream.getPart(name);
-        } catch (IOException e) {
-            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
-            version(HUNT_HTTP_DEBUG) warning(e);
-            return null;
-        }
-    }    
-
-    void onMessageComplete() {
+    package(hunt.http) void onMessageComplete() {
         if(_messageCompleteHandler !is null)
             _messageCompleteHandler(this);
     }
@@ -255,9 +224,35 @@ class HttpServerRequest : HttpRequest {
     //     return this;
     // }
 
-    HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
+    package(hunt.http) HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
         _messageCompleteHandler = handler;
         return this;
     }
+
+    Part[] getParts() {
+        if (_multipartFormParser is null) 
+            return null;
+
+        try {
+            return _multipartFormParser.getParts();
+        } catch (IOException e) {
+            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
+            version(HUNT_HTTP_DEBUG) warning(e);
+            return null;
+        }
+    }
+
+    Part getPart(string name) {
+        if (_multipartFormParser is null) 
+            return null;
+
+        try {
+            return _multipartFormParser.getPart(name);
+        } catch (IOException e) {
+            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
+            version(HUNT_HTTP_DEBUG) warning(e);
+            return null;
+        }
+    }   
 
 }

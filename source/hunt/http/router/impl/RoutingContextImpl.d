@@ -15,6 +15,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.server.HttpServerContext;
 import hunt.http.server.HttpServerRequest;
+import hunt.http.server.HttpServerResponse;
 
 import hunt.collection;
 import hunt.util.Common;
@@ -65,8 +66,7 @@ class RoutingContextImpl : RoutingContext {
     // }
 
     override
-    HttpResponse getResponse() {
-        // return request.getResponse();
+    HttpServerResponse getResponse() {
         return _context.httpResponse();
     }
 
