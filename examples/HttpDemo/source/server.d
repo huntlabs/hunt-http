@@ -4,10 +4,8 @@ import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.server.HttpServer;
-import hunt.http.server.HttpServerOptions;
-import hunt.http.server.ServerHttpHandler;
-import hunt.http.server.WebSocketHandler;
+import hunt.http.server;
+
 import hunt.http.router.RoutingContext;
 
 import hunt.util.DateTime;
@@ -29,7 +27,10 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args) {
 
-    HttpServer server = buildServerWithoutDefaultRoute();
+    // HttpServer server = buildSimpleServer();
+    // HttpServer server = buildServerWithoutDefaultRoute();
+    HttpServer server = buildServerWithForm();
+    
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
@@ -62,7 +63,7 @@ HttpServer buildServerWithMultiRoutes() {
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
-        .addRoute("/testpost", HttpMethod.POST, (RoutingContext context) {
+        .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
             HttpRequest request = context.getRequest();
             string content = request.getStringBody();
             warning(content);
@@ -81,7 +82,6 @@ HttpServer buildServerWithMultiRoutes() {
 
 
 HttpServer buildServerWithoutDefaultRoute() {
-
     HttpServer server = HttpServer.builder()
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
@@ -89,11 +89,45 @@ HttpServer buildServerWithoutDefaultRoute() {
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
-        .addRoute("/testpost", HttpMethod.POST, (RoutingContext context) {
+        .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
             HttpRequest request = context.getRequest();
-            string content = context.getStringBody();
+            string content = request.getStringBody();
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
+        })
+        .build();
+    return server;    
+}
+
+
+HttpServer buildServerWithForm() {
+    // http://10.1.223.62:8080/post?returnUrl=%2flogin
+    // 
+    HttpServer server = HttpServer.builder()
+        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        .setListener(8080, "0.0.0.0")
+        .addRoute("/plain*", (RoutingContext context) {
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
-            context.end("Post: " ~ content ~ ", " ~ DateTime.getTimeAsGMT());
+            context.end("Hello World! " ~ DateTime.getTimeAsGMT());
+        })
+        .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
+            HttpRequest request = context.getRequest();
+            string content = request.getStringBody();
+            string mimeType = request.getMimeType();
+            warning("mimeType: ", mimeType);
+            if(mimeType == "multipart/form-data") {
+                foreach (Part part; request.getParts()) {
+                    MultipartFormInputStream.MultiPart multipart = cast(MultipartFormInputStream.MultiPart) part;
+                    warning("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content=%s",
+                        multipart.getName(), multipart.getSubmittedFileName(), 
+                        multipart.getFile(), multipart.getContentType(), cast(string) multipart.getBytes());
+                }
+            } else if(mimeType == "application/x-www-form-urlencoded") {
+                content = request.getParameterMap().toString();
+            }
+
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
         .build();
     return server;    
