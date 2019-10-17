@@ -317,7 +317,7 @@ class HttpServer : AbstractLifecycle {
             }
         }
 
-        private ServerHttpHandlerAdapter buildHttpHandlerAdapter() {
+        private ServerHttpHandler buildServerHttpHandler() {
             ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter();
 
             adapter.acceptHttpTunnelConnection((request, response, ot, connection) {
@@ -389,7 +389,7 @@ class HttpServer : AbstractLifecycle {
 
         HttpServer build() { 
             WebSocketHandler webSocketHandler = new DefaultWebSocketHandler();
-            HttpServer server = new HttpServer(_httpOptions, buildHttpHandlerAdapter(), webSocketHandler);
+            HttpServer server = new HttpServer(_httpOptions, buildServerHttpHandler(), webSocketHandler);
 
             return server;
         }

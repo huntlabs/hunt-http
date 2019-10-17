@@ -9,10 +9,11 @@ import hunt.Functions;
 import hunt.util.Common;
 import hunt.collection.ByteBuffer;
 
-// deprecated("Using HttpCodecHandler instead.")
-alias HttpHandler = HttpCodecHandler;
 
-interface HttpCodecHandler {
+/**
+ * 
+ */
+interface HttpHandler {
 
     bool content(ByteBuffer item, HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection);
@@ -33,12 +34,9 @@ interface HttpCodecHandler {
             HttpOutputStream output, HttpConnection connection);
 }
 
-// deprecated("Using AbstractHttpCodecHandler instead.") 
-alias AbstractHttpHandler = AbstractHttpCodecHandler;
-
 /**
 */
-class AbstractHttpCodecHandler : HttpCodecHandler {
+class AbstractHttpHandler : HttpHandler {
 
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _headerComplete;
     protected Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream,

@@ -18,13 +18,12 @@ import std.string : icmp;
 // alias RequestHandler = HttpParser.RequestHandler;
 
 
-
 /**
  * 
  */
-class Http1ServerRequestHandler : HttpRequestHandler {
-    package HttpRequest request;
-    package HttpResponse response;
+class Http1ServerRequestHandler : HttpRequestParserHandler {
+    package HttpServerRequest request;
+    package HttpServerResponse response;
     package Http1ServerConnection connection;
     package Http1ServerResponseOutputStream outputStream;
     package ServerHttpHandler serverHttpHandler;
@@ -35,7 +34,7 @@ class Http1ServerRequestHandler : HttpRequestHandler {
     }
 
     override bool startRequest(string method, string uri, HttpVersion ver) {
-        version (HUNT_DEBUG) {
+        version (HUNT_HTTP_DEBUG) {
             tracef("server received the request line, %s, %s, %s", method, uri, ver);
         }
 

@@ -28,9 +28,13 @@ interface ServerHttpHandler : HttpHandler {
 
 }
 
-alias ServerHttpHandlerAdapter = AbstractServerHttpHandler;
+// deprecated("Using AbstractServerHttpHandler instead.")
+// alias ServerHttpHandlerAdapter = AbstractServerHttpHandler;
 
-class AbstractServerHttpHandler : AbstractHttpHandler, ServerHttpHandler {
+/**
+ * 
+ */
+class ServerHttpHandlerAdapter : AbstractHttpHandler, ServerHttpHandler {
 
     protected Action1!HttpConnection _acceptConnection;
     protected Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) _accept100Continue;
@@ -38,54 +42,54 @@ class AbstractServerHttpHandler : AbstractHttpHandler, ServerHttpHandler {
 
     // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-16T11:46:06+08:00
     // refactor to use HttpServerContext 
-    AbstractServerHttpHandler headerComplete(
+    ServerHttpHandlerAdapter headerComplete(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) h) {
         this._headerComplete = h;
         return this;
     }
 
-    AbstractServerHttpHandler messageComplete(
+    ServerHttpHandlerAdapter messageComplete(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) m) {
         this._messageComplete = m;
         return this;
     }
 
-    AbstractServerHttpHandler content(
+    ServerHttpHandlerAdapter content(
             Func5!(ByteBuffer, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) c) {
         this._content = c;
         return this;
     }
 
-    AbstractServerHttpHandler contentComplete(
+    ServerHttpHandlerAdapter contentComplete(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) c) {
         this._contentComplete = c;
         return this;
     }
 
-    AbstractServerHttpHandler badMessage(
+    ServerHttpHandlerAdapter badMessage(
             Action6!(int, string, HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) b) {
         this._badMessage = b;
         return this;
     }
 
-    AbstractServerHttpHandler earlyEOF(
+    ServerHttpHandlerAdapter earlyEOF(
             Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) e) {
         this._earlyEOF = e;
         return this;
     }
 
-    AbstractServerHttpHandler acceptConnection(Action1!HttpConnection c) {
+    ServerHttpHandlerAdapter acceptConnection(Action1!HttpConnection c) {
         this._acceptConnection = c;
         return this;
     }
 
-    AbstractServerHttpHandler accept100Continue(
+    ServerHttpHandlerAdapter accept100Continue(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool) a) {
         this._accept100Continue = a;
         return this;
     }
 
-    AbstractServerHttpHandler acceptHttpTunnelConnection(
+    ServerHttpHandlerAdapter acceptHttpTunnelConnection(
             Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpServerConnection, bool) a) {
         this._acceptHttpTunnelConnection = a;
         return this;
