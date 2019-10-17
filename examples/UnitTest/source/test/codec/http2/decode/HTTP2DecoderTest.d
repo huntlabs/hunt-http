@@ -431,11 +431,11 @@ class MockSessionFactory
 
 import hunt.net.AbstractConnection;
 
-static class AbstractMockSession : AbstractConnection {
+class AbstractMockSession : AbstractConnection {
 
     this(LinkedList!(ByteBuffer) outboundData) {
 
-        super(0, null);
+        super(0, new TcpSslOptions(), null);
     }
 
 version(HUNT_METRIC) {
