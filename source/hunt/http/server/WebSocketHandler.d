@@ -1,45 +1,62 @@
 module hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.http.model.MetaData;
-import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
+import hunt.http.HttpConnection;
+
 import hunt.logging.ConsoleLogger;
+import hunt.Functions;
+
 import std.conv;
 
 /**
-*/
-class WebSocketHandler {
+ * 
+ */
+interface WebSocketHandler {
+     bool acceptUpgrade(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection);
+
+    alias onConnect = onOpen;
+
+    void onOpen(WebSocketConnection connection);
+
+    WebSocketPolicy getWebSocketPolicy();
+
+    void setWebSocketPolicy(WebSocketPolicy w);
+
+    void onFrame(Frame frame, WebSocketConnection connection);
+
+    void onError(Exception t, WebSocketConnection connection);
+}
+
+alias HttpEventHandler = Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection);
+
+/** 
+ * 
+ */
+abstract class AbstractWebSocketHandler : WebSocketHandler {
 
     protected WebSocketPolicy defaultWebSocketPolicy;
     protected WebSocketPolicy _webSocketPolicy;
+
+    private HttpEventHandler _acceptUpgradeHandler;
+    private Action1!(WebSocketConnection) _openHandler;
+    private Action2!(Frame, WebSocketConnection) _frameHandler;
+    private Action2!(Exception, WebSocketConnection) _errorHandler;
 
     this() {
         defaultWebSocketPolicy = WebSocketPolicy.newServerPolicy();
     }
 
-    bool acceptUpgrade(HttpRequest request, HttpResponse response,
-            HttpOutputStream output, HttpConnection connection) {
-        version (HUNT_DEBUG) {
-            infof("The connection %s will upgrade to WebSocket connection",
-                    connection.getId());
-        }
-        return true;
-    }
-
-    void onConnect(WebSocketConnection webSocketConnection) {
-        warning("do nothing");
-    }
-
     WebSocketPolicy getWebSocketPolicy() {
         if (_webSocketPolicy is null) {
             return defaultWebSocketPolicy;
-        }
-        else {
+        } else {
             return _webSocketPolicy;
         }
     }
@@ -48,22 +65,65 @@ class WebSocketHandler {
         this._webSocketPolicy = w;
     }
 
+    bool acceptUpgrade(HttpRequest request, HttpResponse response,
+            HttpOutputStream output, HttpConnection connection) {
+                
+        version (HUNT_HTTP_DEBUG) {
+            string path = request.getURI().getPath();
+            infof("The connection %s will upgrade to WebSocket on path %s",
+                connection.getId(), path);
+        }
+
+        if(_acceptUpgradeHandler !is null)
+            _acceptUpgradeHandler(request, response, output, connection);
+        return true;
+    }
+
+    void onOpen(WebSocketConnection connection) {
+        version (HUNT_HTTP_DEBUG) trace("Opened a connection with ", connection.getRemoteAddress());
+        if(_openHandler !is null) 
+            _openHandler(connection);
+    }
+
     void onFrame(Frame frame, WebSocketConnection connection) {
         version (HUNT_HTTP_DEBUG) {
-            HttpConnection conn = cast(HttpConnection)connection;
-            assert(conn !is null);
             tracef("The WebSocket connection %s received a frame: %s",
-                    conn.getId(), frame.to!string());
+                    connection.getId(), frame.to!string());
         }
+
+        if(_frameHandler !is null)
+            _frameHandler(frame, connection);
     }
 
-    void onError(Exception t, WebSocketConnection connection) {
-        errorf("The WebSocket error", t);
+    void onError(Exception ex, WebSocketConnection connection) {
+        version(HUNT_DEBUG) warningf("WebSocket error: ", ex.msg);
+        version(HUNT_HTTP_DEBUG) error(ex);
+        if(_errorHandler !is null)
+            _errorHandler(ex, connection);
     }
 
+    AbstractWebSocketHandler onAcceptUpgrade(HttpEventHandler handler) {
+        _acceptUpgradeHandler = handler;
+        return this;
+    }
+
+    AbstractWebSocketHandler onOpen(Action1!(WebSocketConnection) handler) {
+        _openHandler = handler;
+        return this;
+    }
+
+    AbstractWebSocketHandler onFrame(Action2!(Frame, WebSocketConnection) handler) {
+        _frameHandler = handler;
+        return this;
+    }
+
+    AbstractWebSocketHandler onError(Action2!(Exception, WebSocketConnection) handler) {
+        _errorHandler = handler;
+        return this;
+    }
 }
 
 
-class DefaultWebSocketHandler : WebSocketHandler {
+class WebSocketHandlerAdapter : AbstractWebSocketHandler {
     
 }

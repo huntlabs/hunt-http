@@ -29,7 +29,8 @@ void main(string[] args) {
 
     // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerWithoutDefaultRoute();
-    HttpServer server = buildServerWithForm();
+    // HttpServer server = buildServerWithForm();
+    HttpServer server = buildServerWithWebSocket();
     
     
     if(server.isTLS())
@@ -129,6 +130,59 @@ HttpServer buildServerWithForm() {
 
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
+        })
+        .build();
+    return server;    
+}
+
+HttpServer buildServerWithWebSocket() {
+    import hunt.http.codec.websocket.stream.WebSocketMessageHandler;
+
+    HttpServer server = HttpServer.builder()
+        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        .setListener(8080, "0.0.0.0")
+        .addRoute("/plain*", (RoutingContext context) {
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Hello World! " ~ DateTime.getTimeAsGMT());
+        })
+        .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
+            HttpServerRequest request = context.getRequest();
+            string content = request.getStringBody();
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
+        })
+        .registerWebSocket("/ws1", new class WebSocketMessageHandler {
+
+            void onOpen(WebSocketConnection connection) {
+                connection.sendText("Resonse from ws1 at " ~ DateTime.getTimeAsGMT());
+            }
+
+            void onText(string text, WebSocketConnection connection) {
+                tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
+                connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
+            }
+
+            void onError(Exception ex, WebSocketConnection connection) {
+                warningf("error (from %s): %s", connection.getRemoteAddress(), ex.msg);
+                version(HUNT_DEBUG) warning(ex);
+            }          
+
+        })
+        .registerWebSocket("/ws2", new class WebSocketMessageHandler {
+
+            void onOpen(WebSocketConnection connection) {
+                connection.sendText("Resonse from ws2 at " ~ DateTime.getTimeAsGMT());
+            }
+
+            void onText(string text, WebSocketConnection connection) {
+                tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
+                connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
+            }
+
+            void onError(Exception ex, WebSocketConnection connection) {
+                warningf("error (from %s): %s", connection.getRemoteAddress(), ex.msg);
+                version(HUNT_DEBUG) warning(ex);
+            }              
         })
         .build();
     return server;    

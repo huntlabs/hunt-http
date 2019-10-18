@@ -51,7 +51,7 @@ abstract class ExtensionFactory  { // : Iterable<Class<? : Extension>>
     // }
 
     bool isAvailable(string name) {
-        tracef("Extension: %s", name);
+        version(HUNT_HTTP_DEBUG) tracef("Extension: %s", name);
         return availableExtensions.containsKey(name);
     }
 

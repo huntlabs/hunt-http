@@ -18,9 +18,17 @@ import hunt.http.server.WebSocketHandler;
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.codec.http.model.MetaData;
+import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
+import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.codec.websocket.stream.WebSocketMessageHandler;
+import hunt.http.codec.websocket.frame;
 
 import hunt.http.router;
+import hunt.http.HttpConnection;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
@@ -49,6 +57,7 @@ class HttpServer : AbstractLifecycle {
     private HttpServerOptions _httpOptions;
     private string host;
     private int port;
+    // private WebSocketHandler[string] webSocketHandlers;
 
     this(HttpServerOptions httpOptions,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
@@ -61,7 +70,7 @@ class HttpServer : AbstractLifecycle {
         httpOptions.setHost(host);
         httpOptions.setPort(port);
         this(httpOptions, new Http2ServerRequestHandler(serverHttpHandler),
-                serverHttpHandler, new WebSocketHandler());
+                serverHttpHandler, new WebSocketHandlerAdapter());
     }
 
     this(string host, int port, HttpServerOptions httpOptions,
@@ -180,6 +189,20 @@ class HttpServer : AbstractLifecycle {
     //     return _server.getNetExecutorService();
     // }
 
+
+    // HttpServer registerWebSocket(string path, WebSocketHandler handler) {
+    //     auto itemPtr = path in webSocketHandlers;
+    //     if(itemPtr !is null)
+    //         throw new Exception("Handler registered on path: " ~ path);
+    //     webSocketHandlers[path] = handler;
+    //     return this;
+    // }
+
+    // HttpServer webSocketPolicy(WebSocketPolicy w) {
+    //     this._webSocketPolicy = w;
+    //     return this;
+    // }    
+
     override protected void initialize() {
         checkWorkingDirectory();
         _server.listen(host, port);
@@ -219,7 +242,8 @@ class HttpServer : AbstractLifecycle {
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
         private Router currentRouter;
-        private bool _canCopyBuffer = false;        
+        private WebSocketMessageHandler[string] webSocketHandlers;
+        // private bool _canCopyBuffer = false;        
 
         this() {
             this(new HttpServerOptions());
@@ -251,10 +275,10 @@ class HttpServer : AbstractLifecycle {
         /**
          * set default route handler
          */
-        Builder enableBufferCopy(bool flag) {
-            _canCopyBuffer = flag;
-            return this;
-        }
+        // Builder enableBufferCopy(bool flag) {
+        //     _canCopyBuffer = flag;
+        //     return this;
+        // }
 
         Builder setHandler(RoutingHandler handler) {
             addRoute("*", handler);
@@ -319,9 +343,22 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        // Builder addRoute(string path, WebSocketHandler handler) {
-        //     return this;
-        // }
+        Builder registerWebSocket(string path, WebSocketMessageHandler handler) {
+            auto itemPtr = path in webSocketHandlers;
+            if(itemPtr !is null)
+                throw new Exception("Handler registered on path: " ~ path);
+            webSocketHandlers[path] = handler;
+
+            Router webSocketRouter = routerManager.register().path(path);
+            
+            version(HUNT_HTTP_DEBUG) {
+                webSocketRouter.handler( (ctx) {  
+                    infof("Skip a router path for WebSocket: %s", path);
+                });
+            }
+
+            return this;
+        }
 
         private void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
             try {
@@ -396,9 +433,61 @@ class HttpServer : AbstractLifecycle {
             return adapter;
         }
 
+        private WebSocketHandler buildWebSocketHandler() {
+            WebSocketHandlerAdapter adapter = new WebSocketHandlerAdapter();
+
+            adapter.onAcceptUpgrade((HttpRequest request, HttpResponse response, 
+                    HttpOutputStream output, HttpConnection connection) {
+                string path = request.getURI().getPath();
+                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                if (handler is null) {
+                    response.setStatus(HttpStatus.BAD_REQUEST_400);
+                    try {
+                        output.write(cast(byte[])("No websocket handler for url: " ~ path));
+                    } catch (IOException e) {
+                        version(HUNT_DEBUG) errorf("Write http message exception", e.msg);
+                    }
+                } else {
+                    // return handler.acceptUpgrade(request, response, output, connection);
+                }
+            }) 
+            .onOpen((connection) {
+                string path = connection.getUpgradeRequest().getURI().getPath();
+                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                if(handler !is null)
+                    handler.onOpen(connection);
+            })
+            .onFrame((Frame frame, WebSocketConnection connection) {
+                string path = connection.getUpgradeRequest().getURI().getPath();
+                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                if(handler !is null) {
+                    switch (frame.getType()) {
+                        case FrameType.TEXT:
+                            handler.onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
+                            break;
+                        case FrameType.CONTINUATION:
+                        case FrameType.BINARY:
+                            // if(_dataHandler !is null)
+                            //     _dataHandler(frame.getPayload(), connection);
+                            break;
+
+                        default: break;
+                    }
+                }
+            })
+            .onError((Exception ex, WebSocketConnection connection) {
+                string path = connection.getUpgradeRequest().getURI().getPath();
+                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                if(handler !is null)
+                    handler.onError(ex, connection);
+            });
+
+            return adapter;
+        }
+
         HttpServer build() { 
-            WebSocketHandler webSocketHandler = new DefaultWebSocketHandler();
-            HttpServer server = new HttpServer(_httpOptions, buildServerHttpHandler(), webSocketHandler);
+            // WebSocketHandler webSocketHandler = new DefaultWebSocketHandler();
+            HttpServer server = new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());
 
             return server;
         }
