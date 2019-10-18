@@ -40,7 +40,7 @@ interface HttpSessionHandlerSPI {
  */
 class HttpSessionConfiguration {
 
-    private string sessionIdParameterName = "huntsessionid";
+    private string sessionIdParameterName = "hunt-sessionid";
     private int defaultMaxInactiveInterval = 10 * 60; //second
 
     string getSessionIdParameterName() {

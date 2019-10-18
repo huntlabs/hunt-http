@@ -66,7 +66,7 @@ class MultipartFormParser {
     alias MultiPart = MultipartForm;
 
     /**
-     * @param input            Request input stream
+     * @param input         Request input stream
      * @param contentType   Content-Type header
      * @param config        MultipartOptions
      * @param contextTmpDir tempdir
@@ -79,8 +79,13 @@ class MultipartFormParser {
         else
             _contextTmpDir = contextTmpDir;
 
-        if (_config is null)
-            _config = new MultipartOptions(_contextTmpDir.asAbsolutePath().array);
+        if (_config is null) {
+            string rootPath = dirName(thisExePath);
+            string abslutePath = buildPath(rootPath, _contextTmpDir);
+            if (!abslutePath.exists())
+                abslutePath.mkdirRecurse();
+            _config = new MultipartOptions(abslutePath);
+        }
 
         // if (input instanceof ServletInputStream) {
         //     if (((ServletInputStream) input).isFinished()) {
@@ -229,7 +234,7 @@ class MultipartFormParser {
         _parts = new MultiMap!Part();
 
         // if its not a multipart request, don't parse it
-        if (_contentType is null || !_contentType.startsWith("multipart/form-data"))
+        if (_contentType.empty() || !_contentType.startsWith("multipart/form-data"))
             return;
 
         // sort out the location to which to write the files
@@ -239,8 +244,10 @@ class MultipartFormParser {
         else 
             _tmpDir = buildPath(_contextTmpDir, location);
 
-        if (!_tmpDir.exists())
-            _tmpDir.mkdirRecurse();
+        version(HUNT_HTTP_DEBUG) {
+            if (!_tmpDir.exists())
+                _tmpDir.mkdirRecurse();
+        }
 
         string contentTypeBoundary = "";
         int bstart = cast(int)_contentType.indexOf("boundary=");

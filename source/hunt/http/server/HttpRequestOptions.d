@@ -3,6 +3,7 @@ module hunt.http.server.HttpRequestOptions;
 import hunt.http.codec.http.model.MultipartOptions;
 
 import std.file;
+import std.path;
 
 /**
  * 
@@ -13,11 +14,13 @@ class HttpRequestOptions {
     private int maxRequestSize = 64 * 1024 * 1024;
     private int maxFileSize = 64 * 1024 * 1024;
     private string tempFilePath = "./temp";
+    private string tempFileAbsolutePath = "/temp";
     private string charset = "UTF-8";
     private MultipartOptions _multipartOptions;
 
     this() {
         tempFilePath = tempDir();
+        tempFileAbsolutePath = tempFilePath;
     }
 
     int getBodyBufferThreshold() {
@@ -40,8 +43,14 @@ class HttpRequestOptions {
         return tempFilePath;
     }
 
+    string getTempFileAbsolutePath() {
+        return tempFileAbsolutePath;
+    }
+
     void setTempFilePath(string tempFilePath) {
         this.tempFilePath = tempFilePath;
+        string rootPath = dirName(thisExePath);
+        tempFileAbsolutePath = buildPath(rootPath, tempFilePath);
     }
 
     string getCharset() {
@@ -54,7 +63,8 @@ class HttpRequestOptions {
 
     MultipartOptions getMultipartOptions() {
         if(_multipartOptions is null) {
-            _multipartOptions = new MultipartOptions(tempFilePath, maxFileSize, maxRequestSize, bodyBufferThreshold); 
+            _multipartOptions = new MultipartOptions(tempFileAbsolutePath, 
+                maxFileSize, maxRequestSize, bodyBufferThreshold); 
         }
         return _multipartOptions;
     }

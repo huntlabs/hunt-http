@@ -4,6 +4,7 @@ import hunt.http.server.GlobalSettings;
 import hunt.http.server.Http1ServerDecoder;
 import hunt.http.server.Http2ServerDecoder;
 import hunt.http.server.Http2ServerRequestHandler;
+import hunt.http.server.HttpRequestOptions;
 import hunt.http.server.HttpServerConnection;
 import hunt.http.server.HttpServerContext;
 import hunt.http.server.HttpServerHandler;
@@ -31,8 +32,11 @@ import hunt.net;
 import hunt.util.Lifecycle;
 
 import core.time;
+
 import std.array;
 import std.algorithm;
+import std.file;
+import std.path;
 
 
 /**
@@ -188,7 +192,13 @@ class HttpServer : AbstractLifecycle {
     }
 
     private void checkWorkingDirectory() {
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-18T10:52:02+08:00
+        // make sure more directories existed.
+        HttpRequestOptions requestOptions = _httpOptions.requestOptions();
+        string path = requestOptions.getTempFileAbsolutePath();
         
+        if (!path.exists())
+            path.mkdirRecurse();
     }
 
     /**

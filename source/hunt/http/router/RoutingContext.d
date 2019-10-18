@@ -167,15 +167,11 @@ abstract class RoutingContext : Closeable {
         return getRequest().getCookies();
     }
 
-    string getParameter(string name)  { implementationMissing(false); return null; }
+    string getParameter(string name);
 
-    // Optional!string getParamOpt(string name) {
-    //     return Optional.ofNullable(getParameter(name));
-    // }
+    List!string getParameterValues(string name);
 
-    List!string getParameterValues(string name) { implementationMissing(false); return null; }
-
-    Map!(string, List!string) getParameterMap() { implementationMissing(false); return null; }
+    Map!(string, List!string) getParameterMap();
 
     // Collection!Part getParts();
 
@@ -185,9 +181,9 @@ abstract class RoutingContext : Closeable {
 
     // BufferedReader getBufferedReader();
 
-    string getStringBody(string charset); // { implementationMissing(false); return null; }
+    string getStringBody(string charset); 
 
-    string getStringBody(); // { implementationMissing(false); return null; }
+    string getStringBody(); 
 
     // <T> T getJsonBody(Class<T> clazz);
 
