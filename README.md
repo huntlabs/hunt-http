@@ -2,18 +2,24 @@
 
 # hunt-http
 
-# Additional package dependencies
-| package | version | purpose |
-|--------|--------|--------|
-| hunt-trace |  0.2.0    |  Tracing for API requests  |
+## Features
+- [x] HttpClient
+- [x] HttpServer
+- [x] HTTP1.x
+- [x] HTTP2
+- [x] WebSocket
+- [x] TLS 1.2
 
-**Note:**
-To support request tracing, you must add these packages to your project:
-1. hunt-trace
+
+## Avaliable versions
+| Identifier | Description | 
+|--------|--------|
+| HUNT_HTTP_DEBUG |  Used to log debug messages about Hunt-HTTP |
+| HUNT_METRIC |  Used to enable some operations and APIs about metric |
 
 ## TODO
-- [ ] Reorganize modules
-- [ ] Improving HttpServer
+- [ ] Reorganizing modules
+- [ ] Supports for HttpSession 
 - [ ] More unit tests
 
 ## References
