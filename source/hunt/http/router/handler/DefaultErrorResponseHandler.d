@@ -44,10 +44,14 @@ abstract class AbstractErrorResponseHandler : IRoutingHandler {
  * 
  */
 class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
+    private __gshared DefaultErrorResponseHandler inst;
 
     static DefaultErrorResponseHandler Default() {
-        __gshared DefaultErrorResponseHandler inst;
         return initOnce!inst(new DefaultErrorResponseHandler());
+    }
+
+    static void Default(DefaultErrorResponseHandler handler) {
+        inst = handler;
     }
 
     override void render(RoutingContext ctx, int status, Throwable t) {

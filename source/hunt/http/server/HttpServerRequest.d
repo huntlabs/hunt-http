@@ -21,6 +21,8 @@ import hunt.text.Common;
 import hunt.util.Common;
 import hunt.util.MimeTypeUtils;
 
+import std.array;
+import std.container.array;
 import std.string : icmp;
 import std.range;
 
@@ -33,6 +35,7 @@ class HttpServerRequest : HttpRequest {
     private string _mimeType;
     private HttpRequestOptions _options;
 
+    private Cookie[] _cookies;
     private PipedStream _pipedStream;
     private MultipartFormParser _multipartFormParser;
     private UrlEncoded _urlEncodedMap;
@@ -228,6 +231,20 @@ class HttpServerRequest : HttpRequest {
         _messageCompleteHandler = handler;
         return this;
     }
+
+    Cookie[] getCookies() {
+        if (_cookies is null) {
+			Array!(Cookie) list;
+			foreach(string v; getFields().getValuesList(HttpHeader.COOKIE)) {
+				if(v.empty) continue;
+				foreach(Cookie c; CookieParser.parseCookie(v))
+					list.insertBack(c);
+			}
+			_cookies = list.array();
+        }
+        return _cookies;
+    }
+
 
     Part[] getParts() {
         if (_multipartFormParser is null) 

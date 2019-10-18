@@ -177,6 +177,7 @@ class HttpServer : AbstractLifecycle {
     // }
 
     override protected void initialize() {
+        checkWorkingDirectory();
         _server.listen(host, port);
     }
 
@@ -184,6 +185,10 @@ class HttpServer : AbstractLifecycle {
         // if (_server !is null) {
         //     _server.stop();
         // }
+    }
+
+    private void checkWorkingDirectory() {
+        
     }
 
     /**

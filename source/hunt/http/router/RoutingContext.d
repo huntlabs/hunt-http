@@ -163,10 +163,39 @@ abstract class RoutingContext : Closeable {
         return getRequest().getContentLength();
     }
 
-    // Cookie[] getCookies() {
-    //     return getRequest().getCookies();
+    Cookie[] getCookies() {
+        return getRequest().getCookies();
+    }
+
+    string getParameter(string name)  { implementationMissing(false); return null; }
+
+    // Optional!string getParamOpt(string name) {
+    //     return Optional.ofNullable(getParameter(name));
     // }
 
+    List!string getParameterValues(string name) { implementationMissing(false); return null; }
+
+    Map!(string, List!string) getParameterMap() { implementationMissing(false); return null; }
+
+    // Collection!Part getParts();
+
+    // Part getPart(string name);
+
+    // InputStream getInputStream();
+
+    // BufferedReader getBufferedReader();
+
+    string getStringBody(string charset); // { implementationMissing(false); return null; }
+
+    string getStringBody(); // { implementationMissing(false); return null; }
+
+    // <T> T getJsonBody(Class<T> clazz);
+
+    // <T> T getJsonBody(GenericTypeReference<T> typeReference);
+
+    // JsonObject getJsonObjectBody();
+
+    // JsonArray getJsonArrayBody();
 
     // response wrap
     RoutingContext setStatus(int status) {
@@ -245,37 +274,6 @@ abstract class RoutingContext : Closeable {
         getResponseHeaders().put(HttpHeader.LOCATION, url);
         DefaultErrorResponseHandler.Default().render(this, HttpStatus.FOUND_302, null);
     }
-
-    // HTTP body API
-    string getParameter(string name)  { implementationMissing(false); return null; }
-
-    // Optional!string getParamOpt(string name) {
-    //     return Optional.ofNullable(getParameter(name));
-    // }
-
-    List!string getParameterValues(string name) { implementationMissing(false); return null; }
-
-    Map!(string, List!string) getParameterMap() { implementationMissing(false); return null; }
-
-    // Collection!Part getParts();
-
-    // Part getPart(string name);
-
-    // InputStream getInputStream();
-
-    // BufferedReader getBufferedReader();
-
-    string getStringBody(string charset); // { implementationMissing(false); return null; }
-
-    string getStringBody(); // { implementationMissing(false); return null; }
-
-    // <T> T getJsonBody(Class<T> clazz);
-
-    // <T> T getJsonBody(GenericTypeReference<T> typeReference);
-
-    // JsonObject getJsonObjectBody();
-
-    // JsonArray getJsonArrayBody();
 
 
     // HTTP session API
