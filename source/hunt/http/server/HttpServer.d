@@ -24,11 +24,11 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
-import hunt.http.codec.websocket.stream.WebSocketMessageHandler;
 import hunt.http.codec.websocket.frame;
 
 import hunt.http.router;
 import hunt.http.HttpConnection;
+import hunt.http.WebSocketMessageHandler;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
@@ -344,12 +344,13 @@ class HttpServer : AbstractLifecycle {
         }
 
         Builder registerWebSocket(string path, WebSocketMessageHandler handler) {
-            auto itemPtr = path in webSocketHandlers;
-            if(itemPtr !is null)
-                throw new Exception("Handler registered on path: " ~ path);
-            webSocketHandlers[path] = handler;
-
+            // auto itemPtr = path in webSocketHandlers;
+            // if(itemPtr !is null)
+            //     throw new Exception("Handler registered on path: " ~ path);
+            
+            // WebSocket path should be skipped
             Router webSocketRouter = routerManager.register().path(path);
+            webSocketHandlers[path] = handler;
             
             version(HUNT_HTTP_DEBUG) {
                 webSocketRouter.handler( (ctx) {  
@@ -362,13 +363,12 @@ class HttpServer : AbstractLifecycle {
 
         private void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
             try {
-                // currentCtx = ctx;
                 if(handler !is null) handler(ctx);
             } catch (Exception e) {
                 ctx.fail(e);
-                errorf("http server handler exception: ", e);
+                version(HUNT_DEBUG) errorf("http server handler exception: ", e.msg);
+                version(HUNT_HTTP_DEBUG) error(e);
             } finally {
-                // currentCtx = null;
             }
         }
 
@@ -436,7 +436,8 @@ class HttpServer : AbstractLifecycle {
         private WebSocketHandler buildWebSocketHandler() {
             WebSocketHandlerAdapter adapter = new WebSocketHandlerAdapter();
 
-            adapter.onAcceptUpgrade((HttpRequest request, HttpResponse response, 
+            adapter
+            .onAcceptUpgrade((HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
                 string path = request.getURI().getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
@@ -447,36 +448,55 @@ class HttpServer : AbstractLifecycle {
                     } catch (IOException e) {
                         version(HUNT_DEBUG) errorf("Write http message exception", e.msg);
                     }
+                    return false;
                 } else {
                     // return handler.acceptUpgrade(request, response, output, connection);
+                    return true;
                 }
             }) 
             .onOpen((connection) {
-                string path = connection.getUpgradeRequest().getURI().getPath();
+                string path = connection.getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
                 if(handler !is null)
                     handler.onOpen(connection);
             })
             .onFrame((Frame frame, WebSocketConnection connection) {
-                string path = connection.getUpgradeRequest().getURI().getPath();
+                string path = connection.getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
-                if(handler !is null) {
-                    switch (frame.getType()) {
-                        case FrameType.TEXT:
-                            handler.onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
-                            break;
-                        case FrameType.CONTINUATION:
-                        case FrameType.BINARY:
-                            // if(_dataHandler !is null)
-                            //     _dataHandler(frame.getPayload(), connection);
-                            break;
+                if(handler is null) {
+                    return;
+                }
 
-                        default: break;
-                    }
+                switch (frame.getType()) {
+                    case WebSocketFrameType.TEXT:
+                        handler.onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
+                        break;
+                        
+                    case WebSocketFrameType.BINARY:
+                            handler.onBinary(frame.getPayload(), connection);
+                        break;
+                        
+                    case WebSocketFrameType.CLOSE:
+                            handler.onClosed(connection);
+                        break;
+
+                    case WebSocketFrameType.PING:
+                        handler.onPing(connection);
+                        break;
+
+                    case WebSocketFrameType.PONG:
+                        handler.onPong(connection);
+                        break;
+
+                    case WebSocketFrameType.CONTINUATION:
+                        handler.onContinuation (frame.getPayload(), connection);
+                        break;
+
+                    default: break;
                 }
             })
             .onError((Exception ex, WebSocketConnection connection) {
-                string path = connection.getUpgradeRequest().getURI().getPath();
+                string path = connection.getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
                 if(handler !is null)
                     handler.onError(ex, connection);

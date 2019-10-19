@@ -96,4 +96,8 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
      */
     HttpResponse getUpgradeResponse();
 
+    final string getPath() {
+        return getUpgradeRequest().getURI().getPath();
+    }
+
 }

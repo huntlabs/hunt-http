@@ -4,6 +4,7 @@ import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
@@ -20,10 +21,13 @@ import std.conv;
 interface WebSocketHandler {
      bool acceptUpgrade(HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection);
-
+    
+    deprecated("Using onOpen instead.")
     alias onConnect = onOpen;
 
     void onOpen(WebSocketConnection connection);
+
+    void onClosed(WebSocketConnection connection);
 
     WebSocketPolicy getWebSocketPolicy();
 
@@ -34,7 +38,7 @@ interface WebSocketHandler {
     void onError(Exception t, WebSocketConnection connection);
 }
 
-alias HttpEventHandler = Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection);
+alias HttpEventHandler = Func4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection, bool);
 
 /** 
  * 
@@ -46,6 +50,7 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
 
     private HttpEventHandler _acceptUpgradeHandler;
     private Action1!(WebSocketConnection) _openHandler;
+    private Action1!(WebSocketConnection) _closeHandler;
     private Action2!(Frame, WebSocketConnection) _frameHandler;
     private Action2!(Exception, WebSocketConnection) _errorHandler;
 
@@ -75,14 +80,22 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
         }
 
         if(_acceptUpgradeHandler !is null)
-            _acceptUpgradeHandler(request, response, output, connection);
-        return true;
+            return _acceptUpgradeHandler(request, response, output, connection);
+        
+        // no handler
+        return false;
     }
 
     void onOpen(WebSocketConnection connection) {
         version (HUNT_HTTP_DEBUG) trace("Opened a connection with ", connection.getRemoteAddress());
         if(_openHandler !is null) 
             _openHandler(connection);
+    }
+
+    void onClosed(WebSocketConnection connection) {
+        version (HUNT_HTTP_DEBUG) tracef("Connection %d closed: ", connection.getId(), connection.getRemoteAddress());
+        if(_closeHandler !is null) 
+            _closeHandler(connection);
     }
 
     void onFrame(Frame frame, WebSocketConnection connection) {
@@ -109,6 +122,11 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
 
     AbstractWebSocketHandler onOpen(Action1!(WebSocketConnection) handler) {
         _openHandler = handler;
+        return this;
+    }
+
+    AbstractWebSocketHandler onClosed(Action1!(WebSocketConnection) handler) {
+        _closeHandler = handler;
         return this;
     }
 

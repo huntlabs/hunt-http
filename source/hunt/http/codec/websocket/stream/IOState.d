@@ -148,7 +148,7 @@ class IOState {
     }
 
     private void notifyStateListeners(ConnectionState state) {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("Notify State Listeners(%d): %s", listeners.size(), state);
         foreach (ConnectionStateListener listener ; listeners) {
             listener(state);
@@ -163,7 +163,7 @@ class IOState {
      * @param close the close information
      */
     void onAbnormalClose(CloseInfo close) {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("onAbnormalClose(%s)", close);
         ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
@@ -196,18 +196,18 @@ class IOState {
         bool open = false;
         synchronized (this) {
             ConnectionState initialState = this.state;
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
                 tracef("onCloseLocal(%s) : %s", closeInfo, initialState);
             if (initialState == ConnectionState.CLOSED) {
                 // already closed
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("already closed");
                 return;
             }
 
             if (initialState == ConnectionState.CONNECTED) {
                 // fast close. a local close request from end-user onConnect/onOpen method
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("FastClose in CONNECTED detected");
                 open = true;
             }
@@ -222,7 +222,7 @@ class IOState {
     private void openAndCloseLocal(CloseInfo closeInfo) {
         // Force the state open (to allow read/write to endpoint)
         onOpened();
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("FastClose continuing with Closure");
         closeLocal(closeInfo);
     }
@@ -231,7 +231,7 @@ class IOState {
         ConnectionState event = ConnectionState.Unknown;
         ConnectionState abnormalEvent = ConnectionState.Unknown;
         synchronized (this) {
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
                 tracef("onCloseLocal(), input=%s, output=%s", inputAvailable, outputAvailable);
 
             this.closeInfo = closeInfo;
@@ -244,7 +244,7 @@ class IOState {
             }
 
             if (!inputAvailable) {
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 this.state = ConnectionState.CLOSED;
@@ -284,7 +284,7 @@ class IOState {
      * @param closeInfo the close information
      */
     void onCloseRemote(CloseInfo closeInfo) {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG_MORE)
             tracef("onCloseRemote(%s)", closeInfo);
         ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {
@@ -293,7 +293,7 @@ class IOState {
                 return;
             }
 
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG_MORE)
                 tracef("onCloseRemote(), input=%s, output=%s", inputAvailable, outputAvailable);
 
             this.closeInfo = closeInfo;
@@ -306,7 +306,7 @@ class IOState {
             }
 
             if (!outputAvailable) {
-                tracef("Close Handshake satisfied, disconnecting");
+                version(HUNT_HTTP_DEBUG) tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
                 state = ConnectionState.CLOSED;
                 finalClose = closeInfo;
@@ -366,7 +366,7 @@ class IOState {
      * A websocket connection has finished its upgrade handshake, and is now open.
      */
     void onOpened() {
-        version(HUNT_DEBUG) tracef("state: %s", this.state);
+        version(HUNT_HTTP_DEBUG) tracef("state: %s", this.state);
 
         ConnectionState event = ConnectionState.Unknown;
         synchronized (this) {

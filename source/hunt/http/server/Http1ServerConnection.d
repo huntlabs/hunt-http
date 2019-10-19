@@ -14,9 +14,11 @@ import hunt.http.codec.http.encode.PredefinedHttp1Response;
 
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.AcceptHash;
+import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
+import hunt.http.codec.websocket.stream.IOState;
 
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PrefaceFrame;
@@ -228,6 +230,15 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                         webSocketHandler.onFrame(frame, webSocketConnection);
                     }
                 });
+                
+                IOState ioState = webSocketConnection.getIOState();
+                ioState.addListener((WebSocketConnectionState state) {
+                    version(HUNT_HTTP_DEBUG) info("State: ", state);
+                    if(state == WebSocketConnectionState.CLOSED) {
+                        webSocketHandler.onClosed(webSocketConnection);
+                    }
+                });
+
 // dfmt on
                 ExtensionConfig[] negotiatedExtensions = webSocketConnection.getExtensionNegotiator()
                     .negotiate(request);
@@ -252,7 +263,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                 // output.close();
                 _tcpSession.setAttribute(HttpConnection.NAME, webSocketConnection);
                 upgradeWebSocketComplete = true;
-                webSocketHandler.onConnect(webSocketConnection);
+                webSocketHandler.onOpen(webSocketConnection);
                 return true;
             }
         default:

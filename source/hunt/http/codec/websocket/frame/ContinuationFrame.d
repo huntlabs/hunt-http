@@ -1,6 +1,7 @@
 module hunt.http.codec.websocket.frame.ContinuationFrame;
 
 import hunt.http.codec.websocket.frame.DataFrame;
+import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.collection.BufferUtils;
@@ -25,7 +26,7 @@ class ContinuationFrame : DataFrame {
     }
 
     override
-    Type getType() {
-        return Type.CONTINUATION;
+    WebSocketFrameType getType() {
+        return WebSocketFrameType.CONTINUATION;
     }
 }

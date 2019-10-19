@@ -37,7 +37,7 @@ class ReadOnlyDelegatedFrame : Frame {
     }
 
     override
-    Type getType() {
+    WebSocketFrameType getType() {
         return frame.getType();
     }
 

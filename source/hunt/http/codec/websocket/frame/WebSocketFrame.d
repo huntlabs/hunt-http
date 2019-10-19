@@ -154,7 +154,7 @@ abstract class WebSocketFrame : Frame {
     }
 
     override
-    Type getType() {
+    WebSocketFrameType getType() {
         return FrameTypeHelper.from(getOpCode());
     }
 

@@ -4,20 +4,34 @@ import hunt.collection.ByteBuffer;
 import hunt.Exceptions;
 import std.conv;
 
-alias FrameType = Frame.Type;
+
+deprecated("Using WebSocketFrameType instead.")
+alias FrameType = WebSocketFrameType;
+
+
+enum WebSocketFrameType : byte {
+    CONTINUATION = 0x00,
+    TEXT = 0x01,
+    BINARY = 0x02,
+    CLOSE = 0x08,
+    PING = 0x09,
+    PONG = 0x0A
+}
 
 /**
  * An immutable websocket frame.
  */
 interface Frame {
-    enum Type : byte {
-        CONTINUATION = 0x00,
-        TEXT = 0x01,
-        BINARY = 0x02,
-        CLOSE = 0x08,
-        PING = 0x09,
-        PONG = 0x0A
-    }
+    deprecated("Using WebSocketFrameType instead.")
+    alias Type = WebSocketFrameType;
+    // enum Type : byte {
+    //     CONTINUATION = 0x00,
+    //     TEXT = 0x01,
+    //     BINARY = 0x02,
+    //     CLOSE = 0x08,
+    //     PING = 0x09,
+    //     PONG = 0x0A
+    // }
 
     byte[] getMask();
 
@@ -32,7 +46,7 @@ interface Frame {
      */
     int getPayloadLength();
 
-    Type getType();
+    WebSocketFrameType getType();
 
     bool hasPayload();
 
@@ -51,8 +65,8 @@ import std.traits;
 
 class FrameTypeHelper {
     
-        static FrameType from(byte op) {
-            foreach (FrameType type ; EnumMembers!(FrameType)) {
+        static WebSocketFrameType from(byte op) {
+            foreach (WebSocketFrameType type ; EnumMembers!(WebSocketFrameType)) {
                 if (cast(byte)type == op) 
                     return type;
             }
@@ -60,16 +74,16 @@ class FrameTypeHelper {
                 " is not a valid Frame.Type");
         }
 
-        static bool isControl(FrameType type) {
-            return type >= FrameType.CLOSE;
+        static bool isControl(WebSocketFrameType type) {
+            return type >= WebSocketFrameType.CLOSE;
         }
 
-        bool isData(FrameType type) {
-            return (type == FrameType.TEXT) || (type == FrameType.BINARY);
+        bool isData(WebSocketFrameType type) {
+            return (type == WebSocketFrameType.TEXT) || (type == WebSocketFrameType.BINARY);
         }
 
-        bool isContinuation(FrameType type) {
-            return type == FrameType.CONTINUATION;
+        bool isContinuation(WebSocketFrameType type) {
+            return type == WebSocketFrameType.CONTINUATION;
         }
 
 }

@@ -26,7 +26,7 @@ class PongFrame : ControlFrame {
     alias setPayload = ControlFrame.setPayload;
 
     override
-    Type getType() {
-        return Type.PONG;
+    WebSocketFrameType getType() {
+        return WebSocketFrameType.PONG;
     }
 }

@@ -26,7 +26,7 @@ class PingFrame : ControlFrame {
     alias setPayload = ControlFrame.setPayload;
 
     override
-    Type getType() {
-        return Type.PING;
+    WebSocketFrameType getType() {
+        return WebSocketFrameType.PING;
     }
 }

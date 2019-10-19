@@ -136,7 +136,7 @@ HttpServer buildServerWithForm() {
 }
 
 HttpServer buildServerWithWebSocket() {
-    import hunt.http.codec.websocket.stream.WebSocketMessageHandler;
+    import hunt.http.WebSocketMessageHandler;
 
     HttpServer server = HttpServer.builder()
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
@@ -151,38 +151,27 @@ HttpServer buildServerWithWebSocket() {
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
-        .registerWebSocket("/ws1", new class WebSocketMessageHandler {
+        .registerWebSocket("/ws1", new class AbstractWebSocketMessageHandler {
 
-            void onOpen(WebSocketConnection connection) {
+            override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from ws1 at " ~ DateTime.getTimeAsGMT());
             }
 
-            void onText(string text, WebSocketConnection connection) {
+            override void onText(string text, WebSocketConnection connection) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
-
-            void onError(Exception ex, WebSocketConnection connection) {
-                warningf("error (from %s): %s", connection.getRemoteAddress(), ex.msg);
-                version(HUNT_DEBUG) warning(ex);
-            }          
-
         })
-        .registerWebSocket("/ws2", new class WebSocketMessageHandler {
+        .registerWebSocket("/ws2", new class AbstractWebSocketMessageHandler {
 
-            void onOpen(WebSocketConnection connection) {
+            override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from ws2 at " ~ DateTime.getTimeAsGMT());
             }
 
-            void onText(string text, WebSocketConnection connection) {
+            override void onText(string text, WebSocketConnection connection) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
-
-            void onError(Exception ex, WebSocketConnection connection) {
-                warningf("error (from %s): %s", connection.getRemoteAddress(), ex.msg);
-                version(HUNT_DEBUG) warning(ex);
-            }              
         })
         .build();
     return server;    

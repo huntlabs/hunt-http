@@ -142,7 +142,7 @@ class Parser {
     }
 
     protected void notifyFrame(Frame f) {
-        version(HUNT_HTTP_DEBUG)
+        version(HUNT_HTTP_DEBUG_MORE)
             tracef("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
 
         if (policy.getBehavior() == WebSocketBehavior.SERVER) {

@@ -1,6 +1,7 @@
 module hunt.http.codec.websocket.frame.BinaryFrame;
 
 import hunt.http.codec.websocket.frame.DataFrame;
+import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.common;
 
 import hunt.collection.BufferUtils;
@@ -27,7 +28,7 @@ class BinaryFrame : DataFrame {
     }
 
     override
-    Type getType() {
-        return getOpCode() == OpCode.CONTINUATION ? Type.CONTINUATION : Type.BINARY;
+    WebSocketFrameType getType() {
+        return getOpCode() == OpCode.CONTINUATION ? WebSocketFrameType.CONTINUATION : WebSocketFrameType.BINARY;
     }
 }

@@ -12,8 +12,8 @@ class CloseFrame : ControlFrame {
     }
 
     override
-    Type getType() {
-        return Type.CLOSE;
+    WebSocketFrameType getType() {
+        return WebSocketFrameType.CLOSE;
     }
 
     /**

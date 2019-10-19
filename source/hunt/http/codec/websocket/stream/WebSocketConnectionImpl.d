@@ -99,7 +99,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
                         callback.failed(ex);
                     }
 
-                    if (frame.getType() == Frame.Type.CLOSE) {
+                    if (frame.getType() == WebSocketFrameType.CLOSE) {
                         CloseFrame closeFrame = cast(CloseFrame) frame;
                         if(closeFrame !is null) {
                             CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
@@ -212,13 +212,13 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
 
     override void incomingFrame(Frame frame) {
         switch (frame.getType()) {
-        case FrameType.PING: {
+        case WebSocketFrameType.PING: {
                 PongFrame pongFrame = new PongFrame();
                 outgoingFrame(pongFrame, Callback.NOOP);
             }
             break;
 
-        case FrameType.CLOSE: {
+        case WebSocketFrameType.CLOSE: {
                 CloseFrame closeFrame = cast(CloseFrame) frame;
                 CloseInfo closeInfo = new CloseInfo(closeFrame.getPayload(), false);
                 ioState.onCloseRemote(closeInfo);
@@ -226,7 +226,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
             }
             break;
 
-        case FrameType.PONG: {
+        case WebSocketFrameType.PONG: {
                 info("The websocket connection %s received pong frame", getId());
             }
             break;

@@ -15,11 +15,13 @@ class TextFrame : DataFrame {
     }
 
     override
-    Type getType() {
-        return getOpCode() == OpCode.CONTINUATION ? Type.CONTINUATION : Type.TEXT;
+    WebSocketFrameType getType() {
+        return getOpCode() == OpCode.CONTINUATION ? WebSocketFrameType.CONTINUATION : WebSocketFrameType.TEXT;
     }
 
     TextFrame setPayload(string str) {
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-19T13:14:09+08:00
+        // copy or not?
         setPayload(BufferUtils.toBuffer(cast(byte[])(str.dup)));
         return this;
     }
