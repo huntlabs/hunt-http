@@ -5,7 +5,7 @@ import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.io.Common;
 import hunt.io.BufferedOutputStream;

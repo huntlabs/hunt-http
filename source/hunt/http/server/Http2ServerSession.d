@@ -5,7 +5,7 @@ import hunt.http.server.ServerSessionListener;
 import hunt.http.codec.http.decode.ServerParser;
 import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 import hunt.http.codec.http.stream;
 
 import hunt.collection.Collections;
@@ -50,11 +50,11 @@ class Http2ServerSession : Http2Session , ServerParser.Listener {
 
     override
     void onHeaders(HeadersFrame frame) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Server received %s", frame);
         }
 
-        MetaData metaData = frame.getMetaData();
+        HttpMetaData metaData = frame.getMetaData();
         if (metaData.isRequest()) {
             StreamSPI stream = createRemoteStream(frame.getStreamId());
             if (stream !is null) {

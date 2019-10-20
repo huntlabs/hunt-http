@@ -1,4 +1,4 @@
-module hunt.http.codec.http.model.MultipartOptions;
+module hunt.http.MultipartOptions;
 
 import std.concurrency : initOnce;
 import std.file;

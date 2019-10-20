@@ -7,7 +7,7 @@ import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 import hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.hpack.HpackEncoder;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.http.codec.http.encode.FrameGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
@@ -33,7 +33,7 @@ class PushPromiseGenerator :FrameGenerator {
 				pushPromiseFrame.getMetaData());
 	}
 
-	List!(ByteBuffer) generatePushPromise(int streamId, int promisedStreamId, MetaData metaData) {
+	List!(ByteBuffer) generatePushPromise(int streamId, int promisedStreamId, HttpMetaData metaData) {
 		if (streamId < 0)
 			throw new IllegalArgumentException("Invalid stream id: " ~ streamId.to!string);
 		if (promisedStreamId < 0)

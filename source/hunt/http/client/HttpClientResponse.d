@@ -1,9 +1,10 @@
 module hunt.http.client.HttpClientResponse;
 
-import hunt.http.codec.http.model.HttpFields;
+import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;

@@ -5,7 +5,6 @@ import hunt.http.client.HttpClientConnection;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.Http2ClientConnection;
 import hunt.http.HttpVersion;
-import hunt.http.HttpConnectionHandler;
 import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 

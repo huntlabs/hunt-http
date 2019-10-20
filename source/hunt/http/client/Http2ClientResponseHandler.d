@@ -4,20 +4,21 @@ import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.HttpClientConnection;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.AbstractHttp2OutputStream;
 import hunt.http.codec.http.stream.DataFrameHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.Stream;
 
-import hunt.collection.LinkedList;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpStatus;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 
+import hunt.collection.LinkedList;
+import hunt.concurrency.Promise;
 import hunt.logging;
-import hunt.util.Common;
 import hunt.Exceptions;
 import hunt.util.Common;
-import hunt.concurrency.Promise;
 
 import std.conv;
 import std.string;
@@ -183,7 +184,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
 
         private Stream stream;
 
-        this(MetaData info, Stream stream) {
+        this(HttpMetaData info, Stream stream) {
             super(info, true);
             committed = true;
             this.stream = stream;

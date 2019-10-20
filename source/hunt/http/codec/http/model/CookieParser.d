@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.CookieParser;
 
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 
 import hunt.Exceptions;
 import hunt.text.Common;

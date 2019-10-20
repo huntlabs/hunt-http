@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 import hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExtension;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.collection.BufferUtils;
 import hunt.util.TypeUtils;
 import hunt.Assert;

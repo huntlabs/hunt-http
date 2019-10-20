@@ -5,7 +5,7 @@ import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.OutgoingFrames;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 
 import hunt.logging;
 

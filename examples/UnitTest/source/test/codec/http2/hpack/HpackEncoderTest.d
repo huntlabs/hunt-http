@@ -2,10 +2,10 @@ module test.codec.http2.hpack.HpackEncoderTest;
 
 import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.HpackEncoder;
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpFields;
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.Assert;
 import hunt.util.UnitTest;

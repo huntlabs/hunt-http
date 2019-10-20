@@ -8,6 +8,14 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
+import hunt.http.HttpHeader;
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
+
 import hunt.collection.ByteBuffer;
 import hunt.io;
 import hunt.logging;

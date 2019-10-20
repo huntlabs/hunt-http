@@ -1,8 +1,9 @@
 module hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 import hunt.http.codec.websocket.stream.IOState;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.net.Connection;
 import hunt.http.HttpConnection;

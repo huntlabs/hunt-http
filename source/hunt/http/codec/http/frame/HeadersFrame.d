@@ -1,6 +1,6 @@
 module hunt.http.codec.http.frame.HeadersFrame;
 
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.PriorityFrame;
 import hunt.http.codec.http.frame.FrameType;
@@ -9,7 +9,7 @@ import std.format;
 
 class HeadersFrame : Frame {
 	private int streamId;
-	private MetaData metaData;
+	private HttpMetaData metaData;
 	private PriorityFrame priority;
 	private bool endStream;
 
@@ -30,7 +30,7 @@ class HeadersFrame : Frame {
 	 * @param endStream
 	 *            whether this frame ends the stream
 	 */
-	this(MetaData metaData, PriorityFrame priority, bool endStream) {
+	this(HttpMetaData metaData, PriorityFrame priority, bool endStream) {
 		this(0, metaData, priority, endStream);
 	}
 
@@ -52,7 +52,7 @@ class HeadersFrame : Frame {
 	 * @param endStream
 	 *            whether this frame ends the stream
 	 */
-	this(int streamId, MetaData metaData, PriorityFrame priority, bool endStream) {
+	this(int streamId, HttpMetaData metaData, PriorityFrame priority, bool endStream) {
 		super(FrameType.HEADERS);
 		this.streamId = streamId;
 		this.metaData = metaData;
@@ -64,7 +64,7 @@ class HeadersFrame : Frame {
 		return streamId;
 	}
 
-	MetaData getMetaData() {
+	HttpMetaData getMetaData() {
 		return metaData;
 	}
 

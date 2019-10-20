@@ -30,6 +30,15 @@ import hunt.http.codec.http.stream;
 // import hunt.http.util.Completable;
 
 import hunt.http.HttpConnectionType;
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
+
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

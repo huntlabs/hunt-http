@@ -1,7 +1,7 @@
 module hunt.http.server.Http1ServerTunnelConnection;
 
 import hunt.http.HttpVersion;
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
 import hunt.http.HttpConnectionType;

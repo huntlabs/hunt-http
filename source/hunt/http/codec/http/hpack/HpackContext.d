@@ -2,9 +2,9 @@ module hunt.http.codec.http.hpack.HpackContext;
 
 // import hunt.http.codec.http.model;
 
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
 import hunt.http.codec.http.model.StaticTableHttpField;
 
 import hunt.http.codec.http.hpack.Huffman;

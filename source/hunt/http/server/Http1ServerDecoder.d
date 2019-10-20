@@ -7,7 +7,7 @@ import hunt.http.server.Http2ServerDecoder;
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
 import hunt.net.codec.Decoder;
 import hunt.http.HttpConnectionType;

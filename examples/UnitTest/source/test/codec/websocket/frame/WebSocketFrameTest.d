@@ -6,7 +6,7 @@ import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.StatusCode;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 
 import hunt.collection.BufferUtils;
 import hunt.Assert;

@@ -3,7 +3,7 @@ module test.codec.websocket.UnitGenerator;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 
 import hunt.collection;
 import hunt.logging;

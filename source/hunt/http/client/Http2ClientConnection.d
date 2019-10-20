@@ -8,17 +8,17 @@ import hunt.http.client.Http2ClientSession;
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpHeaderValue;
-import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+
+import hunt.http.HttpConnectionType;
+import hunt.http.HttpHeader;
+import hunt.http.HttpRequest;
+import hunt.http.WebSocketPolicy;
 
 import hunt.collection;
 import hunt.logging;
-import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

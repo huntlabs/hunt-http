@@ -6,13 +6,15 @@ import hunt.http.codec.http.hpack.NBitInteger;
 
 // import hunt.http.codec.http.model;
 
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.model.HttpScheme;
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpScheme;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -23,15 +25,15 @@ import hunt.http.codec.http.hpack.NBitInteger;
 import hunt.http.codec.http.hpack.Huffman;
 import hunt.http.codec.http.hpack.HpackContext;
 
-// import hunt.http.codec.http.model.HttpHeader;
+// import hunt.http.HttpHeader;
 // import hunt.http.HttpVersion;
 
 import hunt.Exceptions;
 import hunt.util.ConverterUtils;
 
 
-// import hunt.http.codec.http.model.HttpField;
-// import hunt.http.codec.http.model.HttpHeader;
+// import hunt.http.HttpField;
+// import hunt.http.HttpHeader;
 // import hunt.http.HttpVersion;
 
 import hunt.logging;
@@ -133,7 +135,7 @@ class HpackEncoder {
         _localMaxDynamicTableSize = localMaxDynamicTableSize;
     }
 
-    void encode(ByteBuffer buffer, MetaData metadata) {
+    void encode(ByteBuffer buffer, HttpMetaData metadata) {
         version(HUNT_DEBUG)
             tracef("CtxTbl[%x] encoding", _context.toHash());
 

@@ -1,8 +1,8 @@
 module test.http;
 
 import hunt.http.$;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
 import hunt.http.server.Http2ServerBuilder;
 
 /**

@@ -5,8 +5,8 @@ import hunt.Assert;
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
 
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
 import hunt.http.HttpVersion;
 // import hunt.http.codec.http.hpack.HpackEncoder;
 

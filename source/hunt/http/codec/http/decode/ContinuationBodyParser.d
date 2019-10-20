@@ -12,7 +12,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.HeadersFrame;
 
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.Exceptions;
 
@@ -78,7 +78,7 @@ class ContinuationBodyParser :BodyParser {
 
 	private void onHeaders() {
 		ByteBuffer headerBlock = headerBlockFragments.complete();
-		MetaData metaData = headerBlockParser.parse(headerBlock, headerBlock.remaining());
+		HttpMetaData metaData = headerBlockParser.parse(headerBlock, headerBlock.remaining());
 		HeadersFrame frame = new HeadersFrame(getStreamId(), metaData, headerBlockFragments.getPriorityFrame(),
 				headerBlockFragments.isEndStream());
 		notifyHeaders(frame);

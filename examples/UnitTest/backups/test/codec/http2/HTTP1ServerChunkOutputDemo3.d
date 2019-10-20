@@ -7,7 +7,7 @@ import hunt.collection.ArrayList;
 import hunt.collection.List;
 
 import hunt.net.util.HttpURI;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;

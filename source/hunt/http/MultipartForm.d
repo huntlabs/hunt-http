@@ -1,6 +1,6 @@
-module hunt.http.codec.http.model.MultipartForm;
+module hunt.http.MultipartForm;
 
-import hunt.http.codec.http.model.MultipartOptions;
+import hunt.http.MultipartOptions;
 
 import hunt.collection;
 import hunt.io;

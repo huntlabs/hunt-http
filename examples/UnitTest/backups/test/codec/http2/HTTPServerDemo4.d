@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.net.util.HttpURI;
 import hunt.http.HttpOptions;

@@ -17,18 +17,19 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.model.HttpMethod;
-import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.http.codec.websocket.frame;
 
 import hunt.http.router;
 import hunt.http.HttpConnection;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
 import hunt.http.WebSocketMessageHandler;
+import hunt.http.WebSocketPolicy;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;

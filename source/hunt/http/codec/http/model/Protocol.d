@@ -1,9 +1,10 @@
 module hunt.http.codec.http.model.Protocol;
 
-import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MetaData;
-
+import hunt.http.HttpStatus;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 
 
 /**
@@ -27,7 +28,7 @@ struct ProtocolHelper {
         }
     }
 
-    private static Protocol getProtocol(MetaData metaData) {
+    private static Protocol getProtocol(HttpMetaData metaData) {
         if (metaData.getFields().contains(HttpHeader.CONNECTION, "Upgrade")) {
             if (metaData.getFields().contains(HttpHeader.UPGRADE, "h2c")) {
                 return Protocol.H2;

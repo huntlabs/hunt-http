@@ -1,5 +1,5 @@
 
-deprecated("Using hunt.http.codec.http.model.MultipartOptions instead.")
+deprecated("Using hunt.http.MultipartOptions instead.")
 module hunt.http.codec.http.model.MultipartConfig;
 
-public import hunt.http.codec.http.model.MultipartOptions;
+public import hunt.http.MultipartOptions;

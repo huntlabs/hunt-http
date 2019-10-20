@@ -4,7 +4,7 @@ import hunt.http.router.Matcher;
 import hunt.http.router.RoutingContext;
 import hunt.http.router.RoutingHandler;
 
-import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.HttpMethod;
 
 import hunt.collection.List;
 import hunt.collection.Set;

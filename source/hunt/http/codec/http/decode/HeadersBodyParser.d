@@ -10,7 +10,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PriorityFrame;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
@@ -52,7 +52,7 @@ class HeadersBodyParser :BodyParser {
 	override
 	protected void emptyBody(ByteBuffer buffer) {
 		if (hasFlag(Flags.END_HEADERS)) {
-			MetaData metaData = headerBlockParser.parse(BufferUtils.EMPTY_BUFFER, 0);
+			HttpMetaData metaData = headerBlockParser.parse(BufferUtils.EMPTY_BUFFER, 0);
 			onHeaders(0, 0, false, metaData);
 		} else {
 			headerBlockFragments.setStreamId(getStreamId());
@@ -140,7 +140,7 @@ class HeadersBodyParser :BodyParser {
 			}
 			case State.HEADERS: {
 				if (hasFlag(Flags.END_HEADERS)) {
-					MetaData metaData = headerBlockParser.parse(buffer, length);
+					HttpMetaData metaData = headerBlockParser.parse(buffer, length);
 					if (metaData !is null) {
 						state = State.PADDING;
 						loop = paddingLength == 0;
@@ -182,7 +182,7 @@ class HeadersBodyParser :BodyParser {
 		return false;
 	}
 
-	private void onHeaders(int parentStreamId, int weight, bool exclusive, MetaData metaData) {
+	private void onHeaders(int parentStreamId, int weight, bool exclusive, HttpMetaData metaData) {
 		PriorityFrame priorityFrame = null;
 		if (hasFlag(Flags.PRIORITY))
 			priorityFrame = new PriorityFrame(getStreamId(), parentStreamId, weight, exclusive);

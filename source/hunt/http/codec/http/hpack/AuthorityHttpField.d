@@ -1,7 +1,7 @@
 module hunt.http.codec.http.hpack.AuthorityHttpField;
 
 import hunt.http.codec.http.model.HostPortHttpField;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpHeader;
 import hunt.http.codec.http.hpack.HpackContext;
 
 import std.format;

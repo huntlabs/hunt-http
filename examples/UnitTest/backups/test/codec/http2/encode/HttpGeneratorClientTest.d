@@ -1,10 +1,10 @@
 module test.codec.http2.encode;
 
 import hunt.http.codec.http.encode.HttpGenerator;
-import hunt.http.codec.http.model.HttpFields;
+import hunt.http.HttpFields;
 import hunt.net.util.HttpURI;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 import hunt.collection.BufferUtils;
 
 import hunt.Assert;

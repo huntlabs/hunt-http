@@ -11,8 +11,8 @@ import hunt.http.client.HttpClientRequest;
 import hunt.http.client.FormBody;
 import hunt.http.client.RequestBody;
 
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpField;
 
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;

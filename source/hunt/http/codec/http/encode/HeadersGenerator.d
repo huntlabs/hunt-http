@@ -8,7 +8,7 @@ import hunt.http.codec.http.frame.FrameType;
 import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PriorityFrame;
 import hunt.http.codec.http.hpack.HpackEncoder;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.http.codec.http.encode.FrameGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
@@ -42,7 +42,7 @@ class HeadersGenerator :FrameGenerator {
 				headersFrame.isEndStream());
 	}
 
-	List!(ByteBuffer) generateHeaders(int streamId, MetaData metaData, PriorityFrame priority,
+	List!(ByteBuffer) generateHeaders(int streamId, HttpMetaData metaData, PriorityFrame priority,
 			bool endStream) {
 		List!(ByteBuffer) list = new LinkedList!(ByteBuffer)();
 		if (streamId < 0)

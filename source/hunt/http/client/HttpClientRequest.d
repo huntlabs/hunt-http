@@ -3,16 +3,17 @@ module hunt.http.client.HttpClientRequest;
 import hunt.http.client.RequestBody;
 import hunt.http.client.RequestBuilder;
 
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.net.util.HttpURI;
+import hunt.http.HttpHeader;
+import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
 import hunt.Exceptions;
+import hunt.net.util.HttpURI;
 
 alias Request = HttpClientRequest;
 

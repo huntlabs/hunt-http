@@ -3,12 +3,13 @@ module hunt.http.server.ServerHttpHandler;
 import hunt.http.server.HttpServerConnection;
 import hunt.http.server.HttpServerOptions;
 
-import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
 import hunt.http.HttpConnection;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 
 import hunt.collection.ByteBuffer;
 import hunt.Functions;

@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.stream.ExtensionNegotiator;
 
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.IncomingFrames;
@@ -49,7 +49,7 @@ class ExtensionNegotiator {
         this.factory = factory;
     }
 
-    ExtensionConfig[] negotiate(MetaData metaData) {
+    ExtensionConfig[] negotiate(HttpMetaData metaData) {
         InputRange!string fieldValues = metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString());
 
         Array!(ExtensionConfig) configList = ExtensionConfig.parseEnum(fieldValues);
@@ -61,7 +61,7 @@ class ExtensionNegotiator {
         //         .collect(Collectors.toList());
     }
 
-    Extension[] parse(MetaData metaData) {
+    Extension[] parse(HttpMetaData metaData) {
         assert(nextIncomingFrames !is null, "The next incoming frames MUST be not null");
         assert(nextOutgoingFrames !is null, "The next outgoing frames MUST be not null");
 
@@ -95,7 +95,7 @@ class ExtensionNegotiator {
         }
     }
 
-    protected Extension[] _parse(MetaData metaData) {
+    protected Extension[] _parse(HttpMetaData metaData) {
 
         InputRange!string fieldValues = metaData.getFields().getValues(HttpHeader.SEC_WEBSOCKET_EXTENSIONS.asString());
         Array!(ExtensionConfig) configList = ExtensionConfig.parseEnum(fieldValues);

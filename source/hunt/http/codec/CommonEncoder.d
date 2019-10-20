@@ -1,6 +1,6 @@
 module hunt.http.codec.CommonEncoder;
 
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 
 import hunt.collection.ByteBuffer;
 import hunt.Exceptions;

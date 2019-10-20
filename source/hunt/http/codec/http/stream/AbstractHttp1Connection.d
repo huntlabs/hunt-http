@@ -1,13 +1,13 @@
 module hunt.http.codec.http.stream.AbstractHttp1Connection;
 
-import hunt.http.AbstractHttpConnection;
-import hunt.http.HttpOptions;
-
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.encode.Http2Generator;
+
+import hunt.http.HttpConnection;
+import hunt.http.HttpConnectionType;
+import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 
-import hunt.http.HttpConnectionType;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 import hunt.logging;

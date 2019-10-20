@@ -4,7 +4,7 @@ import hunt.collection.ByteBuffer;
 import hunt.Exceptions;
 import hunt.logging;
 
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnectionType;
 import hunt.net.codec.Decoder;

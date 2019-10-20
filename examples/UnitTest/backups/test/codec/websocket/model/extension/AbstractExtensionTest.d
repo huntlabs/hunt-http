@@ -1,6 +1,6 @@
 module test.codec.websocket.model.extension;
 
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.util.Before;
 import hunt.util.Rule;
 import hunt.util.rules.TestName;

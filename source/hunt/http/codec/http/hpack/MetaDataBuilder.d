@@ -3,14 +3,17 @@ module hunt.http.codec.http.hpack.MetaDataBuilder;
 import hunt.http.codec.http.hpack.AuthorityHttpField;
 import hunt.http.codec.http.model.BadMessageException;
 import hunt.http.codec.http.model.HostPortHttpField;
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpScheme;
-import hunt.http.codec.http.model.HttpStatus;
-import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.model.StaticTableHttpField;
+
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpScheme;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
+import hunt.http.HttpMetaData;
 
 import hunt.Exceptions;
 
@@ -131,7 +134,7 @@ class MetaDataBuilder {
 		}
 	}
 
-	MetaData build() {
+	HttpMetaData build() {
 		try {
 			HttpFields fields = _fields;
 			_fields = new HttpFields(std.algorithm.max(10, fields.size() + 5));
@@ -141,7 +144,7 @@ class MetaDataBuilder {
 						_contentLength);
 			if (_status != 0)
 				return new HttpResponse(HttpVersion.HTTP_2, _status, fields, _contentLength);
-			return new MetaData(HttpVersion.HTTP_2, fields, _contentLength);
+			return new HttpMetaData(HttpVersion.HTTP_2, fields, _contentLength);
 		} finally {
 			_status = 0;
 			_method = null;

@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.CookieGenerator;
 
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 
 import hunt.collection.List;
 

@@ -11,9 +11,10 @@ import hunt.http.router.impl.RegexPathMatcher;
 import hunt.http.router.impl.RouterImpl;
 import hunt.http.router.impl.RoutingContextImpl;
 
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MetaData;
-// import hunt.http.server.HttpRequest;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+
 import hunt.http.server.HttpServerContext;
 import hunt.http.router.Matcher;
 import hunt.http.router.Router;

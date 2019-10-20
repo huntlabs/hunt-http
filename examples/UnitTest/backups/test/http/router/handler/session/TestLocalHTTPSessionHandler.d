@@ -1,7 +1,7 @@
 module test.http.router.handler.session;
 
 import hunt.http.$;
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.server.router.HttpSession;
 import hunt.http.server.router.handler.session.HttpSessionConfiguration;

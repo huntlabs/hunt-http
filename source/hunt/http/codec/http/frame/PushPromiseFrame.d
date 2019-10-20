@@ -3,16 +3,16 @@ module hunt.http.codec.http.frame.PushPromiseFrame;
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;
 
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import std.format;
 
 class PushPromiseFrame :Frame {
 	private int streamId;
 	private int promisedStreamId;
-	private MetaData metaData;
+	private HttpMetaData metaData;
 
-	this(int streamId, int promisedStreamId, MetaData metaData) {
+	this(int streamId, int promisedStreamId, HttpMetaData metaData) {
 		super(FrameType.PUSH_PROMISE);
 		this.streamId = streamId;
 		this.promisedStreamId = promisedStreamId;
@@ -27,7 +27,7 @@ class PushPromiseFrame :Frame {
 		return promisedStreamId;
 	}
 
-	MetaData getMetaData() {
+	HttpMetaData getMetaData() {
 		return metaData;
 	}
 

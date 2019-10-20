@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;
 import hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.util.TypeUtils;
 import hunt.Assert;
 import test.codec.websocket.ByteBufferAssert;

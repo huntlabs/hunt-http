@@ -7,7 +7,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 
 import hunt.concurrency.Promise;
 import hunt.concurrency.Future;

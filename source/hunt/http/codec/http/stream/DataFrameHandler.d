@@ -1,11 +1,13 @@
 module hunt.http.codec.http.stream.DataFrameHandler;
 
 import hunt.http.codec.http.stream.HttpHandler;
-import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 
 import hunt.http.codec.http.frame.DataFrame;
-import hunt.http.codec.http.model.MetaData;
+
+import hunt.http.HttpConnection;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 import hunt.util.Common;
 
 /**

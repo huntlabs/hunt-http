@@ -3,7 +3,7 @@ module hunt.http.codec.http.decode.HeaderBlockParser;
 import hunt.collection.ByteBuffer;
 
 import hunt.http.codec.http.hpack.HpackDecoder;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 import hunt.collection.BufferUtils;
 
 class HeaderBlockParser {
@@ -14,7 +14,7 @@ class HeaderBlockParser {
 		this.hpackDecoder = hpackDecoder;
 	}
 
-	MetaData parse(ByteBuffer buffer, int blockLength) {
+	HttpMetaData parse(ByteBuffer buffer, int blockLength) {
 		// We must wait for the all the bytes of the header block to arrive.
 		// If they are not all available, accumulate them.
 		// When all are available, decode them.
@@ -41,7 +41,7 @@ class HeaderBlockParser {
 				toDecode = buffer;
 			}
 
-			MetaData result = hpackDecoder.decode(toDecode);
+			HttpMetaData result = hpackDecoder.decode(toDecode);
 			buffer.limit(limit);
 			
 			if(blockBuffer !is null) {

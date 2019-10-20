@@ -14,12 +14,14 @@ import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.HttpFields;
+import hunt.http.HttpField;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
+
 import hunt.net.util.HttpURI;
-import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;

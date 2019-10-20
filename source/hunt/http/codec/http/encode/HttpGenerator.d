@@ -1,14 +1,17 @@
 module hunt.http.codec.http.encode.HttpGenerator;
 
 import hunt.http.codec.http.model;
-// import hunt.http.codec.http.model.HttpField;
-// import hunt.http.codec.http.model.HttpFields;
-// import hunt.http.codec.http.model.HttpMethod;
-// import hunt.http.codec.http.model.HttpHeader;
-// import hunt.http.codec.http.model.HttpTokens;
-// import hunt.http.HttpVersion;
-// import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.http.hpack.HpackEncoder;
+
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
 
 import hunt.http.Version;
 import hunt.collection;
@@ -557,7 +560,7 @@ class HttpGenerator {
     }
 
     /* ------------------------------------------------------------ */
-    private void generateHeaders(MetaData metaData, ByteBuffer header, ByteBuffer content, bool last) {
+    private void generateHeaders(HttpMetaData metaData, ByteBuffer header, ByteBuffer content, bool last) {
         HttpRequest request = cast(HttpRequest) metaData;
         HttpResponse response = cast(HttpResponse) metaData;
 

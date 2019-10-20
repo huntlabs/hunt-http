@@ -4,7 +4,7 @@ import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.frame.PingFrame;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.collection.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;

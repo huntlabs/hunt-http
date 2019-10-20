@@ -2,7 +2,7 @@ module test.http;
 
 import hunt.http.$;
 import hunt.http.client.SimpleHttpClient;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpStatus;
 import hunt.net.secure.SecureSessionFactory;
 import hunt.net.tcp.secure.conscrypt.ConscryptSecureSessionFactory;
 import hunt.net.tcp.secure.jdk.JdkSecureSessionFactory;

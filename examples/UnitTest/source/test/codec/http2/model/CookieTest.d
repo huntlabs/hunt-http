@@ -4,7 +4,7 @@ import hunt.collection.ArrayList;
 import hunt.collection.List;
 import hunt.Assert;
 
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 import hunt.http.codec.http.model.CookieGenerator;
 import hunt.http.codec.http.model.CookieParser;
 

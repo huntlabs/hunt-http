@@ -5,15 +5,17 @@ import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.model;
 
 
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.BufferingFlowControlStrategy;
 import hunt.http.codec.http.stream.FlowControlStrategy;
 import hunt.http.codec.http.stream.Http2Session;
-import hunt.http.HttpOptions;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.SimpleFlowControlStrategy;
 
 import hunt.http.HttpConnectionType;
+import hunt.http.HttpOptions;
+import hunt.http.HttpVersion;
+
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

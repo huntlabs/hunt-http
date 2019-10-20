@@ -1,7 +1,5 @@
 module hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MetaData;
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
@@ -14,13 +12,17 @@ import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.ExtensionNegotiator;
 import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
 
-import hunt.http.AbstractHttpConnection;
+import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnectionType;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
+import hunt.http.WebSocketPolicy;
 
 import hunt.net.AbstractConnection;
 
@@ -177,7 +179,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
     void setNextIncomingFrames(IncomingFrames nextIncomingFrames) {
         if (nextIncomingFrames !is null) {
             extensionNegotiator.setNextIncomingFrames(nextIncomingFrames);
-            MetaData metaData;
+            HttpMetaData metaData;
             if (upgradeResponse.getFields().contains(HttpHeader.SEC_WEBSOCKET_EXTENSIONS)) {
                 metaData = upgradeResponse;
             } else {

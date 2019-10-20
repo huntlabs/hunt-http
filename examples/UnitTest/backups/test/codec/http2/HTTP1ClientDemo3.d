@@ -11,7 +11,7 @@ import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientRequest;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpHeader;
 import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.HttpRequest;
 import hunt.http.codec.http.model.HttpResponse;

@@ -1,7 +1,7 @@
 module hunt.http.codec.http.stream.HttpOutputStream;
 
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
 
 import hunt.collection;
 import hunt.io;
@@ -12,11 +12,11 @@ import std.conv;
 abstract class HttpOutputStream : OutputStream {
 
     protected bool clientMode;
-    protected MetaData metaData;
+    protected HttpMetaData metaData;
     protected bool closed;
     protected bool committed;
 
-    this(MetaData metaData, bool clientMode) {
+    this(HttpMetaData metaData, bool clientMode) {
         this.metaData = metaData;
         this.clientMode = clientMode;
     }

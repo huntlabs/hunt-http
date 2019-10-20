@@ -1,6 +1,6 @@
 module hunt.http.server.HttpRequestOptions;
 
-import hunt.http.codec.http.model.MultipartOptions;
+import hunt.http.MultipartOptions;
 
 import std.file;
 import std.path;

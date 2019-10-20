@@ -12,6 +12,15 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.http.codec.http.stream.DataFrameHandler;
+
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
 import hunt.http.Version;
 
 import hunt.Exceptions;
@@ -139,7 +148,7 @@ class Http2ServerRequestHandler : ServerSessionListener.Adapter {
 
         private Stream stream;
 
-        this(MetaData info, Stream stream) {
+        this(HttpMetaData info, Stream stream) {
             super(info, false);
             this.stream = stream;
             info.getFields().put(HttpHeader.X_POWERED_BY, X_POWERED_BY_VALUE);

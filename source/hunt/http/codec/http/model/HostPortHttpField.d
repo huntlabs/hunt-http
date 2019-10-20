@@ -2,9 +2,9 @@ module hunt.http.codec.http.model.HostPortHttpField;
 
 import hunt.http.codec.http.model.BadMessageException;
 import hunt.http.codec.http.model.HostPort;
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpStatus;
 
 import hunt.logging;
 

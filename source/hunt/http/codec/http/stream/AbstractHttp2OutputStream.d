@@ -4,10 +4,11 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.http.codec.http.frame;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.LinkedList;
@@ -29,7 +30,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
     private LinkedList!Frame frames;
     private bool noContent = true;
 
-    this(MetaData metaData, bool clientMode) {
+    this(HttpMetaData metaData, bool clientMode) {
         super(metaData, clientMode);
         frames = new LinkedList!Frame();
     }
@@ -69,7 +70,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
             // Optional.ofNullable(metaData.getTrailerSupplier())
             //         .map(Supplier::get)
             //         .ifPresent(trailer -> {
-            //             MetaData metaData = new MetaData(HttpVersion.HTTP_1_1, trailer);
+            //             HttpMetaData metaData = new HttpMetaData(HttpVersion.HTTP_1_1, trailer);
             //             HeadersFrame trailerFrame = new HeadersFrame(getStream().getId(), metaData, null, true);
             //             frames.offer(trailerFrame);
             //         });
@@ -80,7 +81,7 @@ abstract class AbstractHttp2OutputStream : HttpOutputStream , Callback
                 HttpFields trailer = supplier();
                 if(trailer !is null)
                 {
-                    MetaData metaData = new MetaData(HttpVersion.HTTP_1_1, trailer);
+                    HttpMetaData metaData = new HttpMetaData(HttpVersion.HTTP_1_1, trailer);
                         HeadersFrame trailerFrame = new HeadersFrame(getStream().getId(), metaData, null, true);
                         frames.offer(trailerFrame);
                 }

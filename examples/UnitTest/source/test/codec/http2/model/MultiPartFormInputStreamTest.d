@@ -1,8 +1,8 @@
 module test.codec.http2.model.MultipartFormInputStreamTest;
 
 import hunt.http.codec.http.model.MultiException;
-import hunt.http.codec.http.model.MultipartForm;
-import hunt.http.codec.http.model.MultipartOptions;
+import hunt.http.MultipartForm;
+import hunt.http.MultipartOptions;
 import hunt.http.codec.http.model.MultipartParser;
 import hunt.http.codec.http.model.MultipartFormParser;
 

@@ -16,11 +16,11 @@ module test.codec.http2.frame;
 // import hunt.http.codec.http.frame.PriorityFrame;
 // import hunt.http.codec.http.hpack.HpackEncoder;
 // import hunt.http.codec.http.model.HostPortHttpField;
-// import hunt.http.codec.http.model.HttpField;
-// import hunt.http.codec.http.model.HttpFields;
-// import hunt.http.codec.http.model.HttpScheme;
+// import hunt.http.HttpField;
+// import hunt.http.HttpFields;
+// import hunt.http.HttpScheme;
 // import hunt.http.HttpVersion;
-// import hunt.http.codec.http.model.MetaData;
+// import hunt.http.HttpMetaData;
 
 // shared static this()
 // {

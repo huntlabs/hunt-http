@@ -1,8 +1,8 @@
 module hunt.http.codec.http.model.StaticTableHttpField;
 
-import hunt.http.codec.http.model.HttpField;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
 
 import hunt.Exceptions;
 

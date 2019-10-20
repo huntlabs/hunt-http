@@ -6,7 +6,7 @@ import hunt.Assert;
 import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.Huffman;
 import hunt.http.codec.http.hpack.NBitInteger;
-import hunt.http.codec.http.model.HttpField;
+import hunt.http.HttpField;
 
 import std.conv;
 

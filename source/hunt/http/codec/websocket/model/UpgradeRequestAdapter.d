@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.model.UpgradeRequestAdapter;
 
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 import hunt.net.util.HttpURI;
 import hunt.text.QuoteUtil;
 

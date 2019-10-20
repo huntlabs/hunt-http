@@ -5,7 +5,7 @@ public import hunt.http.codec.http.stream.AbstractHttp1Connection;
 public import hunt.http.codec.http.stream.AbstractHttp1OutputStream;
 public import hunt.http.codec.http.stream.AbstractHttp2Connection;
 public import hunt.http.codec.http.stream.AbstractHttp2OutputStream;
-public import hunt.http.AbstractHttpConnection;
+public import hunt.http.HttpConnection;
 // public import hunt.http.HttpConnectionHandler;
 // public import hunt.http.codec.http.stream.BufferedHttpOutputStream;
 public import hunt.http.codec.http.stream.BufferingFlowControlStrategy;

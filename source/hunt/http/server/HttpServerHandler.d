@@ -8,10 +8,9 @@ import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 
-import hunt.http.HttpVersion;
-import hunt.http.HttpConnectionHandler;
-import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
+import hunt.http.HttpOptions;
+import hunt.http.HttpVersion;
 
 import hunt.net.secure.SecureSession;
 import hunt.net.secure.SecureSessionFactory;

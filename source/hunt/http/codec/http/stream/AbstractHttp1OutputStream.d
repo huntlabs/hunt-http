@@ -2,7 +2,10 @@ module hunt.http.codec.http.stream.AbstractHttp1OutputStream;
 
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.http.encode.HttpGenerator;
-import hunt.http.codec.http.model.MetaData;
+
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -17,7 +20,7 @@ import std.format;
 */
 abstract class AbstractHttp1OutputStream : HttpOutputStream {
 
-    this(MetaData metaData, bool clientMode) {
+    this(HttpMetaData metaData, bool clientMode) {
         super(metaData, clientMode);
     }
 
@@ -216,7 +219,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
     }
 
-    protected HttpGenerator.Result generate(MetaData metaData, 
+    protected HttpGenerator.Result generate(HttpMetaData metaData, 
         ByteBuffer header, ByteBuffer chunk, ByteBuffer content, bool last) {
         HttpGenerator generator = getHttpGenerator();
         if (clientMode) {

@@ -3,6 +3,11 @@ module hunt.http.codec.http.encode.PredefinedHttp1Response;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.encode.HttpGenerator;
 
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpResponse;
+import hunt.http.HttpVersion;
+
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 import hunt.Exceptions;

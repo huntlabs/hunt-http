@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.StatusCode;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import test.codec.websocket.utils.Hex;
 import hunt.text.Common;
 import hunt.Assert;

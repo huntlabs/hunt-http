@@ -11,7 +11,7 @@ import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.model.extension.compress.DeflateFrameExtension;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
+import hunt.http.WebSocketPolicy;
 import hunt.text.Common;
 import hunt.util.Common;
 import hunt.http.utils.exception.CommonRuntimeException;

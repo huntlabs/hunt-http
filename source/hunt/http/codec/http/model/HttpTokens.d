@@ -3,7 +3,7 @@ module hunt.http.codec.http.model.HttpTokens;
 /**
  * HTTP constants
  */
-interface HttpTokens
+struct HttpTokens
 {
     // Terminal symbols.
     enum byte COLON = ':';

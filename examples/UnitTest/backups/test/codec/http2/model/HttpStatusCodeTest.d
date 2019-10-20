@@ -5,8 +5,8 @@ import hunt.Assert.assertNull;
 
 import hunt.util.Test;
 
-import hunt.http.codec.http.model.HttpMethod;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpMethod;
+import hunt.http.HttpStatus;
 
 public class HttpStatusCodeTest {
 	

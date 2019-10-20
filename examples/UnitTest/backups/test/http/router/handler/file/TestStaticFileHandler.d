@@ -1,9 +1,9 @@
 module test.http.router.handler.file;
 
 import hunt.http.$;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpStatus;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.server.router.handler.file.StaticFileHandler;
 import hunt.Assert;

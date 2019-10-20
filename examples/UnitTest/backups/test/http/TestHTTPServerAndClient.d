@@ -3,7 +3,7 @@ module test.http;
 import hunt.http.$;
 import hunt.http.client.SimpleHttpClient;
 import hunt.http.client.SimpleHttpClientConfiguration;
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.server.SimpleHttpServer;
 import hunt.http.server.SimpleHttpServerConfiguration;

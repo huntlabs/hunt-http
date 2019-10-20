@@ -16,10 +16,17 @@ import hunt.http.codec.http.stream;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
-import hunt.http.codec.websocket.stream.WebSocketPolicy;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.HttpConnectionType;
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.WebSocketPolicy;
+import hunt.http.HttpVersion;
+
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

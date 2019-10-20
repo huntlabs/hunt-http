@@ -4,10 +4,10 @@ import hunt.http.client.HttpClientRequest;
 import hunt.http.client.RequestBody;
 
 import hunt.net.util.HttpURI;
-import hunt.http.codec.http.model.MetaData;
-import hunt.http.codec.http.model.HttpFields;
-import hunt.http.codec.http.model.HttpMethod;
-import hunt.http.codec.http.model.HttpScheme;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpFields;
+import hunt.http.HttpMethod;
+import hunt.http.HttpScheme;
 
 
 import hunt.Exceptions;

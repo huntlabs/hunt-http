@@ -3,6 +3,14 @@ module hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.hpack.HpackEncoder;
 
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMethod;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
+
 import hunt.collection;
 import hunt.util.DateTime;
 import hunt.Exceptions;
@@ -91,8 +99,7 @@ class HttpParser {
      * </ul>
      */
     // __gshared Trie!HttpField CACHE;
-    static Trie!HttpField CACHE()
-    {
+    static Trie!HttpField CACHE() {
         __gshared Trie!HttpField inst;
         return initOnce!inst(initFieldCache());
     }

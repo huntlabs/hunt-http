@@ -4,7 +4,7 @@ import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model;
-// import hunt.http.codec.http.model.MetaData;
+// import hunt.http.HttpMetaData;
 import hunt.collection.BufferUtils;
 
 import hunt.Assert;

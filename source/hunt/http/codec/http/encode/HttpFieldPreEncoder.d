@@ -1,6 +1,6 @@
 module hunt.http.codec.http.encode.HttpFieldPreEncoder;
 
-import hunt.http.codec.http.model.HttpHeader;
+import hunt.http.HttpHeader;
 import hunt.http.HttpVersion;
 import hunt.http.codec.http.hpack.HpackEncoder;
 

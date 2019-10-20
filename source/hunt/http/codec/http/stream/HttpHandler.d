@@ -3,7 +3,9 @@ module hunt.http.codec.http.stream.HttpHandler;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.HttpConnection;
 
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
 
 import hunt.Functions;
 import hunt.util.Common;

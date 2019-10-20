@@ -10,7 +10,7 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.PushPromiseFrame;
-import hunt.http.codec.http.model.MetaData;
+import hunt.http.HttpMetaData;
 
 import hunt.Exceptions;
 
@@ -101,7 +101,7 @@ class PushPromiseBodyParser :BodyParser {
 				break;
 			}
 			case State.HEADERS: {
-				MetaData metaData = headerBlockParser.parse(buffer, length);
+				HttpMetaData metaData = headerBlockParser.parse(buffer, length);
 				if (metaData !is null) {
 					state = State.PADDING;
 					loop = paddingLength == 0;
@@ -127,7 +127,7 @@ class PushPromiseBodyParser :BodyParser {
 		return false;
 	}
 
-	private void onPushPromise(int streamId, MetaData metaData) {
+	private void onPushPromise(int streamId, HttpMetaData metaData) {
 		PushPromiseFrame frame = new PushPromiseFrame(getStreamId(), streamId, metaData);
 		notifyPushPromise(frame);
 	}

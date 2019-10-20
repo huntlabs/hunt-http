@@ -1,8 +1,8 @@
 module hunt.http.server.HttpServerResponse;
 
-import hunt.http.codec.http.model.HttpFields;
+import hunt.http.HttpFields;
+import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
-import hunt.http.codec.http.model.MetaData;
 
 class HttpServerResponse : HttpResponse {
 

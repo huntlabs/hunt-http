@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.model.UpgradeRequest;
 
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.http.model.Cookie;
+import hunt.http.Cookie;
 import hunt.net.util.HttpURI;
 
 // dfmt off

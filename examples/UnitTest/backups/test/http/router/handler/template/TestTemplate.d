@@ -1,8 +1,8 @@
 module test.http.router.handler.template;
 
 import hunt.http.$;
-import hunt.http.codec.http.model.HttpHeader;
-import hunt.http.codec.http.model.HttpStatus;
+import hunt.http.HttpHeader;
+import hunt.http.HttpStatus;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.Assert;
 import hunt.util.Test;

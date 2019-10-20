@@ -10,6 +10,13 @@ import hunt.http.codec.http.hpack.NBitInteger;
 
 import hunt.http.codec.http.model;
 
+import hunt.http.HttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
+
 import hunt.text.Common;
 import hunt.text.StringBuilder;
 import hunt.util.ConverterUtils;
@@ -60,7 +67,7 @@ class HpackDecoder {
         _localMaxDynamicTableSize = localMaxdynamciTableSize;
     }
 
-    MetaData decode(ByteBuffer buffer) {
+    HttpMetaData decode(ByteBuffer buffer) {
         version(HUNT_HTTP_DEBUG)
             tracef("CtxTbl[%x] decoding %d octets", _context.toHash(), buffer.remaining());
 
