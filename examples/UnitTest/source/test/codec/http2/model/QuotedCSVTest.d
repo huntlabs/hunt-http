@@ -3,7 +3,7 @@ module test.codec.http2.model.QuotedCSVTest;
 import std.array;
 import hunt.Assert;
 
-import hunt.http.codec.http.model.QuotedCSV;
+import hunt.http.QuotedCSV;
 
 alias assertThat = Assert.assertThat;
 

@@ -1,12 +1,9 @@
 module hunt.http.HttpResponse;
 
-import hunt.http.codec.http.model.HostPortHttpField;
-
-import hunt.http.HttpMetaData;
-
-import hunt.http.HttpHeader;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
 import hunt.http.HttpScheme;
 import hunt.http.HttpVersion;
 

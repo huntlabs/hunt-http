@@ -1,8 +1,8 @@
 module hunt.http.codec.websocket.frame.PongFrame;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.frame.ControlFrame;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketCommon;
 import hunt.text.Common;
 
 import hunt.collection.BufferUtils;

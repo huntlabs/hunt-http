@@ -9,12 +9,11 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.stream;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpHeader;
 import hunt.http.HttpRequest;
+import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection;

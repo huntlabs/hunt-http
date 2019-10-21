@@ -1,11 +1,14 @@
-module hunt.http.codec.websocket.frame.WebSocketFrame;
+module hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketFrame;
 
 import hunt.collection;
+import hunt.Exceptions;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
+
+import std.conv;
+import std.traits;
 
 /**
  * A Base Frame as seen in <a href="https://tools.ietf.org/html/rfc6455#section-5.2">RFC 6455. Sec 5.2</a>
@@ -31,7 +34,7 @@ import hunt.text.StringBuilder;
  *   +---------------------------------------------------------------+
  * </pre>
  */
-abstract class WebSocketFrame : Frame {
+abstract class AbstractWebSocketFrame : WebSocketFrame {
 
     /**
      * Combined FIN + RSV1 + RSV2 + RSV3 + OpCode byte.
@@ -67,7 +70,7 @@ abstract class WebSocketFrame : Frame {
 
     abstract void assertValid();
 
-    void copyHeaders(Frame frame) {
+    void copyHeaders(WebSocketFrame frame) {
         finRsvOp = 0x00;
         finRsvOp |= frame.isFin() ? 0x80 : 0x00;
         finRsvOp |= frame.isRsv1() ? 0x40 : 0x00;
@@ -83,7 +86,7 @@ abstract class WebSocketFrame : Frame {
         }
     }
 
-    protected void copyHeaders(WebSocketFrame copy) {
+    protected void copyHeaders(AbstractWebSocketFrame copy) {
         finRsvOp = copy.finRsvOp;
         masked = copy.masked;
         mask = null;
@@ -101,7 +104,7 @@ abstract class WebSocketFrame : Frame {
             return false;
         }
 
-        WebSocketFrame other = cast(WebSocketFrame) obj;
+        AbstractWebSocketFrame other = cast(AbstractWebSocketFrame) obj;
         if(other is null) return false;
         
         if (data is null) {
@@ -210,24 +213,24 @@ abstract class WebSocketFrame : Frame {
         mask = null;
     }
 
-    WebSocketFrame setFin(bool fin) {
+    AbstractWebSocketFrame setFin(bool fin) {
         // set bit 1
         this.finRsvOp = cast(byte) ((finRsvOp & 0x7F) | (fin ? 0x80 : 0x00));
         return this;
     }
 
-    Frame setMask(byte[] maskingKey) {
+    WebSocketFrame setMask(byte[] maskingKey) {
         this.mask = maskingKey;
         this.masked = (mask !is null);
         return this;
     }
 
-    Frame setMasked(bool mask) {
+    WebSocketFrame setMasked(bool mask) {
         this.masked = mask;
         return this;
     }
 
-    protected WebSocketFrame setOpCode(byte op) {
+    protected AbstractWebSocketFrame setOpCode(byte op) {
         this.finRsvOp = cast(byte) ((finRsvOp & 0xF0) | (op & 0x0F));
         return this;
     }
@@ -242,24 +245,24 @@ abstract class WebSocketFrame : Frame {
      * @param buf the bytebuffer to set
      * @return the frame itself
      */
-    WebSocketFrame setPayload(ByteBuffer buf) {
+    AbstractWebSocketFrame setPayload(ByteBuffer buf) {
         data = buf;
         return this;
     }
 
-    WebSocketFrame setRsv1(bool rsv1) {
+    AbstractWebSocketFrame setRsv1(bool rsv1) {
         // set bit 2
         this.finRsvOp = cast(byte) ((finRsvOp & 0xBF) | (rsv1 ? 0x40 : 0x00));
         return this;
     }
 
-    WebSocketFrame setRsv2(bool rsv2) {
+    AbstractWebSocketFrame setRsv2(bool rsv2) {
         // set bit 3
         this.finRsvOp = cast(byte) ((finRsvOp & 0xDF) | (rsv2 ? 0x20 : 0x00));
         return this;
     }
 
-    WebSocketFrame setRsv3(bool rsv3) {
+    AbstractWebSocketFrame setRsv3(bool rsv3) {
         // set bit 4
         this.finRsvOp = cast(byte) ((finRsvOp & 0xEF) | (rsv3 ? 0x10 : 0x00));
         return this;
@@ -279,5 +282,32 @@ abstract class WebSocketFrame : Frame {
         b.append(",masked=").append(masked);
         b.append(']');
         return b.toString();
+    }
+}
+
+/**
+ * 
+ */
+class FrameTypeHelper {
+    
+    static WebSocketFrameType from(byte op) {
+        foreach (WebSocketFrameType type ; EnumMembers!(WebSocketFrameType)) {
+            if (cast(byte)type == op) 
+                return type;
+        }
+        throw new IllegalArgumentException("OpCode " ~ to!string(op) ~ 
+            " is not a valid WebSocketFrameType");
+    }
+
+    static bool isControl(WebSocketFrameType type) {
+        return type >= WebSocketFrameType.CLOSE;
+    }
+
+    static bool isData(WebSocketFrameType type) {
+        return (type == WebSocketFrameType.TEXT) || (type == WebSocketFrameType.BINARY);
+    }
+
+    static bool isContinuation(WebSocketFrameType type) {
+        return type == WebSocketFrameType.CONTINUATION;
     }
 }

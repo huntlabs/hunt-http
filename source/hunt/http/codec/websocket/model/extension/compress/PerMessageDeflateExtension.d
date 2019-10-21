@@ -1,9 +1,9 @@
 module hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExtension;
 
-// import hunt.http.codec.websocket.exception.BadPayloadException;
-// import hunt.http.codec.websocket.frame.Frame;
+// import hunt.http.Exceptions.BadPayloadException;
+// import hunt.http.WebSocketFrame;
 // import hunt.http.codec.websocket.model.ExtensionConfig;
-// import hunt.http.codec.websocket.model.common;
+// import hunt.http.WebSocketCommon;
 // import hunt.util.Common;
 // import hunt.logging;
 

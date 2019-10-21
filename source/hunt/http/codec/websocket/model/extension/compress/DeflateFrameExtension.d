@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.model.extension.compress.DeflateFrameExtension;
 
-import hunt.http.codec.websocket.exception;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.Exceptions;
+import hunt.http.WebSocketFrame;
 
 
 /**

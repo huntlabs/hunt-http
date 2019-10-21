@@ -1,10 +1,10 @@
 module hunt.http.codec.websocket.encode;
 
-import hunt.http.codec.websocket.exception;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.Exceptions;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.codec.websocket.model.Extension;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection;
@@ -90,7 +90,7 @@ class Generator {
         this.readOnly = readOnly;
     }
 
-    void assertFrameValid(Frame frame) {
+    void assertFrameValid(WebSocketFrame frame) {
         if (!validating) {
             return;
         }
@@ -160,13 +160,13 @@ class Generator {
         }
     }
 
-    ByteBuffer generateHeaderBytes(Frame frame) {
+    ByteBuffer generateHeaderBytes(WebSocketFrame frame) {
         ByteBuffer buffer = BufferUtils.allocate(MAX_HEADER_LENGTH);
         generateHeaderBytes(frame, buffer);
         return buffer;
     }
 
-    void generateHeaderBytes(Frame frame, ByteBuffer buffer) {
+    void generateHeaderBytes(WebSocketFrame frame, ByteBuffer buffer) {
         int p = BufferUtils.flipToFill(buffer);
 
         // we need a framing header
@@ -283,7 +283,7 @@ class Generator {
      * @param frame the frame to generate
      * @param buf   the buffer to output the generated frame to
      */
-    void generateWholeFrame(Frame frame, ByteBuffer buf) {
+    void generateWholeFrame(WebSocketFrame frame, ByteBuffer buf) {
         buf.put(generateHeaderBytes(frame));
         if (frame.hasPayload()) {
             if (readOnly) {

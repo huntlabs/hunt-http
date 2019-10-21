@@ -1,10 +1,10 @@
 module test.codec.websocket.model.extension.identity;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.frame.TextFrame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.codec.websocket.model.Extension;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketCommon;
 import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 import hunt.collection.BufferUtils;
 import hunt.Assert;

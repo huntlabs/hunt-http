@@ -12,11 +12,8 @@ import hunt.http.codec.http.decode.SettingsBodyParser;
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.encode.PredefinedHttp1Response;
 
-import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.AcceptHash;
-import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 import hunt.http.codec.websocket.stream.IOState;
 
@@ -38,6 +35,10 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
 import hunt.http.HttpVersion;
+
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketConnection;
+import hunt.http.WebSocketFrame;
 
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
@@ -234,7 +235,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                         webSocketHandler.onError(t, webSocketConnection);
                     }
 
-                    void incomingFrame(Frame frame) {
+                    void incomingFrame(WebSocketFrame frame) {
                         version(HUNT_HTTP_DEBUG_MORE) trace(BufferUtils.toDetailString(frame.getPayload()));
                         webSocketHandler.onFrame(frame, webSocketConnection);
                     }

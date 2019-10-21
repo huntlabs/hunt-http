@@ -1,15 +1,15 @@
 module hunt.http.codec.websocket.frame.ReadOnlyDelegatedFrame;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.collection.ByteBuffer;
 
 /**
- * Immutable, Read-only, Frame implementation.
+ * Immutable, Read-only, WebSocketFrame implementation.
  */
-class ReadOnlyDelegatedFrame : Frame {
-    private Frame frame;
+class ReadOnlyDelegatedFrame : WebSocketFrame {
+    private WebSocketFrame frame;
 
-    this(Frame frame) {
+    this(WebSocketFrame frame) {
         this.frame = frame;
     }
 

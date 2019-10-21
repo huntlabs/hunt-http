@@ -38,5 +38,7 @@ public import hunt.http.HttpStatus;
 public import hunt.http.HttpVersion;
 public import hunt.http.MultipartForm;
 public import hunt.http.MultipartOptions;
-public import hunt.http.WebSocketMessageHandler;
+public import hunt.http.WebSocketCommon;
+public import hunt.http.WebSocketConnection;
+public import hunt.http.WebSocketFrame;
 public import hunt.http.WebSocketPolicy;

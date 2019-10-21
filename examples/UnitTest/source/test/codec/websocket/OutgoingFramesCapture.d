@@ -1,8 +1,7 @@
 module test.codec.websocket.OutgoingFramesCapture;
 
 import hunt.http.codec.websocket.frame;
-import hunt.http.codec.websocket.model.common;
-import hunt.http.codec.websocket.model.OutgoingFrames;
+import hunt.http.WebSocketCommon;
 
 import hunt.collection;
 import hunt.logging;

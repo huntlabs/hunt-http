@@ -5,23 +5,23 @@ public import hunt.http.codec.websocket.frame.CloseFrame;
 public import hunt.http.codec.websocket.frame.ContinuationFrame;
 public import hunt.http.codec.websocket.frame.ControlFrame;
 public import hunt.http.codec.websocket.frame.DataFrame;
-public import hunt.http.codec.websocket.frame.Frame;
+public import hunt.http.WebSocketFrame;
 public import hunt.http.codec.websocket.frame.PingFrame;
 public import hunt.http.codec.websocket.frame.PongFrame;
 public import hunt.http.codec.websocket.frame.ReadOnlyDelegatedFrame;
 public import hunt.http.codec.websocket.frame.TextFrame;
-public import hunt.http.codec.websocket.frame.WebSocketFrame;
+public import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 
 
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketCommon;
 import hunt.collection;
 import hunt.Exceptions;
 
 import std.conv;
 
 class WebSocketFrameHelper {
-    static WebSocketFrame copy(Frame original) {
-        WebSocketFrame copy;
+    static AbstractWebSocketFrame copy(WebSocketFrame original) {
+        AbstractWebSocketFrame copy;
         switch (original.getOpCode()) {
             case OpCode.BINARY:
                 copy = new BinaryFrame();

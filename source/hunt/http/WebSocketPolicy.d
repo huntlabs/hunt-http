@@ -1,8 +1,8 @@
 module hunt.http.WebSocketPolicy;
 
-import hunt.http.codec.websocket.exception;
-import hunt.http.codec.websocket.model.StatusCode;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.Exceptions;
+import hunt.http.WebSocketStatusCode;
+import hunt.http.WebSocketCommon;
 
 import hunt.Exceptions;
 import hunt.text.Common;

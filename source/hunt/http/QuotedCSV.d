@@ -1,13 +1,13 @@
-module hunt.http.codec.http.model.QuotedCSV;
+module hunt.http.QuotedCSV;
+
+import hunt.collection.StringBuffer;
+import hunt.text.Common;
+import hunt.text.StringBuilder;
+import hunt.util.Common;
 
 import std.array;
 import std.conv;
 import std.container.array;
-
-import hunt.util.Common;
-import hunt.collection.StringBuffer;
-import hunt.text.Common;
-import hunt.text.StringBuilder;
 
 /**
  * Implements a quoted comma separated list of values

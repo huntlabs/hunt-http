@@ -1,9 +1,8 @@
 module test.codec.websocket.IncomingFramesCapture;
 
-import hunt.http.codec.websocket.exception;
+import hunt.http.Exceptions;
 import hunt.http.codec.websocket.frame;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketCommon;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.Queue;

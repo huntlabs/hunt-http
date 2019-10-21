@@ -2,9 +2,9 @@ module hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.http.stream.HttpOutputStream;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.stream.IOState;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.WebSocketConnection;
 
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
@@ -35,7 +35,7 @@ interface WebSocketHandler {
 
     void setWebSocketPolicy(WebSocketPolicy w);
 
-    void onFrame(Frame frame, WebSocketConnection connection);
+    void onFrame(WebSocketFrame frame, WebSocketConnection connection);
 
     void onError(Exception t, WebSocketConnection connection);
 }
@@ -53,7 +53,7 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
     private HttpEventHandler _acceptUpgradeHandler;
     private Action1!(WebSocketConnection) _openHandler;
     private Action1!(WebSocketConnection) _closeHandler;
-    private Action2!(Frame, WebSocketConnection) _frameHandler;
+    private Action2!(WebSocketFrame, WebSocketConnection) _frameHandler;
     private Action2!(Exception, WebSocketConnection) _errorHandler;
 
     this() {
@@ -100,7 +100,7 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
             _closeHandler(connection);
     }
 
-    void onFrame(Frame frame, WebSocketConnection connection) {
+    void onFrame(WebSocketFrame frame, WebSocketConnection connection) {
         version (HUNT_HTTP_DEBUG) {
             tracef("The WebSocket connection %s received a frame: %s",
                     connection.getId(), frame.to!string());
@@ -132,7 +132,7 @@ abstract class AbstractWebSocketHandler : WebSocketHandler {
         return this;
     }
 
-    AbstractWebSocketHandler onFrame(Action2!(Frame, WebSocketConnection) handler) {
+    AbstractWebSocketHandler onFrame(Action2!(WebSocketFrame, WebSocketConnection) handler) {
         _frameHandler = handler;
         return this;
     }

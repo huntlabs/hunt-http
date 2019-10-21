@@ -1,7 +1,7 @@
 module hunt.http.HttpField;
 
 import hunt.http.HttpHeader;
-import hunt.http.codec.http.model.QuotedCSV;
+import hunt.http.QuotedCSV;
 
 import hunt.collection;
 import hunt.logging.ConsoleLogger;
@@ -15,6 +15,9 @@ import std.uni;
 import std.csv;
 import std.string;
 
+/**
+ * 
+ */
 class HttpField {
 	private enum string __zeroquality = "q=0";
 	private HttpHeader _header;

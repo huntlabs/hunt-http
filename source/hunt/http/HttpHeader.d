@@ -1,7 +1,7 @@
 module hunt.http.HttpHeader;
 
-import hunt.util.ObjectUtils;
 import hunt.logging.ConsoleLogger;
+import hunt.util.ObjectUtils;
 
 import std.algorithm;
 import std.conv;
@@ -216,11 +216,6 @@ struct HttpHeader {
     // } 
 }
 
-
-import hunt.util.ObjectUtils;
-
-import std.algorithm;
-import std.string;
 // import hunt.collection.ByteBuffer;
 // import java.nio.charset.StandardCharsets;
 // import java.util.EnumSet;

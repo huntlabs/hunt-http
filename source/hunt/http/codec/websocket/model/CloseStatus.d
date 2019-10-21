@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.model.CloseStatus;
 
-import hunt.http.codec.websocket.model.StatusCode;
+import hunt.http.WebSocketStatusCode;
 
 import hunt.Exceptions;
 

@@ -26,5 +26,5 @@ public import hunt.http.MultipartOptions;
 public import hunt.http.codec.http.model.MultipartFormParser;
 public import hunt.http.codec.http.model.MultipartParser;
 public import hunt.http.codec.http.model.Protocol;
-public import hunt.http.codec.http.model.QuotedCSV;
+public import hunt.http.QuotedCSV;
 public import hunt.http.codec.http.model.StaticTableHttpField;

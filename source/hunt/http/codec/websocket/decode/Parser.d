@@ -1,9 +1,13 @@
 module hunt.http.codec.websocket.decode.Parser;
 
-import hunt.http.codec.websocket.exception;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.decode.payload;
+
+import hunt.http.Exceptions;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketConnection;
+import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketPolicy;
 
 import hunt.logging;
@@ -33,8 +37,8 @@ class Parser {
     // State specific
     private State state = State.START;
     private int cursor = 0;
-    // Frame
-    private WebSocketFrame frame;
+    // WebSocketFrame
+    private AbstractWebSocketFrame frame;
     private bool priorDataFrame;
     // payload specific
     private ByteBuffer payload;
@@ -141,7 +145,7 @@ class Parser {
         return (flagsInUse & 0x10) != 0;
     }
 
-    protected void notifyFrame(Frame f) {
+    protected void notifyFrame(WebSocketFrame f) {
         version(HUNT_HTTP_DEBUG_MORE)
             tracef("%s Notify %s", policy.getBehavior(), getIncomingFramesHandler());
 
@@ -194,7 +198,7 @@ class Parser {
             // parse through all the frames in the buffer
             while (parseFrame(buffer)) {
                 version(HUNT_DEBUG) {
-                    tracef("%s Parsed Frame: %s", policy.getBehavior(), frame);
+                    tracef("%s Parsed WebSocketFrame: %s", policy.getBehavior(), frame);
                     // info(BufferUtils.toDetailString(frame.getPayload()));
                 }
                 notifyFrame(frame);
@@ -289,7 +293,7 @@ class Parser {
                             frame = new CloseFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Close Frame [" ~ 
+                                throw new ProtocolException("Fragmented Close WebSocketFrame [" ~ 
                                     OpCode.name(opcode) ~ "]");
                             }
                             break;
@@ -297,7 +301,7 @@ class Parser {
                             frame = new PingFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Ping Frame [" ~ 
+                                throw new ProtocolException("Fragmented Ping WebSocketFrame [" ~ 
                                     OpCode.name(opcode) ~ "]");
                             }
                             break;
@@ -305,7 +309,7 @@ class Parser {
                             frame = new PongFrame();
                             // control frame validation
                             if (!fin) {
-                                throw new ProtocolException("Fragmented Pong Frame [" ~ 
+                                throw new ProtocolException("Fragmented Pong WebSocketFrame [" ~ 
                                     OpCode.name(opcode) ~ "]");
                             }
                             break;

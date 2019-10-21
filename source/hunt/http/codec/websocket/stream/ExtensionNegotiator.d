@@ -1,18 +1,18 @@
 module hunt.http.codec.websocket.stream.ExtensionNegotiator;
 
-import hunt.http.HttpHeader;
-import hunt.http.HttpMetaData;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;
 import hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.WebSocketConnection;
+import hunt.http.WebSocketFrame;
+
 import hunt.collection;
 
-import hunt.http.codec.websocket.model.ExtensionConfig;
 
 import hunt.collection;
 import hunt.Exceptions;

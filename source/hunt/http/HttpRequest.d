@@ -1,13 +1,10 @@
 module hunt.http.HttpRequest;
 
-import hunt.http.HttpMetaData;
-
-import hunt.http.HttpHeader;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
-import hunt.http.codec.http.model.HostPortHttpField;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
 import hunt.http.HttpScheme;
-
 import hunt.http.HttpVersion;
 
 import hunt.collection;
@@ -39,17 +36,10 @@ class HttpRequest : HttpMetaData {
     //     this(method, uri, ver, fields, long.min);
     // }
 
-    // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields) {
-    //     this(method, new HttpURI(scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields);
-    // }
 
-    // this(string method, HttpScheme scheme, HostPortHttpField hostPort, string uri, HttpVersion ver, HttpFields fields, long contentLength) {
-    //     this(method, new HttpURI( scheme.toString(), hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
-    // }
-
-    this(string method, string scheme, HostPortHttpField hostPort, string uri, 
+    this(string method, string scheme, string host, int port, string uri, 
             HttpVersion ver, HttpFields fields, long contentLength=long.min) {
-        this(method, new HttpURI(scheme, hostPort.getHost(), hostPort.getPort(), uri), ver, fields, contentLength);
+        this(method, new HttpURI(scheme, host, port, uri), ver, fields, contentLength);
     }
 
     this(HttpRequest request) {

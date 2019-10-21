@@ -1,10 +1,10 @@
 module hunt.http.codec.websocket.decode.payload;
 
-import hunt.http.codec.websocket.exception;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.Exceptions;
+import hunt.http.WebSocketFrame;
 
 import hunt.collection.ByteBuffer;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 
 import hunt.collection.ByteBuffer;
 
@@ -21,7 +21,7 @@ interface PayloadProcessor {
      */
     void process(ByteBuffer payload);
 
-    void reset(Frame frame);
+    void reset(WebSocketFrame frame);
 }
 
 class DeMaskProcessor : PayloadProcessor {
@@ -65,7 +65,7 @@ class DeMaskProcessor : PayloadProcessor {
     }
 
     override
-    void reset(Frame frame) {
+    void reset(WebSocketFrame frame) {
         reset(frame.getMask());
     }
 }

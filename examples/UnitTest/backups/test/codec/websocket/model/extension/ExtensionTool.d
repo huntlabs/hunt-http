@@ -1,9 +1,9 @@
 module test.codec.websocket.model.extension;
 
 import hunt.http.codec.websocket.decode.Parser;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.frame.TextFrame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.codec.websocket.model;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;

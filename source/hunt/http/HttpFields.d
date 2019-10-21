@@ -2,17 +2,17 @@ module hunt.http.HttpFields;
 
 import hunt.http.HttpField;
 import hunt.http.HttpHeader;
-import hunt.http.codec.http.model.QuotedCSV;
+import hunt.http.QuotedCSV;
 
 import hunt.collection;
-import hunt.util.Common;
 import hunt.Exceptions;
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 import hunt.text.Common;
 import hunt.text.QuotedStringTokenizer;
 import hunt.text.StringBuilder;
 import hunt.text.StringTokenizer;
 import hunt.text.StringUtils;
+import hunt.util.Common;
 
 import std.array;
 import std.algorithm;

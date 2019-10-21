@@ -18,53 +18,9 @@
 
 module hunt.http.HttpScheme;
 
-// import hunt.collection.ByteBuffer;
-
-// import hunt.http.utils.collection.ArrayTrie;
-// import hunt.http.utils.collection.Trie;
-// import hunt.collection.BufferUtils;
-// import hunt.util.Traits;
-
-struct HttpScheme {
-	enum HTTP = "http";
-	enum HTTPS = "https";
-	enum WS = "ws";
-	enum WSS = "wss";
-
-	enum string[] CACHE = [HTTP, HTTPS, WS, WSS];
-
-	// shared static this() {
-	// 	// for (HttpScheme version : HttpScheme.values())
-	// 	// 	CACHE.insert(version.asString(), version);
-	// 	CACHE ~= HTTP;
-	// 	CACHE ~= HTTPS;
-	// 	CACHE ~= WS;
-	// 	CACHE ~= WSS;
-	// }
-
-	// private string _string;
-	// private ByteBuffer buffer;
-
-	// this(string s) {
-	// 	_string = s;
-	// 	buffer = BufferUtils.toBuffer(s);
-	// }
-
-	// mixin GetEnumValues!(HttpScheme);
-
-	// ByteBuffer asByteBuffer() {
-	// 	return buffer.asReadOnlyBuffer();
-	// }
-
-	// bool isSame(string s) {
-	// 	return s != null && std.string.icmp(_string, s) == 0;
-	// }
-
-	// string asString() { return _string; }
-
-	// override
-	// string toString() {
-	// 	return _string;
-	// }
-
+enum HttpScheme : string {
+	HTTP = "http",
+	HTTPS = "https",
+	WS = "ws",
+	WSS = "wss"
 }

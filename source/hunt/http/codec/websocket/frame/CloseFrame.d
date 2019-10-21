@@ -1,8 +1,7 @@
 module hunt.http.codec.websocket.frame.CloseFrame;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.frame.ControlFrame;
-import hunt.http.codec.websocket.model.common;
 
 import hunt.text.Common;
 

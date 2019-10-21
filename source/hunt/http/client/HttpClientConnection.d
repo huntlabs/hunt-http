@@ -5,12 +5,11 @@ import hunt.http.client.Http2ClientConnection;
 
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpConnection;
+import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
 import hunt.concurrency.Promise;

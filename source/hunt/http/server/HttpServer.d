@@ -19,7 +19,7 @@ import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.WebSocketConnection;
 import hunt.http.codec.websocket.frame;
 
 import hunt.http.router;
@@ -28,7 +28,6 @@ import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
-import hunt.http.WebSocketMessageHandler;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection.BufferUtils;
@@ -461,7 +460,7 @@ class HttpServer : AbstractLifecycle {
                 if(handler !is null)
                     handler.onOpen(connection);
             })
-            .onFrame((Frame frame, WebSocketConnection connection) {
+            .onFrame((WebSocketFrame frame, WebSocketConnection connection) {
                 string path = connection.getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
                 if(handler is null) {

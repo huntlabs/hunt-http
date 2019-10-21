@@ -1,13 +1,13 @@
 module hunt.http.codec.websocket.frame.DataFrame;
 
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketFrame;
 
 /**
  * A Data Frame
  */
-class DataFrame : WebSocketFrame {
+class DataFrame : AbstractWebSocketFrame {
     protected this(byte opcode) {
         super(opcode);
     }
@@ -19,7 +19,7 @@ class DataFrame : WebSocketFrame {
      *
      * @param basedOn the frame this one is based on
      */
-    this(Frame basedOn) {
+    this(WebSocketFrame basedOn) {
         this(basedOn, false);
     }
 
@@ -31,7 +31,7 @@ class DataFrame : WebSocketFrame {
      * @param basedOn      the frame this one is based on
      * @param continuation true if this is a continuation frame
      */
-    this(Frame basedOn, bool continuation) {
+    this(WebSocketFrame basedOn, bool continuation) {
         super(basedOn.getOpCode());
         copyHeaders(basedOn);
         if (continuation) {

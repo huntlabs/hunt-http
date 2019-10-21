@@ -1,17 +1,12 @@
 module hunt.http.HttpVersion;
 
 import hunt.collection.ByteBuffer;
-
-// import java.nio.charset.StandardCharsets;
-
-import hunt.util.ObjectUtils;
 import hunt.Exceptions;
+import hunt.util.ObjectUtils;
 
 import std.ascii;
 import std.string;
 
-// import hunt.http.utils.collection.ArrayTrie;
-// import hunt.http.utils.collection.Trie;
 
 struct HttpVersion {
 	enum HttpVersion Null = HttpVersion("null", 0);

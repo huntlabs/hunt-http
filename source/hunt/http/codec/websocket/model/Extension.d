@@ -1,9 +1,9 @@
 module hunt.http.codec.websocket.model.Extension;
 
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.OutgoingFrames;
-import hunt.http.codec.websocket.frame.Frame;
+
+import hunt.http.WebSocketFrame;
+import hunt.http.WebSocketConnection;
 
 /**
  * Interface for WebSocket Extensions.

@@ -8,7 +8,7 @@ import hunt.http.HttpStatus;
 
 import hunt.logging;
 
-class HostPortHttpField :HttpField {
+class HostPortHttpField : HttpField {
 	HostPort _hostPort;
 
 	this(string authority) {

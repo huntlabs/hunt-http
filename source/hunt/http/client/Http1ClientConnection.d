@@ -13,9 +13,8 @@ import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.frame.SettingsFrame;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.common;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketConnection;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.HttpConnection;

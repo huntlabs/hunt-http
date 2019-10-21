@@ -1,6 +1,8 @@
 module hunt.http.HttpStatus;
 
 import hunt.util.ObjectUtils;
+
+import std.concurrency : initOnce;
 import std.conv;
 import std.format;
 
@@ -14,7 +16,7 @@ alias HttpStatusCode = HttpStatus.Code;
  * @see <a href="http://www.iana.org/assignments/http-status-codes/">IANA HTTP
  *      Status Code Registry</a>
  */
-class HttpStatus {
+struct HttpStatus {
 	enum CONTINUE_100 = 100;
 	enum SWITCHING_PROTOCOLS_101 = 101;
 	enum PROCESSING_102 = 102;
@@ -87,7 +89,8 @@ class HttpStatus {
 
 	enum MAX_CODE = 511  + 1;
 
-	private __gshared Code[] codeMap; // = new Code[MAX_CODE + 1];
+	private __gshared Code[] codeMap;
+	
 
 	shared static this() {
 		codeMap = new Code[MAX_CODE + 1];

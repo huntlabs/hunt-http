@@ -1,6 +1,6 @@
 module hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
 
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
 
@@ -37,13 +37,13 @@ class IdentityExtension : AbstractExtension {
     }
 
     // override
-    void incomingFrame(Frame frame) {
+    void incomingFrame(WebSocketFrame frame) {
         // pass through
         nextIncomingFrame(frame);
     }
 
     // override
-    void outgoingFrame(Frame frame, Callback callback) {
+    void outgoingFrame(WebSocketFrame frame, Callback callback) {
         // pass through
         nextOutgoingFrame(frame, callback);
     }

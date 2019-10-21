@@ -1,14 +1,14 @@
 module hunt.http.codec.websocket.frame.ControlFrame;
 
-import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.exception;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
+import hunt.http.Exceptions;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 
 import std.conv;
 
-abstract class ControlFrame : WebSocketFrame {
+abstract class ControlFrame : AbstractWebSocketFrame {
     /**
      * Maximum size of Control frame, per RFC 6455
      */
@@ -74,7 +74,7 @@ abstract class ControlFrame : WebSocketFrame {
     }
 
     override
-    WebSocketFrame setPayload(ByteBuffer buf) {
+    AbstractWebSocketFrame setPayload(ByteBuffer buf) {
         if (buf !is null && buf.remaining() > MAX_CONTROL_PAYLOAD) {
             throw new ProtocolException("Control Payloads can not exceed " ~ MAX_CONTROL_PAYLOAD ~ " bytes in length.");
         }

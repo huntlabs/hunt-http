@@ -4,8 +4,8 @@ import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
-import hunt.http.codec.websocket.model.common;
-import hunt.http.codec.websocket.model.StatusCode;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketStatusCode;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection;

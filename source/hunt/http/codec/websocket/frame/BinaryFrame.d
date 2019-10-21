@@ -1,8 +1,8 @@
 module hunt.http.codec.websocket.frame.BinaryFrame;
 
 import hunt.http.codec.websocket.frame.DataFrame;
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketFrame;
+import hunt.http.WebSocketCommon;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;

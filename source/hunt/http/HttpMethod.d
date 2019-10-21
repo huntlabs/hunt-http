@@ -1,13 +1,15 @@
 module hunt.http.HttpMethod;
 
-import std.string;
+import hunt.collection.ByteBuffer;
 import hunt.text.Common;
 import hunt.util.ObjectUtils;
 
-import hunt.collection.ByteBuffer;
+import std.string;
+
 
 /**
-*/
+ * 
+ */
 struct HttpMethod {
     enum HttpMethod Null = HttpMethod("Null");
     enum HttpMethod GET = HttpMethod("GET");

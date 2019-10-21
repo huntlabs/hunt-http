@@ -4,14 +4,10 @@ import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model.CloseInfo;
-import hunt.http.codec.websocket.model.common;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.extension.AbstractExtension;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.codec.websocket.stream.ExtensionNegotiator;
 import hunt.http.codec.websocket.stream.IOState;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
@@ -22,6 +18,8 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
 import hunt.net.AbstractConnection;
@@ -78,9 +76,9 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         extensionNegotiator.setNextOutgoingFrames(
             new class OutgoingFrames { 
 
-                void outgoingFrame(Frame frame, Callback callback) {
+                void outgoingFrame(WebSocketFrame frame, Callback callback) {
 
-                    WebSocketFrame webSocketFrame = cast(WebSocketFrame) frame;
+                    AbstractWebSocketFrame webSocketFrame = cast(AbstractWebSocketFrame) frame;
                     if (policy.getBehavior() == WebSocketBehavior.CLIENT && webSocketFrame !is null) {
                         if (!webSocketFrame.isMasked()) {
                             webSocketFrame.setMask(generateMask());
@@ -172,7 +170,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         return policy;
     }
 
-    void outgoingFrame(Frame frame, Callback callback) {
+    void outgoingFrame(WebSocketFrame frame, Callback callback) {
         extensionNegotiator.getOutgoingFrames().outgoingFrame(frame, callback);
     }
 
@@ -212,7 +210,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
             frames.incomingError(t);
     }
 
-    override void incomingFrame(Frame frame) {
+    override void incomingFrame(WebSocketFrame frame) {
         switch (frame.getType()) {
         case WebSocketFrameType.PING: {
                 PongFrame pongFrame = new PongFrame();

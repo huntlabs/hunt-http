@@ -1,7 +1,6 @@
 module test.codec.websocket.model.extension.compress;
 
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.model.OutgoingFrames;
+import hunt.http.WebSocketFrame;
 import hunt.util.Common;
 import test.codec.websocket.utils.Hex;
 

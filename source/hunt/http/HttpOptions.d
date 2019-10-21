@@ -1,6 +1,5 @@
 module hunt.http.HttpOptions;
 
-import hunt.http.codec.http.stream.FlowControlStrategy;
 import hunt.http.HttpVersion;
 
 import hunt.net.TcpSslOptions;
@@ -32,11 +31,12 @@ class HttpOptions {
     private string _keyPassword;
 
     // HTTP settings
+	enum int DEFAULT_WINDOW_SIZE = 65535;
     private int maxDynamicTableSize = 4096;
     private int streamIdleTimeout = 10 * 1000;
     private string flowControlStrategy = "buffer";
-    private int initialStreamSendWindow = FlowControlStrategy.DEFAULT_WINDOW_SIZE;
-    private int initialSessionRecvWindow = FlowControlStrategy.DEFAULT_WINDOW_SIZE;
+    private int initialStreamSendWindow = DEFAULT_WINDOW_SIZE;
+    private int initialSessionRecvWindow = DEFAULT_WINDOW_SIZE;
     private int maxConcurrentStreams = -1;
     private int maxHeaderBlockFragment = 0;
     private int maxRequestHeadLength = 4 * 1024;

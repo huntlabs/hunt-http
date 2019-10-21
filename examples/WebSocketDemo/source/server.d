@@ -3,7 +3,7 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 import hunt.http.codec.websocket.frame;
 import hunt.http.codec.websocket.model;
-import hunt.http.codec.websocket.stream.WebSocketConnection;
+import hunt.http.WebSocketConnection;
 
 import hunt.http.server;
 import hunt.collection.ByteBuffer;

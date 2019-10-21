@@ -1,13 +1,14 @@
 module hunt.http.codec.websocket.frame.TextFrame;
 
 import hunt.http.codec.websocket.frame.DataFrame;
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.model.common;
-import hunt.text.Common;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
+import hunt.http.WebSocketCommon;
+import hunt.http.WebSocketFrame;
+
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
+import hunt.text.Common;
 
 class TextFrame : DataFrame {
     this() {
@@ -26,7 +27,7 @@ class TextFrame : DataFrame {
         return this;
     }
 
-    alias setPayload = WebSocketFrame.setPayload;
+    alias setPayload = AbstractWebSocketFrame.setPayload;
 
     override string getPayloadAsUTF8() {
         if (data is null) {

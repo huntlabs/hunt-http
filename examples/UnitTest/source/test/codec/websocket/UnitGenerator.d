@@ -1,8 +1,8 @@
 module test.codec.websocket.UnitGenerator;
 
 import hunt.http.codec.websocket.encode;
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
+import hunt.http.WebSocketFrame;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection;

@@ -1,7 +1,7 @@
 module hunt.http.codec.websocket.model.extension.WebSocketExtensionFactory;
 
 import hunt.http.codec.websocket.model.extension.ExtensionFactory;
-import hunt.http.codec.websocket.exception;
+import hunt.http.Exceptions;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
 

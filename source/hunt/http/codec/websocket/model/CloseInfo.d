@@ -1,11 +1,11 @@
 module hunt.http.codec.websocket.model.CloseInfo;
 
 import hunt.http.codec.websocket.model.CloseStatus;
-import hunt.http.codec.websocket.model.StatusCode;
+import hunt.http.WebSocketStatusCode;
 
-import hunt.http.codec.websocket.exception;
+import hunt.http.Exceptions;
 import hunt.http.codec.websocket.frame.CloseFrame;
-import hunt.http.codec.websocket.frame.Frame;
+import hunt.http.WebSocketFrame;
 
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
@@ -26,7 +26,7 @@ class CloseInfo {
     }
 
     /**
-     * Parse the Close Frame payload.
+     * Parse the Close WebSocketFrame payload.
      *
      * @param payload  the raw close frame payload.
      * @param validate true if payload should be validated per WebSocket spec.
@@ -74,11 +74,11 @@ class CloseInfo {
         }
     }
 
-    this(Frame frame) {
+    this(WebSocketFrame frame) {
         this(frame.getPayload(), false);
     }
 
-    this(Frame frame, bool validate) {
+    this(WebSocketFrame frame, bool validate) {
         this(frame.getPayload(), validate);
     }
 
@@ -114,7 +114,7 @@ class CloseInfo {
         if ((statusCode == StatusCode.NO_CLOSE) || 
             (statusCode == StatusCode.NO_CODE) || 
             (statusCode == StatusCode.FAILED_TLS_HANDSHAKE)) {
-            throw new ProtocolException("Frame forbidden close status code: " ~ statusCode.to!string());
+            throw new ProtocolException("WebSocketFrame forbidden close status code: " ~ statusCode.to!string());
         }
 
         // Status Code is in defined "reserved space" and is declared (all others are invalid)
@@ -151,7 +151,7 @@ class CloseInfo {
     CloseFrame asFrame() {
         CloseFrame frame = new CloseFrame();
         frame.setFin(true);
-        // Frame forbidden codes result in no status code (and no reason string)
+        // WebSocketFrame forbidden codes result in no status code (and no reason string)
         if ((statusCode != StatusCode.NO_CLOSE) && (statusCode != StatusCode.NO_CODE) && 
                 (statusCode != StatusCode.FAILED_TLS_HANDSHAKE)) {
             assertValidStatusCode(statusCode);

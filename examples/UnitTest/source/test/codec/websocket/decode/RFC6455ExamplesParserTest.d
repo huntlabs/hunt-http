@@ -1,9 +1,9 @@
 module test.codec.websocket.decode.RFC6455ExamplesParserTest;
 
 import hunt.http.codec.websocket.decode.Parser;
-import hunt.http.codec.websocket.frame.Frame;
-import hunt.http.codec.websocket.frame.WebSocketFrame;
-import hunt.http.codec.websocket.model.common;
+import hunt.http.WebSocketFrame;
+import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
+import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection.BufferUtils;

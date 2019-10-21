@@ -1,15 +1,13 @@
 module hunt.http.codec.websocket.model.extension.AbstractExtension;
 
-import hunt.http.codec.websocket.frame.Frame;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.codec.websocket.model.ExtensionConfig;
-import hunt.http.codec.websocket.model.IncomingFrames;
-import hunt.http.codec.websocket.model.OutgoingFrames;
+
+import hunt.http.WebSocketConnection;
+import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketPolicy;
 
-import hunt.logging;
-
-import hunt.util.Common;
+import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 import hunt.util.Common;
 import hunt.util.Lifecycle;
@@ -106,12 +104,12 @@ abstract class AbstractExtension : AbstractLifecycle , Extension {
         this.nextIncoming.incomingError(e);
     }
 
-    protected void nextIncomingFrame(Frame frame) {
+    protected void nextIncomingFrame(WebSocketFrame frame) {
         tracef("nextIncomingFrame(%s)", frame);
         this.nextIncoming.incomingFrame(frame);
     }
 
-    protected void nextOutgoingFrame(Frame frame, Callback callback) {
+    protected void nextOutgoingFrame(WebSocketFrame frame, Callback callback) {
         tracef("nextOutgoingFrame(%s)", frame);
         this.nextOutgoing.outgoingFrame(frame, callback);
     }
