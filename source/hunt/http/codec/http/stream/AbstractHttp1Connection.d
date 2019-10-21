@@ -4,7 +4,7 @@ import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.encode.Http2Generator;
 
 import hunt.http.HttpConnection;
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 

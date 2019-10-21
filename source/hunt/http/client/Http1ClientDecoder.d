@@ -8,7 +8,7 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
 

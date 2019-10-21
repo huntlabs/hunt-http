@@ -4,7 +4,7 @@ import hunt.http.HttpVersion;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpTunnelConnection;
 
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 // import hunt.net.buffer.FileRegion;

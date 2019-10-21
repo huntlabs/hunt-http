@@ -12,7 +12,7 @@ import hunt.http.codec.http.stream.Http2Session;
 import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.SimpleFlowControlStrategy;
 
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 

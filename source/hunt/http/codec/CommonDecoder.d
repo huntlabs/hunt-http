@@ -6,7 +6,7 @@ import hunt.logging;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
 import hunt.net.secure.SecureSession;

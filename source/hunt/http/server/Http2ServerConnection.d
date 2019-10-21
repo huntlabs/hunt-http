@@ -11,7 +11,7 @@ import hunt.http.codec.http.encode.Http2Generator;
 
 import hunt.http.codec.http.stream;
 
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

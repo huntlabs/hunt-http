@@ -12,7 +12,7 @@ import hunt.http.codec.http.stream;
 import hunt.http.codec.websocket.model.IncomingFrames;
 import hunt.http.codec.websocket.stream.WebSocketConnection;
 
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.http.HttpHeader;
 import hunt.http.HttpRequest;
 import hunt.http.WebSocketPolicy;

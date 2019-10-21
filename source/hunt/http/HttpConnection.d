@@ -1,36 +1,28 @@
 module hunt.http.HttpConnection;
 
-import hunt.http.HttpVersion;
-import hunt.net.Connection;
-import hunt.Functions;
-import hunt.util.Common;
-
-import std.socket;
-
-
-import hunt.http.HttpOptions;
-import hunt.net.Connection;
-
-import hunt.Exceptions;
-import hunt.logging;
-
-import std.exception;
-
 import hunt.http.HttpConnection;
+import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
-
-import hunt.http.HttpConnectionType;
 
 import hunt.collection.ByteBuffer;
-import hunt.net.AbstractConnection;
-import hunt.net.Connection;
-import hunt.net.secure.SecureSession;
-import hunt.net.Exceptions;
-
 import hunt.Exceptions;
 import hunt.Functions;
+import hunt.logging.ConsoleLogger;
+import hunt.net.AbstractConnection;
+import hunt.net.Connection;
+import hunt.net.Exceptions;
+import hunt.net.secure.SecureSession;
+import hunt.util.Common;
+
+import std.exception;
 import std.socket;
 
+/**
+ * 
+ */
+enum HttpConnectionType {
+    HTTP1, HTTP2, HTTP_TUNNEL, WEB_SOCKET
+}
 
 interface HttpConnection : Closeable { // : Connection 
 

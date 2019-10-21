@@ -15,7 +15,7 @@ import hunt.http.codec.websocket.stream.WebSocketConnection;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.http.HttpHeader;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpRequest;

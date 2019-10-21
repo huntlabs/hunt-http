@@ -29,7 +29,7 @@ import hunt.http.codec.http.stream;
 
 // import hunt.http.util.Completable;
 
-import hunt.http.HttpConnectionType;
+import hunt.http.HttpConnection;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
 import hunt.http.HttpHeader;
