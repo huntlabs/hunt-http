@@ -1,4 +1,4 @@
-module hunt.http.codec.websocket.utils.MaskedByteBuffer;
+module backups.test.codec.websocket.decode.MaskedByteBuffer;
 
 import hunt.collection.ByteBuffer;
 

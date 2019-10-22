@@ -3,7 +3,7 @@ module hunt.http.codec.http.model;
 public import hunt.http.codec.http.model.BadMessageException;
 public import hunt.http.codec.http.model.ContentProvider;
 // public import hunt.http.Cookie;
-public import hunt.http.codec.http.model.CookieGenerator;
+// public import hunt.http.codec.http.model.CookieGenerator;
 public import hunt.http.codec.http.model.CookieParser;
 public import hunt.http.codec.http.model.DateGenerator;
 public import hunt.http.codec.http.model.HttpCompliance;

@@ -4,6 +4,23 @@ import hunt.http.WebSocketStatusCode;
 import hunt.Exceptions;
 
 
+
+/**
+ * 
+ */
+class SessionInvalidException : RuntimeException {
+    mixin BasicExceptionCtors;
+}
+
+/**
+ * 
+ */
+class SessionNotFoundException : RuntimeException {
+    mixin BasicExceptionCtors;
+}
+
+
+
 class WebSocketException : RuntimeException
 {
     mixin BasicExceptionCtors;

@@ -71,4 +71,26 @@ class HttpServerOptions : HttpOptions {
         return this;
     }
 
+    /* ------------------------------ Session APIs ------------------------------ */
+
+    private string sessionIdParameterName = "huntsessionid";
+    private int defaultMaxInactiveInterval = 10 * 60; //second
+
+    string getSessionIdParameterName() {
+        return sessionIdParameterName;
+    }
+
+    void setSessionIdParameterName(string name) {
+        this.sessionIdParameterName = name;
+    }
+
+    int getDefaultMaxInactiveInterval() {
+        return defaultMaxInactiveInterval;
+    }
+
+    void setDefaultMaxInactiveInterval(int interval) {
+        this.defaultMaxInactiveInterval = interval;
+    }
 }
+
+

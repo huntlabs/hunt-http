@@ -1,6 +1,5 @@
 module hunt.http.router.handler.DefaultHttpRouteHandler;
 
-import hunt.http.router.RoutingHandler;
 import hunt.http.router.RoutingContext;
 import hunt.http.router.impl.RoutingContextImpl;
 // import hunt.http.utils.io.ByteArrayPipedStream;
@@ -23,7 +22,7 @@ import std.array;
 /**
  * 
  */
-class DefaultHttpRouteHandler : IRoutingHandler {
+class DefaultHttpRouteHandler : RouteHandler {
 
     private HttpRequestOptions _options;
 

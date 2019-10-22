@@ -1,9 +1,15 @@
 module hunt.http.server.HttpServerResponse;
 
+import hunt.http.Cookie;
+
+import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
 import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
 
+/** 
+ * 
+ */
 class HttpServerResponse : HttpResponse {
 
 	this() {
@@ -17,5 +23,11 @@ class HttpServerResponse : HttpResponse {
 	this(int status, string reason, HttpFields fields, long contentLength) {
 		super(HttpVersion.HTTP_1_1, status, reason, fields, contentLength);
 	}
+
+	
+    HttpServerResponse addCookie(Cookie cookie) {
+        getFields().add(HttpHeader.SET_COOKIE, CookieGenerator.generateSetCookie(cookie));
+        return this;
+    }
 
 }

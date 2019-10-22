@@ -1,7 +1,6 @@
 module hunt.http.router.impl.RouterImpl;
 
 import hunt.http.router.Router;
-import hunt.http.router.RoutingHandler;
 import hunt.http.router.RoutingContext;
 
 import hunt.http.HttpMethod;
@@ -34,7 +33,7 @@ class RouterImpl : Router {
     private RouterManagerImpl routerManager;
     private Set!(MatchType) matchTypes;
 
-    // private IRoutingHandler _handler;
+    // private RouteHandler _handler;
     private RoutingHandler _routingHandler;
     private bool _isEnable = true;
     private List!(string) urlList; // = new ArrayList!(string)();
@@ -175,7 +174,7 @@ class RouterImpl : Router {
         return this;
     }
 
-    Router handler(IRoutingHandler handler) {
+    Router handler(RouteHandler handler) {
         this._routingHandler = (RoutingContext ctx) {
             if(handler !is null)  {
                 version(HUNT_HTTP_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
@@ -187,7 +186,7 @@ class RouterImpl : Router {
 
     Router handler(RoutingHandler h) {
         this._routingHandler = h;
-        // this._handler = new class IRoutingHandler {
+        // this._handler = new class RouteHandler {
         //      void handle(RoutingContext ctx) { 
         //          if(this.outer._routingHandler !is null) {
         //              this.outer._routingHandler(ctx);
@@ -230,7 +229,7 @@ class RouterImpl : Router {
         return matchTypes;
     }
 
-    // IRoutingHandler getHandler() {
+    // RouteHandler getHandler() {
     //     return _handler;
     // }
 

@@ -9,6 +9,8 @@
 - [x] HTTP2
 - [x] WebSocket
 - [x] TLS 1.2
+- [x] Cookie
+- [x] Local session store
 
 
 ## Avaliable versions
@@ -19,7 +21,6 @@
 
 ## TODO
 - [ ] Reorganizing modules
-- [ ] Supports for HttpSession 
 - [ ] More unit tests
 
 ## References

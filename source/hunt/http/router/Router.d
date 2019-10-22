@@ -2,7 +2,6 @@ module hunt.http.router.Router;
 
 import hunt.http.router.Matcher;
 import hunt.http.router.RoutingContext;
-import hunt.http.router.RoutingHandler;
 
 import hunt.http.HttpMethod;
 
@@ -45,7 +44,7 @@ interface Router : Comparable!Router {
 
     Router produces(string accept);
 
-    Router handler(IRoutingHandler handler);
+    Router handler(RouteHandler handler);
 
     Router handler(RoutingHandler handler);
 

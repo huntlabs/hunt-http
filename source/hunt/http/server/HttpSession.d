@@ -1,23 +1,27 @@
 module hunt.http.server.HttpSession;
 
+import hunt.http.Exceptions;
+
 import hunt.collection.HashMap;
 import hunt.collection.Map;
-
-import hunt.util.DateTime;
 import hunt.Exceptions;
+import hunt.util.DateTime;
+import hunt.util.Lifecycle;
+
 import std.datetime;
+import std.variant;
 
 
 /**
  * 
  */
-class HttpSession  {
+class HttpSession  { // : Serializable
 
     private string id;
     private long creationTime;
     private long lastAccessedTime;
     private int maxInactiveInterval;
-    private Map!(string, Object) attributes;
+    private Variant[string] attributes;
     private bool newSession;
 
     string getId() {
@@ -62,12 +66,29 @@ class HttpSession  {
         this.maxInactiveInterval = maxInactiveInterval;
     }
 
-    Map!(string, Object) getAttributes() {
+    Variant[string] getAttributes() {
         return attributes;
     }
 
-    void setAttributes(Map!(string, Object) attributes) {
-        this.attributes = attributes;
+    void setAttribute(T)(string key, T value) if(!is(T == Variant)) {
+        setAttribute(key, value.Variant);
+    }
+
+    void setAttribute(string key, Variant value) {
+        attributes[key] = value;
+    }
+
+    Variant getAttribute(string key) {
+        return attributes.get(key, Variant());
+    }
+
+    T getAttributeAs(T)(string key) {
+        return attributes[key].get!(T);
+    }
+
+    bool hasAttribute(string key) {
+        auto itemPtr = key in attributes;
+        return itemPtr !is null;
     }
 
     bool isNewSession() {
@@ -90,48 +111,96 @@ class HttpSession  {
         session.setMaxInactiveInterval(maxInactiveInterval);
         session.setCreationTime(currentTime);
         session.setLastAccessedTime(session.getCreationTime());
-        session.setAttributes(new HashMap!(string, Object)());
+        // session.setAttributes(new HashMap!(string, Object)());
         session.setNewSession(true);
         return session;
     }
 
-    override bool opEquals(Object o) {
+    override
+    bool opEquals(Object o) {
         if (this is o) return true;
+        if (o is null || typeid(this) != typeid(o)) return false;
         HttpSession that = cast(HttpSession) o;
-        if(that is null) return false;
         return id == that.id;
     }
 
-    override size_t toHash() @trusted nothrow {
+    override
+    size_t toHash() @trusted nothrow {
         return hashOf(id);
     }
 }
 
 
 
+/**
+ * 
+ */
+interface SessionStore : Lifecycle {
+
+    bool remove(string key);
+
+    bool put(string key, HttpSession value);
+
+    HttpSession get(string key);
+
+    int size();
+
+}
+
 
 /**
  * 
  */
-class SessionInvalidException : RuntimeException {
-    this() {
-        super("");
-    }
+interface HttpSessionHandler {
 
-    this(string msg) {
-        super(msg);
-    }
+    HttpSession getSessionById(string id);
+
+    HttpSession getSession();
+
+    HttpSession getSession(bool create);
+
+    HttpSession getAndCreateSession(int maxAge);
+
+    int getSessionSize();
+
+    bool removeSession();
+
+    bool removeSessionById(string id);
+
+    bool updateSession(HttpSession httpSession);
+
+    bool isRequestedSessionIdFromURL();
+
+    bool isRequestedSessionIdFromCookie();
+
+    string getRequestedSessionId();
+
+    string getSessionIdParameterName();
 }
 
-/**
- * 
- */
-class SessionNotFound : RuntimeException {
-    this() {
-        super("");
-    }
 
-    this(string msg) {
-        super(msg);
-    }
-}
+
+// /**
+//  * 
+//  */
+// class HttpSessionConfiguration {
+
+//     private string sessionIdParameterName = "hunt-sessionid";
+//     private int defaultMaxInactiveInterval = 10 * 60; //second
+
+//     string getSessionIdParameterName() {
+//         return sessionIdParameterName;
+//     }
+
+//     void setSessionIdParameterName(string sessionIdParameterName) {
+//         this.sessionIdParameterName = sessionIdParameterName;
+//     }
+
+//     int getDefaultMaxInactiveInterval() {
+//         return defaultMaxInactiveInterval;
+//     }
+
+//     void setDefaultMaxInactiveInterval(int defaultMaxInactiveInterval) {
+//         this.defaultMaxInactiveInterval = defaultMaxInactiveInterval;
+//     }
+// }

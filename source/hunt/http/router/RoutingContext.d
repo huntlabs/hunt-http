@@ -1,6 +1,6 @@
 module hunt.http.router.RoutingContext;
 
-import hunt.http.router.HttpSession;
+import hunt.http.server.HttpSession;
 import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 
@@ -26,6 +26,19 @@ import hunt.collection.List;
 import hunt.collection.Map;
 
 import std.conv;
+import std.variant;
+
+alias RoutingHandler =  void delegate(RoutingContext routingContext);
+
+deprecated("Using RouteHandler instead.")
+alias Handler = RouteHandler;
+
+/**
+ * 
+ */
+interface RouteHandler {
+    void handle(RoutingContext context);
+}
 
 
 /**
@@ -40,18 +53,26 @@ import std.conv;
  * 
  */
 abstract class RoutingContext : Closeable {
+    
+    final T getAttributeAs(T)(string key) {
+        return getAttribute(key).get!T();
+    }
 
-    // string getAttribute(string key) { implementationMissing(false); return null;}
+    final void setAttribute(T)(string key, T value) if(!is(T == Variant)) {
+        setAttribute(key, value.Variant());
+    }
 
-    // string setAttribute(string key, string value) { implementationMissing(false); return null;}
+    Variant getAttribute(string key);
 
-    // string removeAttribute(string key) { implementationMissing(false); return null;}
+    void setAttribute(string key, Variant value);
 
-    // string[string] getAttributes() { implementationMissing(false); return null;}
+    Variant removeAttribute(string key);
+
+    Variant[string] getAttributes();
 
     HttpServerResponse getResponse();
 
-    // HttpResponse getAsyncResponse() { implementationMissing(false); return null;}
+    // HttpResponse getAsyncResponse();
 
     HttpServerRequest getRequest();
 
@@ -83,7 +104,7 @@ abstract class RoutingContext : Closeable {
      * @param content The HTTP body data receiving callback. When the server receives the HTTP body packet, it will be called.
      * @return RoutingContext
      */
-    // RoutingContext onContent(Action1!ByteBuffer content); // { implementationMissing(false); return null;}
+    // RoutingContext onContent(Action1!ByteBuffer content);
 
     /**
      * Set the HTTP body packet complete callback.
@@ -91,7 +112,7 @@ abstract class RoutingContext : Closeable {
      * @param contentComplete The HTTP body packet complete callback.
      * @return RoutingContext
      */
-    // RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete); // { implementationMissing(false); return null;}
+    // RoutingContext onContentComplete(Action1!(HttpRequest) contentComplete);
 
     /**
      * Set the HTTP message complete callback.
@@ -99,7 +120,7 @@ abstract class RoutingContext : Closeable {
      * @param messageComplete the HTTP message complete callback.
      * @return RoutingContext
      */
-    // RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete); // { implementationMissing(false); return null;}
+    // RoutingContext onMessageComplete(Action1!(HttpRequest) messageComplete);
 
     /**
      * If return true, it represents you has set a HTTP body data receiving callback.
@@ -127,13 +148,13 @@ abstract class RoutingContext : Closeable {
 
     // <T> bool next(Promise<T> promise);
 
-    // <T> CompletableFuture<T> nextFuture() {
+    // <T> T> nextFuture() {
     //     Promise.Completable<T> completable = new Promise.Completable<>();
     //     next(completable);
     //     return completable;
     // }
 
-    // <T> CompletableFuture<T> complete() {
+    // <T> T> complete() {
     //     Promise.Completable<T> completable = new Promise.Completable<>();
     //     complete(completable);
     //     return completable;
@@ -240,10 +261,10 @@ abstract class RoutingContext : Closeable {
         return getResponse().getFields();
     }
 
-    // RoutingContext addCookie(Cookie cookie) {
-    //     getResponse().addCookie(cookie);
-    //     return this;
-    // }
+    RoutingContext addCookie(Cookie cookie) {
+        getResponse().addCookie(cookie);
+        return this;
+    }
 
     RoutingContext write(string value);
 
@@ -280,49 +301,29 @@ abstract class RoutingContext : Closeable {
 
 
     // HTTP session API
-    // HttpSession getSessionNow() {
-    //     return getSession();
-    // }
+    HttpSession getSessionById(string id);
 
-    // HttpSession getSessionNow(bool create) {
-    //     return getSession(create).getNow(null);
-    // }
+    HttpSession getSession();
 
-    // int getSessionSizeNow() {
-    //     return getSessionSize().getNow(0);
-    // }
+    HttpSession getSession(bool create);
 
-    // bool removeSessionNow() {
-    //     return removeSession().getNow(false);
-    // }
+    HttpSession getAndCreateSession(int maxAge);
 
-    // bool updateSessionNow(HttpSession httpSession) {
-    //     return updateSession(httpSession).getNow(false);
-    // }
+    int getSessionSize();
 
-    // CompletableFuture<HttpSession> getSessionById(string id);
-
-    // CompletableFuture<HttpSession> getSession();
-
-    // CompletableFuture<HttpSession> getSession(bool create);
-
-    // CompletableFuture<HttpSession> getAndCreateSession(int maxAge);
-
-    // CompletableFuture<int> getSessionSize();
-
-    // CompletableFuture<bool> removeSessionById(string id);
+    bool removeSessionById(string id);
     
-    // CompletableFuture<bool> removeSession();
+    bool removeSession();
 
-    // CompletableFuture<bool> updateSession(HttpSession httpSession);
+    bool updateSession(HttpSession httpSession);
 
-    bool isRequestedSessionIdFromURL()  { implementationMissing(false); return false; }
+    bool isRequestedSessionIdFromURL();
 
-    bool isRequestedSessionIdFromCookie(){ implementationMissing(false); return false; }
+    bool isRequestedSessionIdFromCookie();
 
-    string getRequestedSessionId() { implementationMissing(false); return ""; }
+    string getRequestedSessionId();
 
-    string getSessionIdParameterName() { implementationMissing(false); return ""; }
+    string getSessionIdParameterName();
 
     // Template API
     // void renderTemplate(string resourceName, Object scope);

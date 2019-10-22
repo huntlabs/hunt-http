@@ -1,11 +1,10 @@
 module hunt.http.router.handler.DefaultErrorResponseHandler;
 
-import hunt.http.router.RoutingHandler;
+import hunt.http.router.RoutingContext;
 
 import hunt.http.Version;
 import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
-import hunt.http.router.RoutingContext;
 
 import hunt.logging;
 import hunt.Exceptions;
@@ -17,7 +16,7 @@ import std.concurrency : initOnce;
 /**
  * 
  */
-abstract class AbstractErrorResponseHandler : IRoutingHandler {
+abstract class AbstractErrorResponseHandler : RouteHandler {
 
     void handle(RoutingContext ctx) {
         if (ctx.hasNext()) {

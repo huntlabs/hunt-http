@@ -239,6 +239,10 @@ class HttpServer : AbstractLifecycle {
      * 
      */
     static final class Builder {
+        
+        enum PostMethod = HttpMethod.POST.asString();
+        enum GetMethod = HttpMethod.GET.asString();
+
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
         private Router currentRouter;
@@ -343,6 +347,14 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
+        Builder post(string path, RoutingHandler handler) {
+            return addRoute([path], [PostMethod], handler);
+        }
+
+        Builder get(string path, RoutingHandler handler) {
+            return addRoute([path], [GetMethod], handler);
+        }
+
         Builder registerWebSocket(string path, WebSocketMessageHandler handler) {
             // auto itemPtr = path in webSocketHandlers;
             // if(itemPtr !is null)
@@ -358,6 +370,13 @@ class HttpServer : AbstractLifecycle {
                 });
             }
 
+            return this;
+        }
+
+        Builder enableLocalSessionStore() {
+            LocalHttpSessionHandler sessionHandler = new LocalHttpSessionHandler(_httpOptions);
+            currentRouter = routerManager.register();
+            currentRouter.path("*").handler(sessionHandler);
             return this;
         }
 

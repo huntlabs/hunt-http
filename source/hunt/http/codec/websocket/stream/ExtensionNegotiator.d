@@ -12,9 +12,6 @@ import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketFrame;
 
 import hunt.collection;
-
-
-import hunt.collection;
 import hunt.Exceptions;
 
 import std.algorithm;

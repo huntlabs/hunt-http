@@ -30,8 +30,8 @@ void main(string[] args) {
     // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerWithoutDefaultRoute();
     // HttpServer server = buildServerWithForm();
-    HttpServer server = buildServerWithWebSocket();
-    
+    // HttpServer server = buildServerWithWebSocket();
+    HttpServer server = buildServerWithSessionStore();
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
@@ -135,9 +135,8 @@ HttpServer buildServerWithForm() {
     return server;    
 }
 
-HttpServer buildServerWithWebSocket() {
-    import hunt.http.WebSocketMessageHandler;
 
+HttpServer buildServerWithWebSocket() {
     HttpServer server = HttpServer.builder()
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
@@ -171,6 +170,48 @@ HttpServer buildServerWithWebSocket() {
             override void onText(string text, WebSocketConnection connection) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
+            }
+        })
+        .build();
+    return server;    
+}
+
+
+HttpServer buildServerWithSessionStore() {
+    // 
+    HttpServer server = HttpServer.builder()
+        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        .setListener(8080, "0.0.0.0")
+        .enableLocalSessionStore()
+        .addRoute("/plain*", (RoutingContext context) {
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.end("Hello World! " ~ DateTime.getTimeAsGMT());
+        })
+        .post("/session/:name", (RoutingContext context) {
+            HttpServerRequest request = context.getRequest();
+            string content = request.getStringBody();
+            string mimeType = request.getMimeType();
+            warning("mimeType: ", mimeType);
+
+            string name = context.getRouterParameter("name");
+            trace("the path param -> " ~ name);
+            HttpSession session = context.getSession(true);
+            trace("new session: " ~ session.isNewSession());
+            session.setAttribute(name, "bar");
+            session.setAttribute("age", 18);
+            // 1 second later, the session will expire
+            session.setMaxInactiveInterval(120);
+            context.updateSession(session);
+            context.end("create session success");
+        })
+        .get("/session/:name", (RoutingContext ctx) {
+            string name = ctx.getRouterParameter("name");
+            HttpSession session = ctx.getSession();
+            if (session !is null) {
+                ctx.write("session value is " ~ session.getAttributeAs!string(name));
+                ctx.end(" //// session age is " ~ session.getAttribute("age").toString());
+            } else {
+                ctx.end("session is invalid");
             }
         })
         .build();

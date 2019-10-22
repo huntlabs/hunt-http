@@ -16,6 +16,7 @@ public import hunt.http.server.HttpServerContext;
 public import hunt.http.server.HttpServerOptions;
 public import hunt.http.server.HttpServerRequest;
 public import hunt.http.server.HttpServerResponse;
+public import hunt.http.server.HttpSession;
 public import hunt.http.server.ServerHttpHandler;
 public import hunt.http.server.ServerSessionListener;
 public import hunt.http.server.WebSocketHandler;
@@ -42,3 +43,6 @@ public import hunt.http.WebSocketCommon;
 public import hunt.http.WebSocketConnection;
 public import hunt.http.WebSocketFrame;
 public import hunt.http.WebSocketPolicy;
+
+// Router modules
+public import hunt.http.router;
