@@ -1,7 +1,7 @@
-module hunt.http.router.handler.DefaultHttpRouteHandler;
+module hunt.http.routing.handler.DefaultHttpRouteHandler;
 
-import hunt.http.router.RoutingContext;
-import hunt.http.router.impl.RoutingContextImpl;
+import hunt.http.routing.RoutingContext;
+import hunt.http.routing.impl.RoutingContextImpl;
 // import hunt.http.utils.io.ByteArrayPipedStream;
 // import hunt.http.utils.io.FilePipedStream;
 import hunt.http.codec.http.model;

@@ -1,4 +1,4 @@
-module hunt.http.router.RoutingContext;
+module hunt.http.routing.RoutingContext;
 
 import hunt.http.server.HttpSession;
 import hunt.http.server.HttpServerRequest;
@@ -6,7 +6,7 @@ import hunt.http.server.HttpServerResponse;
 
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream.HttpOutputStream;
-import hunt.http.router.handler.DefaultErrorResponseHandler;
+import hunt.http.routing.handler.DefaultErrorResponseHandler;
 
 import hunt.http.Cookie;
 import hunt.http.HttpHeader;

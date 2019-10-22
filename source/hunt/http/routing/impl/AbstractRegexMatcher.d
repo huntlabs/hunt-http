@@ -1,7 +1,7 @@
-module hunt.http.router.impl.AbstractRegexMatcher;
+module hunt.http.routing.impl.AbstractRegexMatcher;
 
-import hunt.http.router.Matcher;
-import hunt.http.router.Router;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.Router;
 
 import hunt.collection;
 import hunt.Exceptions;

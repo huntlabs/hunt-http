@@ -45,4 +45,4 @@ public import hunt.http.WebSocketFrame;
 public import hunt.http.WebSocketPolicy;
 
 // Router modules
-public import hunt.http.router;
+public import hunt.http.routing;

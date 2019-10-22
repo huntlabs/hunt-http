@@ -1,8 +1,8 @@
-module hunt.http.router.impl.PatternPathMatcher;
+module hunt.http.routing.impl.PatternPathMatcher;
 
 
-import hunt.http.router.impl.AbstractPatternMatcher;
-import hunt.http.router.Matcher;
+import hunt.http.routing.impl.AbstractPatternMatcher;
+import hunt.http.routing.Matcher;
 
 alias MatchType = Matcher.MatchType;
 alias MatchResult = Matcher.MatchResult;

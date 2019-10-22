@@ -1,11 +1,11 @@
-module hunt.http.router.impl.ContentTypePreciseMatcher;
+module hunt.http.routing.impl.ContentTypePreciseMatcher;
 
-import hunt.http.router.impl.AbstractPreciseMatcher;
+import hunt.http.routing.impl.AbstractPreciseMatcher;
 import hunt.util.MimeTypeUtils;
 import hunt.text;
 
 
-import hunt.http.router.Matcher;
+import hunt.http.routing.Matcher;
 import std.range;
 
 alias MatchType = Matcher.MatchType;

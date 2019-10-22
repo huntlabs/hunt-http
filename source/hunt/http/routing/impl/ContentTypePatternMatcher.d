@@ -1,8 +1,8 @@
-module hunt.http.router.impl.ContentTypePatternMatcher;
+module hunt.http.routing.impl.ContentTypePatternMatcher;
 
-import hunt.http.router.Matcher;
+import hunt.http.routing.Matcher;
 
-import hunt.http.router.impl.AbstractPatternMatcher;
+import hunt.http.routing.impl.AbstractPatternMatcher;
 import hunt.util.MimeTypeUtils;
 import hunt.text;
 

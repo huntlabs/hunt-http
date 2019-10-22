@@ -1,6 +1,6 @@
-module hunt.http.router.Matcher;
+module hunt.http.routing.Matcher;
 
-import hunt.http.router.Router;
+import hunt.http.routing.Router;
 
 import hunt.collection.Map;
 import hunt.collection.Set;

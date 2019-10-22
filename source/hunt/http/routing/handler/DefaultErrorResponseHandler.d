@@ -1,6 +1,6 @@
-module hunt.http.router.handler.DefaultErrorResponseHandler;
+module hunt.http.routing.handler.DefaultErrorResponseHandler;
 
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.RoutingContext;
 
 import hunt.http.Version;
 import hunt.http.HttpHeader;

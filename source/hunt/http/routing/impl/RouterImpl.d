@@ -1,13 +1,13 @@
-module hunt.http.router.impl.RouterImpl;
+module hunt.http.routing.impl.RouterImpl;
 
-import hunt.http.router.Router;
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.Router;
+import hunt.http.routing.RoutingContext;
 
 import hunt.http.HttpMethod;
-import hunt.http.router.Matcher;
-import hunt.http.router.Router;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.Router;
 
-import hunt.http.router.impl.RouterManagerImpl;
+import hunt.http.routing.impl.RouterManagerImpl;
 
 import hunt.collection;
 import hunt.logging.ConsoleLogger;

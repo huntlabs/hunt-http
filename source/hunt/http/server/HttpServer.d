@@ -22,7 +22,7 @@ import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.WebSocketConnection;
 import hunt.http.codec.websocket.frame;
 
-import hunt.http.router;
+import hunt.http.routing;
 import hunt.http.HttpConnection;
 import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;

@@ -1,12 +1,12 @@
-module hunt.http.router.RouterManager;
+module hunt.http.routing.RouterManager;
 
-import hunt.http.router.Matcher;
-import hunt.http.router.Router;
-import hunt.http.router.RequestAcceptor;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.Router;
+import hunt.http.routing.RequestAcceptor;
 
-import hunt.http.router.handler.DefaultErrorResponseHandler;
-import hunt.http.router.handler.DefaultHttpRouteHandler;
-import hunt.http.router.impl.RouterManagerImpl;
+import hunt.http.routing.handler.DefaultErrorResponseHandler;
+import hunt.http.routing.handler.DefaultHttpRouteHandler;
+import hunt.http.routing.impl.RouterManagerImpl;
 
 import hunt.http.server.HttpRequestOptions;
 

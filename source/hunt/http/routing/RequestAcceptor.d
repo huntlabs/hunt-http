@@ -1,4 +1,4 @@
-module hunt.http.router.RequestAcceptor;
+module hunt.http.routing.RequestAcceptor;
 
 import hunt.http.server.HttpServerContext;
 

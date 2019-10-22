@@ -1,25 +1,25 @@
-module hunt.http.router.impl.RouterManagerImpl;
+module hunt.http.routing.impl.RouterManagerImpl;
 
-import hunt.http.router.impl.ContentTypePreciseMatcher;
-import hunt.http.router.impl.ContentTypePatternMatcher;
-import hunt.http.router.impl.AcceptHeaderMatcher;
-import hunt.http.router.impl.HttpMethodMatcher;
-import hunt.http.router.impl.PatternPathMatcher;
-import hunt.http.router.impl.PrecisePathMatcher;
-import hunt.http.router.impl.ParameterPathMatcher;
-import hunt.http.router.impl.RegexPathMatcher;
-import hunt.http.router.impl.RouterImpl;
-import hunt.http.router.impl.RoutingContextImpl;
+import hunt.http.routing.impl.ContentTypePreciseMatcher;
+import hunt.http.routing.impl.ContentTypePatternMatcher;
+import hunt.http.routing.impl.AcceptHeaderMatcher;
+import hunt.http.routing.impl.HttpMethodMatcher;
+import hunt.http.routing.impl.PatternPathMatcher;
+import hunt.http.routing.impl.PrecisePathMatcher;
+import hunt.http.routing.impl.ParameterPathMatcher;
+import hunt.http.routing.impl.RegexPathMatcher;
+import hunt.http.routing.impl.RouterImpl;
+import hunt.http.routing.impl.RoutingContextImpl;
 
 import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;
 
 import hunt.http.server.HttpServerContext;
-import hunt.http.router.Matcher;
-import hunt.http.router.Router;
-import hunt.http.router.RouterManager;
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.Router;
+import hunt.http.routing.RouterManager;
+import hunt.http.routing.RoutingContext;
 
 import hunt.collection;
 

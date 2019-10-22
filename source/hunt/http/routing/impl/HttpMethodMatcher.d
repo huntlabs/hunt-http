@@ -1,7 +1,7 @@
-module hunt.http.router.impl.HttpMethodMatcher;
+module hunt.http.routing.impl.HttpMethodMatcher;
 
-import hunt.http.router.impl.AbstractPreciseMatcher;
-import hunt.http.router.Matcher;
+import hunt.http.routing.impl.AbstractPreciseMatcher;
+import hunt.http.routing.Matcher;
 
 import std.string;
 

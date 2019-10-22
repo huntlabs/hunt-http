@@ -1,6 +1,6 @@
-module hunt.http.router.AbstractHttpSessionHandler;
+module hunt.http.routing.AbstractHttpSessionHandler;
 
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.RoutingContext;
 import hunt.http.server.HttpSession;
 
 import hunt.http.Cookie;

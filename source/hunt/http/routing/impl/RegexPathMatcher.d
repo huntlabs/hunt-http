@@ -1,9 +1,9 @@
-module hunt.http.router.impl.RegexPathMatcher;
+module hunt.http.routing.impl.RegexPathMatcher;
 
 
 
-import hunt.http.router.impl.AbstractRegexMatcher;
-import hunt.http.router.Matcher;
+import hunt.http.routing.impl.AbstractRegexMatcher;
+import hunt.http.routing.Matcher;
 
 alias MatchType = Matcher.MatchType;
 

@@ -1,8 +1,8 @@
-module hunt.http.router.impl.AcceptHeaderMatcher;
+module hunt.http.routing.impl.AcceptHeaderMatcher;
 
-import hunt.http.router.impl.AbstractPreciseMatcher;
-import hunt.http.router.Matcher;
-import hunt.http.router.Router;
+import hunt.http.routing.impl.AbstractPreciseMatcher;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.Router;
 
 import hunt.text;
 import hunt.Exceptions;

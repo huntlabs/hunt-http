@@ -1,8 +1,8 @@
-module hunt.http.router.impl.PrecisePathMatcher;
+module hunt.http.routing.impl.PrecisePathMatcher;
 
-import hunt.http.router.impl.AbstractPreciseMatcher;
+import hunt.http.routing.impl.AbstractPreciseMatcher;
 
-import hunt.http.router.Matcher;
+import hunt.http.routing.Matcher;
 import hunt.text;
 
 alias MatchType = Matcher.MatchType;

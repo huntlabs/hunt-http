@@ -1,7 +1,7 @@
-module hunt.http.router.Router;
+module hunt.http.routing.Router;
 
-import hunt.http.router.Matcher;
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.Matcher;
+import hunt.http.routing.RoutingContext;
 
 import hunt.http.HttpMethod;
 

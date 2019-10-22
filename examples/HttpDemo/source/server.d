@@ -6,7 +6,7 @@ import hunt.http.WebSocketConnection;
 
 import hunt.http.server;
 
-import hunt.http.router.RoutingContext;
+import hunt.http.routing.RoutingContext;
 
 import hunt.util.DateTime;
 import hunt.logging;
