@@ -1,5 +1,7 @@
 module test.codec.websocket.IncomingFramesCapture;
 
+import test.codec.common;
+
 import hunt.http.Exceptions;
 import hunt.http.codec.websocket.frame;
 import hunt.http.WebSocketCommon;
@@ -15,11 +17,11 @@ import std.format;
 
 class IncomingFramesCapture : IncomingFrames {
 
-    private LinkedBlockingQueue!(WebSocketFrame) frames;
+    private LinkedBlockingQueue!(AbstractWebSocketFrame) frames;
     private Throwable[] errors;
 
     this() {
-        frames = new LinkedBlockingQueue!(WebSocketFrame)();
+        frames = new LinkedBlockingQueue!(AbstractWebSocketFrame)();
     }
 
     void assertErrorCount(size_t expectedCount) {
@@ -32,7 +34,7 @@ class IncomingFramesCapture : IncomingFrames {
             tracef("Expected %d frame(s)%n", expectedCount);
             tracef("But actually captured %d frame(s)%n", frames.size());
             int i = 0;
-            foreach (WebSocketFrame frame ; frames) {
+            foreach (AbstractWebSocketFrame frame ; frames) {
                 tracef(" [%d] Frame[%s] - %s%n", i++,
                         OpCode.name(frame.getOpCode()),
                         BufferUtils.toDetailString(frame.getPayload()));
@@ -69,7 +71,7 @@ class IncomingFramesCapture : IncomingFrames {
     void dump() {
         tracef("Captured %d incoming frames%n", frames.size());
         int i = 0;
-        foreach (WebSocketFrame frame ; frames) {
+        foreach (AbstractWebSocketFrame frame ; frames) {
             tracef("[%3d] %s%n", i++, frame);
             tracef("          payload: %s%n", BufferUtils.toDetailString(frame.getPayload()));
         }
@@ -91,7 +93,7 @@ class IncomingFramesCapture : IncomingFrames {
 
     int getFrameCount(byte op) {
         int count = 0;
-        foreach (WebSocketFrame frame ; frames) {
+        foreach (AbstractWebSocketFrame frame ; frames) {
             if (frame.getOpCode() == op) {
                 count++;
             }
@@ -99,7 +101,7 @@ class IncomingFramesCapture : IncomingFrames {
         return count;
     }
 
-    Queue!WebSocketFrame getFrames() {
+    Queue!AbstractWebSocketFrame getFrames() {
         return frames;
     }
 
@@ -111,7 +113,7 @@ class IncomingFramesCapture : IncomingFrames {
 
     override
     void incomingFrame(Frame frame) {
-        WebSocketFrame copy = WebSocketFrameHelper.copy(frame);
+        AbstractWebSocketFrame copy = WebSocketFrameHelper.copy(frame);
         // TODO: might need to make this optional (depending on use by client vs server tests)
         // Assert.assertThat("frame.masking must be set",frame.isMasked(),(true));
         frames.add(copy);

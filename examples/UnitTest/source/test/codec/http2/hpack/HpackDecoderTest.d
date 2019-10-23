@@ -1,5 +1,6 @@
 module test.codec.http2.hpack.HpackDecoderTest;
 
+import test.codec.common;
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.model;
 import hunt.util.ConverterUtils;

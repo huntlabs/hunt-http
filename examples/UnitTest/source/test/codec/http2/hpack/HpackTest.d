@@ -1,5 +1,7 @@
 module test.codec.http2.hpack.HpackTest;
 
+import test.codec.common;
+
 import hunt.http.codec.http.hpack.HpackContext;
 import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
@@ -72,7 +74,7 @@ class HpackTest {
         tracef("position=%d, limit=%d, remaining=%d", buffer.position(), buffer.limit(), buffer.remaining());
         tracef("encoding result: %(%02X %)", buffer.array()[0.. buffer.limit()+8]);
 
-        MetaData d = decoder.decode(buffer); 
+        HttpMetaData d = decoder.decode(buffer); 
         Response decoded0 = cast(Response) d;
         original0.getFields().put(new HttpField(HttpHeader.CONTENT_ENCODING, ""));
         assertMetadataSame(original0, decoded0);
@@ -114,12 +116,12 @@ class HpackTest {
         HttpFields fields0 = new HttpFields();
         fields0.add("1234567890", "1234567890123456789012345678901234567890");
         fields0.add("Cookie", "abcdeffhijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR");
-        MetaData original0 = new MetaData(HttpVersion.HTTP_2, fields0);
+        HttpMetaData original0 = new HttpMetaData(HttpVersion.HTTP_2, fields0);
 
         BufferUtils.clearToFill(buffer);
         encoder.encode(buffer, original0);
         BufferUtils.flipToFlush(buffer, 0);
-        MetaData decoded0 = cast(MetaData) decoder.decode(buffer);
+        HttpMetaData decoded0 = cast(HttpMetaData) decoder.decode(buffer);
 
         assertMetadataSame(original0, decoded0);
 
@@ -127,7 +129,7 @@ class HpackTest {
         fields1.add("1234567890", "1234567890123456789012345678901234567890");
         fields1.add("Cookie", "abcdeffhijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR");
         fields1.add("x", "y");
-        MetaData original1 = new MetaData(HttpVersion.HTTP_2, fields1);
+        HttpMetaData original1 = new HttpMetaData(HttpVersion.HTTP_2, fields1);
 
         BufferUtils.clearToFill(buffer);
         encoder.encode(buffer, original1);
@@ -149,12 +151,12 @@ class HpackTest {
         HttpFields fields0 = new HttpFields();
         fields0.add("123456789012345678901234567890123456788901234567890", "value");
         fields0.add("foo", "abcdeffhijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR");
-        MetaData original0 = new MetaData(HttpVersion.HTTP_2, fields0);
+        HttpMetaData original0 = new HttpMetaData(HttpVersion.HTTP_2, fields0);
 
         BufferUtils.clearToFill(buffer);
         encoder.encode(buffer, original0);
         BufferUtils.flipToFlush(buffer, 0);
-        MetaData decoded0 = cast(MetaData) decoder.decode(buffer);
+        HttpMetaData decoded0 = cast(HttpMetaData) decoder.decode(buffer);
 
         assertEquals(2, encoder.getHpackContext().size());
         assertEquals(2, decoder.getHpackContext().size());
@@ -166,12 +168,12 @@ class HpackTest {
         HttpFields fields1 = new HttpFields();
         fields1.add("123456789012345678901234567890123456788901234567890", "other_value");
         fields1.add("x", "y");
-        MetaData original1 = new MetaData(HttpVersion.HTTP_2, fields1);
+        HttpMetaData original1 = new HttpMetaData(HttpVersion.HTTP_2, fields1);
 
         BufferUtils.clearToFill(buffer);
         encoder.encode(buffer, original1);
         BufferUtils.flipToFlush(buffer, 0);
-        MetaData decoded1 = cast(MetaData) decoder.decode(buffer);
+        HttpMetaData decoded1 = cast(HttpMetaData) decoder.decode(buffer);
         assertMetadataSame(original1, decoded1);
 
         assertEquals(2, encoder.getHpackContext().size());
@@ -183,10 +185,10 @@ class HpackTest {
     private void assertMetadataSame(HttpResponse expected, HttpResponse actual) {
         assertThat("Response.status", actual.getStatus(), (expected.getStatus()));
         assertThat("Response.reason", actual.getReason(), (expected.getReason()));
-        assertMetadataSame(cast(MetaData) expected, cast(MetaData) actual);
+        assertMetadataSame(cast(HttpMetaData) expected, cast(HttpMetaData) actual);
     }
 
-    private void assertMetadataSame(MetaData expected, MetaData actual) {
+    private void assertMetadataSame(HttpMetaData expected, HttpMetaData actual) {
         assertThat("Metadata.contentLength", actual.getContentLength(), (expected.getContentLength()));
         assertThat("Metadata.version" ~ ".version", actual.getHttpVersion(), (expected.getHttpVersion()));
         assertHttpFieldsSame("Metadata.fields", expected.getFields(), actual.getFields());

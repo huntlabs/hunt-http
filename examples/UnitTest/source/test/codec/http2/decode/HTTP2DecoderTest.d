@@ -1,5 +1,25 @@
 module test.codec.http2.decode.Http2DecoderTest;
 
+// import test.codec.common;
+
+import hunt.http.Cookie;
+import hunt.http.HttpConnection;
+import hunt.http.HttpConnection;
+import hunt.http.HttpField;
+import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
+import hunt.http.HttpMethod;
+import hunt.http.HttpOptions;
+import hunt.http.HttpRequest;
+import hunt.http.HttpResponse;
+import hunt.http.HttpScheme;
+import hunt.http.HttpStatus;
+import hunt.http.HttpVersion;
+import hunt.http.MultipartForm;
+import hunt.http.MultipartOptions;
+import hunt.util.MimeType;
+
 import hunt.http.codec.http.encode.Http2Generator;
 import hunt.http.codec.http.encode.HeadersGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
@@ -12,10 +32,11 @@ import hunt.http.codec.http.stream.Session;
 import hunt.http.codec.http.stream.Stream;
 import hunt.http.codec.CommonEncoder;
 
-// import hunt.http.server.Http2ServerConnection;
-// import hunt.http.server.Http2ServerDecoder;
-// import hunt.http.server.ServerSessionListener;
-import hunt.http.server;
+import hunt.http.server.Http2ServerConnection;
+import hunt.http.server.Http2ServerDecoder;
+import hunt.http.server.ServerSessionListener;
+import hunt.http.server.HttpServerOptions;
+// import hunt.http.server;
 
 import hunt.collection;
 import hunt.Exceptions;
@@ -211,8 +232,8 @@ class Http2DecoderTest {
         fields.put(HttpHeader.ACCEPT, "text/html");
         fields.put(HttpHeader.USER_AGENT, "Hunt Client 1.0");
         fields.put(HttpHeader.CONTENT_LENGTH, "72");
-        HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP,
-                new HostPortHttpField("localhost:8080"), "/data", HttpVersion.HTTP_2, fields);
+        HttpRequest metaData = new HttpRequest("POST", HttpScheme.HTTP, "localhost", 8080,
+                "/data", HttpVersion.HTTP_2, fields);
 
         DataFrame smallDataFrame = new DataFrame(streamId, BufferUtils.toBuffer(smallContent), false);
         DataFrame bigDataFrame = new DataFrame(streamId, BufferUtils.toBuffer(bigContent), true);
@@ -376,8 +397,8 @@ class Http2DecoderTest {
         HttpFields fields = new HttpFields();
         fields.put("Accept", "text/html");
         fields.put("User-Agent", "Hunt Client 1.0");
-        HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP,
-                new HostPortHttpField("localhost:8080"), "/index", HttpVersion.HTTP_2, fields);
+        HttpRequest metaData = new HttpRequest("GET", HttpScheme.HTTP, "localhost", 8080,
+                "/index", HttpVersion.HTTP_2, fields);
         Map!(int, int) settings = new HashMap!(int, int)();
         settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
         settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());

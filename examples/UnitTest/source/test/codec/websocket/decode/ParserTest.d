@@ -28,7 +28,7 @@ class ParserTest {
      */
     
     void testParseCase5_15() {
-        List!WebSocketFrame send = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame send = new ArrayList!AbstractWebSocketFrame();
         send.add(new TextFrame().setPayload("fragment1").setFin(false));
         send.add(new ContinuationFrame().setPayload("fragment2").setFin(true));
         send.add(new ContinuationFrame().setPayload("fragment3").setFin(false)); // bad frame
@@ -50,7 +50,7 @@ class ParserTest {
      */
     
     void testParseCase5_18() {
-        List!WebSocketFrame send = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame send = new ArrayList!AbstractWebSocketFrame();
         send.add(new TextFrame().setPayload("fragment1").setFin(false));
         send.add(new TextFrame().setPayload("fragment2").setFin(true)); // bad frame, must be continuation
         send.add(new CloseInfo(StatusCode.NORMAL).asFrame());
@@ -69,7 +69,7 @@ class ParserTest {
      * Similar to the server side 5.19 testcase. text message, send in 5 frames/fragments, with 2 pings in the mix.
      */
     void testParseCase5_19() {
-        List!WebSocketFrame send = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame send = new ArrayList!AbstractWebSocketFrame();
         send.add(new TextFrame().setPayload("f1").setFin(false));
         send.add(new ContinuationFrame().setPayload(",f2").setFin(false));
         send.add(new PingFrame().setPayload("pong-1"));
@@ -96,7 +96,7 @@ class ParserTest {
      * Similar to the server side 5.6 testcase. pong, then text, then close frames.
      */
     void testParseCase5_6() {
-        List!WebSocketFrame send = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame send = new ArrayList!AbstractWebSocketFrame();
         send.add(new PongFrame().setPayload("ping"));
         send.add(new TextFrame().setPayload("hello, world"));
         send.add(new CloseInfo(StatusCode.NORMAL).asFrame());
@@ -122,7 +122,7 @@ class ParserTest {
         string utf8 = "Hello-\uC2B5@\uC39F\uC3A4\uC3BC\uC3A0\uC3A1-UTF-8!!";
         byte[] msg = cast(byte[])utf8.dup;
 
-        List!WebSocketFrame send = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame send = new ArrayList!AbstractWebSocketFrame();
         int textCount = 0;
         int continuationCount = 0;
         int len = cast(int)msg.length;
@@ -181,7 +181,7 @@ class ParserTest {
         byte[] payload = new byte[65536];
         payload[] = '*';
 
-        List!WebSocketFrame frames = new ArrayList!WebSocketFrame();
+        List!AbstractWebSocketFrame frames = new ArrayList!AbstractWebSocketFrame();
         TextFrame text = new TextFrame();
         text.setPayload(BufferUtils.toBuffer(payload));
         text.setMask(cast(byte[])("11223344").dup);
@@ -206,9 +206,9 @@ class ParserTest {
         }
 
         capture.assertNoErrors();
-        Queue!WebSocketFrame captureFrames = capture.getFrames();
+        Queue!AbstractWebSocketFrame captureFrames = capture.getFrames();
         Assert.assertThat("Frame Count", captureFrames.size(), (2));
-        WebSocketFrame frame = captureFrames.poll();
+        AbstractWebSocketFrame frame = captureFrames.poll();
         Assert.assertThat("Frame[0].opcode", frame.getOpCode(), (OpCode.TEXT));
         ByteBuffer actualPayload = frame.getPayload();
         Assert.assertThat("Frame[0].payload.length", actualPayload.remaining(), (payload.length));

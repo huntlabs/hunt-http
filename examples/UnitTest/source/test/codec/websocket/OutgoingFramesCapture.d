@@ -1,5 +1,6 @@
 module test.codec.websocket.OutgoingFramesCapture;
 
+import test.codec.common;
 import hunt.http.codec.websocket.frame;
 import hunt.http.WebSocketCommon;
 

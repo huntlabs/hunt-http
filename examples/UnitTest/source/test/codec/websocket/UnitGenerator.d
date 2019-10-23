@@ -1,5 +1,6 @@
 module test.codec.websocket.UnitGenerator;
 
+import test.codec.common;
 import hunt.http.codec.websocket.encode;
 import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
@@ -54,7 +55,7 @@ class UnitGenerator : Generator {
      * @param frames the list of frames to generate from
      * @return the bytebuffer representing all of the generated frames
      */
-    static ByteBuffer generate(List!WebSocketFrame frames) {
+    static ByteBuffer generate(List!AbstractWebSocketFrame frames) {
         // Create non-symmetrical mask (helps show mask bytes order issues)
         byte[] MASK = [0x11, 0x22, 0x33, 0x44];
 
@@ -63,14 +64,14 @@ class UnitGenerator : Generator {
 
         // Generate into single bytebuffer
         int buflen = 0;
-        foreach (WebSocketFrame f ; frames) {
+        foreach (AbstractWebSocketFrame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
         ByteBuffer completeBuf = BufferUtils.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames
-        foreach (WebSocketFrame f ; frames) {
+        foreach (AbstractWebSocketFrame f ; frames) {
             f.setMask(MASK); // make sure we have the test mask set
             BufferUtils.put(generator.generateHeaderBytes(f), completeBuf);
             ByteBuffer window = f.getPayload();

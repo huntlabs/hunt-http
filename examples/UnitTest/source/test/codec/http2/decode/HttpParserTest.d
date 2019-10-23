@@ -1,5 +1,6 @@
 module test.codec.http2.decode.HttpParserTest;
 
+import test.codec.common;
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
 // import hunt.http.codec.http.model.HttpComplianceSection;

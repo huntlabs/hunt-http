@@ -1,5 +1,6 @@
 import std.stdio;
 
+import test.codec.common;
 import hunt.util.UnitTest;
 
 import test.codec.http2.model.HttpFieldsTest;

@@ -1,5 +1,11 @@
 module test.codec.websocket.encode.GeneratorTest;
 
+// import test.codec.common;
+
+
+import hunt.http.WebSocketConnection;
+import hunt.http.WebSocketFrame;
+
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.codec.websocket.encode;
 import hunt.http.codec.websocket.frame;
@@ -118,14 +124,14 @@ class GeneratorTest {
 
     
     void testText_Hello() {
-        WebSocketFrame frame = new TextFrame().setPayload("Hello");
+        AbstractWebSocketFrame frame = new TextFrame().setPayload("Hello");
         byte[] utf = cast(byte[])("Hello");
         assertGeneratedBytes("8105" ~ Hex.asHex(utf), frame);
     }
 
     
     void testText_Masked() {
-        WebSocketFrame frame = new TextFrame().setPayload("Hello");
+        AbstractWebSocketFrame frame = new TextFrame().setPayload("Hello");
         byte[] maskingKey = Hex.asByteArray("11223344");
         frame.setMask(maskingKey);
 
@@ -150,7 +156,7 @@ class GeneratorTest {
         // we are testing that masking works as intended, even if the provided
         // payload does not start at position 0.
         tracef("Payload = {}", BufferUtils.toDetailString(payload));
-        WebSocketFrame frame = new TextFrame().setPayload(payload);
+        AbstractWebSocketFrame frame = new TextFrame().setPayload(payload);
         byte[] maskingKey = Hex.asByteArray("11223344");
         frame.setMask(maskingKey);
 
@@ -171,7 +177,7 @@ class GeneratorTest {
         int pingCount = 2;
 
         // Prepare frames
-        WebSocketFrame[] frames = new WebSocketFrame[pingCount + 1];
+        AbstractWebSocketFrame[] frames = new AbstractWebSocketFrame[pingCount + 1];
         for (int i = 0; i < pingCount; i++) {
             frames[i] = new PingFrame().setPayload(format("ping-%d", i));
         }
@@ -179,7 +185,7 @@ class GeneratorTest {
 
         // Mask All Frames
         byte[] maskingKey = Hex.asByteArray("11223344");
-        foreach (WebSocketFrame f ; frames) {
+        foreach (AbstractWebSocketFrame f ; frames) {
             f.setMask(maskingKey);
         }
 
@@ -206,7 +212,7 @@ class GeneratorTest {
         byte[] payload = new byte[10240];
         payload[] = 0x44;
 
-        WebSocketFrame frame = new BinaryFrame().setPayload(payload);
+        AbstractWebSocketFrame frame = new BinaryFrame().setPayload(payload);
 
         // Generate
         int windowSize = 1024;
@@ -232,7 +238,7 @@ class GeneratorTest {
 
         byte[] mask =cast(byte[]) [0x2A, 0xF0, 0x0F, 0x00];
 
-        WebSocketFrame frame = new BinaryFrame().setPayload(payload);
+        AbstractWebSocketFrame frame = new BinaryFrame().setPayload(payload);
         frame.setMask(mask); // masking!
 
         // Generate
@@ -259,7 +265,7 @@ class GeneratorTest {
         parser.parse(completeBuffer);
 
         // Assert validity of frame
-        WebSocketFrame actual = capture.getFrames().poll();
+        AbstractWebSocketFrame actual = capture.getFrames().poll();
         Assert.assertThat("Frame.opcode", actual.getOpCode(), (OpCode.BINARY));
         Assert.assertThat("Frame.payloadLength", actual.getPayloadLength(), (payload.length));
 
