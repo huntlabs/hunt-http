@@ -28,7 +28,7 @@ alias MultipartFormInputStream = MultipartFormParser;
 
 void deleteOnExit(string file) {
     if(file.exists) {
-        version(HUNT_DEBUG) infof("File removed: %s", file);
+        version(HUNT_HTTP_DEBUG) infof("File removed: %s", file);
         file.remove();
     } else {
         warningf("File not exists: %s", file);
@@ -225,6 +225,7 @@ class MultipartFormParser {
             doParse();
         } catch (Exception e) {
             warningf("Error occurred while parsing: %s", e.msg);
+            version(HUNT_HTTP_DEBUG) warning(e);
             _err = e;
         }
     }
@@ -268,6 +269,16 @@ class MultipartFormParser {
          * keep running total of size of bytes read from input and throw an exception if exceeds MultipartOptions._maxRequestSize
          */
         long total = 0;
+        _in.position(0); // The InputStream may be read, so reset it before reading it again.
+
+        version(HUNT_HTTP_DEBUG) {
+            int size = _in.available();
+            tracef("available: %d", size);
+            if(size == 0) {
+                warning("no data available in inputStream");
+            }
+        }
+
         while (true) {
             len = _in.read(data);
 
@@ -288,6 +299,7 @@ class MultipartFormParser {
                     throw new IllegalStateException("Buffer did not fully consume");
 
             } else if (len == -1) {
+                version(HUNT_DEBUG) trace("no more data avaiable");
                 parser.parse(BufferUtils.EMPTY_BUFFER, true);
                 break;
             }
@@ -306,8 +318,12 @@ class MultipartFormParser {
                 _err = new IOException("Incomplete Multipart");
         }
 
-        version(HUNT_DEBUG) {
-            tracef("Parsing Complete %s err=%s", parser, _err);
+        version(HUNT_HTTP_DEBUG) {
+            if(_err is null) {
+                info("Parsing completed");
+            } else {
+                warningf("Parsing Completed with error: %s", _err);
+            }
         }
     }
 
@@ -343,7 +359,7 @@ class MultipartFormParser {
 
         override
         bool headerComplete() {
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG) {
                 tracef("headerComplete %s", this);
             }
 
@@ -391,7 +407,7 @@ class MultipartFormParser {
                 try {
                     _part.open();
                 } catch (IOException e) {
-                    version(HUNT_DEBUG) warning(e.msg);
+                    version(HUNT_HTTP_DEBUG) warning(e.msg);
                     version(HUNT_HTTP_DEBUG) warning(e);
                     _err = e;
                     return true;
@@ -437,7 +453,7 @@ class MultipartFormParser {
 
         override
         void earlyEOF() {
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
                 tracef("Early EOF %s", this.outer);
         }
 

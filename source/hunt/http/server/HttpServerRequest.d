@@ -23,6 +23,7 @@ import hunt.Exceptions;
 import hunt.Functions;
 import hunt.io.Common;
 import hunt.io.PipedStream;
+import hunt.io.ByteArrayInputStream;
 import hunt.logging.ConsoleLogger;
 import hunt.net.util.HttpURI;
 import hunt.net.util.UrlEncoded;
@@ -113,22 +114,40 @@ class HttpServerRequest : HttpRequest {
     //         this._pipedStream.getOutputStream().close();
     // }
 
-    OutputStream getOutputStream() {
+    private OutputStream getOutputStream() {
         return this._pipedStream.getOutputStream();
     }
 
     string getStringBody(string charset) {
-        if (_stringBody != null) {
+        if (_stringBody !is null) {
             return _stringBody;
         } else {
-            if (_pipedStream is null) 
+            if (_pipedStream is null) // no content
                 return null;
+
             InputStream inputStream = this._pipedStream.getInputStream();
             try  {
-                int size = inputStream.available();
-                version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
-                byte[] buffer = new byte[size];
-                inputStream.read(buffer);
+                // TODO: Tasks pending completion -@zhangxueping at 2019-10-23T15:40:56+08:00
+                // encoding convertion: to UTF-8
+                
+                // inputStream.position(0); // The InputStream may be read, so reset it before reading it again.
+                // int size = inputStream.available();
+                // version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
+                // byte[] buffer = new byte[size];
+                // int number = inputStream.read(buffer);
+                // if(number == -1) {
+                //     version(HUNT_DEBUG) warning("no data read");
+                // }
+
+                // skip the read for better performance
+                ByteArrayInputStream arrayStream = cast(ByteArrayInputStream)inputStream;
+                if(arrayStream is null) {
+                    warningf("only ByteArrayInputStream supported: %s", typeid(inputStream));
+                    return null;
+                }
+
+                byte[] buffer = arrayStream.getRawBuffer();
+
                 _stringBody = cast(string)buffer;
                 return _stringBody;
             } catch (IOException e) {
@@ -162,7 +181,7 @@ class HttpServerRequest : HttpRequest {
 
     package(hunt.http) void onContent(ByteBuffer buffer) {
         version(HUNT_HTTP_DEBUG) {
-            tracef("http body handler received content size -> %s", buffer.remaining());
+            tracef("received content size -> %s bytes", buffer.remaining());
         }
 
         try {
@@ -176,7 +195,7 @@ class HttpServerRequest : HttpRequest {
                     // chunked encoding content dump to temp file
                     _pipedStream.getOutputStream().close();
                     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
-                    byte[] bufferedBytes = bytesStream.getOutputStream().asByteArray();
+                    byte[] bufferedBytes = bytesStream.getOutputStream().toByteArray(false);
                     OutputStream fileOutStream = filePipedStream.getOutputStream();
                     fileOutStream.write(bufferedBytes);
                     fileOutStream.write(BufferUtils.toArray(buffer, false));
@@ -257,26 +276,26 @@ class HttpServerRequest : HttpRequest {
         if (_multipartFormParser is null) 
             return null;
 
-        try {
+        // try {
             return _multipartFormParser.getParts();
-        } catch (IOException e) {
-            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
-            version(HUNT_HTTP_DEBUG) warning(e);
-            return null;
-        }
+        // } catch (IOException e) {
+        //     version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
+        //     version(HUNT_HTTP_DEBUG) warning(e);
+        //     return null;
+        // }
     }
 
     Part getPart(string name) {
         if (_multipartFormParser is null) 
             return null;
 
-        try {
+        // try {
             return _multipartFormParser.getPart(name);
-        } catch (IOException e) {
-            version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
-            version(HUNT_HTTP_DEBUG) warning(e);
-            return null;
-        }
+        // } catch (IOException e) {
+        //     version(HUNT_DEBUG) warning("get multi part exception: ", e.msg);
+        //     version(HUNT_HTTP_DEBUG) warning(e);
+        //     return null;
+        // }
     }   
 
 }

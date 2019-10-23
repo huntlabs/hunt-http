@@ -6,8 +6,8 @@ import hunt.http.codec.http.hpack.HpackContext;
 
 import std.format;
 
-class AuthorityHttpField :HostPortHttpField {
-	static string AUTHORITY = HpackContext.STATIC_TABLE[1][0];
+class AuthorityHttpField : HostPortHttpField {
+	enum string AUTHORITY = HpackContext.STATIC_TABLE[1][0];
 
 	this(string authority) {
 		super(HttpHeader.C_AUTHORITY, AUTHORITY, authority);

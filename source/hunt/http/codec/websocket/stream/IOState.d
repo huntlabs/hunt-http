@@ -14,10 +14,10 @@ import std.array;
 import std.conv;
 
 
-alias ConnectionStateListener = void delegate(ConnectionState state);
+alias ConnectionStateListener = void delegate(WebSocketConnectionState state);
 
 /**
- * Simple state tracker for Input / Output and {@link ConnectionState}.
+ * Simple state tracker for Input / Output and {@link WebSocketConnectionState}.
  * <p>
  * Use the various known .on*() methods to trigger a state change.
  * <ul>
@@ -47,7 +47,7 @@ class IOState {
         ABNORMAL
     }
 
-    private ConnectionState state;
+    private WebSocketConnectionState state;
     private List!(ConnectionStateListener) listeners;
 
     /**
@@ -85,14 +85,14 @@ class IOState {
     private bool cleanClose;
 
     /**
-     * Create a new IOState, initialized to {@link ConnectionState#CONNECTING}
+     * Create a new IOState, initialized to {@link WebSocketConnectionState#CONNECTING}
      */
     this() {
         // finalClose = new AtomicReference!(CloseInfo)();
         // listeners = new CopyOnWriteArrayList!(ConnectionStateListener)();
         listeners = new ArrayList!(ConnectionStateListener)();
 
-        this.state = ConnectionState.CONNECTING;
+        this.state = WebSocketConnectionState.CONNECTING;
         this.inputAvailable = false;
         this.outputAvailable = false;
         this.closeHandshakeSource = CloseHandshakeSource.NONE;
@@ -125,13 +125,13 @@ class IOState {
         return closeInfo;
     }
 
-    ConnectionState getConnectionState() {
+    WebSocketConnectionState getConnectionState() {
         return state;
     }
 
     bool isClosed() {
         synchronized (this) {
-            return (state == ConnectionState.CLOSED);
+            return (state == WebSocketConnectionState.CLOSED);
         }
     }
 
@@ -147,7 +147,7 @@ class IOState {
         return outputAvailable;
     }
 
-    private void notifyStateListeners(ConnectionState state) {
+    private void notifyStateListeners(WebSocketConnectionState state) {
         version(HUNT_HTTP_DEBUG)
             tracef("Notify State Listeners(%d): %s", listeners.size(), state);
         foreach (ConnectionStateListener listener ; listeners) {
@@ -165,18 +165,18 @@ class IOState {
     void onAbnormalClose(CloseInfo close) {
         version(HUNT_HTTP_DEBUG)
             tracef("onAbnormalClose(%s)", close);
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.CLOSED) {
+            if (this.state == WebSocketConnectionState.CLOSED) {
                 // already closed
                 return;
             }
 
-            if (this.state == ConnectionState.OPEN) {
+            if (this.state == WebSocketConnectionState.OPEN) {
                 this.cleanClose = false;
             }
 
-            this.state = ConnectionState.CLOSED;
+            this.state = WebSocketConnectionState.CLOSED;
             finalClose = close;
             // finalClose.compareAndSet(null, close);
             this.inputAvailable = false;
@@ -195,17 +195,17 @@ class IOState {
     void onCloseLocal(CloseInfo closeInfo) {
         bool open = false;
         synchronized (this) {
-            ConnectionState initialState = this.state;
+            WebSocketConnectionState initialState = this.state;
             version(HUNT_HTTP_DEBUG)
                 tracef("onCloseLocal(%s) : %s", closeInfo, initialState);
-            if (initialState == ConnectionState.CLOSED) {
+            if (initialState == WebSocketConnectionState.CLOSED) {
                 // already closed
                 version(HUNT_HTTP_DEBUG)
                     tracef("already closed");
                 return;
             }
 
-            if (initialState == ConnectionState.CONNECTED) {
+            if (initialState == WebSocketConnectionState.CONNECTED) {
                 // fast close. a local close request from end-user onConnect/onOpen method
                 version(HUNT_HTTP_DEBUG)
                     tracef("FastClose in CONNECTED detected");
@@ -228,8 +228,8 @@ class IOState {
     }
 
     private void closeLocal(CloseInfo closeInfo) {
-        ConnectionState event = ConnectionState.Unknown;
-        ConnectionState abnormalEvent = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
+        WebSocketConnectionState abnormalEvent = WebSocketConnectionState.Unknown;
         synchronized (this) {
             version(HUNT_HTTP_DEBUG)
                 tracef("onCloseLocal(), input=%s, output=%s", inputAvailable, outputAvailable);
@@ -247,18 +247,18 @@ class IOState {
                 version(HUNT_HTTP_DEBUG)
                     tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
-                this.state = ConnectionState.CLOSED;
+                this.state = WebSocketConnectionState.CLOSED;
                 // finalClose.compareAndSet(null, closeInfo);
                 finalClose = closeInfo;
                 event = this.state;
-            } else if (this.state == ConnectionState.OPEN) {
+            } else if (this.state == WebSocketConnectionState.OPEN) {
                 // We are now entering CLOSING (or half-closed).
-                this.state = ConnectionState.CLOSING;
+                this.state = WebSocketConnectionState.CLOSING;
                 event = this.state;
 
                 // If abnormal, we don't expect an answer.
                 if (closeInfo.isAbnormal()) {
-                    abnormalEvent = ConnectionState.CLOSED;
+                    abnormalEvent = WebSocketConnectionState.CLOSED;
                     // finalClose.compareAndSet(null, closeInfo);
                     finalClose = closeInfo;
                     cleanClose = false;
@@ -270,9 +270,9 @@ class IOState {
         }
 
         // Only notify on state change events
-        if (event != ConnectionState.Unknown) {
+        if (event != WebSocketConnectionState.Unknown) {
             notifyStateListeners(event);
-            if (abnormalEvent != ConnectionState.Unknown) {
+            if (abnormalEvent != WebSocketConnectionState.Unknown) {
                 notifyStateListeners(abnormalEvent);
             }
         }
@@ -286,9 +286,9 @@ class IOState {
     void onCloseRemote(CloseInfo closeInfo) {
         version(HUNT_HTTP_DEBUG_MORE)
             tracef("onCloseRemote(%s)", closeInfo);
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.CLOSED) {
+            if (this.state == WebSocketConnectionState.CLOSED) {
                 // already closed
                 return;
             }
@@ -308,19 +308,19 @@ class IOState {
             if (!outputAvailable) {
                 version(HUNT_HTTP_DEBUG) tracef("Close Handshake satisfied, disconnecting");
                 cleanClose = true;
-                state = ConnectionState.CLOSED;
+                state = WebSocketConnectionState.CLOSED;
                 finalClose = closeInfo;
                 // finalClose.compareAndSet(null, closeInfo);
                 event = this.state;
-            } else if (this.state == ConnectionState.OPEN) {
+            } else if (this.state == WebSocketConnectionState.OPEN) {
                 // We are now entering CLOSING (or half-closed)
-                this.state = ConnectionState.CLOSING;
+                this.state = WebSocketConnectionState.CLOSING;
                 event = this.state;
             }
         }
 
         // Only notify on state change events
-        if (event != ConnectionState.Unknown) {
+        if (event != WebSocketConnectionState.Unknown) {
             notifyStateListeners(event);
         }
     }
@@ -328,17 +328,17 @@ class IOState {
     /**
      * WebSocket has successfully upgraded, but the end-user onOpen call hasn't run yet.
      * <p>
-     * This is an intermediate state between the RFC's {@link ConnectionState#CONNECTING} and {@link ConnectionState#OPEN}
+     * This is an intermediate state between the RFC's {@link WebSocketConnectionState#CONNECTING} and {@link WebSocketConnectionState#OPEN}
      */
     void onConnected() {
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state != ConnectionState.CONNECTING) {
+            if (this.state != WebSocketConnectionState.CONNECTING) {
                 tracef("Unable to set to connected, not in CONNECTING state: %s", this.state);
                 return;
             }
 
-            this.state = ConnectionState.CONNECTED;
+            this.state = WebSocketConnectionState.CONNECTED;
             inputAvailable = false; // cannot read (yet)
             outputAvailable = true; // write allowed
             event = this.state;
@@ -350,10 +350,10 @@ class IOState {
      * A websocket connection has failed its upgrade handshake, and is now closed.
      */
     void onFailedUpgrade() {
-        assert (this.state == ConnectionState.CONNECTING);
-        ConnectionState event = ConnectionState.Unknown;
+        assert (this.state == WebSocketConnectionState.CONNECTING);
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            this.state = ConnectionState.CLOSED;
+            this.state = WebSocketConnectionState.CLOSED;
             cleanClose = false;
             inputAvailable = false;
             outputAvailable = false;
@@ -368,20 +368,20 @@ class IOState {
     void onOpened() {
         version(HUNT_HTTP_DEBUG) tracef("state: %s", this.state);
 
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.OPEN || 
-                this.state == ConnectionState.CONNECTING) {
+            if (this.state == WebSocketConnectionState.OPEN || 
+                this.state == WebSocketConnectionState.CONNECTING) {
                 // already opened
                 return;
             }
 
-            if (this.state != ConnectionState.CONNECTED) {
+            if (this.state != WebSocketConnectionState.CONNECTED) {
                 warningf("Unable to open, not in CONNECTED state: %s", this.state);
                 return;
             }
 
-            this.state = ConnectionState.OPEN;
+            this.state = WebSocketConnectionState.OPEN;
             this.inputAvailable = true;
             this.outputAvailable = true;
             event = this.state;
@@ -397,9 +397,9 @@ class IOState {
      * @param t the read failure
      */
     void onReadFailure(Throwable t) {
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.CLOSED) {
+            if (this.state == WebSocketConnectionState.CLOSED) {
                 // already closed
                 return;
             }
@@ -424,7 +424,7 @@ class IOState {
             // finalClose.compareAndSet(null, close);
 
             this.cleanClose = false;
-            this.state = ConnectionState.CLOSED;
+            this.state = WebSocketConnectionState.CLOSED;
             this.closeInfo = close;
             this.inputAvailable = false;
             this.outputAvailable = false;
@@ -442,9 +442,9 @@ class IOState {
      * @param t the throwable that caused the write failure
      */
     void onWriteFailure(Throwable t) {
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.CLOSED) {
+            if (this.state == WebSocketConnectionState.CLOSED) {
                 // already closed
                 return;
             }
@@ -470,7 +470,7 @@ class IOState {
             // finalClose.compareAndSet(null, close);
 
             this.cleanClose = false;
-            this.state = ConnectionState.CLOSED;
+            this.state = WebSocketConnectionState.CLOSED;
             this.inputAvailable = false;
             this.outputAvailable = false;
             this.closeHandshakeSource = CloseHandshakeSource.ABNORMAL;
@@ -480,9 +480,9 @@ class IOState {
     }
 
     void onDisconnected() {
-        ConnectionState event = ConnectionState.Unknown;
+        WebSocketConnectionState event = WebSocketConnectionState.Unknown;
         synchronized (this) {
-            if (this.state == ConnectionState.CLOSED) {
+            if (this.state == WebSocketConnectionState.CLOSED) {
                 // already closed
                 return;
             }
@@ -490,7 +490,7 @@ class IOState {
             CloseInfo close = new CloseInfo(StatusCode.ABNORMAL, "Disconnected");
 
             this.cleanClose = false;
-            this.state = ConnectionState.CLOSED;
+            this.state = WebSocketConnectionState.CLOSED;
             this.closeInfo = close;
             this.inputAvailable = false;
             this.outputAvailable = false;
@@ -515,7 +515,7 @@ class IOState {
             str.append('!');
         }
         str.append("out");
-        if ((state == ConnectionState.CLOSED) || (state == ConnectionState.CLOSING)) {
+        if ((state == WebSocketConnectionState.CLOSED) || (state == WebSocketConnectionState.CLOSING)) {
             CloseInfo ci = finalClose;
             if (ci !is null) {
                 str.append(",finalClose=").append(ci.toString());

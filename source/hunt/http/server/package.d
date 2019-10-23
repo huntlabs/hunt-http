@@ -44,5 +44,7 @@ public import hunt.http.WebSocketConnection;
 public import hunt.http.WebSocketFrame;
 public import hunt.http.WebSocketPolicy;
 
+public import hunt.util.MimeType;
+
 // Router modules
 public import hunt.http.routing;

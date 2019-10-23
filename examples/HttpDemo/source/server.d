@@ -1,16 +1,9 @@
-import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream;
-import hunt.http.codec.websocket.frame;
-import hunt.http.codec.websocket.model;
-import hunt.http.WebSocketConnection;
 
 import hunt.http.server;
 
-import hunt.http.routing.RoutingContext;
-
+import hunt.logging.ConsoleLogger;
 import hunt.util.DateTime;
-import hunt.logging;
-import hunt.util.MimeType;
+// import hunt.util.MimeType;
 
 import std.conv;
 import std.json;
@@ -30,8 +23,9 @@ void main(string[] args) {
     // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerWithoutDefaultRoute();
     // HttpServer server = buildServerWithForm();
+    HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
-    HttpServer server = buildServerWithSessionStore();
+    // HttpServer server = buildServerWithSessionStore();
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
@@ -40,6 +34,7 @@ void main(string[] args) {
 
     server.start();
 }
+
 
 HttpServer buildSimpleServer() {
     HttpServer server = HttpServer.builder()
@@ -54,6 +49,7 @@ HttpServer buildSimpleServer() {
         .build();  
     return server; 
 }
+
 
 HttpServer buildServerWithMultiRoutes() {
 
@@ -101,7 +97,7 @@ HttpServer buildServerWithoutDefaultRoute() {
 }
 
 
-HttpServer buildServerWithForm() {
+HttpServer buildServerWithUpload() {
     // http://10.1.223.62:8080/post?returnUrl=%2flogin
     // 
     HttpServer server = HttpServer.builder()
@@ -111,7 +107,37 @@ HttpServer buildServerWithForm() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
-        .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
+        .addRoute("/upload/string", HttpMethod.POST, (RoutingContext context) {
+            HttpServerRequest request = context.getRequest();
+            string content;
+            content = request.getStringBody();
+            string mimeType = request.getMimeType();
+            warning("mimeType: ", mimeType);
+            if(mimeType == "multipart/form-data") {
+                try {
+                    // trace(content);
+                    // tracef("%(%02X %)", cast(byte[])content);
+                    Part[] parts = request.getParts();
+                    foreach (Part part; parts) {
+                        // MultipartForm multipart = cast(MultipartForm) part;
+                        Part multipart = part;
+                        warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content=%s",
+                            multipart.getName(), multipart.getSubmittedFileName(), 
+                            multipart.getFile(), multipart.getContentType(), cast(string) multipart.getBytes());
+                    }
+                } catch (Exception e) {
+                    warning("get multi part exception: ", e.msg);
+                    version(HUNT_HTTP_DEBUG) warning(e);
+                }
+            } else if(mimeType == "application/x-www-form-urlencoded") {
+                // string content = request.getStringBody();
+                content = request.getParameterMap().toString();
+            }
+
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.end("multipart data received.<br><br>" ~ DateTime.getTimeAsGMT());
+        })
+        .addRoute("/upload/file", HttpMethod.POST, (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
             string mimeType = request.getMimeType();

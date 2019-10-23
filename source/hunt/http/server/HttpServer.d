@@ -443,7 +443,7 @@ class HttpServer : AbstractLifecycle {
                     return true;
                 })
                 .badMessage((status, reason, request, response, ot, connection)  {
-                    version(HUNT_HTTP_DEBUG) warning("badMessage: status=%d reason=%s", status, reason);
+                    version(HUNT_HTTP_DEBUG) warningf("badMessage: status=%d reason=%s", status, reason);
                 })
                 .earlyEOF((request, response, ot, connection)  {
                     version(HUNT_HTTP_DEBUG) info("earlyEOF!");
