@@ -525,10 +525,7 @@ class HttpServer : AbstractLifecycle {
         }
 
         HttpServer build() { 
-            // WebSocketHandler webSocketHandler = new DefaultWebSocketHandler();
-            HttpServer server = new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());
-
-            return server;
+            return new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());
         }
     }
 }

@@ -1,14 +1,21 @@
 module hunt.http.server.LocalSessionStore;
 
-import hunt.http.Exceptions;
 import hunt.http.server.HttpSession;
+import hunt.http.server.GlobalSettings;
+
+import hunt.http.Exceptions;
 
 import hunt.collection.HashMap;
+// import hunt.concurrency.Executors;
+// import hunt.concurrency.Scheduler;
+import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.logging.ConsoleLogger;
+import hunt.util.Common;
 import hunt.util.DateTime;
 import hunt.util.Lifecycle;
 
 import core.sync.mutex;
+import core.time;
 import std.range;
 
 
@@ -19,9 +26,10 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
 
     private HashMap!(string, HttpSession) map;
     private Mutex mapMutex;
-    
+    private ScheduledThreadPoolExecutor executor;
+    // TODO: Tasks pending completion -@zhangxueping at 2019-10-23T11:21:26+08:00
+    // 
     // private final ConcurrentMap<string, HttpSession map = new ConcurrentHashMap<>();
-    // private final Scheduler scheduler = Schedulers.createScheduler();
 
     this() {
         map = new HashMap!(string, HttpSession);
@@ -87,20 +95,34 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
         return map.size();
     }
 
+    private void cleaup() {
+        mapMutex.lock();
+        scope(exit) mapMutex.unlock();
+        foreach(string id, HttpSession session; map) {
+            if (session.isInvalid()) {
+                map.remove(id);
+                version(HUNT_DEBUG) tracef("remove expired local HTTP session - %s", id);
+            }
+        }     
+    }
+
     override
     protected void initialize() {
-        // TODO: Tasks pending completion -@zhangxueping at 2019-10-22T10:19:19+08:00
-        // 
-        // scheduler.scheduleWithFixedDelay(() - map.forEach((id, session) - {
-        //     if (session.isInvalid()) {
-        //         map.remove(id);
-        //         tracef("remove expired local HTTP session - %d", id);
-        //     }
-        // }), 1, 1, TimeUnit.SECONDS);
+        // executor = cast(ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
+        executor = GlobalSettings.scheduler();
+        executor.setRemoveOnCancelPolicy(true);
+        executor.scheduleWithFixedDelay(new class Runnable {
+            void run() {
+                cleaup();
+            }
+        }, 
+        seconds(1), seconds(1));
     }
 
     override
     protected void destroy() {
-        // scheduler.stop();
+        // if (executor !is null) {
+        //     executor.shutdown();
+        // }
     }
 }    
