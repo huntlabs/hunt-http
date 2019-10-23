@@ -114,7 +114,7 @@ class HttpMetaData : Iterable!HttpField {
                 _contentLength = field is null ? -1 : field.getLongValue();
             }
         }
-        version(HUNT_HTTP_DEBUG) tracef("contentLength=%d", _contentLength);
+        version(HUNT_HTTP_DEBUG_MORE) tracef("contentLength=%d", _contentLength);
         return _contentLength;
     }
 

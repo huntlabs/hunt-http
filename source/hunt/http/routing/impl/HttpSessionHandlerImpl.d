@@ -67,21 +67,30 @@ class HttpSessionHandlerImpl : AbstractHttpSessionHandler {
         }
         
         try {
-            currentSession = sessionStore.get(getSessionId(create));
-            routingContext.setAttribute(contextSessionKey, currentSession);
+            string sid = getSessionId(create);
+            version(HUNT_HTTP_DEBUG) infof("SessionId: %s, size: %d", sid, sessionStore.size());
+            if(sessionStore.contains(sid)) {
+                currentSession = sessionStore.get(sid);
+                routingContext.setAttribute(contextSessionKey, currentSession);
+            } else {
+                currentSession = createSession(maxAge);
+            }
         } catch(Exception ex) {
             version(HUNT_DEBUG) warning(ex.msg);
-            version(HUNT_HTTP_DEBUG) warning(ex);
             if(create) {
-                
-                SessionInvalidException cause1 = cast(SessionInvalidException)ex.next;
-                SessionNotFoundException cause2 = cast(SessionNotFoundException)ex.next;
-                if(cause1 !is null || cause2 !is null)
+                SessionInvalidException cause1 = cast(SessionInvalidException)ex;
+                SessionNotFoundException cause2 = cast(SessionNotFoundException)ex;
+                if(cause1 !is null || cause2 !is null) {
                     currentSession = createSession(maxAge);
+                } else {
+                    version(HUNT_HTTP_DEBUG) warning(ex);
+                }
             } else {
-                SessionInvalidException cause = cast(SessionInvalidException)ex.next;
+                SessionInvalidException cause = cast(SessionInvalidException)ex;
                 if(cause !is null) {
                     removeCookie();
+                } else {
+                    version(HUNT_HTTP_DEBUG) warning(ex);
                 }
             }
         }
@@ -127,13 +136,15 @@ class HttpSessionHandlerImpl : AbstractHttpSessionHandler {
     }
 
     protected string getSessionId(bool create) {
-        if (create && !requestedSessionId.empty()) {
+        if (create && requestedSessionId.empty()) {
             requestedSessionId = randomUUID().toString().replace("-", "");
         }
+        version(HUNT_HTTP_DEBUG_MORE) tracef("create: %s, requestedSessionId: %s", create, requestedSessionId);
         return requestedSessionId;
     }
 
     protected HttpSession createSession(int maxAge) {
+        version(HUNT_HTTP_DEBUG) info("creating new session: ", requestedSessionId);
         HttpSession newSession = HttpSession.create(requestedSessionId, defaultMaxInactiveInterval);
         sessionStore.put(newSession.getId(), newSession);
         createCookie(maxAge);

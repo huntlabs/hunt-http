@@ -402,7 +402,7 @@ class HttpServer : AbstractLifecycle {
                     return true;
                 })
                 .headerComplete((request, response, ot, connection) {
-                    version(HUNT_HTTP_DEBUG) info("headerComplete!!!!!");
+                    version(HUNT_HTTP_DEBUG) info("headerComplete!");
                     
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     HttpServerContext context = new HttpServerContext(
@@ -423,7 +423,7 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .contentComplete((request, response, ot, connection)  {
-                    version(HUNT_HTTP_DEBUG) info("contentComplete!!!!!");
+                    version(HUNT_HTTP_DEBUG) info("contentComplete!");
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     serverRequest.onContentComplete();
                     // HttpServerContext context = cast(HttpServerContext) request.getAttachment();
@@ -434,7 +434,7 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .messageComplete((request, response, ot, connection)  {
-                    version(HUNT_HTTP_DEBUG) info("messageComplete!!!!!");
+                    version(HUNT_HTTP_DEBUG) info("messageComplete!");
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     serverRequest.onMessageComplete();
                     // if (!r.getResponse().isAsynchronous()) {
@@ -446,7 +446,7 @@ class HttpServer : AbstractLifecycle {
                     version(HUNT_HTTP_DEBUG) warning("badMessage: status=%d reason=%s", status, reason);
                 })
                 .earlyEOF((request, response, ot, connection)  {
-                    version(HUNT_HTTP_DEBUG) info("earlyEOF!!!!!");
+                    version(HUNT_HTTP_DEBUG) info("earlyEOF!");
                 });
 
             return adapter;

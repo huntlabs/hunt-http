@@ -17,7 +17,7 @@ abstract class AbstractHttpSessionHandler : HttpSessionHandler {
 
     protected RoutingContext routingContext;
 
-    protected string sessionIdParameterName = "huntsessionid";
+    protected string sessionIdParameterName = "hunt-session-id";
     protected int defaultMaxInactiveInterval = 5 * 60; //second
 
     protected bool requestedSessionIdFromURL;
@@ -36,13 +36,13 @@ abstract class AbstractHttpSessionHandler : HttpSessionHandler {
     }
 
     protected void initialize() {
-        if (getHttpSessionFromCookie() is null) {
+        if (getHttpSessionFromCookie().empty()) {
             getHttpSessionFromURL();
         }
     }
 
     protected string getHttpSessionFromURL() {
-        if (requestedSessionId != null) {
+        if (!requestedSessionId.empty()) {
             return requestedSessionId;
         }
 

@@ -46,7 +46,7 @@ HttpServer buildSimpleServer() {
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .setHandler((RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.write(DateTime.getTimeAsGMT());
             context.write("<br>Hello World!<br>");
             context.end();
@@ -61,18 +61,18 @@ HttpServer buildServerWithMultiRoutes() {
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
             warning(content);
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Post: " ~ content ~ ", " ~ DateTime.getTimeAsGMT());
         })
         .setHandler((RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.write(DateTime.getTimeAsGMT());
             context.write("<br>Hello World!<br>");
             context.end();
@@ -87,13 +87,13 @@ HttpServer buildServerWithoutDefaultRoute() {
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
         .build();
@@ -108,7 +108,7 @@ HttpServer buildServerWithForm() {
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
@@ -128,7 +128,7 @@ HttpServer buildServerWithForm() {
                 content = request.getParameterMap().toString();
             }
 
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
         .build();
@@ -141,13 +141,13 @@ HttpServer buildServerWithWebSocket() {
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .addRoute("/post", HttpMethod.POST, (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
             string content = request.getStringBody();
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
         .registerWebSocket("/ws1", new class AbstractWebSocketMessageHandler {
@@ -184,32 +184,29 @@ HttpServer buildServerWithSessionStore() {
         .setListener(8080, "0.0.0.0")
         .enableLocalSessionStore()
         .addRoute("/plain*", (RoutingContext context) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
+            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
         .post("/session/:name", (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
-            string content = request.getStringBody();
-            string mimeType = request.getMimeType();
-            warning("mimeType: ", mimeType);
-
             string name = context.getRouterParameter("name");
             trace("the path param -> " ~ name);
             HttpSession session = context.getSession(true);
-            trace("new session: " ~ session.isNewSession());
+            tracef("new session: %s", session.isNewSession());
             session.setAttribute(name, "bar");
             session.setAttribute("age", 18);
-            // 1 second later, the session will expire
-            session.setMaxInactiveInterval(120);
+            // 10 second later, the session will expire
+            session.setMaxInactiveInterval(10);
             context.updateSession(session);
-            context.end("create session success");
+            context.end("session created");
         })
         .get("/session/:name", (RoutingContext ctx) {
             string name = ctx.getRouterParameter("name");
             HttpSession session = ctx.getSession();
+            ctx.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             if (session !is null) {
                 ctx.write("session value is " ~ session.getAttributeAs!string(name));
-                ctx.end(" //// session age is " ~ session.getAttribute("age").toString());
+                ctx.end("<br>session age is " ~ session.getAttribute("age").toString());
             } else {
                 ctx.end("session is invalid");
             }

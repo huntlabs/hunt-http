@@ -121,22 +121,20 @@ class HttpServerRequest : HttpRequest {
         if (_stringBody != null) {
             return _stringBody;
         } else {
-            InputStream inputStream = this._pipedStream.getInputStream();
-            if (inputStream is null) {
+            if (_pipedStream is null) 
                 return null;
-            } else {
-                try  {
-                    int size = inputStream.available();
-                    version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
-                    byte[] buffer = new byte[size];
-                    inputStream.read(buffer);
-                    _stringBody = cast(string)buffer;
-                    return _stringBody;
-                } catch (IOException e) {
-                    version(HUNT_DEBUG) warning("get string body exception: ", e.msg);
-                    version(HUNT_HTTP_DEBUG) warning(e);
-                    return null;
-                }
+            InputStream inputStream = this._pipedStream.getInputStream();
+            try  {
+                int size = inputStream.available();
+                version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
+                byte[] buffer = new byte[size];
+                inputStream.read(buffer);
+                _stringBody = cast(string)buffer;
+                return _stringBody;
+            } catch (IOException e) {
+                version(HUNT_DEBUG) warning("get string body exception: ", e.msg);
+                version(HUNT_HTTP_DEBUG) warning(e);
+                return null;
             }
         }
     }

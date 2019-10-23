@@ -30,6 +30,11 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
     }
 
 
+    bool contains(string key) {
+        return map.containsKey(key);
+    }
+
+
     override
     bool remove(string key) {
         if (!key.empty()) {
@@ -56,7 +61,7 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
 
     override
     HttpSession get(string key) {
-        if (!key.empty()) {
+        if (key.empty()) {
             throw new SessionNotFoundException();
         }
 
@@ -64,7 +69,7 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
         scope(exit) mapMutex.unlock();
         HttpSession session = map.get(key);
         if (session is null) {
-            throw new SessionNotFoundException();
+            throw new SessionNotFoundException(key);
         } else {
             if (session.isInvalid()) {
                 map.remove(session.getId());

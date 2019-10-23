@@ -73,7 +73,7 @@ class HttpServerOptions : HttpOptions {
 
     /* ------------------------------ Session APIs ------------------------------ */
 
-    private string sessionIdParameterName = "huntsessionid";
+    private string sessionIdParameterName = "hunt-session-id";
     private int defaultMaxInactiveInterval = 10 * 60; //second
 
     string getSessionIdParameterName() {

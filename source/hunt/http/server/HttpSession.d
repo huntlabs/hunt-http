@@ -8,7 +8,6 @@ import hunt.Exceptions;
 import hunt.util.DateTime;
 import hunt.util.Lifecycle;
 
-import std.datetime;
 import std.variant;
 
 
@@ -79,11 +78,14 @@ class HttpSession  { // : Serializable
     }
 
     Variant getAttribute(string key) {
-        return attributes.get(key, Variant());
+        return attributes.get(key, Variant(null));
     }
 
     T getAttributeAs(T)(string key) {
-        return attributes[key].get!(T);
+        if(hasAttribute(key))
+            return attributes[key].get!(T);
+        else
+            return T.init;
     }
 
     bool hasAttribute(string key) {
@@ -100,12 +102,12 @@ class HttpSession  { // : Serializable
     }
 
     bool isInvalid() {
-        long currentTime = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(Clock.currStdTime);
+        long currentTime = DateTime.currentTimeMillis(); 
         return (currentTime - lastAccessedTime) > (maxInactiveInterval * 1000);
     }
 
     static HttpSession create(string id, int maxInactiveInterval) {
-        long currentTime = convert!(TimeUnit.HectoNanosecond, TimeUnit.Millisecond)(Clock.currStdTime);
+        long currentTime = DateTime.currentTimeMillis();
         HttpSession session = new HttpSession();
         session.setId(id);
         session.setMaxInactiveInterval(maxInactiveInterval);
@@ -136,6 +138,8 @@ class HttpSession  { // : Serializable
  * 
  */
 interface SessionStore : Lifecycle {
+
+    bool contains(string key);
 
     bool remove(string key);
 

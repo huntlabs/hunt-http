@@ -261,6 +261,18 @@ abstract class RoutingContext : Closeable {
         return getResponse().getFields();
     }
 
+    void responseHeader(HttpHeader header, HttpHeaderValue value) {
+        getResponse().getFields().put(header, value);
+    }
+
+    void responseHeader(string header, string value) {
+        getResponse().getFields().put(header, value);
+    }
+
+    void responseHeader(HttpHeader header, string value) {
+        getResponse().getFields().put(header, value);
+    }
+
     RoutingContext addCookie(Cookie cookie) {
         getResponse().addCookie(cookie);
         return this;
