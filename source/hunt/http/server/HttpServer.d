@@ -416,7 +416,7 @@ class HttpServer : AbstractLifecycle {
                     return false;
                 })
                 .content((buffer, request, response, ot, connection) {
-                    version(HUNT_HTTP_DEBUG) infof("content: %s", BufferUtils.toDetailString(buffer));
+                    version(HUNT_HTTP_DEBUG) tracef("content: %s", BufferUtils.toDetailString(buffer));
 
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
                     serverRequest.onContent(buffer);

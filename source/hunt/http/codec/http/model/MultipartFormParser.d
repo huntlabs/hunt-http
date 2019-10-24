@@ -221,6 +221,8 @@ class MultipartFormParser {
             return;
         _parsed = true;
 
+        scope(exit) _in.close();
+
         try {
             doParse();
         } catch (Exception e) {
@@ -269,7 +271,7 @@ class MultipartFormParser {
          * keep running total of size of bytes read from input and throw an exception if exceeds MultipartOptions._maxRequestSize
          */
         long total = 0;
-        _in.position(0); // The InputStream may be read, so reset it before reading it again.
+        // _in.position(0); // The InputStream may be read, so reset it before reading it again.
 
         version(HUNT_HTTP_DEBUG) {
             int size = _in.available();

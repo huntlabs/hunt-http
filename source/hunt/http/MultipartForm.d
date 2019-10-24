@@ -79,7 +79,16 @@ interface Part {
      *
      * @throws IOException if an error occurs.
      */
+    void writeTo(string fileName);
+
+    deprecated("Using writeTo instead.")
     void write(string fileName);
+
+
+    /**
+     * Save the content to a temp file 
+     */
+    void flush();
 
     /**
      * Deletes the underlying storage for a file item, including deleting any
@@ -172,7 +181,7 @@ class MultipartForm : Part {
 
     override
     string toString() {
-        return format("Part{n=%s,fn=%s,ct=%s,s=%d,tmp=%b,file=%s}", 
+        return format("Part{name=%s, fileName=%s, contentType=%s, size=%d, tmp=%b, file=%s}", 
             _name, _filename, _contentType, _size, _temporary, _file);
     }
 
@@ -227,14 +236,14 @@ class MultipartForm : Part {
         _size += length;
     }
 
-    package void createFile() {
+    private void createFile() {
         /*
          * Some statics just to make the code below easier to understand This get optimized away during the compile anyway
          */
         // bool USER = true;
         // bool WORLD = false;
         _file= buildPath(_tmpDir, "Multipart-" ~ StringUtils.randomId());
-        version(HUNT_DEBUG) trace("Creating temp file: ", _file);
+        version(HUNT_HTTP_DEBUG) infof("Creating temp file for multipart: %s", _file);
 
         // _file = File.createTempFile("Multipart", "", _tmpDir);
         // _file.setReadable(false, WORLD); // (reset) disable it for everyone first
@@ -337,23 +346,27 @@ class MultipartForm : Part {
     long getSize() {
         return _size;
     }
+    
+    deprecated("Using writeTo instead.")
+    void write(string fileName) {
+        writeTo(fileName);
+    }
 
     /**
      * @see Part#write(string)
      */
-    override
-    void write(string fileName) {
+    void writeTo(string fileName) {
         if(fileName.empty) {
-            warning("Target file name can't be empty.");
+            warning("The target file name can't be empty.");
             return;
         }
         _temporary = false;
         if (_file.empty) {
             // part data is only in the ByteArrayOutputStream and never been written to disk
             _file = buildPath(_tmpDir, fileName);
-            version(HUNT_DEBUG) infof("writing file: _file=%s", _file);
+            version(HUNT_HTTP_DEBUG) infof("writing to file: _file=%s", _file);
 
-            FileOutputStream bos = null;
+            scope FileOutputStream bos = null;
             try {
                 bos = new FileOutputStream(_file);
                 _bout.writeTo(bos);
@@ -362,21 +375,23 @@ class MultipartForm : Part {
                 if (bos !is null)
                     bos.close();
 
-            version(HUNT_DEBUG) infof("closing file: _file=%s", _file);
+                version(HUNT_HTTP_DEBUG_MORE) infof("closing file: _file=%s", _file);
                 _bout = null;
             }
         } else {
             // the part data is already written to a temporary file, just rename it
-            string target = dirName(_file) ~ dirSeparator ~ fileName;
-            version(HUNT_DEBUG) tracef("src: %s, target: %s", _file, target);
-            rename(_file, target);
-            _file = target;
+            string target = buildPath(dirName(_file), fileName);
+            if(_file != target) {
+                version(HUNT_HTTP) tracef("moving file, src: %s, target: %s", _file, target);
+                rename(_file, target);
+                _file = target;
+            }
         }
     }
 
     void flush() {
         if(_file.empty) {
-            write("Multipart-" ~ StringUtils.randomId());
+            writeTo("Multipart-" ~ StringUtils.randomId());
         }
     }
 

@@ -126,28 +126,28 @@ class HttpServerRequest : HttpRequest {
                 return null;
 
             InputStream inputStream = this._pipedStream.getInputStream();
+            scope(exit) 
+                inputStream.close();
+
             try  {
+                // inputStream.position(0); // The InputStream may be read, so reset it before reading it again.
+                int size = inputStream.available();
+                version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
                 // TODO: Tasks pending completion -@zhangxueping at 2019-10-23T15:40:56+08:00
                 // encoding convertion: to UTF-8
                 
-                // inputStream.position(0); // The InputStream may be read, so reset it before reading it again.
-                // int size = inputStream.available();
-                // version(HUNT_HTTP_DEBUG) tracef("available: %d", size);
-                // byte[] buffer = new byte[size];
-                // int number = inputStream.read(buffer);
-                // if(number == -1) {
-                //     version(HUNT_DEBUG) warning("no data read");
-                // }
-
                 // skip the read for better performance
+                byte[] buffer;
                 ByteArrayInputStream arrayStream = cast(ByteArrayInputStream)inputStream;
                 if(arrayStream is null) {
-                    warningf("only ByteArrayInputStream supported: %s", typeid(inputStream));
-                    return null;
+                    buffer = new byte[size];
+                    int number = inputStream.read(buffer);
+                    if(number == -1) {
+                        version(HUNT_DEBUG) warning("no data read");
+                    }
+                } else {
+                    buffer = arrayStream.getRawBuffer();
                 }
-
-                byte[] buffer = arrayStream.getRawBuffer();
-
                 _stringBody = cast(string)buffer;
                 return _stringBody;
             } catch (IOException e) {
@@ -189,9 +189,19 @@ class HttpServerRequest : HttpRequest {
             if (isChunked()) {
                 long length = AtomicHelper.increment(chunkedEncodingContentLength, buffer.remaining());
                 ByteArrayPipedStream bytesStream = cast(ByteArrayPipedStream)_pipedStream;
+
+                // switch PipedStream from ByteArrayPipedStream to FilePipedStream.
                 if (length > _options.getBodyBufferThreshold() && bytesStream !is null) {
                     // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-17T23:05:10+08:00
                     // better performance.
+                    
+                    version(HUNT_HTTP_DEBUG) {
+                        warningf("dump to temp file, ContentLength:%d, BufferThreshold: %d, file: %s", 
+                            length,
+                            _options.getBodyBufferThreshold(), 
+                            _options.getTempFilePath());
+                    }
+
                     // chunked encoding content dump to temp file
                     _pipedStream.getOutputStream().close();
                     FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
@@ -213,7 +223,7 @@ class HttpServerRequest : HttpRequest {
     }
 
     package(hunt.http) void onContentComplete() {
-        if(_pipedStream is null || getContentLength() <=0)
+        if(_pipedStream is null || (getContentLength() <=0 && !isChunked()) )
             return;
             
         try {

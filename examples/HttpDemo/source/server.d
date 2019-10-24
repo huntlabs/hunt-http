@@ -3,10 +3,11 @@ import hunt.http.server;
 
 import hunt.logging.ConsoleLogger;
 import hunt.util.DateTime;
-// import hunt.util.MimeType;
 
 import std.conv;
+import std.format;
 import std.json;
+import std.range;
 import std.stdio;
 
 
@@ -142,20 +143,34 @@ HttpServer buildServerWithUpload() {
             string content = request.getStringBody();
             string mimeType = request.getMimeType();
             warning("mimeType: ", mimeType);
+            info(content);
             if(mimeType == "multipart/form-data") {
+                context.write("File uploaded!<br>");
                 foreach (Part part; request.getParts()) {
                     // MultipartForm multipart = cast(MultipartForm) part;
-                    Part multipart = part;
-                    warning("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content=%s",
-                        multipart.getName(), multipart.getSubmittedFileName(), 
-                        multipart.getFile(), multipart.getContentType(), cast(string) multipart.getBytes());
-                }
-            } else if(mimeType == "application/x-www-form-urlencoded") {
-                content = request.getParameterMap().toString();
-            }
+                    string str = format("%s<br>", part.toString());
+                    context.write(str);
 
-            context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
-            context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
+                    string fileName = part.getSubmittedFileName();
+
+                    warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s",
+                        part.getName(), fileName, 
+                        part.getFile(), part.getContentType());
+                    
+                    part.flush(); // Save the content to a temp file 
+
+                    // Write to a specified file.
+                    if(!fileName.empty()) // It's a file part, so will be saved.
+                        part.writeTo(DateTime.currentTimeMillis.to!string() ~ "-" ~ fileName);
+                }
+                
+                context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+                context.end(DateTime.getTimeAsGMT());
+            } else {
+                content = request.getParameterMap().toString();
+                context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+                context.end("wrong data format: " ~ mimeType ~ ",  "  ~ DateTime.getTimeAsGMT());
+            }
         })
         .build();
     return server;    
