@@ -16,7 +16,7 @@ class HttpRequestOptions {
     private string tempFilePath = "./temp";
     private string tempFileAbsolutePath = "/temp";
     private string charset = "UTF-8";
-    private MultipartOptions _multipartOptions;
+    // private MultipartOptions _multipartOptions;
 
     this() {
         tempFilePath = tempDir();
@@ -37,6 +37,14 @@ class HttpRequestOptions {
 
     void setMaxRequestSize(int maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
+    }
+
+    int getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    void setMaxFileSize(int size) {
+        maxFileSize = size;
     }
 
     string getTempFilePath() {
@@ -61,15 +69,15 @@ class HttpRequestOptions {
         this.charset = charset;
     }
 
-    MultipartOptions getMultipartOptions() {
-        if(_multipartOptions is null) {
-            _multipartOptions = new MultipartOptions(tempFileAbsolutePath, 
-                maxFileSize, maxRequestSize, bodyBufferThreshold); 
-        }
-        return _multipartOptions;
-    }
+    // MultipartOptions getMultipartOptions() {
+    //     if(_multipartOptions is null) {
+    //         _multipartOptions = new MultipartOptions(tempFileAbsolutePath, 
+    //             maxFileSize, maxRequestSize, bodyBufferThreshold); 
+    //     }
+    //     return _multipartOptions;
+    // }
 
-    void setMultipartConfig(MultipartOptions options) {
-        this._multipartOptions = options;
-    }
+    // void setMultipartConfig(MultipartOptions options) {
+    //     this._multipartOptions = options;
+    // }
 }

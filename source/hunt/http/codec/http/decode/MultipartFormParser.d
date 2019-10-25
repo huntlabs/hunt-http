@@ -29,10 +29,10 @@ alias MultipartFormInputStream = MultipartFormParser;
 
 void deleteOnExit(string file) {
     if(file.exists) {
-        version(HUNT_HTTP_DEBUG) infof("File removed: %s", file);
+        version(HUNT_DEBUG) infof("File removed: %s", file);
         file.remove();
     } else {
-        warningf("File not exists: %s", file);
+        version(HUNT_DEBUG) warningf("File not exists: %s", file);
     }
 }
 
@@ -50,7 +50,6 @@ class MultipartFormParser {
         return initOnce!inst(new MultiMap!(Part)(Collections.emptyMap!(string, List!(Part))()));
     }
     // __gshared MultipartOptions DEFAULT_MULTIPART_CONFIG;
-    // __gshared MultiMap!(Part) EMPTY_MAP;
 
     private int _bufferSize = 16 * 1024;
     protected InputStream _in;
@@ -272,11 +271,11 @@ class MultipartFormParser {
          * keep running total of size of bytes read from input and throw an exception if exceeds MultipartOptions._maxRequestSize
          */
         long total = 0;
-        // _in.position(0); // The InputStream may be read, so reset it before reading it again.
+        long maxRequestSize = _config.getMaxRequestSize();
 
         version(HUNT_HTTP_DEBUG) {
             int size = _in.available();
-            tracef("available: %d", size);
+            tracef("available: %d, maxRequestSize: %d", size, maxRequestSize);
             if(size == 0) {
                 warning("no data available in inputStream");
             }
@@ -287,9 +286,10 @@ class MultipartFormParser {
 
             if (len > 0) {
                 total += len;
-                if (_config.getMaxRequestSize() > 0 && total > _config.getMaxRequestSize()) {
-                    _err = new IllegalStateException("Request exceeds maxRequestSize (" ~ 
-                        _config.getMaxRequestSize().to!string() ~ ")");
+                if (maxRequestSize > 0 && total > maxRequestSize) {
+                    string msg = format("Request exceeds maxRequestSize (%d)", maxRequestSize);
+                    version(HUNT_DEBUG) warning(msg);
+                    _err = new IllegalStateException(msg);
                     return;
                 }
 
@@ -302,7 +302,7 @@ class MultipartFormParser {
                     throw new IllegalStateException("Buffer did not fully consume");
 
             } else if (len == -1) {
-                version(HUNT_DEBUG) trace("no more data avaiable");
+                version(HUNT_HTTP_DEBUG) trace("no more data avaiable");
                 parser.parse(BufferUtils.EMPTY_BUFFER, true);
                 break;
             }

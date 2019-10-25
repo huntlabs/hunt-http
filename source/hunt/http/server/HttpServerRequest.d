@@ -240,7 +240,7 @@ class HttpServerRequest : HttpRequest {
                 _multipartFormParser = new MultipartFormParser(
                         _pipedStream.getInputStream(),
                         getContentType(),
-                        _options.getMultipartOptions(),
+                        GlobalSettings.getMultipartOptions(_options),
                         _options.getTempFilePath());
             }
         } catch (IOException e) {

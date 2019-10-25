@@ -384,9 +384,9 @@ class HttpServer : AbstractLifecycle {
             try {
                 if(handler !is null) handler(ctx);
             } catch (Exception e) {
-                ctx.fail(e);
-                version(HUNT_DEBUG) errorf("http server handler exception: ", e.msg);
+                version(HUNT_DEBUG) errorf("http server handler exception: %s", e.msg);
                 version(HUNT_HTTP_DEBUG) error(e);
+                ctx.fail(e);
             } finally {
             }
         }
@@ -522,6 +522,13 @@ class HttpServer : AbstractLifecycle {
             });
 
             return adapter;
+        }
+
+        /* ---------------------------- Options operation --------------------------- */
+
+        Builder maxRequestSize(int size) {
+            _httpOptions.requestOptions.setMaxRequestSize(size);
+            return this;
         }
 
         HttpServer build() { 
