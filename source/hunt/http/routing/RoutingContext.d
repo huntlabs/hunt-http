@@ -165,10 +165,14 @@ abstract class RoutingContext : Closeable {
         version(HUNT_HTTP_DEBUG) trace("do nothing");
     }
 
-    void fail(Exception x) { 
-        version(HUNT_DEBUG) warning(x);
+    void fail(Exception ex) { 
+        version(HUNT_DEBUG) warning(ex);
+        HttpServerResponse res = getResponse();
+        if(res !is null) {
+            res.setStatus(HttpStatus.BAD_REQUEST_400);
+        }
+        end(ex.msg);
     }
-
 
     // request wrap
     string getMethod() {

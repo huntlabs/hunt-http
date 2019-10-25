@@ -145,6 +145,7 @@ HttpServer buildServerWithUpload() {
             warning("mimeType: ", mimeType);
             // info(content);
             if(mimeType == "multipart/form-data") {
+                Part[] parts = request.getParts();
                 context.write("File uploaded!<br>");
                 foreach (Part part; request.getParts()) {
                     // MultipartForm multipart = cast(MultipartForm) part;
@@ -173,6 +174,7 @@ HttpServer buildServerWithUpload() {
                 context.end("wrong data format: " ~ mimeType ~ ",  "  ~ DateTime.getTimeAsGMT());
             }
         })
+        .maxRequestSize(256)
         .build();
     return server;    
 }

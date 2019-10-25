@@ -385,7 +385,7 @@ class HttpServer : AbstractLifecycle {
                 if(handler !is null) handler(ctx);
             } catch (Exception e) {
                 version(HUNT_DEBUG) errorf("http server handler exception: %s", e.msg);
-                version(HUNT_HTTP_DEBUG) error(e);
+                // version(HUNT_HTTP_DEBUG) error(e);
                 ctx.fail(e);
             } finally {
             }

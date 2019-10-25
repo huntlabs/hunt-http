@@ -20,6 +20,8 @@ struct GlobalSettings {
 
     static MultipartOptions getMultipartOptions(HttpRequestOptions options) {
         __gshared MultipartOptions _opt;
+        assert(options !is null);
+        
         return initOnce!_opt( 
                 new MultipartOptions(options.getTempFileAbsolutePath(), 
                 options.getMaxFileSize(), options.getMaxRequestSize(), 
