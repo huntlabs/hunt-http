@@ -140,10 +140,10 @@ HttpServer buildServerWithUpload() {
         })
         .addRoute("/upload/file", HttpMethod.POST, (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
-            string content = request.getStringBody();
+            // string content = request.getStringBody();
             string mimeType = request.getMimeType();
             warning("mimeType: ", mimeType);
-            info(content);
+            // info(content);
             if(mimeType == "multipart/form-data") {
                 context.write("File uploaded!<br>");
                 foreach (Part part; request.getParts()) {
@@ -161,12 +161,13 @@ HttpServer buildServerWithUpload() {
 
                     // Write to a specified file.
                     if(!fileName.empty()) // It's a file part, so will be saved.
-                        part.writeTo(DateTime.currentTimeMillis.to!string() ~ "-" ~ fileName);
+                        part.writeTo("file-" ~ DateTime.currentTimeMillis.to!string() ~ "-" ~ fileName);
                 }
                 
                 context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
                 context.end(DateTime.getTimeAsGMT());
             } else {
+                string content = request.getStringBody();
                 content = request.getParameterMap().toString();
                 context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
                 context.end("wrong data format: " ~ mimeType ~ ",  "  ~ DateTime.getTimeAsGMT());

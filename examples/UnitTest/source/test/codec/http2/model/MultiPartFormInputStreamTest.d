@@ -3,8 +3,8 @@ module test.codec.http2.model.MultipartFormInputStreamTest;
 import hunt.http.codec.http.model.MultiException;
 import hunt.http.MultipartForm;
 import hunt.http.MultipartOptions;
-import hunt.http.codec.http.model.MultipartParser;
-import hunt.http.codec.http.model.MultipartFormParser;
+import hunt.http.codec.http.decode.MultipartParser;
+import hunt.http.codec.http.decode.MultipartFormParser;
 
 import hunt.collection;
 import hunt.util.DateTime;

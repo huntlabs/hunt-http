@@ -10,7 +10,7 @@ import std.path;
  */
 class HttpRequestOptions {
 
-    private int bodyBufferThreshold = 512; // * 1024;
+    private int bodyBufferThreshold = 512 * 1024;
     private int maxRequestSize = 64 * 1024 * 1024;
     private int maxFileSize = 64 * 1024 * 1024;
     private string tempFilePath = "./temp";

@@ -10,14 +10,15 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
 import hunt.http.HttpVersion;
+import hunt.http.QuotedCSV;
 
 import hunt.collection;
-import hunt.util.DateTime;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
 import hunt.util.ConverterUtils;
+import hunt.util.DateTime;
 
 import core.time;
 
@@ -1393,6 +1394,8 @@ class HttpParser {
             BufferUtils.clear(buffer);
             badMessage(x);
         } catch (Exception x) {
+            version(HUNT_DEBUG) warning(x.msg);
+            version(HUNT_HTTP_DEBUG) warning(x);
             BufferUtils.clear(buffer);
             badMessage(new BadMessageException(HttpStatus.BAD_REQUEST_400, 
                 _requestHandler !is null ? "Bad Request" : "Bad Response", x));

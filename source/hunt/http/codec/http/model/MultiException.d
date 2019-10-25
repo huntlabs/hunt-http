@@ -30,7 +30,7 @@ import hunt.text.StringBuilder;
  * Allows multiple exceptions to be thrown as a single exception.
  */
 // 
-class MultiException :Exception
+class MultiException : Exception
 {
     private List!Exception nested;
 
@@ -131,15 +131,19 @@ class MultiException :Exception
           case 0:
               break;
           case 1:
-              Exception th=nested.get(0);
-              if (typeid(th) == typeid(Error))
-                  throw cast(Error)th;
-              else if (typeid(th) == typeid(RuntimeException))
-                  throw cast(RuntimeException)th;
-              else
-                  throw new RuntimeException(th);
+                Exception th = nested.get(0);
+                Error err = cast(Error)th;
+                if (err !is null)
+                    throw err;
+                    
+                RuntimeException rex = cast(RuntimeException)th;
+                if (rex !is null)
+                    throw rex;
+
+                throw new RuntimeException(th);
+
           default:
-              throw new RuntimeException(this);
+                throw new RuntimeException(this);
         }
     }
     

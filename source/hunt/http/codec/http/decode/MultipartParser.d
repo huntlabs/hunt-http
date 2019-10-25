@@ -1,4 +1,4 @@
-module hunt.http.codec.http.model.MultipartParser;
+module hunt.http.codec.http.decode.MultipartParser;
 
 import hunt.http.codec.http.model.BadMessageException;
 
@@ -623,8 +623,9 @@ class MultipartParser {
         // There is normal content with no delimiter
         ByteBuffer content = buffer.slice();
 
-        version(HUNT_DEBUG)
-            tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
+        // version(HUNT_DEBUG) {
+        //     tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
+        // }
 
         BufferUtils.clear(buffer);
         return _handler.content(content, false);

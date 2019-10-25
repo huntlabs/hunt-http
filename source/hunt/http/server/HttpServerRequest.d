@@ -7,6 +7,7 @@ import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
 
 import hunt.http.codec.http.decode.HttpParser;
+import hunt.http.codec.http.decode.MultipartFormParser;
 import hunt.http.codec.http.model;
 
 import hunt.http.Cookie;

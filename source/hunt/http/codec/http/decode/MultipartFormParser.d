@@ -1,8 +1,9 @@
-module hunt.http.codec.http.model.MultipartFormParser;
+module hunt.http.codec.http.decode.MultipartFormParser;
 
+import hunt.http.codec.http.decode.MultipartParser;
 import hunt.http.codec.http.model.MultiException;
+
 import hunt.http.MultipartOptions;
-import hunt.http.codec.http.model.MultipartParser;
 import hunt.http.MultipartForm;
 
 import hunt.collection;

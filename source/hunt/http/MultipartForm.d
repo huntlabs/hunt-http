@@ -79,7 +79,7 @@ interface Part {
      *
      * @throws IOException if an error occurs.
      */
-    void writeTo(string fileName);
+    void writeTo(string fileName, bool canOverwrite=false);
 
     deprecated("Using writeTo instead.")
     void write(string fileName);
@@ -355,11 +355,12 @@ class MultipartForm : Part {
     /**
      * @see Part#write(string)
      */
-    void writeTo(string fileName) {
-        if(fileName.empty) {
+    void writeTo(string fileName, bool canOverwrite = false) {
+        if(fileName.empty()) {
             warning("The target file name can't be empty.");
             return;
         }
+
         _temporary = false;
         if (_file.empty) {
             // part data is only in the ByteArrayOutputStream and never been written to disk
@@ -381,10 +382,23 @@ class MultipartForm : Part {
         } else {
             // the part data is already written to a temporary file, just rename it
             string target = buildPath(dirName(_file), fileName);
+            // version(HUNT_HTTP_DEBUG) {
+            //     tracef("target: %s, source: %s", target, _file);
+            // }
+            
             if(_file != target) {
-                version(HUNT_HTTP) tracef("moving file, src: %s, target: %s", _file, target);
-                rename(_file, target);
-                _file = target;
+                bool isExisted = target.exists;
+                if(!isExisted || (isExisted && canOverwrite)) {
+                    version(HUNT_DEBUG) tracef("moving file, src: %s, target: %s", _file, target);
+                    rename(_file, target);
+                    _file = target;
+                }
+
+                version(HUNT_DEBUG) {
+                    if(isExisted && !canOverwrite) {
+                        warningf("The file exists: %s, overwrited: %s", target, canOverwrite);
+                    }
+                }
             }
         }
     }
