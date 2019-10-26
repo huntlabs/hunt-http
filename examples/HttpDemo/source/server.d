@@ -22,7 +22,7 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 void main(string[] args) {
 
     // HttpServer server = buildSimpleServer();
-    // HttpServer server = buildServerWithoutDefaultRoute();
+    // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
@@ -79,7 +79,7 @@ HttpServer buildServerWithMultiRoutes() {
 }
 
 
-HttpServer buildServerWithoutDefaultRoute() {
+HttpServer buildServerDefaultRoute() {
     HttpServer server = HttpServer.builder()
         .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
@@ -92,6 +92,25 @@ HttpServer buildServerWithoutDefaultRoute() {
             string content = request.getStringBody();
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
+        })
+        .addNotFoundRoute((RoutingContext ctx) {
+            string content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
+            string title = "404 - not found";
+
+            ctx.responseHeader(HttpHeader.CONTENT_TYPE, "text/html");
+
+            ctx.write("<!DOCTYPE html>")
+                .write("<html>")
+                .write("<head>")
+                .write("<title>")
+                .write(title)
+                .write("</title>")
+                .write("</head>")
+                .write("<body>")
+                .write("<h1> " ~ title ~ " </h1>")
+                .write("<p>" ~ content ~ "</p>")
+                .write("</body>")
+                .end("</html>");
         })
         .build();
     return server;    

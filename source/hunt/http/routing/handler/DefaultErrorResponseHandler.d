@@ -19,9 +19,6 @@ import std.concurrency : initOnce;
 abstract class AbstractErrorResponseHandler : RouteHandler {
 
     void handle(RoutingContext ctx) {
-
-        warning("ddddd=>", ctx.hasNext());
-
         if (ctx.hasNext()) {
             try {
                 ctx.next();

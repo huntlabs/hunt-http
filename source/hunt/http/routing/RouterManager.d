@@ -67,12 +67,12 @@ class RouterMatchResult : Comparable!RouterMatchResult {
 }
 
 
+enum DEFAULT_LAST_ROUTER_ID = int.max / 2;
+
 /**
  * 
  */
 interface RouterManager : RequestAcceptor {
-
-    enum DEFAULT_LAST_ROUTER_ID = int.max / 2;
 
     Router register();
 

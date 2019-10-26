@@ -355,6 +355,15 @@ class HttpServer : AbstractLifecycle {
             return addRoute([path], [GetMethod], handler);
         }
 
+        Builder addNotFoundRoute(RoutingHandler handler) {
+            currentRouter = routerManager.register(DEFAULT_LAST_ROUTER_ID-1);
+            currentRouter.path("*").handler( (RoutingContext ctx) { 
+                ctx.setStatus(HttpStatus.NOT_FOUND_404);
+                handlerWrap(handler, ctx); 
+            });
+            return this;
+        }
+
         Builder registerWebSocket(string path, WebSocketMessageHandler handler) {
             // auto itemPtr = path in webSocketHandlers;
             // if(itemPtr !is null)
