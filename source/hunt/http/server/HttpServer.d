@@ -383,11 +383,17 @@ class HttpServer : AbstractLifecycle {
         private void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
             try {
                 if(handler !is null) handler(ctx);
-            } catch (Exception e) {
-                version(HUNT_DEBUG) errorf("http server handler exception: %s", e.msg);
+            } catch (Exception ex) {
+                version(HUNT_DEBUG) errorf("route handler exception: %s", ex.msg);
                 // version(HUNT_HTTP_DEBUG) error(e);
-                ctx.fail(e);
-            } finally {
+                if(!ctx.isCommitted()) {
+                    HttpServerResponse res = ctx.getResponse();
+                    if(res !is null) {
+                        res.setStatus(HttpStatus.BAD_REQUEST_400);
+                    }
+                    ctx.end(ex.msg);
+                }
+                ctx.fail(ex);
             }
         }
 

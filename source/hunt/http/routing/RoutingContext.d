@@ -128,6 +128,7 @@ abstract class RoutingContext : Closeable {
      * @return If return true, it represents you has set a HTTP body data receiving callback
      */
     bool isAsynchronousRead();
+
     void enableAsynchronousRead();
 
     /**
@@ -135,14 +136,14 @@ abstract class RoutingContext : Closeable {
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool next() { implementationMissing(false); return false;}
+    bool next();
 
     /**
      * If return false, it represents current handler is the last.
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool hasNext() { implementationMissing(false); return false;}
+    bool hasNext();
 
     // <T> RoutingContext complete(Promise<T> promise);
 
@@ -166,12 +167,14 @@ abstract class RoutingContext : Closeable {
     }
 
     void fail(Exception ex) { 
-        version(HUNT_DEBUG) warning(ex);
-        HttpServerResponse res = getResponse();
-        if(res !is null) {
-            res.setStatus(HttpStatus.BAD_REQUEST_400);
-        }
-        end(ex.msg);
+        // version(HUNT_DEBUG) warning(ex);
+        // if(!isCommitted()) {
+        //     HttpServerResponse res = getResponse();
+        //     if(res !is null) {
+        //         res.setStatus(HttpStatus.BAD_REQUEST_400);
+        //     }
+        //     end(ex.msg);
+        // }
     }
 
     // request wrap

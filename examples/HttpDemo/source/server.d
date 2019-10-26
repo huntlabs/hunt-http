@@ -174,7 +174,7 @@ HttpServer buildServerWithUpload() {
                 context.end("wrong data format: " ~ mimeType ~ ",  "  ~ DateTime.getTimeAsGMT());
             }
         })
-        .maxRequestSize(256)
+        .maxRequestSize(256) // test parser exception
         .build();
     return server;    
 }

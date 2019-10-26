@@ -36,7 +36,7 @@ class RouterImpl : Router {
     // private RouteHandler _handler;
     private RoutingHandler _routingHandler;
     private bool _isEnable = true;
-    private List!(string) urlList; // = new ArrayList!(string)();
+    private List!(string) urlList;
 
     this(int id, RouterManagerImpl routerManager) {
         this.id = id;
@@ -88,7 +88,6 @@ class RouterImpl : Router {
 
     override
     Router paths(string[] urlList) {
-        // urlList.forEach(this::path);
         foreach(string u; urlList)
             this.path(u);
 
@@ -175,31 +174,25 @@ class RouterImpl : Router {
     }
 
     Router handler(RouteHandler handler) {
-        this._routingHandler = (RoutingContext ctx) {
-            if(handler !is null)  {
-                version(HUNT_HTTP_DEBUG) trace("current handler: ", typeid(cast(Object)handler));
+        if(handler !is null)  {
+            this._routingHandler = (RoutingContext ctx) {
+                version(HUNT_HTTP_DEBUG) trace("current route handler: ", typeid(cast(Object)handler));
                 handler.handle(ctx); 
-            }
-        };
+            };
+        }
         return this;
     }
 
     Router handler(RoutingHandler h) {
+        assert(h !is null);
         this._routingHandler = h;
-        // this._handler = new class RouteHandler {
-        //      void handle(RoutingContext ctx) { 
-        //          if(this.outer._routingHandler !is null) {
-        //              this.outer._routingHandler(ctx);
-        //          }
-        //       }
-        // };
         return this;
     }
 
     void handle(RoutingContext context) {
-        if(_routingHandler !is null) {
+        // if(_routingHandler !is null) {
             _routingHandler(context);
-        }
+        // }
     }
 
     override
@@ -233,13 +226,11 @@ class RouterImpl : Router {
     //     return _handler;
     // }
 
-    int opCmp(Router o)
-    {
+    int opCmp(Router o) {
         return compare(id, o.getId());
     }
 
-    override int opCmp(Object o)
-    {
+    override int opCmp(Object o) {
         Router r = cast(Router)o;
         if(r is null)
                 throw new NullPointerException();

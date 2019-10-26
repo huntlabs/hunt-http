@@ -124,6 +124,7 @@ class RoutingContextImpl : RoutingContext {
             return false;
 
         Router r = current.getRouter();
+        version(HUNT_HTTP_DEBUG) infof("current router: %d", r.getId());
         r.handle(this);
         return true;
     }

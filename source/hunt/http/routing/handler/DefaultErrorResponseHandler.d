@@ -19,11 +19,14 @@ import std.concurrency : initOnce;
 abstract class AbstractErrorResponseHandler : RouteHandler {
 
     void handle(RoutingContext ctx) {
+
+        warning("ddddd=>", ctx.hasNext());
+
         if (ctx.hasNext()) {
             try {
                 ctx.next();
             } catch (Exception t) {
-                errorf("http handler exception", t);
+                version(HUNT_DEBUG) errorf("http handler exception", t.msg);
                 if (!ctx.isCommitted()) {
                     render(ctx, HttpStatus.INTERNAL_SERVER_ERROR_500, t);
                     ctx.fail(t);
@@ -35,7 +38,7 @@ abstract class AbstractErrorResponseHandler : RouteHandler {
         }
     }
 
-    abstract void render(RoutingContext ctx, int status, Throwable t);
+    void render(RoutingContext ctx, int status, Exception ex);
 }
 
 
@@ -53,7 +56,7 @@ class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
         inst = handler;
     }
 
-    override void render(RoutingContext ctx, int status, Throwable t) {
+    override void render(RoutingContext ctx, int status, Exception t) {
 
         HttpStatusCode code = HttpStatus.getCode(status); 
         if(code == HttpStatusCode.Null)
@@ -62,15 +65,12 @@ class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
         string title = status.to!string() ~ " " ~ code.getMessage();
         string content;
         if(code == HttpStatusCode.NOT_FOUND) {
-                content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
+            content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
+        } else if(code == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+            content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
+        } else {
+            content = title ~ "<br/>" ~ (t !is null ? t.msg : "");
         }
-        else if(code == HttpStatusCode.INTERNAL_SERVER_ERROR) {
-                content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
-        }
-        else {
-                content = title ~ "<br/>" ~ (t !is null ? t.msg : "");
-        }
-        
 
         ctx.setStatus(status);
         ctx.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, "text/html");
