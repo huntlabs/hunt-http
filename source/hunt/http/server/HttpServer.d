@@ -46,6 +46,14 @@ import std.algorithm;
 import std.file;
 import std.path;
 
+// import hunt.Functions;
+
+template Action(T...) {
+    alias Action = void delegate(T);
+}
+
+        
+alias BadRequestHandler = Action!(HttpServerContext); // HttpOutputStream
 
 /**
 */
@@ -406,6 +414,22 @@ class HttpServer : AbstractLifecycle {
             }
         }
 
+        Builder onError(BadRequestHandler handler) {
+            _badRequestHandler = handler;
+            return this;
+        }
+
+        private void onError(HttpServerContext context) {
+            if(_badRequestHandler !is null) {
+                _badRequestHandler(context);
+            }
+            
+            if(!context.isCommitted())
+                context.end();
+        }
+
+        private BadRequestHandler _badRequestHandler;
+
         private ServerHttpHandler buildServerHttpHandler() {
             ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter(_httpOptions);
 
@@ -458,7 +482,19 @@ class HttpServer : AbstractLifecycle {
                     return true;
                 })
                 .badMessage((status, reason, request, response, ot, connection)  {
-                    version(HUNT_HTTP_DEBUG) warningf("badMessage: status=%d reason=%s", status, reason);
+                    version(HUNT_DEBUG) warningf("badMessage: status=%d reason=%s", status, reason);
+
+                    version(HUNT_HTTP_DEBUG) tracef("response is null: %s", response is null);
+                    if(response is null) {
+                        response = new HttpServerResponse(status, reason, null, -1);
+                    }
+                    
+                    HttpServerContext context = new HttpServerContext(
+                        cast(HttpServerRequest) request, 
+                        cast(HttpServerResponse)response, 
+                        ot, cast(HttpServerConnection)connection);
+
+                    onError(context);
                 })
                 .earlyEOF((request, response, ot, connection)  {
                     version(HUNT_HTTP_DEBUG) info("earlyEOF!");

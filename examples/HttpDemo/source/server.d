@@ -21,10 +21,10 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args) {
 
-    // HttpServer server = buildSimpleServer();
+    HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
-    HttpServer server = buildServerWithUpload();
+    // HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
     // HttpServer server = buildServerWithSessionStore();
     
@@ -46,6 +46,12 @@ HttpServer buildSimpleServer() {
             context.write(DateTime.getTimeAsGMT());
             context.write("<br>Hello World!<br>");
             context.end();
+        })
+        .onError((HttpServerContext context) {
+            HttpServerResponse res = context.httpResponse();
+            assert(res !is null);
+            version(HUNT_DEBUG) warningf("badMessage: status=%d reason=%s", 
+                res.getStatus(), res.getReason());
         })
         .build();  
     return server; 

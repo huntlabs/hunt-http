@@ -114,6 +114,10 @@ class Http1ServerRequestHandler : HttpRequestParsingHandler {
     }
 
     override void badMessage(int status, string reason) {
+        if(response is null) {
+            response = new HttpServerResponse(status, reason);
+            outputStream = new Http1ServerResponseOutputStream(response, connection);
+        }
         serverHttpHandler.badMessage(status, reason, request, response, outputStream, connection);
     }
 

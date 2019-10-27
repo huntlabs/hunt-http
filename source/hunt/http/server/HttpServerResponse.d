@@ -20,6 +20,10 @@ class HttpServerResponse : HttpResponse {
 		super(HttpVersion.HTTP_1_1, status, fields, contentLength);
 	}
 
+	this(int status, string reason) {
+		this(status, reason, new HttpFields(), -1);
+	}
+
 	this(int status, string reason, HttpFields fields, long contentLength) {
 		super(HttpVersion.HTTP_1_1, status, reason, fields, contentLength);
 	}

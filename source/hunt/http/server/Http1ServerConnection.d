@@ -320,33 +320,39 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     }
 
     override protected void generateHttpMessageSuccessfully() {
-        version (HUNT_HTTP_DEBUG)
+        version (HUNT_HTTP_DEBUG) {
             tracef("server session %s generates the HTTP message completely",
                     connection.getId());
+        }
 
         HttpResponse response = connection.getResponse();
         HttpRequest request = connection.getRequest();
 
-        string requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);
+        string requestConnectionValue = "close";
+        HttpVersion ver = HttpVersion.HTTP_1_1;
+        if(request !is null) {
+            requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);
+            ver = request.getHttpVersion();
+        }
         string responseConnectionValue = response.getFields().get(HttpHeader.CONNECTION);
-        HttpVersion ver = request.getHttpVersion();
 
-        if (ver == HttpVersion.HTTP_1_0) {
+        if (ver == HttpVersion.HTTP_1_1) { // the persistent connection is default in HTTP 1.1
+            if ("close".equalsIgnoreCase(requestConnectionValue)
+                    || "close".equalsIgnoreCase(responseConnectionValue)) {
+                connection.close();
+            } else {
+                version (HUNT_HTTP_DEBUG) {
+                    infof("the server %s connection %d is persistent",
+                            response.getHttpVersion(), connection.getId());
+                }
+            }
+        } else if (ver == HttpVersion.HTTP_1_0) {
             if ("keep-alive".equalsIgnoreCase(requestConnectionValue)
                     && "keep-alive".equalsIgnoreCase(responseConnectionValue)) {
                 tracef("the server %s connection %s is persistent",
                         response.getHttpVersion(), connection.getId());
             } else {
                 connection.close();
-            }
-        } else if (ver == HttpVersion.HTTP_1_1) { // the persistent connection is default in HTTP 1.1
-            if ("close".equalsIgnoreCase(requestConnectionValue)
-                    || "close".equalsIgnoreCase(responseConnectionValue)) {
-                connection.close();
-            } else {
-                version (HUNT_HTTP_DEBUG)
-                    infof("the server %s connection %d is persistent",
-                            response.getHttpVersion(), connection.getId());
             }
         } else {
             throw new IllegalStateException(

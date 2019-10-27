@@ -37,6 +37,7 @@ import std.container.array;
 import std.string : icmp;
 import std.range;
 
+
 /**
  * 
  */
@@ -264,10 +265,17 @@ class HttpServerRequest : HttpRequest {
     //     return this;
     // }
 
-    package(hunt.http) HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
+    HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
         _messageCompleteHandler = handler;
         return this;
     }
+
+    
+    HttpServerRequest onBadMessage(Action1!HttpServerRequest handler) {
+        _messageCompleteHandler = handler;
+        return this;
+    }
+    
 
     Cookie[] getCookies() {
         if (_cookies is null) {

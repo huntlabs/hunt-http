@@ -5,13 +5,16 @@ import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 
 import hunt.http.codec.http.stream.HttpOutputStream;
+
 import hunt.http.HttpMetaData;
+import hunt.http.HttpStatus;
 
 import hunt.io.Common;
 import hunt.io.BufferedOutputStream;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging.ConsoleLogger;
+
 
 /**
  * 
@@ -24,6 +27,9 @@ class HttpServerContext {
     private HttpServerConnection _connection;
     private BufferedOutputStream _bufferedOutputStream; 
     private int _bufferSize = 8 * 1024;
+    private bool _isEnded = false;
+
+    // private int _status = HttpStatus.OK_200;
 
     // Action1!ByteBuffer _contentHandler;
     // Action1!HttpRequest _contentCompleteHandler;
@@ -117,5 +123,7 @@ class HttpServerContext {
             _httpOutputStream.close();
         }        
     }
+
+
    
 }
