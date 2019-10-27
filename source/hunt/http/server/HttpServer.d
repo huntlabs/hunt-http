@@ -108,12 +108,12 @@ class HttpServer : AbstractLifecycle {
         // httpServerHandler = new HttpServerHandler(options, listener,
         //         serverHttpHandler, webSocketHandler);
 
-        version(WITH_HUNT_SECURITY) {
-            import hunt.net.secure.SecureUtils;
-            import std.file;
-            import std.path;
+        if (options.isSecureConnectionEnabled()) {
+            version(WITH_HUNT_SECURITY) {
+                import hunt.net.secure.SecureUtils;
+                import std.file;
+                import std.path;
             
-            if (options.isSecureConnectionEnabled()) {
                 string sslCertificate = options.sslCertificate();
                 string sslPrivateKey = options.sslPrivateKey();
                 if(sslCertificate.empty() || sslPrivateKey.empty()) {
@@ -129,6 +129,8 @@ class HttpServer : AbstractLifecycle {
                             options.keystorePassword(), options.keyPassword());
                     }
                 }
+            } else {
+                static assert(false, "Please, add subConfigurations for hunt-http with TLS in dub.json.");
             }
         }
 
@@ -423,7 +425,7 @@ class HttpServer : AbstractLifecycle {
             if(_badRequestHandler !is null) {
                 _badRequestHandler(context);
             }
-            
+
             if(!context.isCommitted())
                 context.end();
         }

@@ -35,7 +35,7 @@ class Http1ServerDecoder : DecoderChain {
     override void decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = BufferUtils.toHeapBuffer(buffer);
 
-        Object attachment = session.getAttribute(HttpConnection.NAME); // session.getAttachment();
+        Object attachment = session.getAttribute(HttpConnection.NAME);
         version (HUNT_HTTP_DEBUG) {
             tracef("session type: %s", attachment is null ? "null" : typeid(attachment).name);
         }
