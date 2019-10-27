@@ -2,13 +2,13 @@
 	"name": "http-demo",
 	"description": "A demo for WebSocket Client/Server with Hunt-http.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
-    "homepage": "https://www.huntlabs.net/",
+    "homepage": "https://www.huntlabs.net",
 	"license": "Apache-2.0",
 	"dependencies": {
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG", "HUNT_IO_DEBUG", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE"
+		"HUNT_DEBUG", "HUNT_HTTP_DEBUG", "HUNT_HTTP_DEBUG_MORE"
 	],
 	"configurations": [
 		{
@@ -27,5 +27,6 @@
 				"source/client.d"
 			]
 		}
-	]
+	],
+	"subConfigurations": {"hunt-http" : "tls"}
 }
