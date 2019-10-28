@@ -52,6 +52,7 @@ void testHttpClientWithCookie() {
     string url = "http://127.0.0.1:8080/session/foo";
     HttpClient client = new HttpClient();
     
+    // post
     FormBody form = new FormBody.Builder()
     .add("age", 20)
     .build();
@@ -67,7 +68,21 @@ void testHttpClientWithCookie() {
     foreach(c ; cookies) {
         trace(c.toString());
     }
+
+    // get
+    RequestBuilder rb = new RequestBuilder()
+        .url(url)
+        .cookies(cookies);
+
+    Request request = rb.build();
+    response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        warning("response: ", response.getBody().asString());
+    }
 }
+
 
 Response postForm(HttpClient client, string url, RequestBody content) {
     Request request = new RequestBuilder()

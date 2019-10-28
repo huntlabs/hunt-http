@@ -3,14 +3,16 @@ module hunt.http.client.RequestBuilder;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.client.RequestBody;
 
-import hunt.net.util.HttpURI;
-import hunt.http.HttpMetaData;
+import hunt.http.Cookie;
 import hunt.http.HttpFields;
+import hunt.http.HttpHeader;
+import hunt.http.HttpMetaData;
 import hunt.http.HttpMethod;
 import hunt.http.HttpScheme;
 
 
 import hunt.Exceptions;
+import hunt.net.util.HttpURI;
 
 import std.array;
 import std.algorithm;
@@ -30,24 +32,24 @@ class RequestBuilder {
     // Map<Class<?>, Object> tags = Collections.emptyMap();
 
     this() {
-      this._method = "GET";
-      this._headers = new HttpFields();
+        this._method = "GET";
+        this._headers = new HttpFields();
     }
 
     this(Request request) {
-      this._url = request.getURI();
-      this._method = request.getMethod();
-      this._requestBody = request.getBody();
+        this._url = request.getURI();
+        this._method = request.getMethod();
+        this._requestBody = request.getBody();
     //   this.tags = request.tags.isEmpty()
     //       ? Collections.emptyMap()
     //       : new LinkedHashMap<>(request.tags);
-      this._headers = request.getFields();
+        this._headers = request.getFields();
     }
 
     RequestBuilder url(HttpURI url) {
-      if (url is null) throw new NullPointerException("url is null");
-      this._url = url;
-      return this;
+        if (url is null) throw new NullPointerException("url is null");
+        this._url = url;
+        return this;
     }
 
     /**
@@ -57,16 +59,16 @@ class RequestBuilder {
      * exception by calling {@link HttpURI#parse}; it returns null for invalid URLs.
      */
     RequestBuilder url(string httpUri) {
-      if (httpUri is null) throw new NullPointerException("url is null");
+        if (httpUri is null) throw new NullPointerException("url is null");
 
-      // Silently replace web socket URLs with HTTP URLs.
-      if (httpUri.length >= 3 && icmp(httpUri[0..3], "ws:") == 0) {
-        httpUri = "http:" ~ httpUri[3 .. $];
-      } else if (httpUri.length >=4 && icmp(httpUri[0 .. 4], "wss:") == 0) {
-        httpUri = "https:" ~ httpUri[4 .. $];
-      }
+        // Silently replace web socket URLs with HTTP URLs.
+        if (httpUri.length >= 3 && icmp(httpUri[0..3], "ws:") == 0) {
+            httpUri = "http:" ~ httpUri[3 .. $];
+        } else if (httpUri.length >=4 && icmp(httpUri[0 .. 4], "wss:") == 0) {
+            httpUri = "https:" ~ httpUri[4 .. $];
+        }
 
-      return url(new HttpURI(httpUri));
+        return url(new HttpURI(httpUri));
     }
 
 
@@ -75,8 +77,8 @@ class RequestBuilder {
      * with that name, they are all replaced.
      */
     RequestBuilder header(string name, string value) {
-      _headers.put(name, value);
-      return this;
+        _headers.put(name, value);
+        return this;
     }
 
     /**
@@ -87,20 +89,20 @@ class RequestBuilder {
      * OkHttp may replace {@code value} with a header derived from the request body.
      */
     RequestBuilder addHeader(string name, string value) {
-      _headers.add(name, value);
-      return this;
+        _headers.add(name, value);
+        return this;
     }
 
     /** Removes all headers named {@code name} on this builder. */
     RequestBuilder removeHeader(string name) {
-      _headers.remove(name);
-      return this;
+        _headers.remove(name);
+        return this;
     }
 
     /** Removes all headers on this builder and adds {@code headers}. */
     RequestBuilder headers(HttpFields headers) {
-      _headers = headers;
-      return this;
+        _headers = headers;
+        return this;
     }
 
     /**
@@ -115,45 +117,56 @@ class RequestBuilder {
     // }
 
     RequestBuilder get() {
-      return method("GET", null);
+        return method("GET", null);
     }
 
     RequestBuilder head() {
-      return method("HEAD", null);
+        return method("HEAD", null);
     }
 
     RequestBuilder post(RequestBody requestBody) {
-      return method("POST", requestBody);
+        return method("POST", requestBody);
     }
 
     RequestBuilder del(RequestBody requestBody) {
-      return method("DELETE", requestBody);
+        return method("DELETE", requestBody);
     }
 
     RequestBuilder del() {
-      return method("DELETE", null);
+        return method("DELETE", null);
     }
 
     RequestBuilder put(RequestBody requestBody) {
-      return method("PUT", requestBody);
+        return method("PUT", requestBody);
     }
 
     RequestBuilder patch(RequestBody requestBody) {
-      return method("PATCH", requestBody);
+        return method("PATCH", requestBody);
     }
 
     RequestBuilder method(string method, RequestBody requestBody) {
-      if (method.empty) throw new NullPointerException("method is empty");
+        if (method.empty) throw new NullPointerException("method is empty");
 
-      if (requestBody !is null && !HttpMethod.permitsRequestBody(method)) {
-        throw new IllegalArgumentException("method " ~ method ~ " must not have a request body.");
-      }
-      if (requestBody is null && HttpMethod.requiresRequestBody(method)) {
-        throw new IllegalArgumentException("method " ~ method ~ " must have a request body.");
-      }
-      this._method = method;
-      this._requestBody = requestBody;
-      return this;
+        if (requestBody !is null && !HttpMethod.permitsRequestBody(method)) {
+            throw new IllegalArgumentException("method " ~ method ~ " must not have a request body.");
+        }
+        if (requestBody is null && HttpMethod.requiresRequestBody(method)) {
+            throw new IllegalArgumentException("method " ~ method ~ " must have a request body.");
+        }
+        this._method = method;
+        this._requestBody = requestBody;
+        return this;
+    }
+
+    /**
+     * Set the cookies.
+     *
+     * @param cookies The cookies.
+     * @return RequestBuilder
+     */
+	RequestBuilder cookies(Cookie[] cookies) {
+        _headers.put(HttpHeader.COOKIE, generateCookies(cookies));
+		return this;
     }
 
     /** Attaches {@code tag} to the request using {@code Object.class} as a key. */
@@ -183,7 +196,7 @@ class RequestBuilder {
     // }
 
     Request build() {
-      if (_url is null) throw new IllegalStateException("url is null");
-      return new Request(_method, _url, _headers, _requestBody);
+        if (_url is null) throw new IllegalStateException("url is null");
+        return new Request(_method, _url, _headers, _requestBody);
     }
 }

@@ -3,6 +3,7 @@ module hunt.http.client.HttpClientRequest;
 import hunt.http.client.RequestBody;
 import hunt.http.client.RequestBuilder;
 
+import hunt.http.Cookie;
 import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
@@ -22,6 +23,7 @@ alias Request = HttpClientRequest;
 class HttpClientRequest : HttpRequest {
 
 	private RequestBody _body;
+	private Cookie[] _cookies;
 
 	this(string method, string uri) {
 		HttpFields fields = new HttpFields();
@@ -67,4 +69,5 @@ class HttpClientRequest : HttpRequest {
 	RequestBuilder newBuilder() {
 		return new RequestBuilder(this);
 	}
+	
 }
