@@ -1,20 +1,30 @@
 module hunt.http.client.HttpClientResponse;
 
+import hunt.http.Cookie;
+import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
 
+
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
 import hunt.Exceptions;
 
+import std.algorithm;
+import std.array;
+
 alias Response = HttpClientResponse;
 
+/**
+ * 
+ */
 class HttpClientResponse : HttpResponse {
 
-	ResponseBody _body;
+	private ResponseBody _body;
+	private Cookie[] _cookies;
 	
 	this(HttpVersion ver, int status, string reason) {
 		this(ver, status, reason, new HttpFields(), long.min);
@@ -60,6 +70,16 @@ class HttpClientResponse : HttpResponse {
 				return false;
 		}
 	}
+	
+	Cookie[] cookies() {
+        if (_cookies is null) {
+            _cookies = getFields().getValuesList(HttpHeader.SET_COOKIE)
+					.map!(parseSetCookie).array;
+        }
+		
+		return _cookies;
+    }
+
 }
 
 /**

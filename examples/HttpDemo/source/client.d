@@ -1,18 +1,21 @@
 
 module HttpClientTest;
 
-import hunt.http.client.HttpClient;
-import hunt.http.client.HttpClientConnection;
-import hunt.http.client.RequestBuilder;
-import hunt.http.client.Call;
+import hunt.http.client;
 
-import hunt.http.client.HttpClientResponse;
-import hunt.http.client.HttpClientRequest;
-import hunt.http.client.FormBody;
-import hunt.http.client.RequestBody;
+// import hunt.http.client.HttpClient;
+// import hunt.http.client.HttpClientConnection;
+// import hunt.http.client.RequestBuilder;
+// import hunt.http.client.Call;
 
-import hunt.http.HttpFields;
-import hunt.http.HttpField;
+// import hunt.http.client.HttpClientResponse;
+// import hunt.http.client.HttpClientRequest;
+// import hunt.http.client.FormBody;
+// import hunt.http.client.RequestBody;
+
+// import hunt.http.HttpFields;
+// import hunt.http.HttpField;
+import hunt.net.util.UrlEncoded;
 
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
@@ -21,19 +24,60 @@ import hunt.util.MimeType;
 
 import std.stdio;
 
+
+// string str = runGet("http://10.1.222.120/test.html");
+// enum string httpUrl = runGet("http://10.1.222.120:8080/index.html");
+// string str = runGet("http://127.0.0.1:8080/json");
+// string str = runGet("http://www.putao.com/");
+
 void main(string[] args) {
 
-    HttpClientTest test = new HttpClientTest();
-    try {
-    test.testGet();
-    // test.testGetHttps();
-    // test.testAsynchronousGet();
-    // test.testPost();
-    // test.testFormPost();
+    // HttpClientTest test = new HttpClientTest();
+    // try {
+    // test.testGet();
+    // // test.testGetHttps();
+    // // test.testAsynchronousGet();
+    // // test.testPost();
+    // // test.testFormPost();
         
-    } catch(Exception ex) {
-        warning(ex);
+    // } catch(Exception ex) {
+    //     warning(ex);
+    // }
+
+    testHttpClientWithCookie();
+}
+
+
+void testHttpClientWithCookie() {
+    string url = "http://127.0.0.1:8080/session/foo";
+    HttpClient client = new HttpClient();
+    
+    FormBody form = new FormBody.Builder()
+    .add("age", 20)
+    .build();
+
+    Response response = postForm(client, url, form);
+
+    if(response.haveBody()) {
+        warningf("response: %s", response.getBody().asString());    
     }
+
+    Cookie[] cookies = response.cookies();
+
+    foreach(c ; cookies) {
+        trace(c.toString());
+    }
+}
+
+Response postForm(HttpClient client, string url, RequestBody content) {
+    Request request = new RequestBuilder()
+        .url(url)
+        .header("Authorization", "Basic cHV0YW86MjAxOQ==")
+        .post(content)
+        .build();
+
+    Response response = client.newCall(request).execute();
+    return response;
 }
 
 
@@ -111,7 +155,6 @@ class HttpClientTest {
 
 	// 
     void testPost() {
-        import hunt.net.util.UrlEncoded;
         UrlEncoded encoder = new UrlEncoded;
         encoder.put("email", "test@putao.com");
         encoder.put("password", "test");

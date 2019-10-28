@@ -30,7 +30,7 @@ class HttpServerResponse : HttpResponse {
 
 	
     HttpServerResponse addCookie(Cookie cookie) {
-        getFields().add(HttpHeader.SET_COOKIE, CookieGenerator.generateSetCookie(cookie));
+        getFields().add(HttpHeader.SET_COOKIE, generateSetCookie(cookie));
         return this;
     }
 

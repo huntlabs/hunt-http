@@ -32,6 +32,7 @@ import hunt.text.Common;
 import hunt.util.Common;
 import hunt.util.MimeTypeUtils;
 
+import std.algorithm;
 import std.array;
 import std.container.array;
 import std.string : icmp;
@@ -278,16 +279,23 @@ class HttpServerRequest : HttpRequest {
     
 
     Cookie[] getCookies() {
+        // if (_cookies is null) {
+		// 	Array!(Cookie) list;
+		// 	foreach(string v; getFields().getValuesList(HttpHeader.COOKIE)) {
+		// 		if(v.empty) continue;
+		// 		foreach(Cookie c; parseCookie(v))
+		// 			list.insertBack(c);
+		// 	}
+		// 	_cookies = list.array();
+        // }
+        // return _cookies;
+        
         if (_cookies is null) {
-			Array!(Cookie) list;
-			foreach(string v; getFields().getValuesList(HttpHeader.COOKIE)) {
-				if(v.empty) continue;
-				foreach(Cookie c; CookieParser.parseCookie(v))
-					list.insertBack(c);
-			}
-			_cookies = list.array();
+            _cookies = getFields().getValuesList(HttpHeader.SET_COOKIE)
+					.map!(parseSetCookie).array;
         }
-        return _cookies;
+		
+		return _cookies;
     }
 
 

@@ -1,16 +1,18 @@
 module hunt.http.client.FormBody;
 
 import hunt.http.client.RequestBody;
-import hunt.net.util.UrlEncoded;
-import hunt.util.MimeType;
-import hunt.Exceptions;
-
-import std.array;
-import std.container;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
+import hunt.Exceptions;
+import hunt.net.util.UrlEncoded;
+import hunt.util.MimeType;
+
+import std.array;
+import std.conv;
+import std.container;
+
 
 /**
 */
@@ -115,6 +117,10 @@ final class FormBody : RequestBody {
 			values.insertBack(UrlEncoded.encodeString(value));
 
 			return this;
+		}
+
+		Builder add(T)(string name, T value) if(!is(T == string)) {
+			return add(name, to!string(value));
 		}
 
 		Builder addEncoded(string name, string value) {

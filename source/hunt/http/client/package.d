@@ -1,5 +1,6 @@
 module hunt.http.client;
 
+public import hunt.http.client.Call;
 public import hunt.http.client.ClientHttp2SessionListener;
 public import hunt.http.client.ClientHttpHandler;
 public import hunt.http.client.Http1ClientConnection;
@@ -22,6 +23,7 @@ public import hunt.http.client.RequestBody;
 public import hunt.http.client.FormBody;
 
 
+
 // Common modules
 public import hunt.http.Cookie;
 public import hunt.http.HttpConnection;
@@ -40,3 +42,6 @@ public import hunt.http.HttpVersion;
 public import hunt.http.MultipartForm;
 public import hunt.http.MultipartOptions;
 public import hunt.http.WebSocketPolicy;
+
+public import hunt.util.MimeType;
+public import hunt.net.util.UrlEncoded;
