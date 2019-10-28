@@ -4,10 +4,13 @@ import hunt.collection.List;
 import hunt.Exceptions;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
+import hunt.text.StringUtils;
 
 import std.array;
+import std.container.array;
 import std.conv;
 import std.string;
+
 
 /** 
  * 
@@ -397,101 +400,180 @@ class Cookie {
 
 }
 
-/** 
- * 
- */
-struct CookieGenerator {
+/* ----------------------------- CookieGenerator ---------------------------- */
 
-	static string generateCookies(List!Cookie cookies) {
-		if (cookies is null) {
-			throw new IllegalArgumentException("the cookie list is null");
-		}
-
-		if (cookies.size() == 1) {
-			return generateCookie(cookies.get(0));
-		} else if (cookies.size() > 1) {
-			StringBuilder sb = new StringBuilder();
-
-			sb.append(generateCookie(cookies.get(0)));
-			for (int i = 1; i < cookies.size(); i++) {
-				sb.append(';').append(generateCookie(cookies.get(i)));
-			}
-
-			return sb.toString();
-		} else {
-			throw new IllegalArgumentException("the cookie list size is 0");
-		}
+string generateCookies(Cookie[] cookies) {
+	if (cookies is null) {
+		throw new IllegalArgumentException("the cookie list is null");
 	}
 
-	static string generateCookie(Cookie cookie) {
-		if (cookie is null) {
-			throw new IllegalArgumentException("the cookie is null");
-		} else {
-			return cookie.getName() ~ "=" ~ cookie.getValue();
+	if (cookies.length == 1) {
+		return generateCookie(cookies[0]);
+	} else if (cookies.length > 1) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(generateCookie(cookies[0]));
+		for (size_t i = 1; i < cookies.length; i++) {
+			sb.append(';').append(generateCookie(cookies[i]));
 		}
+
+		return sb.toString();
+	} else {
+		throw new IllegalArgumentException("the cookie list size is 0");
 	}
-
-	static string generateSetCookie(Cookie cookie) {
-		if (cookie is null) {
-			throw new IllegalArgumentException("the cookie is null");
-		} else {
-			StringBuilder sb = new StringBuilder();
-
-			sb.append(cookie.getName()).append('=').append(cookie.getValue());
-
-			if (!empty(cookie.getComment())) {
-				sb.append(";Comment=").append(cookie.getComment());
-			}
-
-			if (!empty(cookie.getDomain())) {
-				sb.append(";Domain=").append(cookie.getDomain());
-			}
-			if (cookie.getMaxAge() >= 0) {
-				sb.append(";Max-Age=").append(cookie.getMaxAge());
-			}
-
-			string path = empty(cookie.getPath()) ? "/" : cookie.getPath();
-			sb.append(";Path=").append(path);
-
-			if (cookie.getSecure()) {
-				sb.append(";Secure");
-			}
-
-			sb.append(";Version=").append(cookie.getVersion());
-
-			return sb.toString();
-		}
-	}
-
-	// static string generateServletSetCookie(javax.servlet.http.Cookie cookie) {
-	// 	if (cookie == null) {
-	// 		throw new IllegalArgumentException("the cookie is null");
-	// 	} else {
-	// 		StringBuilder sb = new StringBuilder();
-
-	// 		sb.append(cookie.getName()).append('=').append(cookie.getValue());
-
-	// 		if (VerifyUtils.isNotEmpty(cookie.getComment())) {
-	// 			sb.append(";Comment=").append(cookie.getComment());
-	// 		}
-
-	// 		if (VerifyUtils.isNotEmpty(cookie.getDomain())) {
-	// 			sb.append(";Domain=").append(cookie.getDomain());
-	// 		}
-	// 		if (cookie.getMaxAge() >= 0) {
-	// 			sb.append(";Max-Age=").append(cookie.getMaxAge());
-	// 		}
-
-	// 		string path = VerifyUtils.isEmpty(cookie.getPath()) ? "/" : cookie.getPath();
-	// 		sb.append(";Path=").append(path);
-
-	// 		if (cookie.getSecure()) {
-	// 			sb.append(";Secure");
-	// 		}
-
-	// 		sb.append(";Version=").append(cookie.getVersion());
-
-	// 		return sb.toString();
-	// 	}
-	// }
 }
+
+string generateCookies(List!Cookie cookies) {
+	if (cookies is null) {
+		throw new IllegalArgumentException("the cookie list is null");
+	}
+
+	if (cookies.size() == 1) {
+		return generateCookie(cookies.get(0));
+	} else if (cookies.size() > 1) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(generateCookie(cookies.get(0)));
+		for (int i = 1; i < cookies.size(); i++) {
+			sb.append(';').append(generateCookie(cookies.get(i)));
+		}
+
+		return sb.toString();
+	} else {
+		throw new IllegalArgumentException("the cookie list size is 0");
+	}
+}
+
+string generateCookie(Cookie cookie) {
+	if (cookie is null) {
+		throw new IllegalArgumentException("the cookie is null");
+	} else {
+		return cookie.getName() ~ "=" ~ cookie.getValue();
+	}
+}
+
+string generateSetCookie(Cookie cookie) {
+	if (cookie is null) {
+		throw new IllegalArgumentException("the cookie is null");
+	} else {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(cookie.getName()).append('=').append(cookie.getValue());
+
+		if (!empty(cookie.getComment())) {
+			sb.append(";Comment=").append(cookie.getComment());
+		}
+
+		if (!empty(cookie.getDomain())) {
+			sb.append(";Domain=").append(cookie.getDomain());
+		}
+		if (cookie.getMaxAge() >= 0) {
+			sb.append(";Max-Age=").append(cookie.getMaxAge());
+		}
+
+		string path = empty(cookie.getPath()) ? "/" : cookie.getPath();
+		sb.append(";Path=").append(path);
+
+		if (cookie.getSecure()) {
+			sb.append(";Secure");
+		}
+
+		sb.append(";Version=").append(cookie.getVersion());
+
+		return sb.toString();
+	}
+}
+
+// string generateServletSetCookie(javax.servlet.http.Cookie cookie) {
+// 	if (cookie == null) {
+// 		throw new IllegalArgumentException("the cookie is null");
+// 	} else {
+// 		StringBuilder sb = new StringBuilder();
+
+// 		sb.append(cookie.getName()).append('=').append(cookie.getValue());
+
+// 		if (VerifyUtils.isNotEmpty(cookie.getComment())) {
+// 			sb.append(";Comment=").append(cookie.getComment());
+// 		}
+
+// 		if (VerifyUtils.isNotEmpty(cookie.getDomain())) {
+// 			sb.append(";Domain=").append(cookie.getDomain());
+// 		}
+// 		if (cookie.getMaxAge() >= 0) {
+// 			sb.append(";Max-Age=").append(cookie.getMaxAge());
+// 		}
+
+// 		string path = VerifyUtils.isEmpty(cookie.getPath()) ? "/" : cookie.getPath();
+// 		sb.append(";Path=").append(path);
+
+// 		if (cookie.getSecure()) {
+// 			sb.append(";Secure");
+// 		}
+
+// 		sb.append(";Version=").append(cookie.getVersion());
+
+// 		return sb.toString();
+// 	}
+// }
+
+/* ------------------------------ CookieParser ------------------------------ */
+
+alias CookieParsingHandler = void delegate(string name, string value);
+
+void parseCookies(string cookieStr, CookieParsingHandler callback) {
+	if (empty(cookieStr)) {
+		throw new IllegalArgumentException("the cookie string is empty");
+	} else {
+		string[] cookieKeyValues = StringUtils.split(cookieStr, ";");
+		foreach (string cookieKeyValue ; cookieKeyValues) {
+			string[] kv = StringUtils.split(cookieKeyValue, "=", 2);
+			if (kv != null) {
+				if (kv.length == 2) {
+					callback(kv[0].strip(), kv[1].strip());
+				} else if (kv.length == 1) {
+					callback(kv[0].strip(), "");
+				} else {
+					throw new IllegalStateException("the cookie string format error");
+				}
+			} else {
+				throw new IllegalStateException("the cookie string format error");
+			}
+		}
+	}
+}
+
+Cookie parseSetCookie(string cookieStr) {
+	Cookie cookie = new Cookie();
+	parseCookies(cookieStr, (name, value) {
+		if ("Comment".equalsIgnoreCase(name)) {
+			cookie.setComment(value);
+		} else if ("Domain".equalsIgnoreCase(name)) {
+			cookie.setDomain(value);
+		} else if ("Max-Age".equalsIgnoreCase(name)) {
+			cookie.setMaxAge(to!int(value));
+		} else if ("Path".equalsIgnoreCase(name)) {
+			cookie.setPath(value);
+		} else if ("Secure".equalsIgnoreCase(name)) {
+			cookie.setSecure(true);
+		} else if ("Version".equalsIgnoreCase(name)) {
+			cookie.setVersion(to!int(value));
+		} else {
+			cookie.setName(name);
+			cookie.setValue(value);
+		}
+
+	});
+	return cookie;
+}
+
+Cookie[] parseCookie(string cookieStr) {
+	Array!(Cookie) list;
+	parseCookies(cookieStr, (name, value) { list.insertBack(new Cookie(name, value)); });
+	return list.array();
+}
+
+// List<javax.servlet.http.Cookie> parserServletCookie(string cookieStr) {
+//     List<javax.servlet.http.Cookie> list = new ArrayList<>();
+//     parseCookies(cookieStr, (name, value) -> list.add(new javax.servlet.http.Cookie(name, value)));
+//     return list;
+// }

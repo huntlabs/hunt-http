@@ -45,6 +45,7 @@ public import hunt.http.WebSocketFrame;
 public import hunt.http.WebSocketPolicy;
 
 public import hunt.util.MimeType;
+public import hunt.net.util.UrlEncoded;
 
 // Router modules
 public import hunt.http.routing;

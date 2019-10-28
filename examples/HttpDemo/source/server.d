@@ -21,12 +21,12 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 
 void main(string[] args) {
 
-    HttpServer server = buildSimpleServer();
+    // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
-    // HttpServer server = buildServerWithSessionStore();
+    HttpServer server = buildServerWithSessionStore();
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
@@ -249,7 +249,7 @@ HttpServer buildServerWithWebSocket() {
 HttpServer buildServerWithSessionStore() {
     // 
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .enableLocalSessionStore()
         .addRoute("/plain*", (RoutingContext context) {
