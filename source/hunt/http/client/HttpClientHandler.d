@@ -42,6 +42,11 @@ class HttpClientHandler : HttpConnectionHandler {
     override
     void connectionOpened(Connection connection) {
         HttpClientContext context = _httpClientContext; //.get(connection.getId());
+        
+        version(HUNT_HTTP_DEBUG) {
+            infof("Http connection %d opened", connection.getId());
+        }
+        connection.setState(ConnectionState.Opened);
 
         if (context is null) {
             errorf("http2 client can not get the client context of connection %s", connection.getId());

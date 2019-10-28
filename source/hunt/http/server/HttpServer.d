@@ -53,7 +53,7 @@ template Action(T...) {
 }
 
         
-alias BadRequestHandler = Action!(HttpServerContext); // HttpOutputStream
+alias BadRequestHandler = Action!(HttpServerContext); 
 
 /**
 */

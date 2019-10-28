@@ -2,7 +2,7 @@ module hunt.http.client.RealCall;
 
 import hunt.http.client.Call;
 import hunt.http.client.ClientHttpHandler;
-
+import hunt.http.client.CookieStore;
 import hunt.http.client.HttpClient;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientResponse;
@@ -16,6 +16,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.HttpConnection;
 import hunt.http.HttpFields;
 import hunt.http.HttpField;
+import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
@@ -39,6 +40,7 @@ import core.sync.mutex;
 
 import std.parallelism;
 import std.conv;
+import hunt.http.Cookie;
 
 
 /**
@@ -62,7 +64,7 @@ class RealCall : Call {
         
         version(WITH_HUNT_SECURITY) {
             if(request.isHttps()) {
-                client.getHttpConfiguration().setSecureConnectionEnabled(true);
+                client.getHttpOptions().setSecureConnectionEnabled(true);
             }
         }
 		responseLocker = new Mutex();
@@ -84,6 +86,7 @@ class RealCall : Call {
             if (executed) throw new IllegalStateException("Already Executed");
                 executed = true;
         }
+
         responseLocker.lock();
         scope(exit) {
             responseLocker.unlock();
@@ -92,6 +95,29 @@ class RealCall : Call {
         HttpClientResponse hcr;
 
         AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
+
+            override bool headerComplete(HttpRequest request, HttpResponse response,
+                    HttpOutputStream output, HttpConnection connection) {
+                version(HUNT_HTTP_DEBUG) info("headerComplete!");
+                    
+                HttpClientRequest req = cast(HttpClientRequest)request;
+                assert(req !is null);
+
+                HttpClientResponse res = cast(HttpClientResponse)response;
+                assert(res !is null);
+
+                if(req.isCookieStoreEnabled()) {
+
+                    CookieStore store = client.getCookieStore();
+                    if(store !is null) {
+                        foreach(Cookie c; res.cookies()) {
+                            store.addCookie(c);
+                        }
+                    }
+                }
+
+                return true;
+            }
 
             override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
@@ -127,7 +153,7 @@ class RealCall : Call {
 
         doRequestTask(httpHandler);
 
-        HttpOptions options = client.getHttpConfiguration();
+        HttpOptions options = client.getHttpOptions();
         TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
         Duration idleTimeout = tcpOptions.getIdleTimeout();     
 
@@ -197,8 +223,22 @@ class RealCall : Call {
             string scheme = uri.getScheme();
             int port = uri.getPort();
 
-            version(HUNT_HTTP_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
+            version(HUNT_HTTP_DEBUG) infof("new request: scheme=%s, host=%s, port=%d", 
                 scheme, uri.getHost(), port);
+
+            // set cookie from cookie store
+            if(originalRequest.isCookieStoreEnabled()) {
+                CookieStore store = client.getCookieStore();
+                HttpFields fields = originalRequest.getFields();
+                
+                if(store !is null && fields !is null) {
+                    auto cookies = store.getCookies();
+                    
+                    if(cookies !is null)
+                        fields.put(HttpHeader.COOKIE, generateCookies(store.getCookies()));
+                }
+            }
+
 
             FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
 
@@ -208,12 +248,11 @@ class RealCall : Call {
             HttpConnection connection;
             try {
                 client.connect(uri.getHost(), port, promise);
-                NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().getTcpConfiguration();
+                NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpOptions().getTcpConfiguration();
                 connection = promise.get(tcpConfig.getConnectTimeout());
             } catch(Exception ex) {
-                version(HUNT_DEBUG) {
-                    warning(ex);
-                }
+                version(HUNT_DEBUG)  warning(ex.msg);
+                version(HUNT_HTTP_DEBUG) warning(ex);
                 client.close();
                 throw new IOException("Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string());
             }

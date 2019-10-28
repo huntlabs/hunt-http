@@ -3,19 +3,6 @@ module HttpClientTest;
 
 import hunt.http.client;
 
-// import hunt.http.client.HttpClient;
-// import hunt.http.client.HttpClientConnection;
-// import hunt.http.client.RequestBuilder;
-// import hunt.http.client.Call;
-
-// import hunt.http.client.HttpClientResponse;
-// import hunt.http.client.HttpClientRequest;
-// import hunt.http.client.FormBody;
-// import hunt.http.client.RequestBody;
-
-// import hunt.http.HttpFields;
-// import hunt.http.HttpField;
-import hunt.net.util.UrlEncoded;
 
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
@@ -51,6 +38,7 @@ void main(string[] args) {
 void testHttpClientWithCookie() {
     string url = "http://127.0.0.1:8080/session/foo";
     HttpClient client = new HttpClient();
+    client.useCookieStore();
     
     // post
     FormBody form = new FormBody.Builder()
@@ -63,19 +51,20 @@ void testHttpClientWithCookie() {
         warningf("response: %s", response.getBody().asString());    
     }
 
-    Cookie[] cookies = response.cookies();
+    // Cookie[] cookies = response.cookies();
 
-    foreach(c ; cookies) {
-        trace(c.toString());
-    }
+    // foreach(c ; cookies) {
+    //     trace(c.toString());
+    // }
 
     // get
     RequestBuilder rb = new RequestBuilder()
-        .url(url)
-        .cookies(cookies);
+        .url(url);
+    // rb.cookies(cookies);
 
     Request request = rb.build();
     response = client.newCall(request).execute();
+
 
     if (response !is null) {
         tracef("status code: %d", response.getStatus());

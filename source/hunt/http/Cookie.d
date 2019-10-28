@@ -9,6 +9,7 @@ import hunt.text.StringUtils;
 import std.array;
 import std.container.array;
 import std.conv;
+import std.datetime;
 import std.string;
 
 
@@ -151,7 +152,7 @@ class Cookie {
 	 *
 	 * @see #setDomain
 	 */
-	string getDomain() {
+	string getDomain() nothrow {
 		return domain;
 	}
 
@@ -228,7 +229,7 @@ class Cookie {
 	 *
 	 * @see #setPath
 	 */
-	string getPath() {
+	string getPath() nothrow {
 		return path;
 	}
 
@@ -274,7 +275,7 @@ class Cookie {
 	 *
 	 * @return the name of the cookie
 	 */
-	string getName() {
+	string getName() nothrow {
 		return name;
 	}
 
@@ -388,6 +389,17 @@ class Cookie {
 	 */
 	bool isHttpOnly() {
 		return _isHttpOnly;
+	}
+
+
+    /**
+     * Returns true if this cookie has expired.
+     * @param date Current time
+     *
+     * @return {@code true} if the cookie has expired.
+     */
+	bool isExpired(SysTime time) {
+		return maxAge != -1 && maxAge < time.toUnixTime();
 	}
 
 	override

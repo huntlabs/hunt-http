@@ -1,6 +1,8 @@
 module hunt.http.client.HttpClient;
 
+import hunt.http.client.Call;
 import hunt.http.client.ClientHttp2SessionListener;
+import hunt.http.client.CookieStore;
 import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientHandler;
 import hunt.http.client.Http1ClientDecoder;
@@ -9,13 +11,15 @@ import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.HttpClientOptions;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
-import hunt.http.client.Call;
+import hunt.http.client.MemoryCookieStore;
+
 import hunt.http.client.RealCall;
+import hunt.http.client.RequestBody;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
-// import hunt.http.util.Completable;
+
 import hunt.http.HttpOptions;
 
 import hunt.Exceptions;
@@ -43,9 +47,10 @@ class HttpClient : AbstractLifecycle {
 
     private NetClientOptions clientOptions;
     private NetClient[int] _netClients;
-    private HttpClientOptions httpConfiguration;
+    private HttpClientOptions _httpOptions;
     private Callback _onClosed = null;
     private bool _isConnected = false;
+    private CookieStore _cookieStore;
 
     this() {
         NetClientOptions clientOptions = new NetClientOptions();
@@ -65,7 +70,7 @@ class HttpClient : AbstractLifecycle {
             clientOptions = new NetClientOptions();
             c.setTcpConfiguration(clientOptions);
         }
-        this.httpConfiguration = c;
+        this._httpOptions = c;
          // = new ConcurrentHashMap!()();
 
         start();
@@ -113,25 +118,23 @@ class HttpClient : AbstractLifecycle {
             Decoder getDecoder() {
                 return decoder;
             }
-        }).setHandler(new HttpClientHandler(httpConfiguration, clientContext));
+        })
+        .setHandler(new HttpClientHandler(_httpOptions, clientContext));
 
         client.setOnClosed(_onClosed);
-
         client.connect(host, port);
-
         _isConnected = client.isConnected();
     }
 
-    HttpClientOptions getHttpConfiguration() {
-        return httpConfiguration;
+    HttpClientOptions getHttpOptions() {
+        return _httpOptions;
     }
 
     void close() {
         stop();
     }
 
-    void setOnClosed(Callback callback)
-    {
+    void setOnClosed(Callback callback) {
         _onClosed = callback;
     }
 
@@ -149,6 +152,33 @@ class HttpClient : AbstractLifecycle {
 
     bool isConnected() {
         return _isConnected;
+    }
+
+    /**
+     * Sets the handler that can accept cookies from incoming HTTP responses and provides cookies to
+     * outgoing HTTP requests.
+     *
+     * <p>If unset, {@linkplain CookieStore#NO_COOKIES no cookies} will be accepted nor provided.
+     */
+    HttpClient useCookieStore() {
+        _cookieStore = new MemoryCookieStore();
+        return this;
+    }
+    
+    /** 
+     * 
+     * Params:
+     *   store = 
+     * Returns: 
+     */
+    HttpClient useCookieStore(CookieStore store) {
+        if (store is null) throw new NullPointerException("CookieStore is null");
+        _cookieStore = store;
+        return this;
+    }
+
+    CookieStore getCookieStore() {
+        return _cookieStore;
     }
 
    /**
