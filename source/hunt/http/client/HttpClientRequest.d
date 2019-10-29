@@ -4,6 +4,7 @@ import hunt.http.client.CookieStore;
 import hunt.http.client.MemoryCookieStore;
 import hunt.http.client.RequestBody;
 
+import hunt.http.AuthenticationScheme;
 import hunt.http.Cookie;
 import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
@@ -166,6 +167,11 @@ class HttpClientRequest : HttpRequest {
         /** Removes all headers on this builder and adds {@code headers}. */
         Builder headers(HttpFields headers) {
             _headers = headers;
+            return this;
+        }
+
+        Builder authorization(AuthenticationScheme scheme, string token) {
+            header("Authorization", scheme ~ " " ~ token);
             return this;
         }
 

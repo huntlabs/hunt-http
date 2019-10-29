@@ -52,7 +52,6 @@ void testHttpClientWithCookie() {
     }
 
     // Cookie[] cookies = response.cookies();
-
     // foreach(c ; cookies) {
     //     trace(c.toString());
     // }
@@ -76,7 +75,8 @@ void testHttpClientWithCookie() {
 Response postForm(HttpClient client, string url, RequestBody content) {
     Request request = new RequestBuilder()
         .url(url)
-        .header("Authorization", "Basic cHV0YW86MjAxOQ==")
+        // .header("Authorization", "Basic cHV0YW86MjAxOQ==")
+        .authorization(AuthenticationScheme.Basic, "cHV0YW86MjAxOQ==")
         .post(content)
         .build();
 
