@@ -98,12 +98,21 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
     private void cleaup() {
         mapMutex.lock();
         scope(exit) mapMutex.unlock();
+        string[] ids;
         foreach(string id, HttpSession session; map) {
             if (session.isInvalid()) {
-                map.remove(id);
-                version(HUNT_DEBUG) tracef("remove expired local HTTP session - %s", id);
+                ids ~= id; 
             }
-        }     
+        }
+
+        if(ids.length>0) {
+            foreach(string id; ids) {
+                map.remove(id);
+                version(HUNT_DEBUG) tracef("remove expired session - %s", id);
+            }
+
+            version(HUNT_HTTP_DEBUG) infof("session size: %d", map.size());
+        }
     }
 
     override

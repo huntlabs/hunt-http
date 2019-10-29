@@ -278,20 +278,9 @@ class HttpServerRequest : HttpRequest {
     }
     
 
-    Cookie[] getCookies() {
-        // if (_cookies is null) {
-		// 	Array!(Cookie) list;
-		// 	foreach(string v; getFields().getValuesList(HttpHeader.COOKIE)) {
-		// 		if(v.empty) continue;
-		// 		foreach(Cookie c; parseCookie(v))
-		// 			list.insertBack(c);
-		// 	}
-		// 	_cookies = list.array();
-        // }
-        // return _cookies;
-        
+    Cookie[] getCookies() {        
         if (_cookies is null) {
-            _cookies = getFields().getValuesList(HttpHeader.SET_COOKIE)
+            _cookies = getFields().getValuesList(HttpHeader.COOKIE)
 					.map!(parseSetCookie).array;
         }
 		

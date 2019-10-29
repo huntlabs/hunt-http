@@ -260,14 +260,19 @@ HttpServer buildServerWithSessionStore() {
             HttpServerRequest request = context.getRequest();
             string name = context.getRouterParameter("name");
             trace("the path param -> " ~ name);
+            string age = context.getParameter("age");
+            warning("age: ", age);
+
             HttpSession session = context.getSession(true);
+
             tracef("new session: %s", session.isNewSession());
             session.setAttribute(name, "bar");
-            session.setAttribute("age", 18);
-            // 10 second later, the session will expire
+            session.setAttribute("age", age);
+
+            // 10 seconds later, the session will expire
             session.setMaxInactiveInterval(10);
             context.updateSession(session);
-            context.end("session created");
+            context.end("Session created. Expired in 10 seconds.");
         })
         .get("/session/:name", (RoutingContext ctx) {
             string name = ctx.getRouterParameter("name");
