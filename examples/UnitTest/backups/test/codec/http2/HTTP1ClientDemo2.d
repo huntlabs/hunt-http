@@ -15,7 +15,7 @@ import hunt.http.codec.http.model.HttpRequest;
 import hunt.http.codec.http.model.HttpResponse;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.utils.concurrent.FuturePromise;
 import hunt.collection.BufferUtils;
 

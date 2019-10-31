@@ -8,7 +8,7 @@ import hunt.http.routing.RouterManager;
 import hunt.http.routing.RoutingContext;
 
 import hunt.http.HttpMetaData;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.server.HttpServerContext;
 import hunt.http.server.HttpServerRequest;

@@ -4,7 +4,7 @@ import hunt.http.client.ClientHttpHandler;
 import hunt.http.client.Http2ClientConnection;
 
 import hunt.http.codec.http.frame.SettingsFrame;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;

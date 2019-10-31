@@ -10,7 +10,7 @@ import hunt.http.HttpHeader;
 import hunt.http.codec.http.model.HttpHeaderValue;
 import hunt.net.util.HttpURI;
 import hunt.http.HttpOptions;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.utils.collection.MultiMap;

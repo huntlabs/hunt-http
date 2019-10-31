@@ -6,7 +6,7 @@ import hunt.http.client.SimpleHttpClientConfiguration;
 import hunt.http.HttpFields;
 import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.server.SimpleHttpServerConfiguration;
 import hunt.collection.BufferUtils;

@@ -1,6 +1,6 @@
 module hunt.http.server.WebSocketHandler;
 
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.WebSocketFrame;
 import hunt.http.codec.websocket.stream.IOState;

@@ -4,7 +4,7 @@ import hunt.http.server.HttpServerConnection;
 import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.HttpMetaData;
 import hunt.http.HttpStatus;

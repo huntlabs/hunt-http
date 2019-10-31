@@ -1,7 +1,7 @@
 module hunt.http.codec.http.stream.DataFrameHandler;
 
 import hunt.http.codec.http.stream.HttpHandler;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.codec.http.frame.DataFrame;
 

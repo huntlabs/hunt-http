@@ -4,7 +4,7 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.stream.HttpHandler;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.Functions;
 import hunt.util.Common;

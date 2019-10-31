@@ -8,10 +8,12 @@ import hunt.http.server.ServerSessionListener;
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.decode.ServerParser;
 import hunt.http.codec.http.encode.Http2Generator;
-
 import hunt.http.codec.http.stream;
 
 import hunt.http.HttpConnection;
+import hunt.http.HttpOptions;
+import hunt.http.HttpOutputStream;
+
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

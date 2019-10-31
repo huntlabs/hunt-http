@@ -17,7 +17,7 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.WebSocketConnection;
 import hunt.http.codec.websocket.frame;

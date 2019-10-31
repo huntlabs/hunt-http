@@ -6,7 +6,7 @@ import hunt.http.client.HttpClientConnection;
 import hunt.http.codec.http.frame;
 import hunt.http.codec.http.stream.AbstractHttp2OutputStream;
 import hunt.http.codec.http.stream.DataFrameHandler;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.codec.http.stream.Stream;
 
 import hunt.http.HttpMetaData;

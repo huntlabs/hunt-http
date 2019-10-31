@@ -10,7 +10,7 @@ import hunt.net.util.HttpURI;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
 import hunt.http.server.ServerSessionListener;

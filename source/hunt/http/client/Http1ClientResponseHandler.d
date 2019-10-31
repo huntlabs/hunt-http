@@ -6,7 +6,7 @@ import hunt.http.client.HttpClientResponse;
 
 import hunt.http.codec.http.decode.HttpParser;
 import hunt.http.codec.http.model;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.HttpHeader;
 import hunt.http.HttpField;

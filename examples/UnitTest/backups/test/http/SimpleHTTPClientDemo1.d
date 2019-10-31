@@ -12,7 +12,7 @@ import hunt.http.client.SimpleResponse;
 import hunt.http.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.HttpOptions;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.collection.BufferUtils;
 
 public class SimpleHttpClientDemo1 {

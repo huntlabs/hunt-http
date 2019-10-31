@@ -3,7 +3,7 @@ import hunt.http.codec.http.model;
 import hunt.http.client;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.codec.websocket.frame;
 import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;

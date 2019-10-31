@@ -21,10 +21,12 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpField;
 import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
+import hunt.http.HttpOptions;
+import hunt.http.HttpOutputStream;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
-import hunt.http.WebSocketPolicy;
 import hunt.http.HttpVersion;
+import hunt.http.WebSocketPolicy;
 
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;

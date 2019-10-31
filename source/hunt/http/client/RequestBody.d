@@ -1,6 +1,6 @@
 module hunt.http.client.RequestBody;
 
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;

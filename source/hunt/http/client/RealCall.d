@@ -12,7 +12,7 @@ import hunt.http.client.RequestBody;
 
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.HttpConnection;
 import hunt.http.HttpFields;
 import hunt.http.HttpField;
@@ -239,12 +239,10 @@ class RealCall : Call {
                 }
             }
 
-
-            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
-
             if(port <= 0)
                 port = SchemePortMap[scheme];
-            
+
+            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
             HttpConnection connection;
             try {
                 client.connect(uri.getHost(), port, promise);
@@ -267,7 +265,7 @@ class RealCall : Call {
                     // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
                     HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
                     rb.writeTo(output);
-                    output.close();
+                    output.close(); // End a request, and keep the connection for waiting for the respons.
                 } else {
                     http1ClientConnection.send(originalRequest, httpHandler);
                 }

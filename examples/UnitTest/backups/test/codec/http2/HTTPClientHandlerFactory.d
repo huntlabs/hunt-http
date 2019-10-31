@@ -3,7 +3,7 @@ module test.codec.http2;
 import hunt.http.client.ClientHttpHandler;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpConnection;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.collection.BufferUtils;
 
 import java.io.IOException;

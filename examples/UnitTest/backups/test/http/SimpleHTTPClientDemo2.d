@@ -5,7 +5,7 @@ import hunt.http.client.SimpleHttpClientConfiguration;
 import hunt.http.client.SimpleResponse;
 import hunt.http.HttpHeader;
 import hunt.util.MimeType;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

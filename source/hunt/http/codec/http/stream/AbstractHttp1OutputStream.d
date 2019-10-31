@@ -1,6 +1,6 @@
 module hunt.http.codec.http.stream.AbstractHttp1OutputStream;
 
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.codec.http.encode.HttpGenerator;
 
 import hunt.http.HttpMetaData;

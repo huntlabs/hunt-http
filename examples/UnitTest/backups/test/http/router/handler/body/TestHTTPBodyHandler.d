@@ -5,7 +5,7 @@ import hunt.http.client.SimpleHttpClient;
 import hunt.http.codec.http.encode.UrlEncoded;
 import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.utils.concurrent.Promise;
 import hunt.Assert;

@@ -1,7 +1,7 @@
 module hunt.http.client.MultipartBody;
 
 import hunt.http.client.RequestBody;
-import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.http.HttpOutputStream;
 
 import hunt.http.HttpHeader;
 import hunt.http.HttpField;
