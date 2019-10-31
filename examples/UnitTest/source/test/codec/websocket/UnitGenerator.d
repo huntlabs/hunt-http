@@ -14,7 +14,7 @@ import hunt.logging;
  */
 class UnitGenerator : Generator {
 
-    static ByteBuffer generate(Frame frame) {
+    static ByteBuffer generate(WebSocketFrame frame) {
         return generate([frame]);
     }
 
@@ -26,19 +26,19 @@ class UnitGenerator : Generator {
      * @param frames the frames to generate from
      * @return the ByteBuffer representing all of the generated frames provided.
      */
-    static ByteBuffer generate(T = Frame)(T[] frames) {
+    static ByteBuffer generate(T = WebSocketFrame)(T[] frames) {
         Generator generator = new UnitGenerator();
 
         // Generate into single bytebuffer
         int buflen = 0;
-        foreach (Frame f ; frames) {
+        foreach (WebSocketFrame f ; frames) {
             buflen += f.getPayloadLength() + Generator.MAX_HEADER_LENGTH;
         }
         ByteBuffer completeBuf = BufferUtils.allocate(buflen);
         BufferUtils.clearToFill(completeBuf);
 
         // Generate frames
-        foreach (Frame f ; frames) {
+        foreach (WebSocketFrame f ; frames) {
             generator.generateWholeFrame(f, completeBuf);
         }
 

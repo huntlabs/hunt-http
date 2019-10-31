@@ -544,7 +544,7 @@ class MultipartParser {
     /* ------------------------------------------------------------------------------- */
     private void handleField() {
         version(HUNT_DEBUG)
-            tracef("parsedField:  _fieldName=%s _fieldValue=%s %s", _fieldName, _fieldValue, this);
+            tracef("parsedField:  fieldName=%s fieldValue=%s %s", _fieldName, _fieldValue, this);
 
         if (_fieldName != null && _fieldValue != null)
             _handler.parsedField(_fieldName, _fieldValue);

@@ -130,7 +130,7 @@ class HttpServer : AbstractLifecycle {
                     }
                 }
             } else {
-                static assert(false, "Please, add subConfigurations for hunt-http with TLS in dub.json.");
+                assert(false, "Please, add subConfigurations for hunt-http with TLS in dub.json.");
             }
         }
 

@@ -19,8 +19,9 @@ public import hunt.http.client.Http2ClientDecoder;
 public import hunt.http.client.Http2ClientResponseHandler;
 public import hunt.http.client.Http2ClientSession;
 
-public import hunt.http.client.RequestBody;
+public import hunt.http.client.MultipartBody;
 public import hunt.http.client.FormBody;
+public import hunt.http.client.RequestBody;
 
 
 

@@ -9,7 +9,7 @@ import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
 import hunt.http.HttpHeader;
-import hunt.http.codec.http.model.HttpHeaderValue;
+import hunt.http.HttpHeader;
 import hunt.http.QuotedCSV;
 
 import std.conv;

@@ -19,7 +19,7 @@ class WebSocketFrameTest {
     private Generator strictGenerator;
     private Generator laxGenerator;
 
-    private ByteBuffer generateWholeFrame(Generator generator, Frame frame) {
+    private ByteBuffer generateWholeFrame(Generator generator, WebSocketFrame frame) {
         ByteBuffer buf = BufferUtils.allocate(frame.getPayloadLength() + Generator.MAX_HEADER_LENGTH);
         generator.generateWholeFrame(frame, buf);
         BufferUtils.flipToFlush(buf, 0);
@@ -38,7 +38,7 @@ class WebSocketFrameTest {
 
     private void assertFrameHex(string message, string expectedHex, ByteBuffer actual) {
         string actualHex = Hex.asHex(actual);
-        Assert.assertThat("Generated Frame:" ~ message, actualHex, expectedHex);
+        Assert.assertThat("Generated WebSocketFrame:" ~ message, actualHex, expectedHex);
     }
 
     
@@ -46,7 +46,7 @@ class WebSocketFrameTest {
         WebSocketFrame frame = new CloseFrame().setFin(false);
         ByteBuffer actual = generateWholeFrame(laxGenerator, frame);
         string expected = "0800";
-        assertFrameHex("Lax Invalid Close Frame", expected, actual);
+        assertFrameHex("Lax Invalid Close WebSocketFrame", expected, actual);
     }
 
     
@@ -54,7 +54,7 @@ class WebSocketFrameTest {
         WebSocketFrame frame = new PingFrame().setFin(false);
         ByteBuffer actual = generateWholeFrame(laxGenerator, frame);
         string expected = "0900";
-        assertFrameHex("Lax Invalid Ping Frame", expected, actual);
+        assertFrameHex("Lax Invalid Ping WebSocketFrame", expected, actual);
     }
 
     
@@ -62,7 +62,7 @@ class WebSocketFrameTest {
         CloseInfo close = new CloseInfo(StatusCode.NORMAL);
         ByteBuffer actual = generateWholeFrame(strictGenerator, close.asFrame());
         string expected = "880203E8";
-        assertFrameHex("Strict Valid Close Frame", expected, actual);
+        assertFrameHex("Strict Valid Close WebSocketFrame", expected, actual);
     }
 
     
@@ -70,7 +70,7 @@ class WebSocketFrameTest {
         WebSocketFrame frame = new PingFrame();
         ByteBuffer actual = generateWholeFrame(strictGenerator, frame);
         string expected = "8900";
-        assertFrameHex("Strict Valid Ping Frame", expected, actual);
+        assertFrameHex("Strict Valid Ping WebSocketFrame", expected, actual);
     }
 
     
@@ -81,7 +81,7 @@ class WebSocketFrameTest {
         laxGenerator.setRsv1InUse(true);
         ByteBuffer actual = generateWholeFrame(laxGenerator, frame);
         string expected = "C1024869";
-        assertFrameHex("Lax Text Frame with RSV1", expected, actual);
+        assertFrameHex("Lax Text WebSocketFrame with RSV1", expected, actual);
     }
 
     
@@ -92,7 +92,7 @@ class WebSocketFrameTest {
         laxGenerator.setRsv2InUse(true);
         ByteBuffer actual = generateWholeFrame(laxGenerator, frame);
         string expected = "A1024869";
-        assertFrameHex("Lax Text Frame with RSV2", expected, actual);
+        assertFrameHex("Lax Text WebSocketFrame with RSV2", expected, actual);
     }
 
     
@@ -103,6 +103,6 @@ class WebSocketFrameTest {
         laxGenerator.setRsv3InUse(true);
         ByteBuffer actual = generateWholeFrame(laxGenerator, frame);
         string expected = "91024869";
-        assertFrameHex("Lax Text Frame with RSV3", expected, actual);
+        assertFrameHex("Lax Text WebSocketFrame with RSV3", expected, actual);
     }
 }

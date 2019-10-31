@@ -112,7 +112,7 @@ class IncomingFramesCapture : IncomingFrames {
     }
 
     override
-    void incomingFrame(Frame frame) {
+    void incomingFrame(WebSocketFrame frame) {
         AbstractWebSocketFrame copy = WebSocketFrameHelper.copy(frame);
         // TODO: might need to make this optional (depending on use by client vs server tests)
         // Assert.assertThat("frame.masking must be set",frame.isMasked(),(true));

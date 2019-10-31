@@ -24,9 +24,9 @@ void main(string[] args) {
     // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
-    // HttpServer server = buildServerWithUpload();
+    HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
-    HttpServer server = buildServerWithSessionStore();
+    // HttpServer server = buildServerWithSessionStore();
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
@@ -127,7 +127,7 @@ HttpServer buildServerWithUpload() {
     // http://10.1.223.62:8080/post?returnUrl=%2flogin
     // 
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
@@ -171,10 +171,10 @@ HttpServer buildServerWithUpload() {
             // info(content);
             if(mimeType == "multipart/form-data") {
                 Part[] parts = request.getParts();
-                context.write("File uploaded!<br>");
+                context.write("File uploaded!<br>\n");
                 foreach (Part part; request.getParts()) {
                     // MultipartForm multipart = cast(MultipartForm) part;
-                    string str = format("%s<br>", part.toString());
+                    string str = format("%s<br>\n", part.toString());
                     context.write(str);
 
                     string fileName = part.getSubmittedFileName();
@@ -186,8 +186,13 @@ HttpServer buildServerWithUpload() {
                     part.flush(); // Save the content to a temp file 
 
                     // Write to a specified file.
-                    if(!fileName.empty()) // It's a file part, so will be saved.
-                        part.writeTo("file-" ~ DateTime.currentTimeMillis.to!string() ~ "-" ~ fileName);
+                    if(!fileName.empty()) { // It's a file part, so will be saved.
+                        string savedFile = "file-" ~ DateTime.currentTimeMillis.to!string() ~ "-" ~ fileName;
+                        warning("File saved to: ", savedFile);
+                        part.writeTo(savedFile);
+                        str = format("savedFile: %s<br><br>\n", savedFile);
+                        context.write(str);
+                    }
                 }
                 
                 context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
@@ -199,7 +204,7 @@ HttpServer buildServerWithUpload() {
                 context.end("wrong data format: " ~ mimeType ~ ",  "  ~ DateTime.getTimeAsGMT());
             }
         })
-        .maxRequestSize(256) // test parser exception
+        // .maxRequestSize(256) // test maxRequestSize
         .build();
     return server;    
 }

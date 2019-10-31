@@ -41,10 +41,10 @@ class GeneratorTest {
             this.totalBytes = 0;
         }
 
-        ByteBuffer generateWindowed(Frame[] frames...) {
+        ByteBuffer generateWindowed(WebSocketFrame[] frames...) {
             // Create Buffer to hold all generated frames in a single buffer
             int completeBufSize = 0;
-            foreach (Frame f ; frames) {
+            foreach (WebSocketFrame f ; frames) {
                 completeBufSize += Generator.MAX_HEADER_LENGTH + f.getPayloadLength();
             }
 
@@ -54,7 +54,7 @@ class GeneratorTest {
             // Generate from all frames
             Generator generator = new UnitGenerator();
 
-            foreach (Frame f ; frames) {
+            foreach (WebSocketFrame f ; frames) {
                 ByteBuffer header = generator.generateHeaderBytes(f);
                 totalBytes += BufferUtils.put(header, completeBuf);
 
@@ -80,7 +80,7 @@ class GeneratorTest {
         }
     }
 
-    private void assertGeneratedBytes(T = Frame)(string expectedBytes, T[] frames...) {
+    private void assertGeneratedBytes(T = WebSocketFrame)(string expectedBytes, T[] frames...) {
         // collect up all frames as single ByteBuffer
         ByteBuffer allframes = UnitGenerator.generate(frames);
         // Get hex string form of all frames bytebuffer.
@@ -266,12 +266,12 @@ class GeneratorTest {
 
         // Assert validity of frame
         AbstractWebSocketFrame actual = capture.getFrames().poll();
-        Assert.assertThat("Frame.opcode", actual.getOpCode(), (OpCode.BINARY));
-        Assert.assertThat("Frame.payloadLength", actual.getPayloadLength(), (payload.length));
+        Assert.assertThat("WebSocketFrame.opcode", actual.getOpCode(), (OpCode.BINARY));
+        Assert.assertThat("WebSocketFrame.payloadLength", actual.getPayloadLength(), (payload.length));
 
         // Validate payload contents for proper masking
         ByteBuffer actualData = actual.getPayload().slice();
-        Assert.assertThat("Frame.payload.remaining", actualData.remaining(), (payload.length));
+        Assert.assertThat("WebSocketFrame.payload.remaining", actualData.remaining(), (payload.length));
         while (actualData.remaining() > 0) {
             Assert.assertThat("Actual.payload[" ~ actualData.position().to!string() ~ "]", 
                 actualData.get(), (cast(byte) 0x55));

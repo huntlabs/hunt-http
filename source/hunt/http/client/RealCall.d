@@ -264,7 +264,10 @@ class RealCall : Call {
                 Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
                 RequestBody rb = originalRequest.getBody();
                 if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
-                    http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+                    // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+                    HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
+                    rb.writeTo(output);
+                    output.close();
                 } else {
                     http1ClientConnection.send(originalRequest, httpHandler);
                 }

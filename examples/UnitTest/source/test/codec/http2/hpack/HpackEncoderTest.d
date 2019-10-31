@@ -52,7 +52,7 @@ class HpackEncoderTest {
     //     // encode them
     //     ByteBuffer buffer = BufferUtils.allocate(4096);
     //     int pos = BufferUtils.flipToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, pos);
         
     //     // something was encoded!
@@ -63,7 +63,7 @@ class HpackEncoderTest {
 
     //     // encode exact same fields again!
     //     BufferUtils.clearToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, 0);
 
     //     // All are in the dynamic table
@@ -75,7 +75,7 @@ class HpackEncoderTest {
 
     //     // encode
     //     BufferUtils.clearToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, 0);
 
     //     // something was encoded!
@@ -91,7 +91,7 @@ class HpackEncoderTest {
 
     //     // encode
     //     BufferUtils.clearToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, 0);
 
     //     // something was encoded!
@@ -106,7 +106,7 @@ class HpackEncoderTest {
 
     //     // encode
     //     BufferUtils.clearToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, 0);
 
     //     // something was encoded!
@@ -122,7 +122,7 @@ class HpackEncoderTest {
 
     //     // encode
     //     BufferUtils.clearToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, 0);
 
     //     // something was encoded!
@@ -144,7 +144,7 @@ class HpackEncoderTest {
 
         // encode
         BufferUtils.clearToFill(buffer);
-        encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+        encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
         
         tracef("position=%d, limit=%d, remaining=%d", buffer.position(), buffer.limit(), buffer.remaining());
         BufferUtils.flipToFlush(buffer, 0);
@@ -160,7 +160,7 @@ class HpackEncoderTest {
 
         // encode again
         BufferUtils.clearToFill(buffer);
-        encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+        encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
         BufferUtils.flipToFlush(buffer, 0);
 
         // something was encoded!
@@ -179,14 +179,14 @@ class HpackEncoderTest {
     //     HpackEncoder encoder = new HpackEncoder(128);
     //     ByteBuffer buffer0 = BufferUtils.allocate(4096);
     //     int pos = BufferUtils.flipToFill(buffer0);
-    //     encoder.encode(buffer0, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer0, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer0, pos);
 
     //     encoder = new HpackEncoder(128);
     //     fields.add(new HttpField("user-agent", "jetty/test"));
     //     ByteBuffer buffer1 = BufferUtils.allocate(4096);
     //     pos = BufferUtils.flipToFill(buffer1);
-    //     encoder.encode(buffer1, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer1, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer1, pos);
 
     //     encoder = new HpackEncoder(128);
@@ -197,14 +197,14 @@ class HpackEncoderTest {
     //                     "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ "));
     //     ByteBuffer buffer2 = BufferUtils.allocate(4096);
     //     pos = BufferUtils.flipToFill(buffer2);
-    //     encoder.encode(buffer2, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer2, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer2, pos);
 
     //     encoder = new HpackEncoder(128);
     //     fields.add(new HttpField("host", "somehost"));
     //     ByteBuffer buffer = BufferUtils.allocate(4096);
     //     pos = BufferUtils.flipToFill(buffer);
-    //     encoder.encode(buffer, new MetaData(HttpVersion.HTTP_2, fields));
+    //     encoder.encode(buffer, new HttpMetaData(HttpVersion.HTTP_2, fields));
     //     BufferUtils.flipToFlush(buffer, pos);
 
     //     // System.err.println(BufferUtils.toHexString(buffer0));

@@ -132,7 +132,7 @@ class RFC6455ExamplesParserTest {
         capture.assertNoErrors();
         capture.assertHasFrame(OpCode.BINARY, 1);
 
-        Frame bin = capture.getFrames().poll();
+        WebSocketFrame bin = capture.getFrames().poll();
 
         Assert.assertThat("BinaryFrame.payloadLength", bin.getPayloadLength(), (dataSize));
 
@@ -164,7 +164,7 @@ class RFC6455ExamplesParserTest {
         capture.assertNoErrors();
         capture.assertHasFrame(OpCode.BINARY, 1);
 
-        Frame bin = capture.getFrames().poll();
+        WebSocketFrame bin = capture.getFrames().poll();
 
         Assert.assertThat("BinaryFrame.payloadLength", bin.getPayloadLength(), (dataSize));
 
@@ -199,7 +199,7 @@ class RFC6455ExamplesParserTest {
         capture.assertNoErrors();
         capture.assertHasFrame(OpCode.BINARY, 1);
 
-        Frame bin = capture.getFrames().poll();
+        WebSocketFrame bin = capture.getFrames().poll();
 
         Assert.assertThat("BinaryFrame.payloadLength", bin.getPayloadLength(), (dataSize));
         ByteBuffer data = bin.getPayload();

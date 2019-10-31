@@ -449,8 +449,9 @@ private class ResponseHandlerWrap : HttpResponseParsingHandler {
 
 }
 
-/**
-*/
+/** 
+ * 
+ */
 class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
     private Http1ClientConnection connection;
     private HttpGenerator httpGenerator;

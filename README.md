@@ -21,6 +21,7 @@
 
 ## TODO
 - [ ] Reorganizing modules
+- [ ] PersistentCookieStore for HttpClient
 - [ ] More unit tests
 
 ## References

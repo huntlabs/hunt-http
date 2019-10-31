@@ -39,7 +39,7 @@ class OutgoingFramesCapture : OutgoingFrames {
     void dump() {
         tracef("Captured %d outgoing writes%n", frames.size());
         for (int i = 0; i < frames.size(); i++) {
-            Frame frame = frames.get(i);
+            WebSocketFrame frame = frames.get(i);
             tracef("[%3d] %s%n", i, frame);
             tracef("      %s%n", BufferUtils.toDetailString(frame.getPayload()));
         }
@@ -60,7 +60,7 @@ class OutgoingFramesCapture : OutgoingFrames {
     }
 
     override
-    void outgoingFrame(Frame frame, Callback callback) {
+    void outgoingFrame(WebSocketFrame frame, Callback callback) {
         frames.add(WebSocketFrameHelper.copy(frame));
         if (callback !is null) {
             callback.succeeded();

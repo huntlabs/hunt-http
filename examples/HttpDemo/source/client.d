@@ -31,7 +31,8 @@ void main(string[] args) {
     //     warning(ex);
     // }
 
-    testHttpClientWithCookie();
+    // testHttpClientWithCookie();
+    testHttpClientWithMultipart();
 }
 
 
@@ -41,11 +42,11 @@ void testHttpClientWithCookie() {
     client.useCookieStore();
     
     // post
-    FormBody form = new FormBody.Builder()
+    FormBody formBody = new FormBody.Builder()
     .add("age", 20)
     .build();
 
-    Response response = postForm(client, url, form);
+    Response response = postForm(client, url, formBody);
 
     if(response.haveBody()) {
         warningf("response: %s", response.getBody().asString());    
@@ -71,6 +72,30 @@ void testHttpClientWithCookie() {
     }
 }
 
+
+void testHttpClientWithMultipart() {
+    // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
+    string url = "http://127.0.0.1:8080/upload/file";
+    // string url = "http://10.1.222.120:8080/upload/file";
+    HttpClient client = new HttpClient();
+    // client.useCookieStore();
+
+    // post
+    MultipartBody requestBody = new MultipartBody.Builder()
+        .setType(MultipartBody.FORM)
+        .addFormDataPart("title", "Putao Logo", MimeType.TEXT_PLAIN_VALUE)
+        .addFormDataPart("image", "favicon.ico",
+            // RequestBody.create("image/ico", "dub.json"))
+            // RequestBody.createFromFile("image/ico", "dub.json"))
+            RequestBody.createFromFile("image/ico", "resources/favicon.ico"))
+        .build();
+    
+    Response response = postForm(client, url, requestBody);
+
+    if(response.haveBody()) {
+        warningf("response: %s", response.getBody().asString());    
+    }
+}
 
 Response postForm(HttpClient client, string url, RequestBody content) {
     Request request = new RequestBuilder()
@@ -175,7 +200,7 @@ class HttpClientTest {
     }
 
     string post(string url, string contentType,  string content) {
-        RequestBody b = new RequestBody(contentType, content);
+        RequestBody b = RequestBody.create(contentType, content);
 
         Request request = new RequestBuilder()
             .url(url)
