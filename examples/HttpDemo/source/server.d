@@ -24,9 +24,9 @@ void main(string[] args) {
     // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
-    HttpServer server = buildServerWithUpload();
+    // HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
-    // HttpServer server = buildServerWithSessionStore();
+    HttpServer server = buildServerWithSessionStore();
     
     if(server.isTLS())
 	    writefln("listening on https://%s:%d", server.getHost, server.getPort);

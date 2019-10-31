@@ -18,21 +18,24 @@ import std.stdio;
 // string str = runGet("http://www.putao.com/");
 
 void main(string[] args) {
+    // testSimpleHttpClient();
+    testHttpClientWithCookie();
+    // testHttpClientWithMultipart();
+}
 
-    // HttpClientTest test = new HttpClientTest();
-    // try {
-    // test.testGet();
-    // // test.testGetHttps();
-    // // test.testAsynchronousGet();
-    // // test.testPost();
-    // // test.testFormPost();
+void testSimpleHttpClient() {
+
+    HttpClientTest test = new HttpClientTest();
+    try {
+    test.testGet();
+    // test.testGetHttps();
+    // test.testAsynchronousGet();
+    // test.testPost();
+    // test.testFormPost();
         
-    // } catch(Exception ex) {
-    //     warning(ex);
-    // }
-
-    // testHttpClientWithCookie();
-    testHttpClientWithMultipart();
+    } catch(Exception ex) {
+        warning(ex);
+    }
 }
 
 

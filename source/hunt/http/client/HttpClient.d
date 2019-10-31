@@ -11,7 +11,7 @@ import hunt.http.client.Http2ClientDecoder;
 import hunt.http.client.HttpClientOptions;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
-import hunt.http.client.MemoryCookieStore;
+import hunt.http.client.InMemoryCookieStore;
 
 import hunt.http.client.RealCall;
 import hunt.http.client.RequestBody;
@@ -161,7 +161,7 @@ class HttpClient : AbstractLifecycle {
      * <p>If unset, {@linkplain CookieStore#NO_COOKIES no cookies} will be accepted nor provided.
      */
     HttpClient useCookieStore() {
-        _cookieStore = new MemoryCookieStore();
+        _cookieStore = new InMemoryCookieStore();
         return this;
     }
     

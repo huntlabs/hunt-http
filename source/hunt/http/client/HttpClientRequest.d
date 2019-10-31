@@ -1,7 +1,7 @@
 module hunt.http.client.HttpClientRequest;
 
 import hunt.http.client.CookieStore;
-import hunt.http.client.MemoryCookieStore;
+import hunt.http.client.InMemoryCookieStore;
 import hunt.http.client.RequestBody;
 
 import hunt.http.AuthenticationScheme;

@@ -107,11 +107,10 @@ class RealCall : Call {
                 assert(res !is null);
 
                 if(req.isCookieStoreEnabled()) {
-
                     CookieStore store = client.getCookieStore();
                     if(store !is null) {
                         foreach(Cookie c; res.cookies()) {
-                            store.addCookie(c);
+                            store.add(request.getURI(), c);
                         }
                     }
                 }

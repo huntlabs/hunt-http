@@ -5,19 +5,39 @@ import hunt.Exceptions;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
 import hunt.text.StringUtils;
+import hunt.util.DateTime;
 
 import std.array;
 import std.container.array;
 import std.conv;
-import std.datetime;
 import std.string;
 
 
-/** 
- * 
+alias HttpCookie = Cookie;
+
+/**
+ * An HttpCookie object represents an HTTP cookie, which carries state
+ * information between server and user agent. Cookie is widely adopted
+ * to create stateful sessions.
+ *
+ * <p> There are 3 HTTP cookie specifications:
+ * <blockquote>
+ *   Netscape draft<br>
+ *   RFC 2109 - <a href="http://www.ietf.org/rfc/rfc2109.txt">
+ * <i>http://www.ietf.org/rfc/rfc2109.txt</i></a><br>
+ *   RFC 2965 - <a href="http://www.ietf.org/rfc/rfc2965.txt">
+ * <i>http://www.ietf.org/rfc/rfc2965.txt</i></a>
+ * </blockquote>
+ *
+ * <p> HttpCookie class can accept all these 3 forms of syntax.
+ *
+ * @author Edward Wang
  */
 class Cookie {
 
+    // Since the positive and zero max-age have their meanings,
+    // this value serves as a hint as 'not specify max-age'
+    private enum MAX_AGE_UNSPECIFIED = -1;
 	//
 	// The value of the cookie itself.
 	//
@@ -32,11 +52,26 @@ class Cookie {
 	private string comment; // ;Comment=VALUE ... describes cookie's use
 	// ;Discard ... implied by maxAge < 0
 	private string domain; // ;Domain=VALUE ... domain that sees cookie
-	private int maxAge = -1; // ;Max-Age=VALUE ... cookies auto-expire
+	private int maxAge = MAX_AGE_UNSPECIFIED; // ;Max-Age=VALUE ... cookies auto-expire
 	private string path; // ;Path=VALUE ... URLs that see the cookie
 	private bool secure; // ;Secure ... e.g. use SSL
-	private int _version = 0; // ;Version=1 ... means RFC 2109++ style
+	private int _version = 1; // ;Version=1 ... means RFC 2109++ style
 	private bool _isHttpOnly = false;
+
+    // Hold the creation time (in seconds) of the http cookie for later
+    // expiration calculation
+    private long whenCreated;
+
+    // date formats used by Netscape's cookie draft
+    // as well as formats seen on various sites
+    private enum string[] COOKIE_DATE_FORMATS = [
+        "EEE',' dd-MMM-yyyy HH:mm:ss 'GMT'",
+        "EEE',' dd MMM yyyy HH:mm:ss 'GMT'",
+        "EEE MMM dd yyyy HH:mm:ss 'GMT'Z",
+        "EEE',' dd-MMM-yy HH:mm:ss 'GMT'",
+        "EEE',' dd MMM yy HH:mm:ss 'GMT'",
+        "EEE MMM dd yy HH:mm:ss 'GMT'Z"
+	];	
 
 	this() {
 
@@ -91,6 +126,7 @@ class Cookie {
 		this.secure = secure;
 		this.domain = domain;
 		this._isHttpOnly = httpOnly;
+        this.whenCreated = DateTime.currentTimeMillis();
 	}
 
 	/**
@@ -391,15 +427,21 @@ class Cookie {
 		return _isHttpOnly;
 	}
 
-
     /**
-     * Returns true if this cookie has expired.
-     * @param date Current time
+     * Reports whether this HTTP cookie has expired or not.
      *
-     * @return {@code true} if the cookie has expired.
+     * @return  {@code true} to indicate this HTTP cookie has expired;
+     *          otherwise, {@code false}
      */
-	bool isExpired(SysTime time) {
-		return maxAge != -1 && maxAge < time.toUnixTime();
+	bool isExpired() {
+        // if not specify max-age, this cookie should be
+        // discarded when user agent is to be closed, but
+        // it is not expired.
+        if (maxAge < 0) return false;
+        if (maxAge == 0) return true;
+
+        long deltaSecond = (DateTime.currentTimeMillis() - whenCreated) / 1000;
+        return deltaSecond > maxAge;
 	}
 
 	override
