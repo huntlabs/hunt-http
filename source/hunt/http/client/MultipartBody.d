@@ -22,7 +22,6 @@ import std.conv;
 import std.string;
 import std.uuid;
 
-alias ByteString = string;
 alias MediaType = string;
 
 
@@ -66,17 +65,26 @@ final class MultipartBody : RequestBody {
     private enum byte[] CRLF = ['\r', '\n'];
     private enum byte[] DASHDASH = ['-', '-'];
 
-    private ByteString _boundary;
+    private string _boundary;
     private MediaType _originalType;
     private MediaType _contentType;
     private List!Part _parts;
-    // private long _contentLength = -1L;
+    private long _contentLength = -1L;
+    private bool _isChunked = false;
 
-    this(ByteString boundary, MediaType type, List!Part parts) {
+    this(string boundary, MediaType type, List!Part parts) {
         this._boundary = boundary;
         this._originalType = type;
         this._contentType = type ~ "; boundary=" ~ boundary;
         this._parts = parts;
+    }
+
+    bool isChunked() {
+        return _isChunked;
+    }
+
+    void isChunked(bool flag) {
+        _isChunked = flag;
     }
 
     MediaType type() {
@@ -106,10 +114,17 @@ final class MultipartBody : RequestBody {
     }
 
     override long contentLength() {
-        // long result = _contentLength;
-        // if (result != -1L) return result;
-        // return _contentLength = writeOrCountBytes(true);
-        return -1;
+        if(_isChunked) {
+            return -1;
+        } else {
+            if (_contentLength == -1)
+                _contentLength = writeOrCountBytes!(true)(null);
+            return _contentLength;
+        }
+    }
+    
+    override void writeTo(HttpOutputStream sink) {
+        writeOrCountBytes!false(sink);
     }
 
     /**
@@ -118,9 +133,10 @@ final class MultipartBody : RequestBody {
      * to awkward operations like measuring the encoded length of header strings, or the
      * length-in-digits of an encoded integer.
      */
-    override void writeTo(HttpOutputStream sink) {
+    private long writeOrCountBytes(bool canCount=false)(HttpOutputStream sink) {
         long byteCount = 0L;
         Appender!(byte[]) buffer;
+        buffer.reserve(512);
         
         foreach (Part part; _parts) {
             HttpFields headers = part._headers;
@@ -138,7 +154,7 @@ final class MultipartBody : RequestBody {
 
             RequestBody requestBody = part._body;
             MediaType contentType = requestBody.contentType();
-            long contentLength = requestBody.contentLength();
+            long length = requestBody.contentLength();
 
             if (contentType !is null) {
                 buffer.put(cast(byte[])"Content-Type: ");
@@ -146,19 +162,31 @@ final class MultipartBody : RequestBody {
                 buffer.put(CRLF);
             }
 
-            if (contentLength != -1) {
+            if (length != -1) {
                 buffer.put(cast(byte[])"Content-Length: ");
-                buffer.put(cast(byte[])(contentLength.to!string()));
+                buffer.put(cast(byte[])(length.to!string()));
                 buffer.put(CRLF);
             } else {
-                version(HUNT_DEBUG) warning("We can't measure the body's size without the sizes of its components.");
+                string msg = "We can't measure the body's size without the sizes of its components. part body: %s";
+                msg = format(msg, typeid(requestBody));
+                version(HUNT_DEBUG) warning(msg);
+                
+                static if(canCount) {
+                    throw new Exception(msg);
+                }
             }
 
             buffer.put(CRLF);
-            sink.write(buffer.data());
-            requestBody.writeTo(sink);
+
+            static if(canCount) {
+                byteCount += cast(long)buffer.data().length + length;
+            } else {
+                sink.write(buffer.data());
+                requestBody.writeTo(sink);
+            }
             
             buffer = Appender!(byte[])(); // reset the buffer
+            buffer.reserve(512);
             buffer.put(CRLF);
         }
 
@@ -167,10 +195,14 @@ final class MultipartBody : RequestBody {
         buffer.put(DASHDASH);
         buffer.put(CRLF);
         buffer.put(CRLF);
-        // buffer.put(cast(byte[])"0");
-        // buffer.put(CRLF);
-        // buffer.put(CRLF);
-        sink.write(buffer.data());
+        
+        static if(canCount) {
+            byteCount += cast(long)buffer.data().length;
+        } else {
+            sink.write(buffer.data());
+        }
+
+        return byteCount;
     }
 
     /**
@@ -268,9 +300,10 @@ final class MultipartBody : RequestBody {
     }
 
     static final class Builder {
-        private ByteString _boundary;
-        private MediaType type = MIXED;
+        private string _boundary;
+        private MediaType type = FORM;
         private List!Part parts;
+        private bool _isChunked = false;
 
         this() {
             this(randomUUID().toString());
@@ -283,8 +316,8 @@ final class MultipartBody : RequestBody {
         }
 
         /**
-         * Set the MIME type. Expected values for {@code type} are {@link #MIXED} (the default), {@link
-         * #ALTERNATIVE}, {@link #DIGEST}, {@link #PARALLEL} and {@link #FORM}.
+         * Set the MIME type. Expected values for {@code type} are {@link #FORM} (the default), {@link
+         * #ALTERNATIVE}, {@link #DIGEST}, {@link #PARALLEL} and {@link #MIXED}.
          */
         Builder setType(MediaType type) {
             if (type is null) {
@@ -329,12 +362,20 @@ final class MultipartBody : RequestBody {
             return this;
         }
 
+        Builder enableChunk() {
+            _isChunked = true;
+            return this;
+        }
+
         /** Assemble the specified parts into a request body. */
         MultipartBody build() {
             if (parts.isEmpty()) {
                 throw new IllegalStateException("Multipart body must have at least one part.");
             }
-            return new MultipartBody(_boundary, type, parts);
+            auto r = new MultipartBody(_boundary, type, parts);
+            r.isChunked = _isChunked;
+
+            return r;
         }
     }
 }

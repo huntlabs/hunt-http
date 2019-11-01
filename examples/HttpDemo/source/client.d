@@ -19,8 +19,8 @@ import std.stdio;
 
 void main(string[] args) {
     // testSimpleHttpClient();
-    testHttpClientWithCookie();
-    // testHttpClientWithMultipart();
+    // testHttpClientWithCookie();
+    testHttpClientWithMultipart();
 }
 
 void testSimpleHttpClient() {
@@ -78,19 +78,20 @@ void testHttpClientWithCookie() {
 
 void testHttpClientWithMultipart() {
     // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
-    string url = "http://127.0.0.1:8080/upload/file";
-    // string url = "http://10.1.222.120:8080/upload/file";
+    // string url = "http://127.0.0.1:8080/upload/file";
+    string url = "http://10.1.222.120:8080/upload/file";
     HttpClient client = new HttpClient();
     // client.useCookieStore();
 
     // post
     MultipartBody requestBody = new MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
+        // .setType(MultipartBody.FORM)
+        // .enableChunk()
         .addFormDataPart("title", "Putao Logo", MimeType.TEXT_PLAIN_VALUE)
         .addFormDataPart("image", "favicon.ico",
-            // RequestBody.create("image/ico", "dub.json"))
+            RequestBody.create("image/ico", "dub.json"))
             // RequestBody.createFromFile("image/ico", "dub.json"))
-            RequestBody.createFromFile("image/ico", "resources/favicon.ico"))
+            // RequestBody.createFromFile("image/ico", "resources/favicon.ico"))
         .build();
     
     Response response = postForm(client, url, requestBody);
