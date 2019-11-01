@@ -33,6 +33,7 @@ public import hunt.http.HttpHeader;
 public import hunt.http.HttpMetaData;
 public import hunt.http.HttpMethod;
 public import hunt.http.HttpOptions;
+public import hunt.http.HttpOutputStream;
 public import hunt.http.HttpRequest;
 public import hunt.http.HttpResponse;
 public import hunt.http.HttpScheme;

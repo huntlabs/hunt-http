@@ -212,7 +212,7 @@ HttpServer buildServerWithUpload() {
 
 HttpServer buildServerWithWebSocket() {
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);

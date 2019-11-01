@@ -199,7 +199,7 @@ abstract class AbstractHttpConnection : HttpConnection {
 
 /**
 */
-abstract class HttpConnectionHandler : NetConnectionHandler {
+abstract class HttpConnectionHandler : NetConnectionHandlerAdapter {
 
     protected HttpOptions config;
 
@@ -261,13 +261,16 @@ abstract class HttpConnectionHandler : NetConnectionHandler {
         }
     }
 
-    override
-    void connectionOpened(Connection connection) {
-        implementationMissing(false);
-    }
+    // override
+    // void connectionOpened(Connection connection) {
+    //     implementationMissing(false);
+    // }
 
-    override
-    void failedOpeningConnection(int connectionId, Throwable t) { implementationMissing(false); }
+    // override
+    // void failedOpeningConnection(int connectionId, Throwable t) { 
+    //     errorf("Failed to open a http connection %d, reason: <%s>", connectionId, t.msg);
+    //     super.failedOpeningConnection(connectionId, t);
+    // }
 
     override
     void failedAcceptingConnection(int connectionId, Throwable t) { implementationMissing(false); }

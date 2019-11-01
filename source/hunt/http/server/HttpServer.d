@@ -46,14 +46,17 @@ import std.algorithm;
 import std.file;
 import std.path;
 
-// import hunt.Functions;
+import hunt.Functions;
 
-template Action(T...) {
-    alias Action = void delegate(T);
-}
+// template Action(T...) {
+//     alias Action = void delegate(T);
+// }
 
         
-alias BadRequestHandler = Action!(HttpServerContext); 
+alias BadRequestHandler = ActionN!(HttpServerContext); 
+
+// alias ServerEventHandler = ActionN!(HttpServer, Throwable);
+alias ServerErrorHandler = ActionN!(HttpServer, Exception);
 
 /**
 */
@@ -61,11 +64,13 @@ class HttpServer : AbstractLifecycle {
 
     private NetServer _server;
     private NetServerOptions _serverOptions;
-    // private HttpServerHandler httpServerHandler;
     private HttpServerOptions _httpOptions;
     private string host;
     private int port;
-    // private WebSocketHandler[string] webSocketHandlers;
+
+    private Action _openSucceededHandler;
+    private ActionN!(Throwable) _openFailedHandler;
+    private ServerErrorHandler _errorHandler;
 
     this(HttpServerOptions httpOptions,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
@@ -136,6 +141,7 @@ class HttpServer : AbstractLifecycle {
 
         _server = NetUtil.createNetServer!(ThreadMode.Single)(_serverOptions);
 
+        // set codec
         _server.setCodec(new class Codec {
             private CommonEncoder encoder;
             private CommonDecoder decoder;
@@ -158,7 +164,33 @@ class HttpServer : AbstractLifecycle {
             }
         });
 
-        _server.setHandler(new HttpServerHandler(options, listener, serverHttpHandler, webSocketHandler));
+        // set handler
+        HttpServerHandler serverHandler = new HttpServerHandler(options, listener, serverHttpHandler, webSocketHandler);
+
+        serverHandler.onOpened((Connection conn) {
+            version(HUNT_HTTP_DEBUG) {
+                infof("Http connection %d opend: %s", conn.getId, typeid(conn));
+            }
+            version (HUNT_DEBUG) {
+                if (options.isSecureConnectionEnabled())
+                    tracef("Listing at: https://%s:%d", host, port);
+                else
+                    tracef("Listing at: http://%s:%d", host, port);
+            }
+
+            if(_openSucceededHandler !is null) 
+                _openSucceededHandler();
+        });
+
+        serverHandler.onOpenFailed((int id, Throwable ex) {
+            version(HUNT_HTTP_DEBUG) warning(ex.msg);
+            if(_openFailedHandler !is null) 
+                _openFailedHandler(ex);
+           stop();
+        });
+
+        _server.setHandler(serverHandler);
+        // _server.setHandler(new HttpServerHandler(options, listener, serverHttpHandler, webSocketHandler));
 
         // For test
         // string responseString = `HTTP/1.1 000 
@@ -169,14 +201,6 @@ class HttpServer : AbstractLifecycle {
         // Connection: keep-alive
 
         // Hello, World!`;
-
-
-        version (HUNT_DEBUG) {
-            if (options.isSecureConnectionEnabled())
-                tracef("Listing at: https://%s:%d", host, port);
-            else
-                tracef("Listing at: http://%s:%d", host, port);
-        }
     }
 
     HttpServerOptions getHttpOptions() {
@@ -191,27 +215,13 @@ class HttpServer : AbstractLifecycle {
         return port;
     }
 
+    bool isOpen() {
+        return _server.isOpen();
+    }
+
     bool isTLS() {
         return _httpOptions.isSecureConnectionEnabled();
     }
-
-    // ExecutorService getNetExecutorService() {
-    //     return _server.getNetExecutorService();
-    // }
-
-
-    // HttpServer registerWebSocket(string path, WebSocketHandler handler) {
-    //     auto itemPtr = path in webSocketHandlers;
-    //     if(itemPtr !is null)
-    //         throw new Exception("Handler registered on path: " ~ path);
-    //     webSocketHandlers[path] = handler;
-    //     return this;
-    // }
-
-    // HttpServer webSocketPolicy(WebSocketPolicy w) {
-    //     this._webSocketPolicy = w;
-    //     return this;
-    // }    
 
     override protected void initialize() {
         checkWorkingDirectory();
@@ -219,9 +229,14 @@ class HttpServer : AbstractLifecycle {
     }
 
     override protected void destroy() {
-        // if (_server !is null) {
-        //     _server.stop();
-        // }
+
+        if (_server !is null && _server.isOpen()) {
+            version(HUNT_DEBUG) warning("stopping the HttpServer...");
+            _server.close();
+        }
+
+        version(HUNT_DEBUG) warning("stopping the EventLoop...");
+        NetUtil.stopEventLoop();
     }
 
     private void checkWorkingDirectory() {
@@ -233,6 +248,28 @@ class HttpServer : AbstractLifecycle {
         if (!path.exists())
             path.mkdirRecurse();
     }
+
+    /* ----------------------------- connect events ----------------------------- */
+
+    HttpServer onOpened(Action handler) {
+        _openSucceededHandler = handler;
+        return this;
+    }
+
+    HttpServer onOpenFailed(ActionN!(Throwable) handler) {
+        _openFailedHandler = handler;
+        return this;
+    }
+
+    HttpServer onError(ServerErrorHandler handler) {
+        _errorHandler = handler;
+        return this;
+    }
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Builder                                  */
+    /* -------------------------------------------------------------------------- */
 
     /**
      * @return A builder that can be used to create an Undertow server instance

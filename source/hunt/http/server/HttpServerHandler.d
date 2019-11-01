@@ -24,7 +24,8 @@ import std.range.primitives;
 import std.string;
 
 /**
-*/
+ * 
+ */
 class HttpServerHandler : HttpConnectionHandler {
 
     private ServerSessionListener listener;
@@ -40,7 +41,8 @@ class HttpServerHandler : HttpConnectionHandler {
     }
 
     override void connectionOpened(Connection connection) {
-        // tracef("New http connection: %s", typeid(cast(Object) connection));
+        version(HUNT_HTTP_DEBUG_MORE) tracef("New http connection: %s", typeid(cast(Object) connection));
+
         version(WITH_HUNT_SECURITY) {
             if (config.isSecureConnectionEnabled()) {
                 buildSecureSession(connection);
@@ -50,6 +52,8 @@ class HttpServerHandler : HttpConnectionHandler {
         } else {
             buildNomalSession(connection);
         }
+
+        super.connectionOpened(connection);
     }
 
     private void buildNomalSession(Connection connection) {
@@ -57,7 +61,7 @@ class HttpServerHandler : HttpConnectionHandler {
         connection.setState(ConnectionState.Opening);
 
         version (HUNT_HTTP_DEBUG)
-            info("Building a new http connection...");
+            infof("Building a new http connection...");
         string protocol = config.getProtocol();
         
         if (!protocol.empty) {
@@ -86,7 +90,6 @@ class HttpServerHandler : HttpConnectionHandler {
             } else if (icmp(HTTP_2, protocol) == 0) {
                 Http2ServerConnection httpConnection = new Http2ServerConnection(config,
                         connection, listener);
-                // connection.attachObject(httpConnection);
                 connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
                 connection.setState(ConnectionState.Opened);

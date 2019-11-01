@@ -198,8 +198,6 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
 }
 
 
-
-
 /**
  * 
  */
