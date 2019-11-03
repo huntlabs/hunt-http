@@ -19,69 +19,33 @@ import hunt.net.secure.conscrypt;
 import hunt.util.DateTime;
 import hunt.logging;
 
-import std.datetime;
+// import std.datetime;
 import std.conv;
 import std.stdio;
-import hunt.net.NetUtil;
 
 /**
 sudo apt-get install libssl-dev
+https://github.com/square/okhttp/blob/26949cf4786828157f95e6f954596a1aa530e5e4/samples/guide/src/main/java/okhttp3/recipes/WebSocketEcho.java
 */
 void main(string[] args) {
 
-    NetUtil.startEventLoop();
-
     HttpClient client = new HttpClient();
-    Future!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
+//
+    string url = "http://127.0.0.1:8080/ws1";
+    Request request = new RequestBuilder()
+        .url(url)
+        // .header("Authorization", "Basic cHV0YW86MjAxOQ==")
+        .authorization(AuthenticationScheme.Basic, "cHV0YW86MjAxOQ==")
+        .build();
 
-    HttpClientRequest request = new HttpClientRequest("GET", "/");
-    FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
-    IncomingFramesEx incomingFramesEx = new IncomingFramesEx();
-    ClientHttpHandlerEx handlerEx = new ClientHttpHandlerEx();
-
-    HttpClientConnection connection = conn.get();
-    assert(connection !is null);
-
-    connection.upgradeWebSocket(request, WebSocketPolicy.newClientPolicy(),
-            promise, handlerEx, incomingFramesEx);
-
-    WebSocketConnection webSocketConnection = promise.get();
-    webSocketConnection.sendText("Hello WebSocket").thenAccept((r) {
-        warning("Client sends text frame success.");
-    });
-
-    // webSocketConnection.sendData([0x12, 0x13]).thenAccept((r) {
-    //     warning("Client sends text frame success.");
-    // });
-
-    client.stop();
-}
-
-class ClientHttpHandlerEx : AbstractClientHttpHandler {
-    override public bool messageComplete(HttpRequest request,
-            HttpResponse response, HttpOutputStream output, HttpConnection connection) {
-        warningf("upgrade websocket success: " ~ response.toString());
-        return true;
-    }
-}
-
-class IncomingFramesEx : IncomingFrames {
-    override public void incomingError(Exception t) {
-
-    }
-
-    override public void incomingFrame(Frame frame) {
-        FrameType type = frame.getType();
-        switch (type) {
-        case FrameType.TEXT: {
-                TextFrame textFrame = cast(TextFrame) frame;
-                infof("Client received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
-                break;
-            }
-
-        default:
-            warningf("Can't handle the frame of ", type);
-            break;
+    WebSocketConnection wsConn =  client.newWebSocket(request, new class AbstractWebSocketMessageHandler {
+        override void onOpen(WebSocketConnection connection) {
+            warning("Connection opened");
+            connection.sendText("Hello WebSocket. " ~ DateTime.getTimeAsGMT());
         }
-    }
+
+        override void onText(string text, WebSocketConnection connection) {
+            warningf("received (from %s): %s", connection.getRemoteAddress(), text); 
+        }
+    });
 }

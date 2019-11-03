@@ -218,10 +218,13 @@ interface WebSocketMessageHandler {
     void onContinuation(ByteBuffer buffer, WebSocketConnection connection);
 
     void onError(Exception exception, WebSocketConnection connection);
+
+    alias onFailure = onError;
 }
 
 /**
- * 
+ * See_Also:
+ *  WebSocketListener from OKHTTP3
  */
 abstract class AbstractWebSocketMessageHandler : WebSocketMessageHandler {
 

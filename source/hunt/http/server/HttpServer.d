@@ -582,11 +582,11 @@ class HttpServer : AbstractLifecycle {
                         break;
                         
                     case WebSocketFrameType.BINARY:
-                            handler.onBinary(frame.getPayload(), connection);
+                        handler.onBinary(frame.getPayload(), connection);
                         break;
                         
                     case WebSocketFrameType.CLOSE:
-                            handler.onClosed(connection);
+                        handler.onClosed(connection);
                         break;
 
                     case WebSocketFrameType.PING:

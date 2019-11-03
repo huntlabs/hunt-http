@@ -10,6 +10,7 @@ import hunt.http.client.HttpClientRequest;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.RequestBody;
 
+import hunt.http.Cookie;
 import hunt.http.HttpOptions;
 import hunt.http.HttpConnection;
 import hunt.http.HttpOutputStream;
@@ -40,7 +41,6 @@ import core.sync.mutex;
 
 import std.parallelism;
 import std.conv;
-import hunt.http.Cookie;
 
 
 /**
@@ -158,6 +158,7 @@ class RealCall : Call {
 
         if(hcr is null) {
             if(idleTimeout.isNegative()) {
+                version (HUNT_HTTP_DEBUG) infof("waitting for response...");
                 responseCondition.wait();
             } else {  
                 version (HUNT_HTTP_DEBUG) infof("waitting for response in %s ...", idleTimeout);
@@ -280,6 +281,7 @@ class RealCall : Call {
 
     
     void cancel() {
+        implementationMissing(false);
         // transmitter.cancel();
     }
 
