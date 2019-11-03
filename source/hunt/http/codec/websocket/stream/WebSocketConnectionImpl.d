@@ -22,16 +22,16 @@ import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
-import hunt.net.AbstractConnection;
-
-// import hunt.net.secure.SecureSession;
-import hunt.net.Connection;
+import hunt.http.Util;
 
 import hunt.collection;
+import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.Delayed;
+import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging;
-import hunt.concurrency.CompletableFuture;
-import hunt.Exceptions;
+import hunt.net.AbstractConnection;
+import hunt.net.Connection;
 import hunt.util.Common;
 
 import core.time;
@@ -110,28 +110,36 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
                 }
             }
         );
-//dfmt on
+
         setNextIncomingFrames(nextIncomingFrames);
 
         if (this.policy.getBehavior() == WebSocketBehavior.CLIENT) {
-// TODO: Tasks pending completion -@zxp at 8/6/2019, 5:48:02 PM
-// 
-            implementationMissing(false);
+            executor = CommonUtil.scheduler();
+            executor.setRemoveOnCancelPolicy(true);
+            ScheduledFuture!(void) pingFuture = executor.scheduleWithFixedDelay(new class Runnable {
+                void run() {
+                    PingFrame pingFrame = new PingFrame();
 
-            // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() {
-            //     PingFrame pingFrame = new PingFrame();
-            //     outgoingFrame(pingFrame, new class NoopCallback {
-            //         void succeeded() {
-            //             info("The websocket connection %s sent ping frame success", getId());
-            //         }
+                    outgoingFrame(pingFrame, new class NoopCallback {
+                        override void succeeded() {
+                            version(HUNT_HTTP_DEBUG) infof("The websocket connection %s sent ping frame success", getId());
+                        }
 
-            //         void failed(Exception x) {
-            //             log.warn("the websocket connection %s sends ping frame failure. %s", getId(), x.getMessage());
-            //         }
-            //     });
-            // }, config.getWebsocketPingInterval(), config.getWebsocketPingInterval(), TimeUnit.MILLISECONDS);
-            // onClose(c -> pingFuture.cancel());
+                        override void failed(Exception x) {
+                            debug warningf("the websocket connection %s sends ping frame failure. %s", getId(), x.msg);
+                            version(HUNT_HTTP_DEBUG)  warning(x);
+                        }
+                    });
+                }
+            }, 
+            
+            msecs(config.getWebsocketPingInterval()), 
+            msecs(config.getWebsocketPingInterval()));
+
+            onClose( (c) { pingFuture.cancel(false); });
         }
+
+//dfmt on        
     }
 
     override WebSocketConnection onClose(Action1!(HttpConnection) handler) {
@@ -140,8 +148,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         return this;
     }
 
-    override WebSocketConnection onException(Action2!(HttpConnection,
-            Exception) handler) {
+    override WebSocketConnection onException(Action2!(HttpConnection, Exception) handler) {
         // return connectionEvent.onException(exceptionListener);
         super.onException(handler);
         return this;

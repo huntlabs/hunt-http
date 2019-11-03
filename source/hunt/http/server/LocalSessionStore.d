@@ -4,6 +4,7 @@ import hunt.http.server.HttpSession;
 import hunt.http.server.GlobalSettings;
 
 import hunt.http.Exceptions;
+import hunt.http.Util;
 
 import hunt.collection.HashMap;
 // import hunt.concurrency.Executors;
@@ -117,8 +118,7 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
 
     override
     protected void initialize() {
-        // executor = cast(ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
-        executor = GlobalSettings.scheduler();
+        executor = CommonUtil.scheduler();
         executor.setRemoveOnCancelPolicy(true);
         executor.scheduleWithFixedDelay(new class Runnable {
             void run() {

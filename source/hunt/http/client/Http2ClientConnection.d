@@ -17,22 +17,27 @@ import hunt.http.HttpOutputStream;
 import hunt.http.HttpRequest;
 import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
+import hunt.http.Util;
 
 import hunt.collection;
-import hunt.logging;
+import hunt.concurrency.Delayed;
+import hunt.logging.ConsoleLogger;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 
 import hunt.util.Common;
 import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
-// import hunt.concurrency.Scheduler;
 import hunt.Exceptions;
 
+import core.time;
 import std.conv;
 
 alias SessionListener = StreamSession.Listener;
 
+/**
+ * 
+ */
 class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     void initialize(HttpOptions config, Promise!(HttpClientConnection) promise,
                            SessionListener listener) {
@@ -65,19 +70,29 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
             sessionSPI.frames(null, callback, prefaceFrame, settingsFrame);
         }
 
-        // TODO: Tasks pending completion -@Administrator at 2018-7-16 14:41:31
-        // 
-        // Scheduler.Future pingFuture = scheduler.scheduleAtFixedRate(() => getHttp2Session().ping(new PingFrame(false), new class Callback {
-        //     void succeeded() {
-        //         info("The session %s sent ping frame success", getId());
-        //     }
+        executor = CommonUtil.scheduler();
+        executor.setRemoveOnCancelPolicy(true);
+        ScheduledFuture!(void) pingFuture = executor.scheduleWithFixedDelay(new class Runnable {
+            void run() {
+                PingFrame pingFrame = new PingFrame(false);
 
-        //     void failed(Throwable x) {
-        //         warningf("the session %s sends ping frame failure. %s", getId(), x.getMessage());
-        //     }
-        // }), config.getHttp2PingInterval(), config.getHttp2PingInterval(), TimeUnit.MILLISECONDS);
+                getHttp2Session().ping(pingFrame, new class NoopCallback {
+                    override void succeeded() {
+                        version(HUNT_HTTP_DEBUG) infof("The session %s sent ping frame success", getId());
+                    }
 
-        // onClose(c => pingFuture.cancel());
+                    override void failed(Exception x) {
+                        debug warningf("the session %s sends ping frame failure. %s", getId(), x.msg);
+                        version(HUNT_HTTP_DEBUG)  warning(x);
+                    }
+                });
+            }
+        }, 
+        
+        msecs(config.getHttp2PingInterval()), 
+        msecs(config.getHttp2PingInterval()));
+
+        onClose( (c) { pingFuture.cancel(false); });        
     }
 
     this(HttpOptions config, Connection tcpSession, SessionListener listener) {

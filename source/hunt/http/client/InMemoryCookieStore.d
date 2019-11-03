@@ -87,11 +87,6 @@ class InMemoryCookieStore : CookieStore {
         }
 
         HttpURI httpUri = new HttpURI(uri);
-        
-        // enum len = "https".length;
-        // bool secureLink = false;
-        // if(uri>len && (icmp(uri[0..len], "https" == 0))) secureLink = true;
-
         bool secureLink = icmp("https", httpUri.getScheme()) == 0;
 
         lock.reader().lock();

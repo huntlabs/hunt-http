@@ -34,7 +34,7 @@ void main(string[] args) {
     HttpClient client = new HttpClient();
     Future!(HttpClientConnection) conn = client.connect("127.0.0.1", 8080);
 
-    HttpClientRequest request = new HttpClientRequest("GET", "/index");
+    HttpClientRequest request = new HttpClientRequest("GET", "/");
     FuturePromise!WebSocketConnection promise = new FuturePromise!WebSocketConnection();
     IncomingFramesEx incomingFramesEx = new IncomingFramesEx();
     ClientHttpHandlerEx handlerEx = new ClientHttpHandlerEx();
@@ -46,13 +46,13 @@ void main(string[] args) {
             promise, handlerEx, incomingFramesEx);
 
     WebSocketConnection webSocketConnection = promise.get();
-    // webSocketConnection.sendText("Hello WebSocket").thenAccept((r) {
-    //     tracef("Client sends text frame success.");
-    // });
-
-    webSocketConnection.sendData([0x12, 0x13]).thenAccept((r) {
-        tracef("Client sends text frame success.");
+    webSocketConnection.sendText("Hello WebSocket").thenAccept((r) {
+        warning("Client sends text frame success.");
     });
+
+    // webSocketConnection.sendData([0x12, 0x13]).thenAccept((r) {
+    //     warning("Client sends text frame success.");
+    // });
 
     client.stop();
 }
@@ -60,7 +60,7 @@ void main(string[] args) {
 class ClientHttpHandlerEx : AbstractClientHttpHandler {
     override public bool messageComplete(HttpRequest request,
             HttpResponse response, HttpOutputStream output, HttpConnection connection) {
-        tracef("upgrade websocket success: " ~ response.toString());
+        warningf("upgrade websocket success: " ~ response.toString());
         return true;
     }
 }
@@ -75,7 +75,7 @@ class IncomingFramesEx : IncomingFrames {
         switch (type) {
         case FrameType.TEXT: {
                 TextFrame textFrame = cast(TextFrame) frame;
-                tracef("Client received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
+                infof("Client received: " ~ textFrame.toString() ~ ", " ~ textFrame.getPayloadAsUTF8());
                 break;
             }
 

@@ -5,6 +5,7 @@ import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 
 import hunt.collection.ByteBuffer;
+import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging.ConsoleLogger;
@@ -48,6 +49,8 @@ interface HttpConnection : Closeable { // : Connection
  * 
  */
 abstract class AbstractHttpConnection : HttpConnection { 
+    
+    protected ScheduledThreadPoolExecutor executor;
 
     protected Connection _tcpSession;
     protected HttpVersion _httpVersion;
