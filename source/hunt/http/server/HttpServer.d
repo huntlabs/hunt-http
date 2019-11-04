@@ -578,11 +578,11 @@ class HttpServer : AbstractLifecycle {
 
                 switch (frame.getType()) {
                     case WebSocketFrameType.TEXT:
-                        handler.onText((cast(DataFrame) frame).getPayloadAsUTF8(), connection);
+                        handler.onText(connection, (cast(DataFrame) frame).getPayloadAsUTF8());
                         break;
                         
                     case WebSocketFrameType.BINARY:
-                        handler.onBinary(frame.getPayload(), connection);
+                        handler.onBinary(connection, frame.getPayload());
                         break;
                         
                     case WebSocketFrameType.CLOSE:
@@ -598,7 +598,7 @@ class HttpServer : AbstractLifecycle {
                         break;
 
                     case WebSocketFrameType.CONTINUATION:
-                        handler.onContinuation (frame.getPayload(), connection);
+                        handler.onContinuation(connection, frame.getPayload());
                         break;
 
                     default: break;
@@ -608,7 +608,7 @@ class HttpServer : AbstractLifecycle {
                 string path = connection.getPath();
                 WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
                 if(handler !is null)
-                    handler.onError(ex, connection);
+                    handler.onError(connection, ex);
             });
 
             return adapter;

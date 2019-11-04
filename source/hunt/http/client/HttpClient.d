@@ -249,7 +249,7 @@ class HttpClient : AbstractLifecycle {
         IncomingFrames incomingFrames = new class IncomingFrames {
             void incomingError(Exception ex) {
                 version(HUNT_HTTP_DEBUG) warningf(ex.msg);
-                handler.onError(ex, webSocket);
+                handler.onError(webSocket, ex);
             }
 
             void incomingFrame(WebSocketFrame frame) {
@@ -257,11 +257,11 @@ class HttpClient : AbstractLifecycle {
                 version(HUNT_HTTP_DEBUG) tracef("new frame comming: %s", type);
                 switch (type) {
                     case WebSocketFrameType.TEXT:
-                        handler.onText((cast(DataFrame) frame).getPayloadAsUTF8(), webSocket);
+                        handler.onText(webSocket, (cast(DataFrame) frame).getPayloadAsUTF8());
                         break;
                         
                     case WebSocketFrameType.BINARY:
-                        handler.onBinary(frame.getPayload(), webSocket);
+                        handler.onBinary(webSocket, frame.getPayload());
                         break;
                         
                     case WebSocketFrameType.CLOSE:
@@ -277,7 +277,7 @@ class HttpClient : AbstractLifecycle {
                         break;
 
                     case WebSocketFrameType.CONTINUATION:
-                        handler.onContinuation (frame.getPayload(), webSocket);
+                        handler.onContinuation(webSocket, frame.getPayload());
                         break;
 
                     default:
@@ -301,7 +301,7 @@ class HttpClient : AbstractLifecycle {
                 handler.onOpen(webSocket);
             } catch(Exception ex ) {
                 version(HUNT_HTTP_DEBUG) warningf(ex.msg);
-                handler.onError(ex, webSocket);
+                handler.onError(webSocket, ex);
             }
         }
         return webSocket;

@@ -211,13 +211,13 @@ interface WebSocketMessageHandler {
 
     void onPong(WebSocketConnection connection);
     
-    void onText(string text, WebSocketConnection connection);
+    void onText(WebSocketConnection connection, string text);
 
-    void onBinary(ByteBuffer buffer, WebSocketConnection connection);
+    void onBinary(WebSocketConnection connection, ByteBuffer buffer);
 
-    void onContinuation(ByteBuffer buffer, WebSocketConnection connection);
+    void onContinuation(WebSocketConnection connection, ByteBuffer buffer);
 
-    void onError(Exception exception, WebSocketConnection connection);
+    void onError(WebSocketConnection connection, Exception exception);
 
     alias onFailure = onError;
 }
@@ -242,15 +242,15 @@ abstract class AbstractWebSocketMessageHandler : WebSocketMessageHandler {
         version(HUNT_HTTP_DEBUG) tracef("ping from %s", connection.getRemoteAddress());
     }
     
-    void onText(string text, WebSocketConnection connection)  { 
+    void onText(WebSocketConnection connection, string text)  { 
         version(HUNT_HTTP_DEBUG) tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
      }
 
-    void onBinary(ByteBuffer buffer, WebSocketConnection connection)  { implementationMissing(false); }
+    void onBinary(WebSocketConnection connection, ByteBuffer buffer)  { implementationMissing(false); }
 
-    void onContinuation(ByteBuffer buffer, WebSocketConnection connection)  { implementationMissing(false); }
+    void onContinuation(WebSocketConnection connection, ByteBuffer buffer)  { implementationMissing(false); }
 
-    void onError(Exception ex, WebSocketConnection connection)  { 
+    void onError(WebSocketConnection connection, Exception ex)  { 
         debug warningf("error (from %s): %s", connection.getRemoteAddress(), ex.msg);
         version(HUNT_DEBUG) warning(ex);
     }

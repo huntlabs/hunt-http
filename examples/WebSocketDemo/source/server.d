@@ -43,7 +43,7 @@ HttpServer buildServerWithWebSocket() {
                 connection.sendText("Avaliable WebSocket endpoints: /, /ws1, /ws2.");
             }
 
-            override void onText(string text, WebSocketConnection connection) {
+            override void onText(WebSocketConnection connection, string text) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
@@ -64,7 +64,7 @@ HttpServer buildServerWithWebSocket() {
                 connection.sendText("Resonse from /ws1 at " ~ DateTime.getTimeAsGMT());
             }
 
-            override void onText(string text, WebSocketConnection connection) {
+            override void onText(WebSocketConnection connection, string text) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
@@ -75,7 +75,7 @@ HttpServer buildServerWithWebSocket() {
                 connection.sendText("Resonse from /ws2 at " ~ DateTime.getTimeAsGMT());
             }
 
-            override void onText(string text, WebSocketConnection connection) {
+            override void onText(WebSocketConnection connection, string text) {
                 tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }

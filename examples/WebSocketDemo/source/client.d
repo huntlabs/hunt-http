@@ -44,7 +44,7 @@ void main(string[] args) {
             connection.sendText("Hello WebSocket. " ~ DateTime.getTimeAsGMT());
         }
 
-        override void onText(string text, WebSocketConnection connection) {
+        override void onText(WebSocketConnection connection, string text) {
             warningf("received (from %s): %s", connection.getRemoteAddress(), text); 
         }
     });
