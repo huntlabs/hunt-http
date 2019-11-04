@@ -152,7 +152,7 @@ class HttpClient : AbstractLifecycle {
     }
 
     override protected void initialize() {
-        NetUtil.startEventLoop();
+        // do nothing
     }
 
     override  void destroy() {

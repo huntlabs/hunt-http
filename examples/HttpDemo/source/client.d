@@ -3,11 +3,10 @@ module HttpClientTest;
 
 import hunt.http.client;
 
-
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
+import hunt.util.DateTime;
 import hunt.util.MimeType;
-
 
 import std.stdio;
 
@@ -20,7 +19,8 @@ import std.stdio;
 void main(string[] args) {
     // testSimpleHttpClient();
     // testHttpClientWithCookie();
-    testHttpClientWithMultipart();
+    // testHttpClientWithMultipart();
+    testWebSocketClient();
 }
 
 void testSimpleHttpClient() {
@@ -113,6 +113,35 @@ Response postForm(HttpClient client, string url, RequestBody content) {
     return response;
 }
 
+
+void testWebSocketClient() {
+
+    HttpClient client = new HttpClient();
+//
+    string url = "http://127.0.0.1:8080/ws1";
+    Request request = new RequestBuilder()
+        .url(url)
+        // .header("Authorization", "Basic cHV0YW86MjAxOQ==")
+        .authorization(AuthenticationScheme.Basic, "cHV0YW86MjAxOQ==")
+        .build();
+
+    WebSocketConnection wsConn =  client.newWebSocket(request, new class AbstractWebSocketMessageHandler {
+        override void onOpen(WebSocketConnection connection) {
+            warning("Connection opened");
+            connection.sendText("Hello WebSocket. " ~ DateTime.getTimeAsGMT());
+        }
+
+        override void onText(WebSocketConnection connection, string text) {
+            warningf("received (from %s): %s", connection.getRemoteAddress(), text); 
+        }
+    }); 
+
+    // import core.thread;
+    // import core.time;
+    // Thread.sleep(5.seconds);
+    // wsConn.close();
+    // client.close();
+}
 
 class HttpClientTest {
     HttpClient client;

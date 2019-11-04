@@ -25,15 +25,19 @@ void main(string[] args) {
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithUpload();
-    // HttpServer server = buildServerWithWebSocket();
-    HttpServer server = buildServerWithSessionStore();
+    HttpServer server = buildServerWithWebSocket();
+    // HttpServer server = buildServerWithSessionStore();
     
-    if(server.isTLS())
-	    writefln("listening on https://%s:%d", server.getHost, server.getPort);
-    else 
-	    writefln("listening on http://%s:%d", server.getHost, server.getPort);
-
-    server.start();
+    server.onOpened(() {
+        if(server.isTLS())
+            writefln("listening on https://%s:%d", server.getHost, server.getPort);
+        else 
+            writefln("listening on http://%s:%d", server.getHost, server.getPort);
+    })
+    .onOpenFailed((e) {
+        writefln("Failed to open a HttpServer, the reason: %s", e.msg);
+    })
+    .start();
 }
 
 
@@ -214,6 +218,18 @@ HttpServer buildServerWithWebSocket() {
     HttpServer server = HttpServer.builder()
         // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
+        .registerWebSocket("/", new class AbstractWebSocketMessageHandler {
+
+            override void onOpen(WebSocketConnection connection) {
+                connection.sendText("Resonse from / at " ~ DateTime.getTimeAsGMT());
+                connection.sendText("Avaliable WebSocket endpoints: /, /ws1, /ws2.");
+            }
+
+            override void onText(WebSocketConnection connection, string text) {
+                tracef("received (from %s): %s", connection.getRemoteAddress(), text); 
+                connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
+            }
+        })
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
@@ -227,7 +243,7 @@ HttpServer buildServerWithWebSocket() {
         .registerWebSocket("/ws1", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
-                connection.sendText("Resonse from ws1 at " ~ DateTime.getTimeAsGMT());
+                connection.sendText("Resonse from /ws1 at " ~ DateTime.getTimeAsGMT());
             }
 
             override void onText(WebSocketConnection connection, string text) {
@@ -238,7 +254,7 @@ HttpServer buildServerWithWebSocket() {
         .registerWebSocket("/ws2", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
-                connection.sendText("Resonse from ws2 at " ~ DateTime.getTimeAsGMT());
+                connection.sendText("Resonse from /ws2 at " ~ DateTime.getTimeAsGMT());
             }
 
             override void onText(WebSocketConnection connection, string text) {
