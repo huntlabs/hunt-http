@@ -23,6 +23,40 @@
 [4] In-memory only<br>
 [5] Download untested<br>
 
+## Simple codes
+
+### Using hunt-http build a web server
+```D
+import hunt.http;
+
+void main()
+{
+    auto server = HttpServer.builder().setListener(8080, "0.0.0.0").setHandler((RoutingContext context) {
+            context.write("Hello World!");
+            context.end();
+        }).build();
+
+    server.start();
+}
+```
+
+### Using hunt-http build a websocket server
+```D
+import hunt.http;
+
+void main()
+{
+    auto server = HttpServer.builder().setListener(8080, "0.0.0.0").registerWebSocket("/", new class AbstractWebSocketMessageHandler {
+            override void onText(WebSocketConnection connection, string text)
+            {
+                connection.sendText("Hello " ~ text);
+            }
+        }).build()
+
+    server.start();
+}
+```
+
 
 ## Avaliable versions
 | Name | Description | 
