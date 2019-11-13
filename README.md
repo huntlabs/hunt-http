@@ -39,6 +39,24 @@ void main()
     server.start();
 }
 ```
+### Using hunt-http build a http client
+```D
+import hunt.http;
+import hunt.logging;
+
+void main()
+{
+    auto client = new HttpClient();
+
+    auto request = new RequestBuilder().url("http://www.huntlabs.net").build();
+    auto response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        return response.getBody().asString();
+    }
+}
+```
 
 ### Using hunt-http build a websocket server
 ```D
