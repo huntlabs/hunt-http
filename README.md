@@ -42,7 +42,8 @@ void main()
 ### Using hunt-http build a http client
 ```D
 import hunt.http;
-import hunt.logging;
+
+import std.stdio;
 
 void main()
 {
@@ -51,9 +52,9 @@ void main()
     auto request = new RequestBuilder().url("http://www.huntlabs.net").build();
     auto response = client.newCall(request).execute();
 
-    if (response !is null) {
-        tracef("status code: %d", response.getStatus());
-        return response.getBody().asString();
+    if (response !is null)
+    {
+        writeln(response.getBody().asString());
     }
 }
 ```
