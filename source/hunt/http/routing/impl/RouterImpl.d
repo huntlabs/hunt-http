@@ -190,9 +190,9 @@ class RouterImpl : Router {
     }
 
     void handle(RoutingContext context) {
-        // if(_routingHandler !is null) {
+        if(_routingHandler !is null) {
             _routingHandler(context);
-        // }
+        }
     }
 
     override

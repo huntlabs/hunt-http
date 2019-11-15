@@ -152,11 +152,10 @@ class RealCall : Call {
 
         doRequestTask(httpHandler);
 
-        HttpOptions options = client.getHttpOptions();
-        TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
-        Duration idleTimeout = tcpOptions.getIdleTimeout();     
-
         if(hcr is null) {
+            HttpOptions options = client.getHttpOptions();
+            TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
+            Duration idleTimeout = tcpOptions.getIdleTimeout();     
             if(idleTimeout.isNegative()) {
                 version (HUNT_HTTP_DEBUG) infof("waitting for response...");
                 responseCondition.wait();
