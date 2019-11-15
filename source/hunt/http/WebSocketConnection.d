@@ -5,7 +5,6 @@ import hunt.http.HttpResponse;
 import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketPolicy;
-// import hunt.http.codec.websocket.model.OutgoingFrames;
 import hunt.http.HttpConnection;
 
 import hunt.collection.ByteBuffer;
@@ -131,6 +130,8 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
      * @return the idle timeout in milliseconds
      */
     // long getIdleTimeout();
+
+    bool isConnected();
 
     /**
      * Get the IOState of the connection.

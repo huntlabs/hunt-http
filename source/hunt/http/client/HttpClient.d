@@ -241,14 +241,14 @@ class HttpClient : AbstractLifecycle {
         AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
             override bool messageComplete(HttpRequest request,
                     HttpResponse response, HttpOutputStream output, HttpConnection connection) {
-                warningf("upgrade websocket success: " ~ response.toString());
+                version(HUNT_HTTP_DEBUG) tracef("Upgrade to WebSocket successfully: " ~ response.toString());
                 return true;
             }
         };
 
         IncomingFrames incomingFrames = new class IncomingFrames {
             void incomingError(Exception ex) {
-                version(HUNT_HTTP_DEBUG) warningf(ex.msg);
+                version(HUNT_DEBUG) warningf(ex.msg);
                 handler.onError(webSocket, ex);
             }
 

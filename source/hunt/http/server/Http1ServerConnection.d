@@ -251,6 +251,9 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
                     }
                 });
 
+                ioState.onConnected();
+                ioState.onOpened();
+
 // dfmt on
                 ExtensionConfig[] negotiatedExtensions = webSocketConnection.getExtensionNegotiator()
                     .negotiate(request);

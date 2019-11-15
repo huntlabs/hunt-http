@@ -70,7 +70,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         this.upgradeResponse = upgradeResponse;
         this.config = config;
         ioState = new IOState();
-        ioState.onOpened();
+        // ioState.onOpened();
 
         //dfmt off
         extensionNegotiator.setNextOutgoingFrames(
@@ -169,6 +169,15 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         super.notifyException(t);
     }
 
+    bool isConnected() {
+        if(ioState !is null) {
+            WebSocketConnectionState state = ioState.getConnectionState();
+            version(HUNT_HTTP_DEBUG) tracef("io state: %s", state) ;
+            return state == WebSocketConnectionState.CONNECTED || state == WebSocketConnectionState.OPEN;
+        }
+        return false;
+    }
+
     override IOState getIOState() {
         return ioState;
     }
@@ -234,7 +243,7 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
             break;
 
         case WebSocketFrameType.PONG: {
-                info("The websocket connection %s received pong frame", getId());
+                infof("The websocket connection %s received pong frame", getId());
             }
             break;
 
@@ -360,6 +369,22 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
     override HttpVersion getHttpVersion() {
         return super.getHttpVersion();
     }
+
+    override void setAttribute(string key, Object value) {
+        super.setAttribute(key, value);
+    }
+    
+    override Object getAttribute(string key) {
+        return super.getAttribute(key);
+    }
+    
+    override Object removeAttribute(string key) {
+        return super.removeAttribute(key);
+    }    
+    
+    override bool containsAttribute(string key) {
+        return super.containsAttribute(key);
+    }    
 
 // version (HUNT_METRIC) {
 //     override long getOpenTime() {

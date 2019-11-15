@@ -15,6 +15,7 @@ import hunt.http.codec.http.model;
 import hunt.http.codec.http.stream;
 import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketConnection;
+import hunt.http.codec.websocket.stream.IOState;
 import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.HttpConnection;
@@ -192,7 +193,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                         && http2SessionListener !is null && http2Connection !is null) {
                     upgradeHttp2Complete = true;
                     // tcpSession.attachObject(http2Connection);
-                    getTcpConnection().setAttribute(HttpConnection.NAME, http2Connection);
+                    setAttribute(HttpConnection.NAME, http2Connection);
                     http2SessionListener.setConnection(http2Connection);
                     http2Connection.initialize(getHttpOptions(),
                             http2ConnectionPromise, http2SessionListener);
@@ -208,7 +209,10 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
                     WebSocketConnection webSocketConnection = new WebSocketConnectionImpl(
                             getTcpConnection(), incomingFrames, policy, request, response, config);
                     // tcpSession.attachObject(cast(Object) webSocketConnection);
-                    getTcpConnection().setAttribute(HttpConnection.NAME, cast(Object)webSocketConnection);
+                    setAttribute(HttpConnection.NAME, cast(Object)webSocketConnection);
+                    IOState state = webSocketConnection.getIOState();
+                    state.onConnected();
+                    state.onOpened();
                     webSocketConnectionPromise.succeeded(webSocketConnection);
                     return true;
                 } else {

@@ -42,6 +42,38 @@ interface HttpConnection : Closeable { // : Connection
     HttpConnection onClose(Action1!(HttpConnection) handler);
 
     HttpConnection onException(Action2!(HttpConnection, Exception) handler);
+
+
+    /**
+     * Returns the value of the user-defined attribute of this connection.
+     *
+     * @param key the key of the attribute
+     * @return <tt>null</tt> if there is no attribute with the specified key
+     */
+    Object getAttribute(string key);
+    
+    /**
+     * Sets a user-defined attribute.
+     *
+     * @param key the key of the attribute
+     * @param value the value of the attribute
+     */
+    void setAttribute(string key, Object value);
+
+    /**
+     * Removes a user-defined attribute with the specified key.
+     *
+     * @param key The key of the attribute we want to remove
+     * @return The old value of the attribute.  <tt>null</tt> if not found.
+     */
+    Object removeAttribute(string key);
+
+    /**
+     * @param key The key of the attribute we are looking for in the connection 
+     * @return <tt>true</tt> if this connection contains the attribute with
+     * the specified <tt>key</tt>.
+     */
+    bool containsAttribute(string key);
 }
 
 
@@ -90,6 +122,22 @@ abstract class AbstractHttpConnection : HttpConnection {
 
     bool isSecured() {
         return _tcpSession.isSecured();
+    }
+
+    void setAttribute(string key, Object value) {
+        _tcpSession.setAttribute(key, value);
+    }
+    
+    Object getAttribute(string key) {
+        return _tcpSession.getAttribute(key);
+    }
+    
+    Object removeAttribute(string key) {
+        return _tcpSession.removeAttribute(key);
+    }
+
+    bool containsAttribute(string key) {
+        return _tcpSession.containsAttribute(key);
     }
 
     override
