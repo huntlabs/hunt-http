@@ -175,7 +175,7 @@ struct HttpStatus {
 			_message = message;
 		}
 
-		mixin GetConstantValues!(Code);
+		mixin ValuesMemberTempate!(Code);
 
 		int getCode() {
 			return _code;

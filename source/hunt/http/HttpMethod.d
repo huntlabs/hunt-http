@@ -137,7 +137,7 @@ struct HttpMethod {
     }
 
  
-	mixin GetConstantValues!(HttpMethod);
+	mixin ValuesMemberTempate!(HttpMethod);
 
     /* ------------------------------------------------------------ */
     private string _string;

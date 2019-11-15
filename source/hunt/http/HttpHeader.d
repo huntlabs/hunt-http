@@ -154,7 +154,7 @@ struct HttpHeader {
         // }
     }
 
-    mixin GetConstantValues!(HttpHeader);
+    mixin ValuesMemberTempate!(HttpHeader);
 
     private int _ordinal;
     private string _string;
@@ -258,7 +258,7 @@ struct HttpHeaderValue {
 		}
 	}
 
-	mixin GetConstantValues!(HttpHeaderValue);
+	mixin ValuesMemberTempate!(HttpHeaderValue);
 
 	private string _string;
 	// private ByteBuffer buffer;

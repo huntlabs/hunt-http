@@ -22,7 +22,7 @@ struct HttpVersion {
 			CACHE[ver.toString()] = ver;
 	}
 
-	mixin GetConstantValues!(HttpVersion);
+	mixin ValuesMemberTempate!(HttpVersion);
 
 	/**
 	 * Optimized lookup to find a HTTP Version and whitespace in a byte array.
