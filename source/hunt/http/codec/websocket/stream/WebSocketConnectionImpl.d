@@ -117,33 +117,35 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
             executor = CommonUtil.scheduler();
             executor.setRemoveOnCancelPolicy(true);
             ScheduledFuture!(void) pingFuture = executor.scheduleWithFixedDelay(new class Runnable {
-                void run() {
-                    PingFrame pingFrame = new PingFrame();
+                    void run() {
+                        PingFrame pingFrame = new PingFrame();
 
-                    outgoingFrame(pingFrame, new class NoopCallback {
-                        override void succeeded() {
-                            version(HUNT_HTTP_DEBUG) infof("The websocket connection %s sent ping frame success", getId());
-                        }
+                        outgoingFrame(pingFrame, new class NoopCallback {
+                            override void succeeded() {
+                                version(HUNT_HTTP_DEBUG) infof("The websocket connection %s sent ping frame success", getId());
+                            }
 
-                        override void failed(Exception x) {
-                            debug warningf("the websocket connection %s sends ping frame failure. %s", getId(), x.msg);
-                            version(HUNT_HTTP_DEBUG)  warning(x);
-                        }
-                    });
-                }
-            }, 
-            
-            msecs(config.getWebsocketPingInterval()), 
-            msecs(config.getWebsocketPingInterval()));
+                            override void failed(Exception x) {
+                                debug warningf("the websocket connection %s sends ping frame failure. %s", getId(), x.msg);
+                                version(HUNT_HTTP_DEBUG)  warning(x);
+                            }
+                        });
+                    }
+                }, 
+                msecs(config.getWebsocketPingInterval()), 
+                msecs(config.getWebsocketPingInterval()));
 
-            onClose( (c) { pingFuture.cancel(false); });
-        }
+            onClose( (c) {
+                version(HUNT_HTTP_DEBUG) 
+                infof("Cancelling the ping task on connection %d with %s", this.getId(), this.getRemoteAddress());
+                pingFuture.cancel(false); 
+            });
+        }        
 
 //dfmt on        
     }
 
     override WebSocketConnection onClose(Action1!(HttpConnection) handler) {
-        // return connectionEvent.onClose(closedListener);
         super.onClose(handler);
         return this;
     }

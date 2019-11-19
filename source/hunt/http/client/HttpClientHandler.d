@@ -156,6 +156,11 @@ class HttpClientHandler : HttpConnectionHandler {
     void connectionClosed(Connection connection) {
         try {
             super.connectionClosed(connection);
+        } catch(Exception ex) {
+            warning(ex.msg);
+            version(HUNT_DEBUG) {
+                warning(ex);
+            }
         } finally {
             // _httpClientContext.remove(connection.getId());
         }

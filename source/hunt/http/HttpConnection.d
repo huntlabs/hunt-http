@@ -291,8 +291,8 @@ abstract class HttpConnectionHandler : NetConnectionHandlerAdapter {
 
     override
     void connectionClosed(Connection connection) {
-        version(HUNT_HTTP_DEBUG) {
-            infof("Connection %s closed event. Remote host: %s", 
+        version(HUNT_DEBUG) {
+            infof("Connection %d closed event. Remote host: %s", 
                 connection.getId(), connection.getRemoteAddress());
         }
 

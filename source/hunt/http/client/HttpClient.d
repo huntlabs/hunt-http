@@ -134,7 +134,7 @@ class HttpClient : AbstractLifecycle {
         })
         .setHandler(new HttpClientHandler(_httpOptions, clientContext));
 
-        client.setOnClosed(_onClosed);
+        client.onClosed(_onClosed);
         client.connect(host, port);
         // _isConnected = client.isConnected();
     }
@@ -155,7 +155,7 @@ class HttpClient : AbstractLifecycle {
         // do nothing
     }
 
-    override  void destroy() {
+    override void destroy() {
         foreach(NetClient client; _netClients) {
             client.close();
         }
