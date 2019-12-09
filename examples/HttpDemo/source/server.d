@@ -103,7 +103,7 @@ HttpServer buildServerDefaultRoute() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
-        .addNotFoundRoute((RoutingContext ctx) {
+        .setDefaultRequest((RoutingContext ctx) {
             string content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
             string title = "404 - not found";
 
@@ -218,7 +218,7 @@ HttpServer buildServerWithWebSocket() {
     HttpServer server = HttpServer.builder()
         // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
-        .registerWebSocket("/", new class AbstractWebSocketMessageHandler {
+        .webSocket("/", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from / at " ~ DateTime.getTimeAsGMT());
@@ -240,7 +240,7 @@ HttpServer buildServerWithWebSocket() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
-        .registerWebSocket("/ws1", new class AbstractWebSocketMessageHandler {
+        .webSocket("/ws1", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from /ws1 at " ~ DateTime.getTimeAsGMT());
@@ -251,7 +251,7 @@ HttpServer buildServerWithWebSocket() {
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
         })
-        .registerWebSocket("/ws2", new class AbstractWebSocketMessageHandler {
+        .webSocket("/ws2", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from /ws2 at " ~ DateTime.getTimeAsGMT());

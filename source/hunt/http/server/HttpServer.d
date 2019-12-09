@@ -289,6 +289,8 @@ class HttpServer : AbstractLifecycle {
         
         enum PostMethod = HttpMethod.POST.asString();
         enum GetMethod = HttpMethod.GET.asString();
+        enum PutMethod = HttpMethod.PUT.asString();
+        enum DeleteMethod = HttpMethod.DELETE.asString();
 
         private HttpServerOptions _httpOptions;
         private RouterManager routerManager;
@@ -394,15 +396,27 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        Builder post(string path, RoutingHandler handler) {
-            return addRoute([path], [PostMethod], handler);
-        }
-
-        Builder get(string path, RoutingHandler handler) {
+        Builder onGet(string path, RoutingHandler handler) {
             return addRoute([path], [GetMethod], handler);
         }
 
-        Builder addNotFoundRoute(RoutingHandler handler) {
+        Builder onPost(string path, RoutingHandler handler) {
+            return addRoute([path], [PostMethod], handler);
+        }
+
+        Builder onPut(string path, RoutingHandler handler) {
+            return addRoute([path], [PutMethod], handler);
+        }
+
+        Builder onDelete(string path, RoutingHandler handler) {
+            return addRoute([path], [DeleteMethod], handler);
+        }
+
+        Builder onRequest(HttpMethod method, string path, RoutingHandler handler) {
+            return addRoute([path], [method], handler);
+        }
+
+        Builder setDefaultRequest(RoutingHandler handler) {
             currentRouter = routerManager.register(DEFAULT_LAST_ROUTER_ID-1);
             currentRouter.path("*").handler( (RoutingContext ctx) { 
                 ctx.setStatus(HttpStatus.NOT_FOUND_404);
@@ -411,7 +425,9 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        Builder registerWebSocket(string path, WebSocketMessageHandler handler) {
+        alias addNotFoundRoute = setDefaultRequest;
+
+        Builder webSocket(string path, WebSocketMessageHandler handler) {
             // auto itemPtr = path in webSocketHandlers;
             // if(itemPtr !is null)
             //     throw new Exception("Handler registered on path: " ~ path);
