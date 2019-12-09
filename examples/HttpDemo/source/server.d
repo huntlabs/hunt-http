@@ -277,7 +277,7 @@ HttpServer buildServerWithSessionStore() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
         })
-        .post("/session/:name", (RoutingContext context) {
+        .onPost("/session/:name", (RoutingContext context) {
             HttpServerRequest request = context.getRequest();
             string name = context.getRouterParameter("name");
             trace("the path param -> " ~ name);
@@ -295,7 +295,7 @@ HttpServer buildServerWithSessionStore() {
             context.updateSession(session);
             context.end("Session created. Expired in 10 seconds.");
         })
-        .get("/session/:name", (RoutingContext ctx) {
+        .onGet("/session/:name", (RoutingContext ctx) {
             string name = ctx.getRouterParameter("name");
             HttpSession session = ctx.getSession();
             ctx.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);

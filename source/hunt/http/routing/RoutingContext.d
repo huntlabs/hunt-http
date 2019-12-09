@@ -6,7 +6,7 @@ import hunt.http.server.HttpServerResponse;
 
 import hunt.http.codec.http.model;
 import hunt.http.HttpOutputStream;
-import hunt.http.routing.handler.DefaultErrorResponseHandler;
+import hunt.http.routing.handler;
 
 import hunt.http.Cookie;
 import hunt.http.HttpHeader;

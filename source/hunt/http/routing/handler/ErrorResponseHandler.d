@@ -1,4 +1,4 @@
-module hunt.http.routing.handler.DefaultErrorResponseHandler;
+module hunt.http.routing.handler.ErrorResponseHandler;
 
 import hunt.http.routing.RoutingContext;
 
@@ -16,7 +16,7 @@ import std.concurrency : initOnce;
 /**
  * 
  */
-abstract class AbstractErrorResponseHandler : RouteHandler {
+abstract class ErrorResponseHandler : RouteHandler {
 
     void handle(RoutingContext ctx) {
         if (ctx.hasNext()) {
@@ -42,7 +42,7 @@ abstract class AbstractErrorResponseHandler : RouteHandler {
 /**
  * 
  */
-class DefaultErrorResponseHandler : AbstractErrorResponseHandler {
+class DefaultErrorResponseHandler : ErrorResponseHandler {
     private __gshared DefaultErrorResponseHandler inst;
 
     static DefaultErrorResponseHandler Default() {
