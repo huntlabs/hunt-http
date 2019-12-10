@@ -78,6 +78,14 @@ class HttpResponse : HttpMetaData {
         _reason = reason;
     }
 
+    void setHeader(T = string)(HttpHeader header, T value) {
+        getFields().put(header, value);
+    }
+
+    void setHeader(T = string)(string header, T value) {
+        getFields().put(header, value);
+    }
+
     alias code = getStatus;
     alias message = getReason;
     

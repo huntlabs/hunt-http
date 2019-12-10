@@ -6,7 +6,7 @@ import hunt.http.Version;
 import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
 
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 
 import std.conv;
@@ -18,24 +18,24 @@ import std.concurrency : initOnce;
  */
 abstract class ErrorResponseHandler : RouteHandler {
 
-    void handle(RoutingContext ctx) {
-        if (ctx.hasNext()) {
+    void handle(RoutingContext context) {
+        if (context.hasNext()) {
             try {
-                ctx.next();
+                context.next();
             } catch (Exception t) {
                 version(HUNT_DEBUG) errorf("http handler exception", t.msg);
-                if (!ctx.isCommitted()) {
-                    render(ctx, HttpStatus.INTERNAL_SERVER_ERROR_500, t);
-                    ctx.fail(t);
+                if (!context.isCommitted()) {
+                    render(context, HttpStatus.INTERNAL_SERVER_ERROR_500, t);
+                    context.fail(t);
                 }
             }
         } else {
-            render(ctx, HttpStatus.NOT_FOUND_404, null);
-            ctx.succeed(true);
+            render(context, HttpStatus.NOT_FOUND_404, null);
+            context.succeed(true);
         }
     }
 
-    void render(RoutingContext ctx, int status, Exception ex);
+    abstract void render(RoutingContext context, int status, Exception ex);
 }
 
 
@@ -53,7 +53,7 @@ class DefaultErrorResponseHandler : ErrorResponseHandler {
         inst = handler;
     }
 
-    override void render(RoutingContext ctx, int status, Exception t) {
+    override void render(RoutingContext context, int status, Exception t) {
 
         HttpStatusCode code = HttpStatus.getCode(status); 
         if(code == HttpStatusCode.Null)
@@ -61,17 +61,17 @@ class DefaultErrorResponseHandler : ErrorResponseHandler {
         
         string title = status.to!string() ~ " " ~ code.getMessage();
         string content;
-        if(code == HttpStatusCode.NOT_FOUND) {
-            content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
-        } else if(code == HttpStatusCode.INTERNAL_SERVER_ERROR) {
+        if(status == HttpStatus.NOT_FOUND_404) {
+            content = "The resource " ~ context.getURI().getPath() ~ " is not found";
+        } else if(status == HttpStatus.INTERNAL_SERVER_ERROR_500) {
             content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
         } else {
             content = title ~ "<br/>" ~ (t !is null ? t.msg : "");
         }
 
-        ctx.setStatus(status);
-        ctx.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, "text/html");
-        ctx.write("<!DOCTYPE html>")
+        context.setStatus(status);
+        context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, "text/html");
+        context.write("<!DOCTYPE html>")
            .write("<html>")
            .write("<head>")
            .write("<title>")

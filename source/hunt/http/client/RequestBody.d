@@ -162,8 +162,6 @@ abstract class RequestBody {
                         tracef("read: %s, remaining: %d, eof: %s", 
                             data.length, remaining, f.eof());
                     }
-
-                    remaining = 100;
 				}
 			}
         };

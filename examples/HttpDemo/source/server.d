@@ -22,10 +22,10 @@ openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 
 void main(string[] args) {
 
     // HttpServer server = buildSimpleServer();
-    // HttpServer server = buildServerDefaultRoute();
+    HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithUpload();
-    HttpServer server = buildServerWithWebSocket();
+    // HttpServer server = buildServerWithWebSocket();
     // HttpServer server = buildServerWithSessionStore();
     
     server.onOpened(() {
@@ -43,7 +43,7 @@ void main(string[] args) {
 
 HttpServer buildSimpleServer() {
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .setHandler((RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
@@ -65,7 +65,7 @@ HttpServer buildSimpleServer() {
 HttpServer buildServerWithMultiRoutes() {
 
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
@@ -91,7 +91,7 @@ HttpServer buildServerWithMultiRoutes() {
 
 HttpServer buildServerDefaultRoute() {
     HttpServer server = HttpServer.builder()
-        .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
+        // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
@@ -103,6 +103,8 @@ HttpServer buildServerDefaultRoute() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
+        .resource("/files", "/home/zhangxueping")
+        // .resource("/files/*", "/home/zhangxueping")
         .setDefaultRequest((RoutingContext ctx) {
             string content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
             string title = "404 - not found";
@@ -218,7 +220,7 @@ HttpServer buildServerWithWebSocket() {
     HttpServer server = HttpServer.builder()
         // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
-        .webSocket("/", new class AbstractWebSocketMessageHandler {
+        .websocket("/", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from / at " ~ DateTime.getTimeAsGMT());
@@ -240,7 +242,7 @@ HttpServer buildServerWithWebSocket() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
-        .webSocket("/ws1", new class AbstractWebSocketMessageHandler {
+        .websocket("/ws1", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from /ws1 at " ~ DateTime.getTimeAsGMT());
@@ -251,7 +253,7 @@ HttpServer buildServerWithWebSocket() {
                 connection.sendText("received at " ~ DateTime.getTimeAsGMT() ~ " : " ~ text);
             }
         })
-        .webSocket("/ws2", new class AbstractWebSocketMessageHandler {
+        .websocket("/ws2", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
                 connection.sendText("Resonse from /ws2 at " ~ DateTime.getTimeAsGMT());

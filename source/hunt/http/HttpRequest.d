@@ -105,6 +105,14 @@ class HttpRequest : HttpMetaData {
         _uri = uri;
     }
 
+    bool headerExists(HttpHeader header) {
+        return getFields().containsKey(header.asString());
+    }
+
+    bool headerExists(string key) {
+        return getFields().containsKey(key);
+    }
+
     bool isChunked() {
         string transferEncoding = getFields().get(HttpHeader.TRANSFER_ENCODING);
         return HttpHeaderValue.CHUNKED.asString() == transferEncoding

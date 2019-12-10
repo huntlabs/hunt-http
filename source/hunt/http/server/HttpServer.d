@@ -17,10 +17,10 @@ import hunt.http.server.WebSocketHandler;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
-import hunt.http.HttpOutputStream;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
-import hunt.http.WebSocketConnection;
 import hunt.http.codec.websocket.frame;
+import hunt.http.HttpOutputStream;
+import hunt.http.WebSocketConnection;
 
 import hunt.http.routing;
 import hunt.http.HttpConnection;
@@ -33,10 +33,11 @@ import hunt.http.WebSocketPolicy;
 import hunt.collection.BufferUtils;
 import hunt.collection.ByteBuffer;
 import hunt.event.EventLoop;
-import hunt.util.DateTime;
 import hunt.Exceptions;
+import hunt.Functions;
 import hunt.logging;
 import hunt.net;
+import hunt.util.DateTime;
 import hunt.util.Lifecycle;
 
 import core.time;
@@ -46,16 +47,8 @@ import std.algorithm;
 import std.file;
 import std.path;
 
-import hunt.Functions;
-
-// template Action(T...) {
-//     alias Action = void delegate(T);
-// }
-
         
 alias BadRequestHandler = ActionN!(HttpServerContext); 
-
-// alias ServerEventHandler = ActionN!(HttpServer, Throwable);
 alias ServerErrorHandler = ActionN!(HttpServer, Exception);
 
 /**
@@ -369,6 +362,18 @@ class HttpServer : AbstractLifecycle {
 
         Builder addRoute(string[] paths, string[] methods, RoutingHandler handler) {
             currentRouter = routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), paths);
+            currentRouter.paths(paths);
+            foreach(string m; methods) {
+                currentRouter.method(m);
+            }
+            currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            return this;
+        }
+
+        Builder addRoute(string[] paths, string[] methods, RouteHandler handler) {
+            currentRouter = routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), paths);
             currentRouter.paths(paths);
             foreach(string m; methods) {
                 currentRouter.method(m);
@@ -388,6 +393,7 @@ class HttpServer : AbstractLifecycle {
 
         Builder addRegexRoute(string regex, string[] methods, RoutingHandler handler) {
             currentRouter = routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), regex);
             currentRouter.pathRegex(regex);
             foreach(string m; methods) {
                 currentRouter.method(m);
@@ -418,6 +424,7 @@ class HttpServer : AbstractLifecycle {
 
         Builder setDefaultRequest(RoutingHandler handler) {
             currentRouter = routerManager.register(DEFAULT_LAST_ROUTER_ID-1);
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), "*");
             currentRouter.path("*").handler( (RoutingContext ctx) { 
                 ctx.setStatus(HttpStatus.NOT_FOUND_404);
                 handlerWrap(handler, ctx); 
@@ -427,13 +434,36 @@ class HttpServer : AbstractLifecycle {
 
         alias addNotFoundRoute = setDefaultRequest;
 
-        Builder webSocket(string path, WebSocketMessageHandler handler) {
-            // auto itemPtr = path in webSocketHandlers;
-            // if(itemPtr !is null)
-            //     throw new Exception("Handler registered on path: " ~ path);
+        Builder resource(string path, string localPath, bool isListing = true) {
+            return resource(path, new DefaultResourceHandler(localPath).directoryListingEnabled(isListing));
+        }
+
+        Builder resource(string path, AbstractResourceHandler handler) {
+            // assert(path.length > 0);
+            if(path[0] != '/')
+                path = "/" ~ path;
+            
+            string staticPath;
+            if(path[$-1] != '/') {
+                staticPath = path;
+                path ~= "/";
+            } else {
+                staticPath = path[0..$-1];
+            }
+
+            path ~= "*";
+
+            return addRoute([path, staticPath], cast(string[])null, handler);
+        }
+
+        Builder websocket(string path, WebSocketMessageHandler handler) {
+            auto itemPtr = path in webSocketHandlers;
+            if(itemPtr !is null)
+                throw new Exception("Handler registered on path: " ~ path);
             
             // WebSocket path should be skipped
             Router webSocketRouter = routerManager.register().path(path);
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", webSocketRouter.getId(), path);
             webSocketHandlers[path] = handler;
             
             version(HUNT_HTTP_DEBUG) {
@@ -448,8 +478,26 @@ class HttpServer : AbstractLifecycle {
         Builder enableLocalSessionStore() {
             LocalHttpSessionHandler sessionHandler = new LocalHttpSessionHandler(_httpOptions);
             currentRouter = routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: *", currentRouter.getId());
             currentRouter.path("*").handler(sessionHandler);
             return this;
+        }
+
+        private void handlerWrap(RouteHandler handler, RoutingContext ctx) {
+            try {
+                if(handler !is null) handler.handle(ctx);
+            } catch (Exception ex) {
+                version(HUNT_DEBUG) errorf("route handler exception: %s", ex.msg);
+                // version(HUNT_HTTP_DEBUG) error(e);
+                if(!ctx.isCommitted()) {
+                    HttpServerResponse res = ctx.getResponse();
+                    if(res !is null) {
+                        res.setStatus(HttpStatus.BAD_REQUEST_400);
+                    }
+                    ctx.end(ex.msg);
+                }
+                ctx.fail(ex);
+            }
         }
 
         private void handlerWrap(RoutingHandler handler, RoutingContext ctx) {
