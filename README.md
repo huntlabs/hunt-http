@@ -12,7 +12,7 @@
 | Routing | tested | none |
 | Cookie | tested | tested[3] |
 | Session | tested[4] | tested |
-| Form-Data | tested | tested[5] |
+| Form-Data[5] | tested | tested |
 | X-WWW-Form | tested | tested |
 
 **Note:**
@@ -20,8 +20,8 @@
 [1] Custom certificates<br>
 [2] WSS untested<br>
 [3] In-memory only<br>
-[4] In-memory only<br>
-[5] Download untested<br>
+[4] In-memory only
+[5] File upload and download
 
 ## Simple codes
 
@@ -86,7 +86,7 @@ void main()
 ## TODO
 - [ ] Reorganizing modules
 - [ ] PersistentCookieStore for HttpClient
-- [ ] More unit tests
+- [ ] Benchmark
 
 ## References
 - Eclipse Jetty 9.4.x, [https://github.com/eclipse/jetty.project](https://github.com/eclipse/jetty.project)
