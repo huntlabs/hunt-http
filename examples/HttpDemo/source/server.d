@@ -103,8 +103,7 @@ HttpServer buildServerDefaultRoute() {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             context.end("Post: " ~ content ~ "<br><br>" ~ DateTime.getTimeAsGMT());
         })
-        .resource("/files", "/home/zhangxueping")
-        // .resource("/files/*", "/home/zhangxueping")
+        .resource("/files", "/home")
         .setDefaultRequest((RoutingContext ctx) {
             string content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
             string title = "404 - not found";
