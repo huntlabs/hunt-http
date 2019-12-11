@@ -1,8 +1,8 @@
 module hunt.http.routing.handler.ResourceHandler;
 
+import hunt.http.routing.handler.Util;
+
 import hunt.http.routing.RoutingContext;
-import hunt.http.server.HttpServerResponse;
-import hunt.http.server.HttpServerRequest;
 
 import hunt.http.Version;
 import hunt.http.HttpHeader;
@@ -31,12 +31,14 @@ import std.string;
  */
 abstract class AbstractResourceHandler : RouteHandler {
 
+    enum string CurrentRequestFile = "CurrentRequestFile";
+
     /**
      * If directory listing is enabled.
      */
     private bool _directoryListingEnabled = false; 
     private string _basePath;
-    private string _requestFile;
+    // private string requestPath;
     private size_t _bufferSize = 1024;
     private bool _cachable = true;
     private Duration _cacheTime = -1.seconds;
@@ -50,13 +52,13 @@ abstract class AbstractResourceHandler : RouteHandler {
         return _basePath;
     }
 
-    protected string requestFile() {
-        return _requestFile;
-    }
+    // protected string requestFile() {
+    //     return requestPath;
+    // }
 
-    bool isBasePath() {
-        return _basePath == _requestFile;
-    }
+    // bool isBasePath() {
+    //     return _basePath == requestPath;
+    // }
 
     size_t bufferSize() {
         return _bufferSize;
@@ -99,30 +101,30 @@ abstract class AbstractResourceHandler : RouteHandler {
         version(HUNT_HTTP_DEBUG) infof("requestPath: %s", requestPath);
 
         if(requestPath.length <= 1) {
-            _requestFile = _basePath;
+            requestPath = _basePath;
         } else {
             string p = requestPath[1..$];
             ptrdiff_t index = indexOf(p, "/");
             if(index > 0) {
                 p = p[index+1 .. $];
-                _requestFile = buildNormalizedPath(_basePath, p);
+                requestPath = buildNormalizedPath(_basePath, p);
             } else {
-                _requestFile = _basePath;
+                requestPath = _basePath;
             }
             
         }
 
-        version(HUNT_HTTP_DEBUG) tracef("requesting %s, base: %s", _requestFile, _basePath);
-        if(!_requestFile.startsWith(_basePath)) {
+        version(HUNT_HTTP_DEBUG) tracef("requesting %s, base: %s", requestPath, _basePath);
+        if(!requestPath.startsWith(_basePath)) {
             render(context, HttpStatus.NOT_FOUND_404, null);
             context.succeed(true);
             return;
         }
         
-        if(!_requestFile.exists()) {
+        if(!requestPath.exists()) {
             version(HUNT_DEBUG) {
                 warningf("Failed to get resource %s from base %s, as the path did not exist",
-                    _requestFile, _basePath);
+                    requestPath, _basePath);
             }
             render(context, HttpStatus.NOT_FOUND_404, null);
             context.succeed(true);
@@ -130,6 +132,7 @@ abstract class AbstractResourceHandler : RouteHandler {
         }
 
         try {
+            context.setAttribute(CurrentRequestFile, requestPath);
             render(context, HttpStatus.OK_200, null);
             context.succeed(true);
         } catch(Exception ex) {
@@ -158,6 +161,7 @@ class DefaultResourceHandler : AbstractResourceHandler {
     }
 
     override void render(RoutingContext context, int status, Exception t) {
+        string requestFile = context.getAttribute(CurrentRequestFile).get!string();
         context.setStatus(status);
 
         HttpStatusCode code = HttpStatus.getCode(status); 
@@ -175,20 +179,20 @@ class DefaultResourceHandler : AbstractResourceHandler {
             content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
         } else if(requestFile.isDir()) {
             if(directoryListingEnabled()) {
-                content = generateContent(context, title);
+                content = renderFileList(basePath(), requestFile, format(`Index of %s`, requestPath));
             } else {
                 content = format(`Index of %s`, requestPath);
             }
 
         } else {
-            handleFile(context);
+            handleRequestFile(context, requestFile);
             return;
         }
 
-        respond(context, title, content);
+        renderDefaults(context, title, content);
     }
 
-    private void respond(RoutingContext context, string title, string content) {
+    private void renderDefaults(RoutingContext context, string title, string content) {
 
         context.responseHeader(HttpHeader.CONTENT_TYPE, "text/html");
 
@@ -206,7 +210,7 @@ class DefaultResourceHandler : AbstractResourceHandler {
             .end("</html>\n");
     }
 
-    private void handleFile(RoutingContext context) {
+    private void handleRequestFile(RoutingContext context, string requestFile) {
 
         if(cachable() && cacheTime() > Duration.zero()) {
             context.responseHeader(HttpHeader.CACHE_CONTROL, 
@@ -220,145 +224,27 @@ class DefaultResourceHandler : AbstractResourceHandler {
         string mime = _mimetypes.getMimeByExtension(requestFile);
         version(HUNT_HTTP_DEBUG) infof("MIME type: %s for %s", mime, requestFile);
         if(!mime.empty()) {
-            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, mime ~ ";charset=utf-8");
+            context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, mime);
 
             if(mime == "application/json") {
-                renderFileContent(context);
+                RoutingHandlerUtils.renderFileContent(context, requestFile, bufferSize());
             } else {
                 AcceptMimeType[] acceptMimes = MimeTypeUtils.parseAcceptMIMETypes(mime);
                 if(acceptMimes.length > 0 && acceptMimes[0].getParentType() == "text") {
                     // show the content of file
-                    renderFileContent(context);
+                    RoutingHandlerUtils.renderFileContent(context, requestFile, bufferSize());
                 } else {
-                    downloadFile(context);
-                    context.end();
-                    context.succeed(true);
+                    RoutingHandlerUtils.downloadFile(context, requestFile);
                 }
             }
-            
+            context.end();
+            context.succeed(true);
         } else {
             context.getResponseHeaders().put(HttpHeader.CONTENT_TYPE, MimeType.APPLICATION_OCTET_STREAM_VALUE);
-            downloadFile(context);
+            RoutingHandlerUtils.downloadFile(context, requestFile);
             context.end();
             context.succeed(true);
         }
-    }
-
-    private void downloadFile(RoutingContext context) {
-        HttpServerRequest request = context.getRequest();
-        HttpServerResponse response = context.getResponse();
-        DirEntry fileInfo = DirEntry(requestFile());
-        response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
-
-        size_t rangeStart = 0;
-        size_t rangeEnd = 0;
-
-        size_t fileSize = fileInfo.size();
-
-        if (request.headerExists(HttpHeader.RANGE))
-        {
-            // https://tools.ietf.org/html/rfc7233
-            // Range can be in form "-\d", "\d-" or "\d-\d"
-            auto range = request.header(HttpHeader.RANGE.asString()).chompPrefix("bytes=");
-            if (range.canFind(','))
-            {
-                response.setStatus(HttpStatus.NOT_IMPLEMENTED_501);
-                return;
-            }
-            auto s = range.split("-");
-
-            if (s.length != 2) {
-                response.setStatus(HttpStatus.BAD_REQUEST_400);
-                return;
-            }
-
-            try {
-                if (s[0].length) {
-                    rangeStart = s[0].to!ulong;
-                    rangeEnd = s[1].length ? s[1].to!ulong : fileSize;
-                } else if (s[1].length) {
-                    rangeEnd = fileSize;
-                    auto len = s[1].to!ulong;
-
-                    if (len >= rangeEnd)
-                        rangeStart = 0;
-                    else
-                        rangeStart = rangeEnd - len;
-                } else {
-                    response.setStatus(HttpStatus.BAD_REQUEST_400);
-                    return;
-                }
-            } catch (ConvException e) {
-                warning(e.msg);
-                version(HUNT_DEBUG) warning(e);
-                response.setStatus(HttpStatus.BAD_REQUEST_400);
-            }
-
-            if (rangeEnd > fileSize)
-                rangeEnd = fileSize;
-
-            if (rangeStart > rangeEnd)
-                rangeStart = rangeEnd;
-
-            if (rangeEnd)
-                rangeEnd--; // End is inclusive, so one less than length
-            // potential integer overflow with rangeEnd - rangeStart == size_t.max is intended. This only happens with empty files, the + 1 will then put it back to 0
-
-            response.setHeader(HttpHeader.CONTENT_LENGTH, to!string(rangeEnd - rangeStart + 1));
-            response.setHeader(HttpHeader.CONTENT_RANGE, "bytes %s-%s/%s".format(rangeStart < rangeEnd ? 
-                rangeStart : rangeEnd, rangeEnd, fileSize));
-            response.setStatus(HttpStatus.PARTIAL_CONTENT_206);
-        }
-        else
-        {
-            rangeEnd = fileSize - 1;
-            response.setHeader(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
-        }
-
-        // write out the file contents
-        auto f = std.stdio.File(requestFile(), "r");
-        scope(exit) f.close();
-
-        f.seek(rangeStart);
-        int remainingSize = rangeEnd.to!uint - rangeStart.to!uint + 1;
-        if(remainingSize <= 0) {
-            warningf("actualSize:%d, remainingSize=%d", fileSize, remainingSize);
-        } else {
-            auto buf = f.rawRead(new ubyte[remainingSize]);
-            // response.setContent(buf);
-            context.write(cast(byte[])buf);
-        }
-    }
-
-    private void renderFileContent(RoutingContext context) {
-
-        string title = "Content for: " ~ requestFile();
-
-        ubyte[] buffer;
-        File f = File(requestFile(), "r");
-        size_t total = f.size();
-
-        scope(exit) f.close();
-
-        size_t remaining = total;
-        while(remaining > 0 && !f.eof()) {
-
-            if(remaining > bufferSize()) 
-                buffer = new ubyte[bufferSize()];
-            else 
-                buffer = new ubyte[remaining];
-            ubyte[] data = f.rawRead(buffer);
-            
-            if(data.length > 0) {
-                context.write(cast(byte[])data);
-                remaining -= data.length;
-            }
-            version(HUNT_HTTP_DEBUG) {
-                tracef("read: %s, remaining: %d, eof: %s", 
-                    data.length, remaining, f.eof());
-            }
-        }
-        context.end();
     }
 
     static string convertFileSize(size_t size) {
@@ -375,21 +261,21 @@ class DefaultResourceHandler : AbstractResourceHandler {
         }
     }
 
-    private string generateContent(RoutingContext context, string title) {
+    static string renderFileList(string basePath, string requestFile,  string title) {
         Appender!string sb;
-        sb.put("<table id='thetable'>\n");
+        sb.put(format!("<h1>%s</h1><hr>\n")(title));
+        sb.put("<table id='thetable' style='width: 800px;border-collapse: collapse;'>\n");
         sb.put("<thead>\n");
-        sb.put(format("<tr><th colspan='3'>%s</th></tr>\n", title));
-        sb.put("<tr><th>Name</th><th>Last Modified</th><th>Size</th></tr>\n");
+        sb.put("<tr><th width='auto'>Name</th><th width='200px'>Last Modified</th><th width='60px'>Size</th></tr>\n");
         sb.put("</thead>\n");
 
         sb.put("<tbody>\n");
 
-        if(!isBasePath()) {
+        if(basePath != requestFile) {
             sb.put("<tr><td><a href='../'>../</a></td><td>&nbsp;</td><td>&nbsp;</td></tr>\n");
         }
 
-        foreach(DirEntry file; dirEntries(requestFile(), SpanMode.shallow)) {
+        foreach(DirEntry file; dirEntries(requestFile, SpanMode.shallow)) {
             string fileName = baseName(file.name);
             string fileTime = (cast(DateTime)(file.timeLastModified)).toSimpleString();
             if(file.isDir()) {
@@ -404,9 +290,9 @@ class DefaultResourceHandler : AbstractResourceHandler {
         }
         sb.put("</tbody>\n");
         sb.put("</table>\n");
-        sb.put("<tfoot>\n");
-        sb.put("<tr><th class='loc footer' colspan='3'>Powered by Hunt-HTTP</th></tr>\n");
-        sb.put("</tfoot>\n");
+        // sb.put("<tfoot>\n");
+        // sb.put("<tr><th class='loc footer' colspan='3'>Powered by Hunt-HTTP</th></tr>\n");
+        // sb.put("</tfoot>\n");
 
         return sb.data;
     }
