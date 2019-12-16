@@ -62,9 +62,9 @@ class HttpClient : AbstractLifecycle {
     private CookieStore _cookieStore;
 
     this() {
-        NetClientOptions clientOptions = new NetClientOptions();
+        clientOptions = new NetClientOptions();
         clientOptions.setIdleTimeout(15.seconds);
-        clientOptions.setConnectTimeout(5.seconds);
+        clientOptions.setConnectTimeout(10.seconds);
         HttpClientOptions config = new HttpClientOptions(clientOptions);
         this(config);
     }

@@ -18,11 +18,15 @@ import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
 import hunt.Exceptions;
+import hunt.net.KeyCertOptions;
+import hunt.net.PemKeyCertOptions;
 import hunt.net.util.HttpURI;
 
 import std.array;
 import std.algorithm;
 import std.string;
+import std.file;
+import std.path;
 
 
 /**
@@ -32,6 +36,10 @@ class HttpClientRequest : HttpRequest {
 	private RequestBody _body;
 	private Cookie[] _cookies;
     private bool _cookieStoreEnabled = true;
+
+    // SSL/TLS settings
+    KeyCertOptions _keyCertOptions;
+    private bool _isCertificateAuth;
 
 	this(string method, string uri) {
 		HttpFields fields = new HttpFields();
@@ -78,10 +86,57 @@ class HttpClientRequest : HttpRequest {
         return _cookieStoreEnabled;
     }
 
+    void isCertificateAuth(bool flag) {
+        _isCertificateAuth = flag;
+    }
+
+    bool isCertificateAuth() {
+        return _isCertificateAuth;
+    }
+
+    KeyCertOptions getKeyCertOptions() {
+        return _keyCertOptions;
+    }
+
+    void setKeyCertOptions(KeyCertOptions options) {
+        _keyCertOptions = options;
+    }
+	
+    // string sslCertificate() {
+    //     return _tlsCertificate;
+    // }
+
+    // void sslCertificate(string fileName) {
+    //     _tlsCertificate = fileName;
+    // }
+
+    // string sslPrivateKey() {
+    //     return _tlsPrivateKey;
+    // }
+
+    // void sslPrivateKey(string fileName) {
+    //     _tlsPrivateKey = fileName;
+    // }
+
+    // string keystorePassword() {
+    //     return _tlsCertPassword;
+    // }
+
+    // void keystorePassword(string password) {
+    //     _tlsCertPassword = password;
+    // }
+
+    // string keyPassword() {
+    //     return _tlsKeyPassword;
+    // }
+
+    // void keyPassword(string password) {
+    //     _tlsKeyPassword = password;
+    // }
+
 	RequestBuilder newBuilder() {
 		return new RequestBuilder(this);
 	}
-	
 
     /**
     */
@@ -92,6 +147,16 @@ class HttpClientRequest : HttpRequest {
         private HttpFields _headers;
         private RequestBody _requestBody;
         private bool _cookieStoreEnabled = true;
+
+        // SSL/TLS settings
+        private bool _isCertificateAuth = false;
+        private string _tlsCaFile;
+        private string _tlsCaPassworld;
+        private string _tlsCertificate;
+        private string _tlsPrivateKey;
+        private string _tlsCertPassword;
+        private string _tlsKeyPassword;
+
 
         /** A mutable map of tags, or an immutable empty map if we don't have any. */
         // Map<Class<?>, Object> tags = Collections.emptyMap();
@@ -136,7 +201,6 @@ class HttpClientRequest : HttpRequest {
             return url(new HttpURI(httpUri));
         }
 
-
         /**
          * Sets the header named {@code name} to {@code value}. If this request already has any headers
          * with that name, they are all replaced.
@@ -170,10 +234,28 @@ class HttpClientRequest : HttpRequest {
             return this;
         }
 
+        // Enable header authorization
         Builder authorization(AuthenticationScheme scheme, string token) {
             header("Authorization", scheme ~ " " ~ token);
             return this;
         }
+
+        // Enable certificate authorization
+        Builder authorization(string certificate, string privateKey, string certPassword="", string keyPassword="") {
+            _isCertificateAuth = true;
+            _tlsCertificate = certificate;
+            _tlsPrivateKey = privateKey;
+            _tlsCertPassword = certPassword;
+            _tlsKeyPassword = keyPassword;
+            return this;
+        }
+
+        Builder certificateAuth(string caFile, string caPassword) {
+            _tlsCaFile = caFile;
+            _tlsCaPassworld = caPassword;
+            return this;
+        }
+          
 
         /**
          * Sets this request's {@code Cache-Control} header, replacing any cache control headers already
@@ -274,8 +356,17 @@ class HttpClientRequest : HttpRequest {
         HttpClientRequest build() {
             if (_url is null) throw new IllegalStateException("url is null");
 
+            string basePath = dirName(thisExePath);
+
 			HttpClientRequest request = new Request(_method, _url, _headers, _requestBody);
 			request._cookieStoreEnabled = _cookieStoreEnabled;
+            PemKeyCertOptions options = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
+                buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
+            options.setCaFile(buildPath(basePath, _tlsCaFile));
+            options.setCaPassword(_tlsCaPassworld);
+
+            request.setKeyCertOptions(options);
+            request.isCertificateAuth = _isCertificateAuth;
             return request;
         }
     }    	

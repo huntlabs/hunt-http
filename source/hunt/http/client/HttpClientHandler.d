@@ -9,6 +9,7 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 
 import hunt.net.Connection;
+import hunt.net.KeyCertOptions;
 import hunt.net.secure.SecureSession;
 
 
@@ -44,7 +45,7 @@ class HttpClientHandler : HttpConnectionHandler {
         HttpClientContext context = _httpClientContext; //.get(connection.getId());
         
         version(HUNT_HTTP_DEBUG) {
-            infof("Http connection %d opened", connection.getId());
+            infof("HTTP connection %d opened", connection.getId());
         }
         connection.setState(ConnectionState.Opened);
 
@@ -56,13 +57,14 @@ class HttpClientHandler : HttpConnectionHandler {
 
         if (config.isSecureConnectionEnabled()) {
             version(HUNT_DEBUG) {
-                infof("initilizing a secure connection: %s", connection.getState());
+                infof("initilizing a secure connection %d: %s", connection.getId(), connection.getState());
             }
 
             version(WITH_HUNT_SECURITY) {
                 import hunt.net.secure.SecureUtils;
                 connection.setState(ConnectionState.Securing);
-                SecureSession secureSession = SecureUtils.createClientSession(connection, (SecureSession sslSession) {
+
+                SecureSessionHandshakeListener handshakeListener = (SecureSession sslSession) {
 
                     // connection.setAttribute(SecureSession.NAME, cast(Object)sslSession);
 
@@ -90,7 +92,14 @@ class HttpClientHandler : HttpConnectionHandler {
                             throw new IllegalStateException("SSL application protocol negotiates failure. The protocol " 
                                 ~ protocol ~ " is not supported");
                     }
-                });
+                };
+
+                SecureSession secureSession;
+                if(config.isCertificateAuth()) {
+                    secureSession = SecureUtils.createClientSession(connection, handshakeListener, config.getKeyCertOptions());
+                } else {
+                    secureSession = SecureUtils.createClientSession(connection, handshakeListener);
+                }
 
                 // connection.attachObject(cast(Object)secureSession);
 

@@ -23,7 +23,6 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
 
-import hunt.net.util.HttpURI;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -31,8 +30,11 @@ import hunt.concurrency.FuturePromise;
 import hunt.Exceptions;
 // import hunt.net.NetUtil;
 import hunt.logging.ConsoleLogger;
+import hunt.net.KeyCertOptions;
+import hunt.net.PemKeyCertOptions;
 import hunt.net.TcpSslOptions;
 import hunt.net.NetClientOptions;
+import hunt.net.util.HttpURI;
 import hunt.util.Traits;
 
 import core.atomic;
@@ -64,7 +66,7 @@ class RealCall : Call {
         
         version(WITH_HUNT_SECURITY) {
             if(request.isHttps()) {
-                client.getHttpOptions().setSecureConnectionEnabled(true);
+                client.getHttpOptions().isSecureConnectionEnabled(true);
             }
         }
 		responseLocker = new Mutex();
@@ -150,11 +152,19 @@ class RealCall : Call {
 
         };
 
+        HttpOptions options = client.getHttpOptions();
+        // options = new HttpOptions(options); // clone the options
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-12-12T18:13:36+08:00
+        // clone the options
+        if(originalRequest.isCertificateAuth()) {
+            options.isCertificateAuth = originalRequest.isCertificateAuth();
+            options.setKeyCertOptions(originalRequest.getKeyCertOptions());
+        }
+
         doRequestTask(httpHandler);
 
-        if(hcr is null) {
-            HttpOptions options = client.getHttpOptions();
-            TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
+        if(hcr is null) {        
+            TcpSslOptions tcpOptions = options.getTcpConfiguration();     
             Duration idleTimeout = tcpOptions.getIdleTimeout();     
             if(idleTimeout.isNegative()) {
                 version (HUNT_HTTP_DEBUG) infof("waitting for response...");
@@ -203,9 +213,9 @@ class RealCall : Call {
 
         httpHandler.badMessage((int status, string reason, HttpRequest request,
                     HttpResponse response, HttpOutputStream output, HttpConnection connection) {
-                import std.format;
-                string msg = format("status: %d, reason: %s", status, reason);
-                responseCallback.onFailure(this, new IOException(msg));
+            import std.format;
+            string msg = format("status: %d, reason: %s", status, reason);
+            responseCallback.onFailure(this, new IOException(msg));
         });
 
         try {

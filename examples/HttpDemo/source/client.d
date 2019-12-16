@@ -20,7 +20,9 @@ void main(string[] args) {
     // testSimpleHttpClient();
     // testHttpClientWithCookie();
     // testHttpClientWithMultipart();
-    testWebSocketClient();
+    // testWebSocketClient();
+    // testHttpClientWithTLS();
+    testHttpClientWithMutualTLS();
 }
 
 void testSimpleHttpClient() {
@@ -141,6 +143,43 @@ void testWebSocketClient() {
     // Thread.sleep(5.seconds);
     // wsConn.close();
     // client.close();
+}
+
+void testHttpClientWithTLS() {
+    // string url = "https://10.1.222.120:440/";
+    // string url = "https://publicobject.com/helloworld.txt";
+    string url = "https://www.bing.com/";
+
+    HttpClient client = new HttpClient();
+    Request request = new RequestBuilder().url(url).build();        
+    Response response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        trace(response.getBody().asString());
+    }
+
+    warning("done.");    
+}
+
+void testHttpClientWithMutualTLS() {
+    // mutual TLS
+    string url = "https://10.1.222.120:440/";
+    // string url = "https://publicobject.com/helloworld.txt";
+    // string url = "https://www.bing.com/";
+
+    HttpClient client = new HttpClient();
+    Request request = new RequestBuilder().url(url).authorization("cert/client.crt", 
+        "cert/client.key", "hunt2018", "hunt2018").build();
+
+    Response response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        trace(response.getBody().asString());
+    }
+
+    warning("done.");    
 }
 
 class HttpClientTest {
