@@ -1,5 +1,6 @@
 module hunt.http.server.HttpServer;
 
+import hunt.http.server.ClientAuth;
 import hunt.http.server.GlobalSettings;
 import hunt.http.server.Http1ServerDecoder;
 import hunt.http.server.Http2ServerDecoder;
@@ -112,20 +113,26 @@ class HttpServer : AbstractLifecycle {
                 import std.file;
                 import std.path;
             
-                string sslCertificate = options.sslCertificate();
-                string sslPrivateKey = options.sslPrivateKey();
-                if(sslCertificate.empty() || sslPrivateKey.empty()) {
+                // string sslCertificate = options.sslCertificate();
+                // string sslPrivateKey = options.sslPrivateKey();
+                // if(sslCertificate.empty() || sslPrivateKey.empty()) {
+                //     warningf("No certificate files found. Using the defaults.");
+                // } else {
+	            //     string currentRootPath = dirName(thisExePath);
+                //     sslCertificate = buildPath(currentRootPath, sslCertificate);
+                //     sslPrivateKey = buildPath(currentRootPath, sslPrivateKey);
+                //     if(!sslCertificate.exists() || !sslPrivateKey.exists()) {
+                //         warningf("No certificate files found. Using the defaults.");
+                //     } else {
+                //         SecureUtils.setServerCertificate(sslCertificate, sslPrivateKey, 
+                //             options.keystorePassword(), options.keyPassword());
+                //     }
+                // }
+                KeyCertOptions certOptions = options.getKeyCertOptions();
+                if(certOptions is null) {
                     warningf("No certificate files found. Using the defaults.");
                 } else {
-	                string currentRootPath = dirName(thisExePath);
-                    sslCertificate = buildPath(currentRootPath, sslCertificate);
-                    sslPrivateKey = buildPath(currentRootPath, sslPrivateKey);
-                    if(!sslCertificate.exists() || !sslPrivateKey.exists()) {
-                        warningf("No certificate files found. Using the defaults.");
-                    } else {
-                        SecureUtils.setServerCertificate(sslCertificate, sslPrivateKey, 
-                            options.keystorePassword(), options.keyPassword());
-                    }
+                    SecureUtils.setServerCertificate(certOptions);
                 }
             } else {
                 assert(false, "Please, add subConfigurations for hunt-http with TLS in dub.json.");
@@ -289,7 +296,17 @@ class HttpServer : AbstractLifecycle {
         private RouterManager routerManager;
         private Router currentRouter;
         private WebSocketMessageHandler[string] webSocketHandlers;
-        // private bool _canCopyBuffer = false;        
+        // private bool _canCopyBuffer = false;       
+        
+        // SSL/TLS settings
+        private bool _isCertificateAuth = false;
+        private string _tlsCaFile;
+        private string _tlsCaPassworld;
+        private string _tlsCertificate;
+        private string _tlsPrivateKey;
+        private string _tlsCertPassword;
+        private string _tlsKeyPassword;
+
 
         this() {
             this(new HttpServerOptions());
@@ -309,12 +326,22 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        Builder setTLS(string certificate, string privateKey, string storePassword="", string keyPassword="") {
-            _httpOptions.sslCertificate = certificate;
-            _httpOptions.sslPrivateKey = privateKey;
-            _httpOptions.keystorePassword = storePassword;
-            _httpOptions.keyPassword = keyPassword;
-            _httpOptions.setSecureConnectionEnabled(true);
+        Builder setTLS(string certificate, string privateKey, string certPassword="", string keyPassword="") {
+            _isCertificateAuth = true;
+            _tlsCertificate = certificate;
+            _tlsPrivateKey = privateKey;
+            _tlsCertPassword = certPassword;
+            _tlsKeyPassword = keyPassword;
+            // _httpOptions.sslCertificate = certificate;
+            // _httpOptions.sslPrivateKey = privateKey;
+            // _httpOptions.keystorePassword = storePassword;
+            // _httpOptions.keyPassword = keyPassword;
+            // _httpOptions.setSecureConnectionEnabled(true);
+            return this;
+        }
+
+        Builder requiresClientAuth() {
+            _httpOptions.setClientAuth(ClientAuth.REQUIRED);
             return this;
         }
 
@@ -686,6 +713,16 @@ class HttpServer : AbstractLifecycle {
         }
 
         HttpServer build() { 
+
+            string basePath = dirName(thisExePath);
+            PemKeyCertOptions certOptions = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
+                buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
+            certOptions.setCaFile(buildPath(basePath, _tlsCaFile));
+            certOptions.setCaPassword(_tlsCaPassworld);
+
+            _httpOptions.setKeyCertOptions(certOptions);
+            _httpOptions.setSecureConnectionEnabled(_isCertificateAuth);
+
             return new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());
         }
     }

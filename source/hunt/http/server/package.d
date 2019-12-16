@@ -1,5 +1,6 @@
 module hunt.http.server;
 
+public import hunt.http.server.ClientAuth;
 public import hunt.http.server.GlobalSettings;
 public import hunt.http.server.Http1ServerConnection;
 public import hunt.http.server.Http1ServerDecoder;

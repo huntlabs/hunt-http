@@ -2,6 +2,7 @@ module hunt.http.HttpOptions;
 
 import hunt.http.HttpVersion;
 
+import hunt.net.KeyCertOptions;
 import hunt.net.TcpSslOptions;
 import std.datetime;
 
@@ -25,6 +26,7 @@ class HttpOptions {
     private TcpSslOptions tcpSslOptions; 
 
     // SSL/TLS settings
+    private bool _isCertificateAuth = false;
     private string _sslCertificate;
     private string _sslPrivateKey;
     private string _keystorePassword;
@@ -313,41 +315,67 @@ class HttpOptions {
      *
      * @param isSecureConnectionEnabled If set true, the server or client enable the SSL/TLS connection.
      */
+
+    void isSecureConnectionEnabled(bool status) {
+        this.tcpSslOptions.setSsl(status);
+    }
+    
+    deprecated("Unsupported anymore!")
     void setSecureConnectionEnabled(bool status) {
         this.tcpSslOptions.setSsl(status);
     }
 
-    string sslCertificate() {
-        return _sslCertificate;
+    bool isCertificateAuth() {
+        return _isCertificateAuth;
     }
 
-    void sslCertificate(string fileName) {
-        _sslCertificate = fileName;
+    void isCertificateAuth(bool flag) {
+        _isCertificateAuth = flag;
+        if(flag) {
+            isSecureConnectionEnabled = true;
+        }
     }
 
-    string sslPrivateKey() {
-        return _sslPrivateKey;
+    void setKeyCertOptions(KeyCertOptions options) {
+        this.tcpSslOptions.setKeyCertOptions(options);
     }
 
-    void sslPrivateKey(string fileName) {
-        _sslPrivateKey = fileName;
+    KeyCertOptions getKeyCertOptions() {
+        return this.tcpSslOptions.getKeyCertOptions();
     }
 
-    string keystorePassword() {
-        return _keystorePassword;
-    }
 
-    void keystorePassword(string password) {
-        _keystorePassword = password;
-    }
+    // string sslCertificate() {
+    //     return _sslCertificate;
+    // }
 
-    string keyPassword() {
-        return _keyPassword;
-    }
+    // void sslCertificate(string fileName) {
+    //     _sslCertificate = fileName;
+    // }
 
-    void keyPassword(string password) {
-        _keyPassword = password;
-    }
+    // string sslPrivateKey() {
+    //     return _sslPrivateKey;
+    // }
+
+    // void sslPrivateKey(string fileName) {
+    //     _sslPrivateKey = fileName;
+    // }
+
+    // string keystorePassword() {
+    //     return _keystorePassword;
+    // }
+
+    // void keystorePassword(string password) {
+    //     _keystorePassword = password;
+    // }
+
+    // string keyPassword() {
+    //     return _keyPassword;
+    // }
+
+    // void keyPassword(string password) {
+    //     _keyPassword = password;
+    // }
 
     /**
      * Get the default HTTP protocol version. The value is "HTTP/2.0" or "HTTP/1.1". If the value is null,

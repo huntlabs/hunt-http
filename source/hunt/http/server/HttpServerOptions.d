@@ -1,16 +1,25 @@
 module hunt.http.server.HttpServerOptions;
 
+import hunt.http.server.ClientAuth;
+import hunt.http.server.HttpRequestOptions;
+
 import hunt.http.HttpOptions;
 import hunt.net.TcpSslOptions;
 import hunt.net.NetServerOptions;
-import hunt.http.server.HttpRequestOptions;
 
 /**
  * 
  */
 class HttpServerOptions : HttpOptions {
+
+    /**
+     * Default value of whether client auth is required (SSL/TLS) = No
+     */
+    enum ClientAuth DEFAULT_CLIENT_AUTH = ClientAuth.NONE;
+
     private NetServerOptions _netServerOptions;
     private HttpRequestOptions _httpRequestOptions;
+    private ClientAuth clientAuth;
 
     this() {
         this(new NetServerOptions(), new HttpRequestOptions());
@@ -23,6 +32,7 @@ class HttpServerOptions : HttpOptions {
     this(NetServerOptions serverOptions, HttpRequestOptions requestOptions) {
         _netServerOptions = serverOptions;
         _httpRequestOptions = requestOptions;
+        clientAuth = DEFAULT_CLIENT_AUTH;
         super(serverOptions);
     }
 
@@ -70,6 +80,26 @@ class HttpServerOptions : HttpOptions {
         _netServerOptions.setHost(host);
         return this;
     }
+
+    /**
+     * 
+     */
+    ClientAuth getClientAuth() {
+        return clientAuth;
+    }
+
+    /**
+     * Set whether client auth is required
+     *
+     * @param clientAuth One of "NONE, REQUEST, REQUIRED". If it's set to "REQUIRED" then server will require the
+     *                   SSL cert to be presented otherwise it won't accept the request. If it's set to "REQUEST" then
+     *                   it won't mandate the certificate to be presented, basically make it optional.
+     * @return a reference to this, so the API can be used fluently
+     */
+    HttpServerOptions setClientAuth(ClientAuth clientAuth) {
+        this.clientAuth = clientAuth;
+        return this;
+    }    
 
     /* ------------------------------ Session APIs ------------------------------ */
 
