@@ -326,17 +326,20 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
+
+        // Certificate Authority (CA) certificate
+        Builder setCaCert(string caFile, string caPassword) {
+            _tlsCaFile = caFile;
+            _tlsCaPassworld = caPassword;
+            return this;
+        }
+
         Builder setTLS(string certificate, string privateKey, string certPassword="", string keyPassword="") {
             _isCertificateAuth = true;
             _tlsCertificate = certificate;
             _tlsPrivateKey = privateKey;
             _tlsCertPassword = certPassword;
             _tlsKeyPassword = keyPassword;
-            // _httpOptions.sslCertificate = certificate;
-            // _httpOptions.sslPrivateKey = privateKey;
-            // _httpOptions.keystorePassword = storePassword;
-            // _httpOptions.keyPassword = keyPassword;
-            // _httpOptions.setSecureConnectionEnabled(true);
             return this;
         }
 
@@ -715,12 +718,18 @@ class HttpServer : AbstractLifecycle {
         HttpServer build() { 
 
             string basePath = dirName(thisExePath);
-            PemKeyCertOptions certOptions = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
-                buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
-            certOptions.setCaFile(buildPath(basePath, _tlsCaFile));
-            certOptions.setCaPassword(_tlsCaPassworld);
 
-            _httpOptions.setKeyCertOptions(certOptions);
+            if(!_tlsCertificate.empty()) {
+                PemKeyCertOptions certOptions = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
+                    buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
+                
+                if(!_tlsCaFile.empty()) {
+                    certOptions.setCaFile(buildPath(basePath, _tlsCaFile));
+                    certOptions.setCaPassword(_tlsCaPassworld);
+                }
+                _httpOptions.setKeyCertOptions(certOptions);
+            }
+
             _httpOptions.setSecureConnectionEnabled(_isCertificateAuth);
 
             return new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());

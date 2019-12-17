@@ -6,7 +6,7 @@ import hunt.net.util.HttpURI;
 
 // dfmt off
 version(WITH_HUNT_SECURITY) {
-    import hunt.security.Principal;
+    // import hunt.security.Principal;
 }
 // dfmt on
 
@@ -176,7 +176,7 @@ interface UpgradeRequest {
      *
      * @return the user principal
      */
-    version(WITH_HUNT_SECURITY) Principal getUserPrincipal();
+    // version(WITH_HUNT_SECURITY) Principal getUserPrincipal();
 
     /**
      * Test if a specific sub-protocol is offered

@@ -6,7 +6,7 @@ import hunt.text.QuoteUtil;
 
 // dfmt off
 version(WITH_HUNT_SECURITY) {
-    import hunt.security.Principal;
+    // import hunt.security.Principal;
 }
 // dfmt on
 

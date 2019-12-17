@@ -101,38 +101,6 @@ class HttpClientRequest : HttpRequest {
     void setKeyCertOptions(KeyCertOptions options) {
         _keyCertOptions = options;
     }
-	
-    // string sslCertificate() {
-    //     return _tlsCertificate;
-    // }
-
-    // void sslCertificate(string fileName) {
-    //     _tlsCertificate = fileName;
-    // }
-
-    // string sslPrivateKey() {
-    //     return _tlsPrivateKey;
-    // }
-
-    // void sslPrivateKey(string fileName) {
-    //     _tlsPrivateKey = fileName;
-    // }
-
-    // string keystorePassword() {
-    //     return _tlsCertPassword;
-    // }
-
-    // void keystorePassword(string password) {
-    //     _tlsCertPassword = password;
-    // }
-
-    // string keyPassword() {
-    //     return _tlsKeyPassword;
-    // }
-
-    // void keyPassword(string password) {
-    //     _tlsKeyPassword = password;
-    // }
 
 	RequestBuilder newBuilder() {
 		return new RequestBuilder(this);
@@ -241,7 +209,8 @@ class HttpClientRequest : HttpRequest {
         }
 
         // Enable certificate authorization
-        Builder authorization(string certificate, string privateKey, string certPassword="", string keyPassword="") {
+        // https://github.com/Hakky54/mutual-tls-ssl
+        Builder mutualTls(string certificate, string privateKey, string certPassword="", string keyPassword="") {
             _isCertificateAuth = true;
             _tlsCertificate = certificate;
             _tlsPrivateKey = privateKey;
@@ -250,7 +219,8 @@ class HttpClientRequest : HttpRequest {
             return this;
         }
 
-        Builder certificateAuth(string caFile, string caPassword) {
+        // Certificate Authority (CA) certificate
+        Builder caCert(string caFile, string caPassword) {
             _tlsCaFile = caFile;
             _tlsCaPassworld = caPassword;
             return this;
@@ -360,13 +330,19 @@ class HttpClientRequest : HttpRequest {
 
 			HttpClientRequest request = new Request(_method, _url, _headers, _requestBody);
 			request._cookieStoreEnabled = _cookieStoreEnabled;
-            PemKeyCertOptions options = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
-                buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
-            options.setCaFile(buildPath(basePath, _tlsCaFile));
-            options.setCaPassword(_tlsCaPassworld);
 
-            request.setKeyCertOptions(options);
-            request.isCertificateAuth = _isCertificateAuth;
+            if(!_tlsCertificate.empty()) {
+                PemKeyCertOptions options = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),
+                    buildPath(basePath, _tlsPrivateKey), _tlsCertPassword, _tlsKeyPassword);
+                
+                if(!_tlsCaFile.empty()) {
+                    options.setCaFile(buildPath(basePath, _tlsCaFile));
+                    options.setCaPassword(_tlsCaPassworld);
+                }
+                request.setKeyCertOptions(options);
+                request.isCertificateAuth = _isCertificateAuth;
+            }
+
             return request;
         }
     }    	

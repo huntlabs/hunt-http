@@ -163,14 +163,18 @@ void testHttpClientWithTLS() {
 }
 
 void testHttpClientWithMutualTLS() {
+    // https://www.naschenweng.info/2018/02/01/java-mutual-ssl-authentication-2-way-ssl-authentication/
     // mutual TLS
     string url = "https://10.1.222.120:440/";
     // string url = "https://publicobject.com/helloworld.txt";
     // string url = "https://www.bing.com/";
 
     HttpClient client = new HttpClient();
-    Request request = new RequestBuilder().url(url).authorization("cert/client.crt", 
-        "cert/client.key", "hunt2018", "hunt2018").build();
+    Request request = new RequestBuilder()
+        .url(url)
+        .caCert("cert/ca.crt", "hunt2019")
+        .mutualTls("cert/client.crt", "cert/client.key", "hunt2019", "hunt2019")
+        .build();
 
     Response response = client.newCall(request).execute();
 

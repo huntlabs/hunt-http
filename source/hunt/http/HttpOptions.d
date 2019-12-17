@@ -320,7 +320,6 @@ class HttpOptions {
         this.tcpSslOptions.setSsl(status);
     }
     
-    deprecated("Unsupported anymore!")
     void setSecureConnectionEnabled(bool status) {
         this.tcpSslOptions.setSsl(status);
     }

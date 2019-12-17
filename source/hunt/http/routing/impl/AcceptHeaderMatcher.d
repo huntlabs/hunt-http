@@ -56,9 +56,9 @@ class AcceptHeaderMatcher : AbstractPreciseMatcher {
         Set!Router set = new HashSet!Router();
 
         foreach (AcceptMimeType type ; acceptMIMETypes) {
-            foreach(string key, Set!(Router) value; _map) {
+            foreach(string key, Set!(Router) v; _map) {
                 if(checkKey(type, key)) {
-                    set.addAll(value);
+                    set.addAll(v);
                 }
             }
 
