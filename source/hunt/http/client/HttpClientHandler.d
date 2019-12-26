@@ -29,7 +29,8 @@ import hunt.logging;
 import std.array;
 
 /**
-*/
+ * 
+ */
 class HttpClientHandler : HttpConnectionHandler {
 
     // private Map!(int, HttpClientContext) _httpClientContext;

@@ -21,7 +21,7 @@ class CommonEncoder : EncoderChain {
     override void encode(Object message, Connection session) {
 
         ConnectionState connState = session.getState();
-        version(HUNT_HTTP_DEBUG) {
+        version(HUNT_HTTP_DEBUG_MORE) {
             infof("ConnectionState: %s", connState);        
         }
 

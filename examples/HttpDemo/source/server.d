@@ -1,5 +1,8 @@
 
+import hunt.http.client;
 import hunt.http.server;
+
+import hunt.trace.Tracer;
 
 import hunt.logging.ConsoleLogger;
 import hunt.util.DateTime;
@@ -11,15 +14,20 @@ import std.range;
 import std.stdio;
 
 
+
 void main(string[] args) {
 
-    // HttpServer server = buildSimpleServer();
+    version(WITH_HUNT_TRACE) {
+        HttpServer server = buildOpenTracingServer();
+    } else {
+        HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
-    HttpServer server = buildServerWithTLS();
+    // HttpServer server = buildServerWithTLS();
     // HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
     // HttpServer server = buildServerWithSessionStore();
+    }
     
     server.onOpened(() {
         if(server.isTLS())
@@ -330,4 +338,68 @@ HttpServer buildServerWithSessionStore() {
         })
         .build();
     return server;    
+}
+
+version(WITH_HUNT_TRACE) {
+    HttpServer buildOpenTracingServer() {
+        
+        import hunt.trace.HttpSender;
+        string endpoint = "http://10.1.222.120:9411/api/v2/spans";
+        httpSender().endpoint(endpoint);
+
+
+        HttpServer server = HttpServer.builder()
+            .setListener(8080, "0.0.0.0")
+            .localServiceName("HttpServerDemo")
+            .setHandler((RoutingContext context) {
+
+                context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
+                context.write(DateTime.getTimeAsGMT());
+                
+                string url = "http://10.1.222.120:801/index.html";
+                HttpClient client = new HttpClient();
+
+                RequestBuilder requestBuilder = new RequestBuilder()
+                        .url(url)
+                        .localServiceName("HttpServerDemo");
+
+                HttpServerRequest serverRequest = context.getRequest();
+                
+                Object obj = serverRequest.getAttachment();
+                if(obj !is null) {
+                    Tracer tracer = cast(Tracer)obj;
+                    if(tracer !is null) {
+                        requestBuilder.withTracer(tracer);
+                    } else {
+                        // warning("Attachment conflict: ", typeid(obj));
+                        // context.write(format("<br>Attachment conflict: %s<br>", typeid(obj)));
+                        // context.end();
+                        // return;
+                    }
+                } else {
+                    warning("No tracer found");
+                }
+
+                Request request = requestBuilder.build();
+                Response response = client.newCall(request).execute();
+
+                if (response !is null) {
+                    warningf("status code: %d", response.getStatus());
+                    // if(response.haveBody())
+                    //  trace(response.getBody().asString());
+                } else {
+                    warning("no response");
+                }
+                context.write("<br>Hello World!<br>");
+                context.end();
+            })
+            .onError((HttpServerContext context) {
+                HttpServerResponse res = context.httpResponse();
+                assert(res !is null);
+                version(HUNT_DEBUG) warningf("badMessage: status=%d reason=%s", 
+                    res.getStatus(), res.getReason());
+            })
+            .build();  
+        return server; 
+    }
 }

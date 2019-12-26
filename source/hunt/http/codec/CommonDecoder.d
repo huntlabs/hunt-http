@@ -9,6 +9,7 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpConnection;
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
+import hunt.net.Exceptions;
 import hunt.net.secure.SecureSession;
 import hunt.util.DateTime;
 
@@ -29,7 +30,22 @@ class CommonDecoder : DecoderChain {
         }
 
         version(WITH_HUNT_SECURITY) {
-            decodeSecureSession(buf, session);
+            try {
+                decodeSecureSession(buf, session);
+            } catch(SSLHandshakeException ex) {
+                warning(ex.msg);
+                session.write(ErrorResponseMessage);
+                // session.close();
+            } catch(Exception ex) {
+                warning(ex.msg);
+                version(HUNT_HTTP_DEBUG) warning(ex);
+                version(HUNT_DEBUG) {
+                    session.write(ex.msg);
+                } else {
+                    session.write(ex.msg);
+                }
+                session.close();
+            }
         } else {
             decodePlaintextSession(buf, session);
         }
@@ -179,3 +195,20 @@ class CommonDecoder : DecoderChain {
         }
     }
 }
+
+
+// TODO: Tasks pending completion -@zhangxueping at 2019-12-23T19:11:48+08:00
+// 
+enum ErrorResponseMessage = "HTTP/1.1 400 Bad Request\n" ~
+"Server: nginx/1.17.6\n" ~
+"Date: Mon, 23 Dec 2019 10:54:33 GMT\n" ~
+"Content-Type: text/html\n" ~
+"Connection: close\n" ~
+
+"<html>\n" ~
+"<head><title>400 No required SSL certificate was sent</title></head>\n" ~
+"<body>\n" ~
+"<center><h1>400 Bad Request</h1></center>\n" ~
+"<hr><center>Hunt</center>\n" ~
+"</body>\n" ~
+"</html>\n";

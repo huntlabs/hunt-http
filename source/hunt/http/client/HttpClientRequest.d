@@ -18,24 +18,34 @@ import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
 import hunt.Exceptions;
+import hunt.logging.ConsoleLogger;
 import hunt.net.KeyCertOptions;
 import hunt.net.PemKeyCertOptions;
 import hunt.net.util.HttpURI;
 
 import std.array;
 import std.algorithm;
-import std.string;
+import std.conv;
 import std.file;
 import std.path;
+import std.string;
 
+version(WITH_HUNT_TRACE) {
+    import hunt.trace.Constrants;
+    import hunt.trace.Endpoint;
+    import hunt.trace.Span;
+    import hunt.trace.Tracer;
+    import hunt.trace.HttpSender;
+}
 
 /**
-*/
+ * 
+ */
 class HttpClientRequest : HttpRequest {
 
 	private RequestBody _body;
 	private Cookie[] _cookies;
-    private bool _cookieStoreEnabled = true;
+    private bool _isCookieStoreEnabled = true;
 
     // SSL/TLS settings
     KeyCertOptions _keyCertOptions;
@@ -83,7 +93,19 @@ class HttpClientRequest : HttpRequest {
 	}
 
     bool isCookieStoreEnabled() {
-        return _cookieStoreEnabled;
+        return _isCookieStoreEnabled;
+    }
+
+    void isCookieStoreEnabled(bool flag) {
+        _isCookieStoreEnabled = flag;
+    }
+
+    bool isTracingEnabled() {
+        return _isTracingEnabled;
+    }
+
+    void isTracingEnabled(bool flag) {
+        _isTracingEnabled = flag;
     }
 
     void isCertificateAuth(bool flag) {
@@ -106,6 +128,49 @@ class HttpClientRequest : HttpRequest {
 		return new RequestBuilder(this);
 	}
 
+version(WITH_HUNT_TRACE) {
+    private bool _isTracingEnabled = true;
+    private Tracer _tracer;
+    private Span _span;
+    private string[string] tags;
+
+    void startSpan() {
+        if(!isTracingEnabled()) return;
+        if(_span is null) {
+            warning("span is null");
+            return;
+        }
+
+        HttpURI uri = getURI();
+        tags[HTTP_HOST] = uri.getHost();
+        tags[HTTP_URL] = uri.getPathQuery();
+        tags[HTTP_PATH] = uri.getPath();
+        tags[HTTP_REQUEST_SIZE] = getContentLength().to!string();
+        tags[HTTP_METHOD] = getMethod();
+
+        if(_span !is null) {
+            _span.start();
+            getFields().put("b3", _span.defaultId());
+        }
+    }    
+    
+    void endTraceSpan(int status, string message) {
+        
+        if(!isTracingEnabled()) return;
+
+        if(_span !is null) {
+            tags[HTTP_STATUS_CODE] = to!string(status);
+            // tags[HTTP_RESPONSE_SIZE] = to!string(response.getContentLength());
+
+            traceSpanAfter(_span , tags, message);
+
+            httpSender().sendSpans(_span);
+        }
+    }
+} else {
+    private bool _isTracingEnabled = false;
+}
+
     /**
     */
     final static class Builder {
@@ -114,7 +179,6 @@ class HttpClientRequest : HttpRequest {
         private string _method;
         private HttpFields _headers;
         private RequestBody _requestBody;
-        private bool _cookieStoreEnabled = true;
 
         // SSL/TLS settings
         private bool _isCertificateAuth = false;
@@ -291,11 +355,37 @@ class HttpClientRequest : HttpRequest {
             return this;
         }
 		
-        Builder disableCookieStore() {
-            _cookieStoreEnabled = false;
+        Builder cookieStoreEnabled(bool flag) {
+            _isCookieStoreEnabled = flag;
+            return this;
+        }
+        private bool _isCookieStoreEnabled = true;
+
+        // Trace
+        Builder enableTracing(bool flag) {
+            _isTracingEnabled = flag;
+            return this;
+        }
+        
+version(WITH_HUNT_TRACE) {
+    
+        Builder withTracer(Tracer t) {
+            _tracer = t;
             return this;
         }
 
+        Builder localServiceName(string name) {
+            _localServiceName = name;
+            return this;
+        }
+
+        private Tracer _tracer;
+        private string _localServiceName;
+
+        private bool _isTracingEnabled = true;
+} else {
+        private bool _isTracingEnabled = false;
+}
 
         /** Attaches {@code tag} to the request using {@code Object.class} as a key. */
         // Builder tag(Object tag) {
@@ -329,7 +419,45 @@ class HttpClientRequest : HttpRequest {
             string basePath = dirName(thisExePath);
 
 			HttpClientRequest request = new Request(_method, _url, _headers, _requestBody);
-			request._cookieStoreEnabled = _cookieStoreEnabled;
+			request._isCookieStoreEnabled = _isCookieStoreEnabled;
+            request._isTracingEnabled = _isTracingEnabled;
+            version(WITH_HUNT_TRACE) {
+                if(_isTracingEnabled) {
+                    string spanName = _url.getPath();
+                    Span span;
+                    if(_tracer is null) {
+                        _tracer = new Tracer(spanName);
+                        span = _tracer.root; 
+                    } else {
+                        span = _tracer.addSpan(spanName);
+                    }
+
+                    span.initializeLocalEndpoint(_localServiceName);
+
+                    // EndPoint remoteEndpoint = new EndPoint();
+                    // remoteEndpoint.port = _url.getPort();
+                    
+                    // try {
+                    //     auto addresses = getAddress(_url.getHost());
+                    //     foreach (address; addresses) {
+                    //         // writefln("  IP: %s", address.toAddrString());
+                    //         string ip = address.toAddrString();
+                    //         if(ip.startsWith("::")) {
+                    //             remoteEndpoint.ipv6 = ip;
+                    //         } else {
+                    //             remoteEndpoint.ipv4 = ip;
+                    //         }
+                    //     }
+                    // } catch(Exception ex) {
+                    //     warning(ex.msg);
+                    // }
+
+                    // span.remoteEndpoint = remoteEndpoint;
+
+                    request._tracer = _tracer;
+                    request._span = span;
+                }
+            }
 
             if(!_tlsCertificate.empty()) {
                 PemKeyCertOptions options = new PemKeyCertOptions(buildPath(basePath, _tlsCertificate),

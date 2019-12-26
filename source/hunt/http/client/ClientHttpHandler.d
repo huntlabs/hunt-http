@@ -11,7 +11,8 @@ import hunt.util.Common;
 import hunt.collection.ByteBuffer;
 
 /**
-*/
+ * 
+ */
 interface ClientHttpHandler : HttpHandler {
 
     void continueToSendData(HttpRequest request, HttpResponse response,
@@ -19,7 +20,8 @@ interface ClientHttpHandler : HttpHandler {
 }
 
 /**
-*/
+ * 
+ */
 class AbstractClientHttpHandler : AbstractHttpHandler, ClientHttpHandler {
 
     protected Action4!(HttpRequest, HttpResponse, HttpOutputStream, HttpConnection) _continueToSendData;

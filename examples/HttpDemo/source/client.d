@@ -22,7 +22,8 @@ void main(string[] args) {
     // testHttpClientWithMultipart();
     // testWebSocketClient();
     // testHttpClientWithTLS();
-    testHttpClientWithMutualTLS();
+    // testHttpClientWithMutualTLS();
+    version(WITH_HUNT_TRACE) testOpenTracing();
 }
 
 void testSimpleHttpClient() {
@@ -317,4 +318,34 @@ class HttpClientTest {
         return "";
   	}
 
+}
+
+
+version(WITH_HUNT_TRACE) {
+    void testOpenTracing() {
+        import hunt.trace.HttpSender;
+        // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
+        string endpoint = "http://10.1.222.120:9411/api/v2/spans";
+        httpSender().endpoint(endpoint);
+
+        // string url = "http://10.1.222.120:801/index.html";
+        string url = "http://127.0.0.1:8080/plaintext";
+        HttpClient client = new HttpClient();
+
+        Request request = new RequestBuilder()
+            .url(url)
+            .localServiceName("HttpClientDemo")
+            .build();
+        Response response = client.newCall(request).execute();
+
+        if (response !is null) {
+            warningf("status code: %d", response.getStatus());
+            // if(response.haveBody())
+            //  trace(response.getBody().asString());
+        } else {
+            warning("no response");
+        }
+
+        getchar();
+    }
 }

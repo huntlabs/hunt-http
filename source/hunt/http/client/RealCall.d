@@ -21,8 +21,8 @@ import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
+import hunt.http.HttpStatus;
 import hunt.http.HttpVersion;
-
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.BufferUtils;
@@ -41,9 +41,16 @@ import core.atomic;
 import core.sync.condition;
 import core.sync.mutex;
 
-import std.parallelism;
 import std.conv;
+import std.format;
+import std.parallelism;
 
+// version(WITH_HUNT_TRACE) {
+//     import hunt.trace.Constrants;
+//     import hunt.trace.Plugin;
+//     import hunt.trace.Span;
+//     import hunt.trace.Tracer;
+// }
 
 /**
 */
@@ -92,6 +99,10 @@ class RealCall : Call {
         responseLocker.lock();
         scope(exit) {
             responseLocker.unlock();
+        }
+
+        version(WITH_HUNT_TRACE) {
+            originalRequest.startSpan();
         }
         
         HttpClientResponse hcr;
@@ -173,16 +184,23 @@ class RealCall : Call {
                 version (HUNT_HTTP_DEBUG) infof("waitting for response in %s ...", idleTimeout);
                 bool r = responseCondition.wait(idleTimeout);
                 if(!r) {
-                    warningf("No any response in %s", idleTimeout);
-
+                    string msg = format("No any response in %s", idleTimeout);
+                    warningf(msg);
                     client.close();
+
+                    version(WITH_HUNT_TRACE) {
+                        originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+                    }                    
                     throw new TimeoutException();
                 }
             }
         }
-        version (HUNT_HTTP_DEBUG) info("response normally");
-        return hcr;
 
+        version (HUNT_HTTP_DEBUG) info("response normally");
+        version(WITH_HUNT_TRACE) {
+            originalRequest.endTraceSpan(hcr.getStatus(), null);
+        }
+        return hcr;
     }
 
     void enqueue(Callback responseCallback) {
@@ -228,64 +246,78 @@ class RealCall : Call {
     }
 
     void doRequestTask(AbstractClientHttpHandler httpHandler) {
-            HttpURI uri = originalRequest.getURI();
-            string scheme = uri.getScheme();
-            int port = uri.getPort();
+        HttpURI uri = originalRequest.getURI();
+        string scheme = uri.getScheme();
 
-            version(HUNT_HTTP_DEBUG) infof("new request: scheme=%s, host=%s, port=%d", 
-                scheme, uri.getHost(), port);
+        // port
+        int port = uri.getPort();
+        version(HUNT_HTTP_DEBUG) infof("new request: scheme=%s, host=%s, port=%d", 
+            scheme, uri.getHost(), port);
+        if(port <= 0)
+            port = SchemePortMap[scheme];
 
-            // set cookie from cookie store
-            if(originalRequest.isCookieStoreEnabled()) {
-                CookieStore store = client.getCookieStore();
-                HttpFields fields = originalRequest.getFields();
-                
-                if(store !is null && fields !is null) {
-                    auto cookies = store.getCookies();
-                    
-                    if(cookies !is null)
-                        fields.put(HttpHeader.COOKIE, generateCookies(store.getCookies()));
-                }
-            }
-
-            if(port <= 0)
-                port = SchemePortMap[scheme];
-
-            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
-            HttpConnection connection;
-            try {
-                client.connect(uri.getHost(), port, promise);
-                NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpOptions().getTcpConfiguration();
-                connection = promise.get(tcpConfig.getConnectTimeout());
-            } catch(Exception ex) {
-                version(HUNT_DEBUG)  warning(ex.msg);
-                version(HUNT_HTTP_DEBUG) warning(ex);
-                client.close();
-                throw new IOException("Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string());
-            }
+        // set cookie from cookie store
+        if(originalRequest.isCookieStoreEnabled()) {
+            CookieStore store = client.getCookieStore();
+            HttpFields fields = originalRequest.getFields();
             
-            version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
-
-            if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
-
-                Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
-                RequestBody rb = originalRequest.getBody();
-                if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
-                    // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
-                    HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
-                    rb.writeTo(output);
-                    output.close(); // End a request, and keep the connection for waiting for the respons.
-                } else {
-                    http1ClientConnection.send(originalRequest, httpHandler);
-                }
-            } else {
-                // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
-                // 
-                string msg = "Unsupported " ~ connection.getHttpVersion().toString();
-                throw new IOException(msg);
+            if(store !is null && fields !is null) {
+                auto cookies = store.getCookies();
+                
+                if(cookies !is null)
+                    fields.put(HttpHeader.COOKIE, generateCookies(store.getCookies()));
             }
+        }
 
-            version (HUNT_HTTP_DEBUG) info("waitting response...");        
+        // opentracing: initialize TraceContext
+
+
+        FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
+        HttpConnection connection;
+        try {
+            NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpOptions().getTcpConfiguration();
+            client.connect(uri.getHost(), port, promise);
+            connection = promise.get(tcpConfig.getConnectTimeout());
+        } catch(Exception ex) {
+            string msg = "Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string();
+            version(HUNT_DEBUG) {
+                warning(msg, " Reason: ", ex.msg);
+            }
+            version(HUNT_HTTP_DEBUG) warning(ex);
+            client.close();
+
+            version(WITH_HUNT_TRACE) {
+                originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+            }
+            throw new IOException(msg);
+        }
+        
+        version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
+
+        if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
+
+            Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
+            RequestBody rb = originalRequest.getBody();
+            if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
+                // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+                HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
+                rb.writeTo(output);
+                output.close(); // End a request, and keep the connection for waiting for the respons.
+            } else {
+                http1ClientConnection.send(originalRequest, httpHandler);
+            }
+        } else {
+            // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
+            // 
+            string msg = "Unsupported " ~ connection.getHttpVersion().toString();
+            
+            version(WITH_HUNT_TRACE) {
+                originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+            }
+            throw new IOException(msg);
+        }
+
+        version (HUNT_HTTP_DEBUG) info("waitting response...");        
     }
 
     
@@ -307,5 +339,5 @@ class RealCall : Call {
         
         return false;
     }
-    
+          
 }
