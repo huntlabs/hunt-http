@@ -17,6 +17,7 @@ import hunt.http.HttpConnection;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
 import hunt.http.codec.http.model.HttpMethod;
+import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.HttpVersion;
 import hunt.net.util.HttpURI;
 import hunt.http.codec.http.model.MetaData;
@@ -35,8 +36,9 @@ import core.atomic;
 import core.sync.condition;
 import core.sync.mutex;
 
-import std.parallelism;
 import std.conv;
+import std.format;
+import std.parallelism;
 
 
 /**
@@ -87,6 +89,10 @@ class RealCall : Call {
             responseLocker.unlock();
         }
         
+        version(WITH_HUNT_TRACE) {
+            originalRequest.startSpan();
+        }
+
         HttpClientResponse hcr;
 
         AbstractClientHttpHandler httpHandler = new class AbstractClientHttpHandler {
@@ -136,14 +142,21 @@ class RealCall : Call {
                 version (HUNT_HTTP_DEBUG) infof("waitting for response in %s ...", idleTimeout);
                 bool r = responseCondition.wait(idleTimeout);
                 if(!r) {
-                    warningf("No any response in %s", idleTimeout);
+                    string msg = format("No any response in %s", idleTimeout);
+                    warningf(msg);
 
                     client.close();
+                    version(WITH_HUNT_TRACE) {
+                        originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+                    }    
                     throw new TimeoutException();
                 }
             }
         }
         version (HUNT_HTTP_DEBUG) info("response normally");
+        version(WITH_HUNT_TRACE) {
+            originalRequest.endTraceSpan(hcr.getStatus(), null);
+        }
         return hcr;
 
     }
@@ -191,50 +204,61 @@ class RealCall : Call {
     }
 
     void doRequestTask(AbstractClientHttpHandler httpHandler) {
-            HttpURI uri = originalRequest.getURI();
-            string scheme = uri.getScheme();
-            int port = uri.getPort();
+        HttpURI uri = originalRequest.getURI();
+        string scheme = uri.getScheme();
+        int port = uri.getPort();
 
-            version(HUNT_HTTP_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
-                scheme, uri.getHost(), port);
+        version(HUNT_HTTP_DEBUG) tracef("new request: scheme=%s, host=%s, port=%d", 
+            scheme, uri.getHost(), port);
 
-            FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
+        FuturePromise!HttpClientConnection promise = new FuturePromise!HttpClientConnection();
 
-            if(port <= 0)
-                port = SchemePortMap[scheme];
-            
-            HttpConnection connection;
-            try {
-                client.connect(uri.getHost(), port, promise);
-                NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().getTcpConfiguration();
-                connection = promise.get(tcpConfig.getConnectTimeout());
-            } catch(Exception ex) {
-                version(HUNT_DEBUG) {
-                    warning(ex);
-                }
-                client.close();
-                throw new IOException("Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string());
+        if(port <= 0)
+            port = SchemePortMap[scheme];
+        
+        HttpConnection connection;
+        try {
+            client.connect(uri.getHost(), port, promise);
+            NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().getTcpConfiguration();
+            connection = promise.get(tcpConfig.getConnectTimeout());
+        } catch(Exception ex) {
+            string msg = "Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string();
+            version(HUNT_DEBUG) {
+                warning(msg, " Reason: ", ex.msg);
             }
-            
-            version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
+            version(HUNT_HTTP_DEBUG) warning(ex);
+            client.close();
 
-            if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
+            version(WITH_HUNT_TRACE) {
+                originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+            }
+            throw new IOException(msg);
+        }
+        
+        version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
 
-                Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
-                RequestBody rb = originalRequest.getBody();
-                if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
-                    http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
-                } else {
-                    http1ClientConnection.send(originalRequest, httpHandler);
-                }
+        if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
+
+            Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
+            RequestBody rb = originalRequest.getBody();
+            if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
+                // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
+                HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
+                rb.writeTo(output);
             } else {
-                // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
-                // 
-                string msg = "Unsupported " ~ connection.getHttpVersion().toString();
-                throw new IOException(msg);
+                http1ClientConnection.send(originalRequest, httpHandler);
             }
+        } else {
+            // TODO: Tasks pending completion -@zxp at 6/4/2019, 5:55:40 PM
+            // 
+            string msg = "Unsupported " ~ connection.getHttpVersion().toString();
+            version(WITH_HUNT_TRACE) {
+                originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
+            }
+            throw new IOException(msg);
+        }
 
-            version (HUNT_HTTP_DEBUG) info("waitting response...");        
+        version (HUNT_HTTP_DEBUG) info("waitting response...");        
     }
 
     

@@ -13,12 +13,6 @@ import hunt.io;
 import hunt.logging;
 import hunt.text.Common;
 
-version(WITH_HUNT_TRACE) {
-import hunt.trace.Constrants;
-import hunt.trace.Plugin;
-import hunt.trace.Span;
-}
-
 import std.string : icmp;
 import std.conv;
 
@@ -39,40 +33,8 @@ class Http1ClientResponseHandler : HttpResponseHandler {
     }
 
     package(hunt.http.client) void onReady() {
-        version(WITH_HUNT_TRACE) {
-            if(request !is null) {
-                initializeTracer(request);
-            }
-        }
+
     }
-
-version(WITH_HUNT_TRACE) {
-    private void initializeTracer(HttpRequest request) {
-        HttpURI uri = request.getURI();
-        tags[HTTP_HOST] = uri.getHost();
-        tags[HTTP_URL] = uri.getPathQuery();
-        tags[HTTP_PATH] = uri.getPath();
-        tags[HTTP_REQUEST_SIZE] = request.getContentLength().to!string();
-        tags[HTTP_METHOD] = request.getMethod();
-
-        _span = traceSpanBefore(request.getURI().getPath());
-        if(_span !is null) {
-            request.getFields().put("b3", _span.defaultId());
-        }
-    }
-
-    private Span _span;
-    private string[string] tags;
-
-    private void endTraceSpan(string error) {
-        if(_span !is null) {
-            tags[HTTP_STATUS_CODE] = to!string(response.getStatus());
-            tags[HTTP_RESPONSE_SIZE] = to!string(response.getContentLength());
-
-            traceSpanAfter(_span , tags , error);
-        }
-    }    
-}    
 
     override
     final bool startResponse(HttpVersion ver, int status, string reason) {
@@ -132,7 +94,8 @@ version(WITH_HUNT_TRACE) {
     protected bool http1MessageComplete() {
         version(HUNT_HTTP_DEBUG_MORE) trace("handle response");
         try {
-            version(WITH_HUNT_TRACE) endTraceSpan("");
+            // version(WITH_HUNT_TRACE) endTraceSpan("");
+            
             return clientHttpHandler.messageComplete(request, response, outputStream, connection);
         } finally {
             string requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);

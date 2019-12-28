@@ -5,16 +5,28 @@ import hunt.http.client.RequestBuilder;
 
 import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpFields;
-import hunt.net.util.HttpURI;
 import hunt.http.HttpVersion;
 import hunt.http.codec.http.model.MetaData;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
+import hunt.logging.ConsoleLogger;
+import hunt.net.util.HttpURI;
 import hunt.Exceptions;
 
 alias Request = HttpClientRequest;
+
+import std.conv;
+
+version(WITH_HUNT_TRACE) {
+    import hunt.trace.Constrants;
+    import hunt.trace.Endpoint;
+    import hunt.trace.Span;
+    import hunt.trace.Tracer;
+    import hunt.trace.HttpSender;
+}
+
 
 /**
 */
@@ -66,4 +78,61 @@ class HttpClientRequest : HttpRequest {
 	RequestBuilder newBuilder() {
 		return new RequestBuilder(this);
 	}
+
+    bool isTracingEnabled() {
+        return _isTracingEnabled;
+    }
+
+    void isTracingEnabled(bool flag) {
+        _isTracingEnabled = flag;
+    }
+
+	// Trace
+	// HttpClientRequest enableTracing(bool flag) {
+	// 	_isTracingEnabled = flag;
+	// 	return this;
+	// }
+	
+version(WITH_HUNT_TRACE) {
+    private bool _isTracingEnabled = true;
+    package(hunt.http.client)  Tracer _tracer;
+    package(hunt.http.client)  Span _span;
+    private string[string] tags;
+
+    void startSpan() {
+        if(!isTracingEnabled()) return;
+        if(_span is null) {
+            warning("span is null");
+            return;
+        }
+
+        HttpURI uri = getURI();
+        tags[HTTP_HOST] = uri.getHost();
+        tags[HTTP_URL] = uri.getPathQuery();
+        tags[HTTP_PATH] = uri.getPath();
+        tags[HTTP_REQUEST_SIZE] = getContentLength().to!string();
+        tags[HTTP_METHOD] = getMethod();
+
+        if(_span !is null) {
+            _span.start();
+            getFields().put("b3", _span.defaultId());
+        }
+    }    
+    
+    void endTraceSpan(int status, string message) {
+        
+        if(!isTracingEnabled()) return;
+        if(_span !is null) {
+            tags[HTTP_STATUS_CODE] = to!string(status);
+            // tags[HTTP_RESPONSE_SIZE] = to!string(response.getContentLength());
+
+            traceSpanAfter(_span , tags, message);
+
+            httpSender().sendSpans(_span);
+        }
+    }
+} else {
+    private bool _isTracingEnabled = false;
+}
+
 }

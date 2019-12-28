@@ -15,7 +15,7 @@ alias AbstractHttpHandler = HttpConnectionHandler;
 
 /**
 */
-abstract class HttpConnectionHandler : ConnectionEventHandler {
+abstract class HttpConnectionHandler : NetConnectionHandler {
 
     protected HttpOptions config;
 

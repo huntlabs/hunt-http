@@ -73,25 +73,32 @@ class Span {
 
     }
 
-    void initializeLocalEndpoint(string name) {
-        //
-        localEndpoint = new EndPoint();
-        localEndpoint.serviceName = name;
+    __gshared EndPoint defaultLocalEndpoint;
 
-        try {
-            auto addresses = getAddress("localhost");
-            foreach (address; addresses) {
-                // writefln("  IP: %s", address.toAddrString());
-                string ip = address.toAddrString();
-                if(ip.startsWith("::")) {
-                    // localEndpoint.ipv6 = ip; // todo
-                } else {
-                    localEndpoint.ipv4 = ip;
+
+    void initializeLocalEndpoint(string name) {
+        if(defaultLocalEndpoint is null) {
+            defaultLocalEndpoint = new EndPoint();
+            defaultLocalEndpoint.serviceName = name;
+
+            try {
+                auto addresses = getAddress("localhost");
+                foreach (address; addresses) {
+                    // writefln("  IP: %s", address.toAddrString());
+                    string ip = address.toAddrString();
+                    if(ip.startsWith("::")) {
+                        // localEndpoint.ipv6 = ip; // todo
+                    } else {
+                        defaultLocalEndpoint.ipv4 = ip;
+                    }
                 }
+            } catch(Exception ex) {
+                warning(ex.msg);
             }
-        } catch(Exception ex) {
-            warning(ex.msg);
-        }
+        } 
+        
+        //
+        localEndpoint = defaultLocalEndpoint;
     }
 
     override string toString() {
@@ -99,9 +106,11 @@ class Span {
         json["debug"] = (debug_);
         json["shared"] = (shared_);
 
-        // import hunt.logging.ConsoleLogger;
-        // warning("parentId: ", parentId);
-        // warning("traceId: ", traceId);
+        version(HUNT_TRACE_DEBUG) {
+            warning("parentId: ", parentId);
+            warning("traceId: ", traceId);
+        }
+
         if (parentId.length != 0)
             json["parentId"] = parentId;
         return json.toString;

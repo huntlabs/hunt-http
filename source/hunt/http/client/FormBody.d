@@ -1,16 +1,19 @@
 module hunt.http.client.FormBody;
 
 import hunt.http.client.RequestBody;
+
+import hunt.Exceptions;
+import hunt.http.codec.http.stream.HttpOutputStream;
+import hunt.logging.ConsoleLogger;
 import hunt.net.util.UrlEncoded;
 import hunt.util.MimeType;
-import hunt.Exceptions;
-
-import std.array;
-import std.container;
 
 import hunt.collection.ByteBuffer;
 import hunt.collection.HeapByteBuffer;
 import hunt.collection.BufferUtils;
+
+import std.array;
+import std.container;
 
 /**
 */
@@ -20,6 +23,7 @@ final class FormBody : RequestBody {
 	private string[] _encodedNames;
 	private string[] _encodedValues;
     private bool _isEncoded = false;
+	private ByteBuffer _buffer;
 
 	this(string[] encodedNames, string[] encodedValues) {
 		this._encodedNames = encodedNames;
@@ -53,23 +57,28 @@ final class FormBody : RequestBody {
 		return CONTENT_TYPE;
 	}
 
-	override size_t contentLength() {
-        if(!_isEncoded) {
-            encode();
+	override long contentLength() {
+        if(_buffer is null) {
+            _buffer = encode();
         }
 
-		return _contentLength;
+		return _buffer.remaining();
 	}
 
-	override ByteBuffer content() {
-        if(!_isEncoded) { 
-            encode();
+	// override ByteBuffer content() {
+    //     if(!_isEncoded) { 
+    //         encode();
+    //     }
+	// 	return _content;
+	// }
+
+	override void writeTo(HttpOutputStream sink) {
+        if(_buffer is null) { 
+           	_buffer = encode();
         }
-		return _content;
+
+		sink.write(_buffer);
 	}
-	//   override void writeTo(BufferedSink sink) {
-	//     writeOrCountBytes(sink, false);
-	//   }
 
 	/**
    * Either writes this request to {@code sink} or measures its content length. We have one method
@@ -77,19 +86,21 @@ final class FormBody : RequestBody {
    * to awkward operations like measuring the encoded length of header strings, or the
    * length-in-digits of an encoded integer.
    */
-	private void encode() {
-
+	private ByteBuffer encode() {
+		ByteBuffer buffer = BufferUtils.allocate(2 * 1024);
 		for (size_t i = 0; i < _encodedNames.length; i++) {
 			if (i > 0)
-				_content.put('&');
-			_content.put(cast(byte[])_encodedNames[i]);
-			_content.put('=');
-			_content.put(cast(byte[])_encodedValues[i]);
+				buffer.put('&');
+			buffer.put(cast(byte[])_encodedNames[i]);
+			buffer.put('=');
+			buffer.put(cast(byte[])_encodedValues[i]);
 		}
 
-        _isEncoded = true;
-		_contentLength = cast(size_t)_content.position();
-		_content.flip();
+		buffer.flip();
+
+		version(HUNT_HTTP_DEBUG) trace(cast(string)buffer.getRemaining());
+
+		return buffer;
 	}
 
 	static final class Builder {

@@ -25,6 +25,7 @@ import hunt.util.Lifecycle;
 import core.time;
 import std.array;
 
+
 /**
 */
 class HttpServer : AbstractLifecycle {
@@ -148,6 +149,21 @@ class HttpServer : AbstractLifecycle {
     int getPort() {
         return port;
     }
+
+    bool isOpen() {
+        return _server.isOpen();
+    }
+
+    bool isTLS() {
+        return _httpOptions.isSecureConnectionEnabled();
+    }
+    
+
+    HttpServer localServiceName(string name) {
+        _localServiceName = name;
+        return this;
+    }
+    private string _localServiceName;
 
     // ExecutorService getNetExecutorService() {
     //     return _server.getNetExecutorService();

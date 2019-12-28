@@ -21,3 +21,5 @@ public import hunt.http.client.RequestBuilder;
 public import hunt.http.client.RequestBody;
 public import hunt.http.client.FormBody;
 
+public import hunt.util.MimeType;
+public import hunt.net.util.UrlEncoded;

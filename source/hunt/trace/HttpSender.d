@@ -79,37 +79,41 @@ class HttpSender {
         }
         str ~= "]";
 
-        // warning(str);
+        version(HUNT_TRACE_DEBUG) warning(str);
         // doSend(str);
         auto sendTask = task(&doSend, str);
         taskPool.put(sendTask);
     }
 
     private void doSend(string content) {
+        try {
 
-        version(HUNT_HTTP_DEBUG) { 
-            tracef("endpoint: %s", _endpoint);
-            trace(content);
-        }
+            version(HUNT_HTTP_DEBUG) { 
+                tracef("endpoint: %s", _endpoint);
+                trace(content);
+            }
 
-        assert(!_endpoint.empty());
+            assert(!_endpoint.empty());
 
-        RequestBody b = RequestBody.create(MimeType.APPLICATION_JSON_VALUE, content);
-        Request request = new RequestBuilder()
-            .enableTracing(false)
-            .url(_endpoint)
-            .post(b)
-            .build();
-        
-        // client = new HttpClient();
-        Response response = client.newCall(request).execute();
+            RequestBody b = RequestBody.create(MimeType.APPLICATION_JSON_VALUE, content);
+            Request request = new RequestBuilder()
+                .enableTracing(false)
+                .url(_endpoint)
+                .post(b)
+                .build();
+            
+            // client = new HttpClient();
+            Response response = client.newCall(request).execute();
 
-        if (response !is null) {
-            version(HUNT_HTTP_DEBUG) warningf("status code: %d", response.getStatus());
-            if(response.haveBody())
-                trace(response.getBody().asString());
-        } else {
-            warning("no response");
+            if (response !is null) {
+                version(HUNT_TRACE_DEBUG) warningf("status code: %d", response.getStatus());
+                if(response.haveBody())
+                    trace(response.getBody().asString());
+            } else {
+                warning("no response");
+            }
+        } catch(Throwable t) {
+            warning(t);
         }
     }
 }

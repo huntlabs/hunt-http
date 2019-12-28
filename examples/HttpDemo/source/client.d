@@ -18,11 +18,19 @@ import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 import hunt.util.MimeType;
 
-
 import std.stdio;
 
 void main(string[] args) {
+    version(WITH_HUNT_TRACE) {
+        testOpenTracing();
+    } else {
+        testSimpleHttpClient();
+    }
+}
 
+
+
+void testSimpleHttpClient() {
     HttpClientTest test = new HttpClientTest();
     try {
     test.testGet();
@@ -35,7 +43,6 @@ void main(string[] args) {
         warning(ex);
     }
 }
-
 
 class HttpClientTest {
     HttpClient client;
@@ -169,4 +176,36 @@ class HttpClientTest {
         return "";
   	}
 
+}
+
+
+
+version(WITH_HUNT_TRACE) {
+    void testOpenTracing() {
+        import hunt.trace.HttpSender;
+        // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
+        string endpoint = "http://10.1.222.120:9411/api/v2/spans";
+        httpSender().endpoint(endpoint);
+
+        // string url = "http://10.1.222.120:801/index.html";
+        // string url = "http://127.0.0.1:8080/plaintext";
+        string url = "http://127.0.0.1:8080/test/tracing";
+        HttpClient client = new HttpClient();
+
+        Request request = new RequestBuilder()
+            .url(url)
+            .localServiceName("HttpClientDemo")
+            .build();
+        Response response = client.newCall(request).execute();
+
+        if (response !is null) {
+            warningf("status code: %d", response.getStatus());
+            // if(response.haveBody())
+            //  trace(response.getBody().asString());
+        } else {
+            warning("no response");
+        }
+
+        getchar();
+    }
 }
