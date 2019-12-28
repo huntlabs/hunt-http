@@ -2,18 +2,12 @@
 
 # hunt-http
 
-# Additional package dependencies
-| package | version | purpose |
-|--------|--------|--------|
-| hunt-trace |  0.2.0    |  Tracing for API requests  |
 
 **Note:**
-To support request tracing, you must add these packages to your project:
-1. hunt-trace
+To support request tracing, you must add a version of `WITH_HUNT_TRACE` to your project:
 
 ## TODO
 - [ ] Reorganize modules
-- [ ] Improving HttpServer
 - [ ] More unit tests
 
 ## References
