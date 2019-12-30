@@ -130,7 +130,6 @@ class HttpClientRequest : HttpRequest {
 
 version(WITH_HUNT_TRACE) {
     private bool _isTracingEnabled = true;
-    private Tracer _tracer;
     private Span _span;
     private string[string] tags;
 
@@ -454,7 +453,7 @@ version(WITH_HUNT_TRACE) {
 
                     // span.remoteEndpoint = remoteEndpoint;
 
-                    request._tracer = _tracer;
+                    request.tracer = _tracer;
                     request._span = span;
                 }
             }

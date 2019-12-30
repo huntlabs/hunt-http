@@ -53,9 +53,10 @@ version(WITH_HUNT_TRACE) {
     import hunt.net.util.HttpURI;
     import hunt.trace.Constrants;
     import hunt.trace.Endpoint;
+    import hunt.trace.HttpSender;
     import hunt.trace.Span;
     import hunt.trace.Tracer;
-    import hunt.trace.HttpSender;
+    import hunt.trace.TracingOptions;
 
     import std.conv;
     import std.format;
@@ -65,7 +66,8 @@ alias BadRequestHandler = ActionN!(HttpServerContext);
 alias ServerErrorHandler = ActionN!(HttpServer, Exception);
 
 /**
-*/
+ * 
+ */
 class HttpServer : AbstractLifecycle {
 
     private NetServer _server;
@@ -577,68 +579,59 @@ class HttpServer : AbstractLifecycle {
 
     
 version(WITH_HUNT_TRACE) {
-    private void initializeTracer(HttpRequest request, HttpConnection connection) {
-
-        import std.socket;
-
-        string b3 = request.header("b3");
-         if(b3.empty()) {
-            // TODO: Tasks pending completion -@zhangxueping at 2019-12-23T17:23:17+08:00
-            // 
-        } else {
-            string reqPath = request.getURI().getPath();
-            version(HUNT_HTTP_DEBUG) {
-                warningf("initializing tracer for %s, with %s", reqPath, b3);
-            }
-            Tracer t = new Tracer(reqPath, b3);
-            Object o = request.getAttachment();
-            if(o !is null) {
-                warning("Attachment conflict: ", typeid(o));
-            }
-
-            Span span = t.root;
-            // span.initializeLocalEndpoint(_localServiceName);
-            
-            // 
-            Address local = connection.getLocalAddress();
-            EndPoint localEndpoint = new EndPoint();
-            localEndpoint.serviceName = _localServiceName;
-            localEndpoint.ipv4 = local.toAddrString();
-            localEndpoint.port = local.toPortString().to!int();
-            span.localEndpoint = localEndpoint; 
-
-            // 
-            Address remote = connection.getRemoteAddress;
-            EndPoint remoteEndpoint = new EndPoint();
-            remoteEndpoint.ipv4 = remote.toAddrString();
-            remoteEndpoint.port = remote.toPortString().to!int;
-            span.remoteEndpoint = remoteEndpoint;
-            //
-
-            span.start();
-            request.setAttachment(t);
-        }
-    }
+    private string _localServiceName;
+    private bool _isB3HeaderRequired = true;
+    // private TracingOptions _tracingOptions;
 
     Builder localServiceName(string name) {
         _localServiceName = name;
         return this;
     }
 
-    private string _localServiceName;
+    Builder isB3HeaderRequired(bool flag) {
+        _isB3HeaderRequired = flag;
+        return this;
+    }
+
+    private void initializeTracer(HttpRequest request, HttpConnection connection) {
+        Tracer tracer;
+        string reqPath = request.getURI().getPath();
+        string b3 = request.header("b3");
+        if(b3.empty()) {
+            if(_isB3HeaderRequired) return;
+
+            tracer = new Tracer(reqPath);
+        } else {
+            version(HUNT_HTTP_DEBUG) {
+                warningf("initializing tracer for %s, with %s", reqPath, b3);
+            }
+
+            tracer = new Tracer(reqPath, b3);
+        }
+
+        Span span = tracer.root;
+        span.initializeLocalEndpoint(_localServiceName);
+        import std.socket;
+
+        // 
+        Address remote = connection.getRemoteAddress;
+        EndPoint remoteEndpoint = new EndPoint();
+        remoteEndpoint.ipv4 = remote.toAddrString();
+        remoteEndpoint.port = remote.toPortString().to!int;
+        span.remoteEndpoint = remoteEndpoint;
+        //
+
+        span.start();
+        request.tracer = tracer;
+    }
 
     private void endTraceSpan(HttpRequest request, int status, string message = null) {
-        Object obj = request.getAttachment();
-        if(obj is null) { // no Tracer;
-            warning("no tracer found");
-            return ;
-        }
-
-        Tracer tracer = cast(Tracer)obj;
+        Tracer tracer = request.tracer;
         if(tracer is null) {
-            warning("Attachment conflict: ", typeid(obj));
+            warning("no tracer found");
             return;
         }
+
         HttpURI uri = request.getURI();
         string[string] tags;
         tags[HTTP_HOST] = uri.getHost();
@@ -655,7 +648,6 @@ version(WITH_HUNT_TRACE) {
         }
     }    
 }  
-
         private ServerHttpHandler buildServerHttpHandler() {
             ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter(_httpOptions);
 

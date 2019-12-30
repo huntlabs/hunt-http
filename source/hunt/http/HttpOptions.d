@@ -4,6 +4,7 @@ import hunt.http.HttpVersion;
 
 import hunt.net.KeyCertOptions;
 import hunt.net.TcpSslOptions;
+
 import std.datetime;
 
 // dfmt off
@@ -19,7 +20,8 @@ deprecated("Using HttpOptions instead.")
 alias HttpConfiguration = HttpOptions;
 
 /**
-*/
+ * 
+ */
 class HttpOptions {
 
     // TCP settings
@@ -27,10 +29,6 @@ class HttpOptions {
 
     // SSL/TLS settings
     private bool _isCertificateAuth = false;
-    private string _sslCertificate;
-    private string _sslPrivateKey;
-    private string _keystorePassword;
-    private string _keyPassword;
 
     // HTTP settings
 	enum int DEFAULT_WINDOW_SIZE = 65535;
@@ -343,38 +341,6 @@ class HttpOptions {
         return this.tcpSslOptions.getKeyCertOptions();
     }
 
-
-    // string sslCertificate() {
-    //     return _sslCertificate;
-    // }
-
-    // void sslCertificate(string fileName) {
-    //     _sslCertificate = fileName;
-    // }
-
-    // string sslPrivateKey() {
-    //     return _sslPrivateKey;
-    // }
-
-    // void sslPrivateKey(string fileName) {
-    //     _sslPrivateKey = fileName;
-    // }
-
-    // string keystorePassword() {
-    //     return _keystorePassword;
-    // }
-
-    // void keystorePassword(string password) {
-    //     _keystorePassword = password;
-    // }
-
-    // string keyPassword() {
-    //     return _keyPassword;
-    // }
-
-    // void keyPassword(string password) {
-    //     _keyPassword = password;
-    // }
 
     /**
      * Get the default HTTP protocol version. The value is "HTTP/2.0" or "HTTP/1.1". If the value is null,

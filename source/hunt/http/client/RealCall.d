@@ -45,13 +45,6 @@ import std.conv;
 import std.format;
 import std.parallelism;
 
-// version(WITH_HUNT_TRACE) {
-//     import hunt.trace.Constrants;
-//     import hunt.trace.Plugin;
-//     import hunt.trace.Span;
-//     import hunt.trace.Tracer;
-// }
-
 /**
 */
 class RealCall : Call {

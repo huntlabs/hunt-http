@@ -351,6 +351,7 @@ version(WITH_HUNT_TRACE) {
         HttpServer server = HttpServer.builder()
             .setListener(8080, "0.0.0.0")
             .localServiceName("HttpServerDemo")
+            .isB3HeaderRequired(false)
             .setHandler((RoutingContext context) {
 
                 context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
@@ -364,29 +365,14 @@ version(WITH_HUNT_TRACE) {
                         .localServiceName("HttpServerDemo");
 
                 HttpServerRequest serverRequest = context.getRequest();
-                
-                Object obj = serverRequest.getAttachment();
-                if(obj !is null) {
-                    Tracer tracer = cast(Tracer)obj;
-                    if(tracer !is null) {
-                        requestBuilder.withTracer(tracer);
-                    } else {
-                        // warning("Attachment conflict: ", typeid(obj));
-                        // context.write(format("<br>Attachment conflict: %s<br>", typeid(obj)));
-                        // context.end();
-                        // return;
-                    }
-                } else {
-                    warning("No tracer found");
-                }
+                Tracer tracer = serverRequest.tracer;
+                if(tracer !is null) requestBuilder.withTracer(tracer);
 
                 Request request = requestBuilder.build();
                 Response response = client.newCall(request).execute();
 
                 if (response !is null) {
                     warningf("status code: %d", response.getStatus());
-                    // if(response.haveBody())
-                    //  trace(response.getBody().asString());
                 } else {
                     warning("no response");
                 }
@@ -396,8 +382,7 @@ version(WITH_HUNT_TRACE) {
             .onError((HttpServerContext context) {
                 HttpServerResponse res = context.httpResponse();
                 assert(res !is null);
-                version(HUNT_DEBUG) warningf("badMessage: status=%d reason=%s", 
-                    res.getStatus(), res.getReason());
+                version(HUNT_DEBUG) warningf("badMessage: status=%d reason=%s", res.getStatus(), res.getReason());
             })
             .build();  
         return server; 
