@@ -9,7 +9,7 @@ public import hunt.trace.Endpoint;
 // public import hunt.trace.Client;
 public import hunt.trace.Span;
 public import hunt.trace.Tracer;
-
+public import hunt.trace.HttpSender;
 
 
 
