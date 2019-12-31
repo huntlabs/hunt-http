@@ -35,10 +35,10 @@ struct RoutingHandlerUtils {
         DirEntry fileInfo = DirEntry(requestFile);
         response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
 
-        size_t rangeStart = 0;
-        size_t rangeEnd = 0;
+        ulong rangeStart = 0;
+        ulong rangeEnd = 0;
 
-        size_t fileSize = fileInfo.size();
+        ulong fileSize = fileInfo.size();
 
         if (request.headerExists(HttpHeader.RANGE))
         {
@@ -121,17 +121,17 @@ struct RoutingHandlerUtils {
 
         ubyte[] buffer;
         File f = File(requestFile, "r");
-        size_t total = f.size();
+        ulong total = f.size();
 
         scope(exit) f.close();
 
-        size_t remaining = total;
+        ulong remaining = total;
         while(remaining > 0 && !f.eof()) {
 
             if(remaining > bufferSize) 
                 buffer = new ubyte[bufferSize];
             else 
-                buffer = new ubyte[remaining];
+                buffer = new ubyte[cast(size_t)remaining];
             ubyte[] data = f.rawRead(buffer);
             
             if(data.length > 0) {

@@ -247,7 +247,7 @@ class DefaultResourceHandler : AbstractResourceHandler {
         }
     }
 
-    static string convertFileSize(size_t size) {
+    static string convertFileSize(ulong size) {
         if(size < 1024) {
             return size.to!string();
         } else if(size < 1024*1024) {

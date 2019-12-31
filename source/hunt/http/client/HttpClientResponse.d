@@ -101,7 +101,7 @@ class ResponseBody {
 		return _contentType;
 	}
 
-	size_t contentLength() {
+	long contentLength() {
 		return _contentLength;
 	}
 

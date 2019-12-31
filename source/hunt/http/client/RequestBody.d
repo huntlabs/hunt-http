@@ -145,7 +145,7 @@ abstract class RequestBody {
 				File f = File(abslutePath, "r");
 				scope(exit) f.close();
 
-				long remaining = total;
+				size_t remaining = cast(size_t)total;
 				while(remaining > 0 && !f.eof()) {
 
 					if(remaining > MaxBufferSize) 
