@@ -1,7 +1,7 @@
 {
     "name": "hunt-http",
     "targetType": "staticLibrary",
-    "description": "http module for hunt.",
+    "description": "Hunt-Http is a flexible performant http server and client. Support HTTP/1.1, HTTP/2, WebSocket and static resource.",
     "copyright": "Copyright (C) 2018-2019, HuntLabs",
     "homepage": "https://www.huntlabs.net",
     "license": "Apache-2.0",
