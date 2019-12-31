@@ -1,12 +1,13 @@
 [![Build Status](https://travis-ci.org/huntlabs/hunt-http.svg?branch=master)](https://travis-ci.org/huntlabs/hunt-http)
 
 # hunt-http
+Hunt-Http is a flexible performant http server and client written in D Programming Language.
 
 ## Features
 | Feature | Server | Client |
 |--------|--------|--------|
 | HTTP 1.x | tested | tested |
-| HTTP2 | tested | tested |
+| HTTP/2 | tested | tested |
 | TLS 1.2 | tested | tested[1] |
 | WebSocket[2] | tested | tested |
 | Routing | tested | none |
@@ -31,7 +32,9 @@ import hunt.http;
 
 void main()
 {
-    auto server = HttpServer.builder().setListener(8080, "0.0.0.0").setHandler((RoutingContext context) {
+    auto server = HttpServer.builder()
+        .setListener(8080, "0.0.0.0")
+        .setHandler((RoutingContext context) {
             context.write("Hello World!");
             context.end();
         }).build();
@@ -39,6 +42,7 @@ void main()
     server.start();
 }
 ```
+
 ### Using hunt-http build a http client
 ```D
 import hunt.http;
@@ -50,6 +54,7 @@ void main()
     auto client = new HttpClient();
 
     auto request = new RequestBuilder().url("http://www.huntlabs.net").build();
+
     auto response = client.newCall(request).execute();
 
     if (response !is null)
@@ -65,7 +70,9 @@ import hunt.http;
 
 void main()
 {
-    auto server = HttpServer.builder().setListener(8080, "0.0.0.0").registerWebSocket("/", new class AbstractWebSocketMessageHandler {
+    auto server = HttpServer.builder()
+        .setListener(8080, "0.0.0.0")
+        .websocket("/ws", new class AbstractWebSocketMessageHandler {
             override void onText(WebSocketConnection connection, string text)
             {
                 connection.sendText("Hello " ~ text);
