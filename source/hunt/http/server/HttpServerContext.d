@@ -57,6 +57,7 @@ class HttpServerContext {
 
     void httpResponse(HttpServerResponse response) {
         _httpResponse = response;
+        _httpOutputStream.setMetaData(response);  // binding the response with a httpOutputStream
     }
 
     // HttpServerContext onContent(Action1!ByteBuffer handler) {

@@ -32,6 +32,11 @@ abstract class HttpOutputStream : OutputStream {
         return committed;
     }
 
+    void setMetaData(HttpMetaData metaData) {
+        assert(!closed && !committed, "Stream closed!");
+        this.metaData = metaData;
+    }
+
     override
     void write(int b) {
         // byte* ptr = cast(byte*)&b;

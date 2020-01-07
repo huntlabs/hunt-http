@@ -312,6 +312,128 @@ class HttpServerRequest : HttpRequest {
         //     version(HUNT_HTTP_DEBUG) warning(e);
         //     return null;
         // }
-    }   
+    } 
+    
+
+// dfmtoff Some Helpers
+
+    import std.string;
+
+    @property string path() {
+        return getURI().getPath();
+    }
+
+
+    @property string decodedPath() {
+        return getURI().getDecodedPath();
+    }
+
+    /**
+     * Retrieve a query string item from the request.
+     *
+     * @param  string  key
+     * @param  string|array|null  default
+     * @return string|array
+     */
+    string query(string key, string defaults = null) {
+        return queries().get(key, defaults);
+    }
+
+    /**
+     * Retrieve a request payload item from the request.
+     *
+     * @param  string  key
+     * @param  string|array|null  default
+     *
+     * @return string|array
+     */
+    T post(T = string)(string key, T v = T.init) {
+        string[][string] form = xFormData();
+        if (form is null)
+            return v;
+        if(key in form) {
+            string[] _v = form[key];
+            if (_v.length > 0) {
+                static if(is(T == string))
+                    v = _v[0];
+                else {
+                    v = to!T(_v[0]);
+                }
+            } 
+        } 
+
+        return v;
+    }
+
+    T[] posts(T = string)(string key, T[] v = null) {
+        string[][string] form = xFormData();
+        if (form is null)
+            return v;
+            
+        if(key in form) {
+            string[] _v = form[key];
+            if (_v.length > 0) {
+                static if(is(T == string))
+                    v = _v[];
+                else {
+                    v = new T[_v.length];
+                    for(size i =0; i<v.length; i++) {
+                        v[i] = to!T(_v[i]);
+                    }
+                }
+            } 
+        } 
+
+        return v;
+    }
+
+    // get queries
+    @property ref string[string] queries() {
+        if (!_isQueryParamsSet) {
+            MultiMap!string map = new MultiMap!string();
+            getURI().decodeQueryTo(map);
+            foreach (string key, List!(string) values; map) {
+                version(HUNT_DEBUG) {
+                    infof("query parameter: key=%s, values=%s", key, values[0]);
+                }
+                if(values is null || values.size()<1) {
+                    _queryParams[key] = ""; 
+                } else {
+                    _queryParams[key] = values[0];
+                }
+            }
+            _isQueryParamsSet = true;
+        }
+        return _queryParams;
+    }
+
+    void putQueryParameter(string key, string value) {
+        version(HUNT_DEBUG) infof("query parameter: key=%s, values=%s", key, value);
+        _queryParams[key] = value;
+    }
+
+    @property string[][string] xFormData() {
+        if (_xFormData is null && _isXFormUrlencoded) {
+            UrlEncoded map = new UrlEncoded();
+            map.decode(getStringBody());
+            foreach (string key; map.byKey()) {
+                foreach(string v; map.getValues(key)) {
+                    key = key.strip();
+                    _xFormData[key] ~= v.strip();
+                }
+            }
+        }
+        return _xFormData;
+    }
+    
+    private string[][string] _xFormData;
+    private string[string] _queryParams;
+    
+    private bool _isMultipart = false;
+    private bool _isXFormUrlencoded = false;
+    private bool _isQueryParamsSet = false;
+
+// dfmton
+
 
 }

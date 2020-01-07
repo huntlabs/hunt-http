@@ -19,6 +19,7 @@ import hunt.collection;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
+import hunt.io.Common;
 import hunt.logging.ConsoleLogger;
 import hunt.util.Common;
 
@@ -35,7 +36,7 @@ class RoutingContextImpl : RoutingContext {
     private HttpSessionHandler httpSessionHandler;
     private Variant[string] _attributes;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
-    private  bool asynchronousRead = false;
+    private bool asynchronousRead = false;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
     private HttpServerContext _context;
 
@@ -45,31 +46,34 @@ class RoutingContextImpl : RoutingContext {
         this.routers = routers;
     }
 
-    override
-    Variant getAttribute(string key) {
+    override Variant getAttribute(string key) {
         return _attributes.get(key, Variant());
     }
 
-    override
-    void setAttribute(string key, Variant value) {
+    override void setAttribute(string key, Variant value) {
         _attributes[key] = value;
     }
 
-    override
-    Variant removeAttribute(string key) {
+    override Variant removeAttribute(string key) {
         Variant v = _attributes[key];
         _attributes.remove(key);
         return v;
     }
 
-    override
-    Variant[string] getAttributes() {
+    override Variant[string] getAttributes() {
         return _attributes;
     }
 
-    override
-    HttpServerResponse getResponse() {
+    override HttpServerRequest getRequest() {
+        return request;
+    }
+
+    override HttpServerResponse getResponse() {
         return _context.httpResponse();
+    }
+
+    override void response(HttpServerResponse response) {
+        _context.httpResponse = response;
     }
 
     // override
@@ -77,13 +81,11 @@ class RoutingContextImpl : RoutingContext {
     //     return request.getAsyncResponse();
     // }
 
-    override
-    HttpServerRequest getRequest() {
-        return request;
+    override OutputStream outputStream() {
+        return _context.outputStream();
     }
 
-    override
-    string getRouterParameter(string name) {
+    override string getRouterParameter(string name) {
         return current.getParameters().get(name);
     }
 
@@ -108,8 +110,7 @@ class RoutingContextImpl : RoutingContext {
     //     return this;
     // }
 
-    override
-    bool isAsynchronousRead() {
+    override bool isAsynchronousRead() {
         return asynchronousRead;
     }
 
@@ -117,20 +118,19 @@ class RoutingContextImpl : RoutingContext {
         asynchronousRead = true;
     }
 
-    override
-    bool next() {
+    override bool next() {
         current = routers.pollFirst();
-        if(current is null) 
+        if (current is null)
             return false;
 
         Router r = current.getRouter();
-        version(HUNT_HTTP_DEBUG) infof("current router: %d", r.getId());
+        version (HUNT_HTTP_DEBUG)
+            infof("current router: %d", r.getId());
         r.handle(this);
         return true;
     }
 
-    override
-    bool hasNext() {
+    override bool hasNext() {
         return !routers.isEmpty();
     }
 
@@ -146,7 +146,6 @@ class RoutingContextImpl : RoutingContext {
     //     return complete(promise).next();
     // }
 
-    
     // override
     // <T> void succeed(T t) {
     //     Optional.ofNullable(handlerPromiseQueue)
@@ -162,7 +161,6 @@ class RoutingContextImpl : RoutingContext {
     //             .ifPresent(p -> p.failed(x));
     // }
 
-    
     // private <T> ConcurrentLinkedDeque<Promise<T>> createHandlerPromiseQueueIfAbsent() {
     //     if (handlerPromiseQueue == null) {
     //         handlerPromiseQueue = new ConcurrentLinkedDeque<>();
@@ -178,8 +176,7 @@ class RoutingContextImpl : RoutingContext {
         _context.end();
     }
 
-    override
-    string getParameter(string name) {
+    override string getParameter(string name) {
         // if(httpRequestBody is null) {
         //     return null;
         // } else {
@@ -188,8 +185,7 @@ class RoutingContextImpl : RoutingContext {
         return getRequest().getParameter(name);
     }
 
-    override
-    List!string getParameterValues(string name) {
+    override List!string getParameterValues(string name) {
         // if(httpRequestBody is null)
         //     return new EmptyList!string();
         // else
@@ -197,13 +193,12 @@ class RoutingContextImpl : RoutingContext {
         return getRequest().getParameterValues(name);
     }
 
-    override
-    Map!(string, List!string) getParameterMap() {
+    override Map!(string, List!string) getParameterMap() {
         // if(httpRequestBody is null)
         //     return null;
         // else
         //     return httpRequestBody.getParameterMap();
-        
+
         return getRequest().getParameterMap();
     }
 
@@ -243,18 +238,16 @@ class RoutingContextImpl : RoutingContext {
     //                    .orElse(null);
     // }
 
-    override
-    string getStringBody(string charset) {
+    override string getStringBody(string charset) {
         // if(httpRequestBody is null)
         //     return request.getStringBody(charset);
         // else
         //     return httpRequestBody.getStringBody(charset);
-        
+
         return getRequest().getStringBody(charset);
     }
 
-    override
-    string getStringBody() {
+    override string getStringBody() {
         // if(httpRequestBody is null)
         //     return request.getStringBody();
         // else
@@ -290,113 +283,101 @@ class RoutingContextImpl : RoutingContext {
     //                    .map(HttpServerRequest::getJsonArrayBody)
     //                    .orElseGet(request::getJsonArrayBody);
     // }
-    
+
     // override void setHttpBody(HttpServerRequest requestBody) {
     //     this.httpRequestBody = requestBody;
     // }
 
-    override
-    HttpSession getSessionById(string id) {
-        if(httpSessionHandler is null) {
+    override HttpSession getSessionById(string id) {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getSessionById(id);
         }
     }
 
-    override
-    HttpSession getSession() {
-        if(httpSessionHandler is null) {
+    override HttpSession getSession() {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getSession();
         }
     }
 
-    override
-    HttpSession getSession(bool create) {
-        if(httpSessionHandler is null) {
+    override HttpSession getSession(bool create) {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getSession(create);
         }
     }
 
-    override
-    HttpSession getAndCreateSession(int maxAge) {
-        if(httpSessionHandler is null) {
+    override HttpSession getAndCreateSession(int maxAge) {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getAndCreateSession(maxAge);
         }
     }
 
-    override
-    int getSessionSize() {
-        if(httpSessionHandler is null) {
+    override int getSessionSize() {
+        if (httpSessionHandler is null) {
             return 0;
         } else {
             return httpSessionHandler.getSessionSize();
         }
     }
 
-    override
-    bool removeSessionById(string id) {
-        if(httpSessionHandler is null) {
+    override bool removeSessionById(string id) {
+        if (httpSessionHandler is null) {
             return false;
         } else {
             return httpSessionHandler.removeSessionById(id);
         }
     }
 
-    override
-    bool removeSession() {
-        if(httpSessionHandler is null) {
+    override bool removeSession() {
+        if (httpSessionHandler is null) {
             return false;
         } else {
             return httpSessionHandler.removeSession;
         }
     }
 
-    override
-    bool updateSession(HttpSession httpSession) {
-        if(httpSessionHandler is null) {
+    override bool updateSession(HttpSession httpSession) {
+        if (httpSessionHandler is null) {
             return false;
         } else {
             return httpSessionHandler.updateSession(httpSession);
         }
     }
 
-    override
-    bool isRequestedSessionIdFromURL() {
-        if(httpSessionHandler is null) {
+    override bool isRequestedSessionIdFromURL() {
+        if (httpSessionHandler is null) {
             return false;
         } else {
             return httpSessionHandler.isRequestedSessionIdFromURL();
         }
     }
 
-    override
-    bool isRequestedSessionIdFromCookie() {
-        if(httpSessionHandler is null) {
+    override bool isRequestedSessionIdFromCookie() {
+        if (httpSessionHandler is null) {
             return false;
         } else {
             return httpSessionHandler.isRequestedSessionIdFromCookie();
         }
     }
 
-    override
-    string getRequestedSessionId() {
-        if(httpSessionHandler is null) {
+    override string getRequestedSessionId() {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getRequestedSessionId();
         }
     }
 
-    override
-    string getSessionIdParameterName() {
-        if(httpSessionHandler is null) {
+    override string getSessionIdParameterName() {
+        if (httpSessionHandler is null) {
             return null;
         } else {
             return httpSessionHandler.getSessionIdParameterName();
@@ -422,12 +403,11 @@ class RoutingContextImpl : RoutingContext {
     //     templateHandlerSPI.renderTemplate(this, resourceName, scopes);
     // }
 
-
     override RoutingContext write(string value) {
         _context.write(value);
         return this;
     }
-   
+
     override RoutingContext write(byte[] b, int off, int len) {
         _context.write(b, off, len);
         return this;
@@ -437,7 +417,7 @@ class RoutingContextImpl : RoutingContext {
         _context.end();
         return this;
     }
-    
+
     override void flush() {
         _context.flush();
     }

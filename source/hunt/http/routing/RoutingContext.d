@@ -17,6 +17,7 @@ import hunt.http.HttpVersion;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
+import hunt.io.Common;
 import hunt.logging.ConsoleLogger;
 import hunt.util.Common;
 import hunt.net.util.HttpURI;
@@ -72,11 +73,14 @@ abstract class RoutingContext : Closeable {
 
     HttpServerResponse getResponse();
 
+    void response(HttpServerResponse response);
+
     // HttpResponse getAsyncResponse();
 
     HttpServerRequest getRequest();
 
-    // HttpOutputStream getOutputStream();   
+    // HttpOutputStream getOutputStream();  
+    OutputStream outputStream(); 
 
     int getConnectionId();
 

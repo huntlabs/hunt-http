@@ -628,7 +628,7 @@ version(WITH_HUNT_TRACE) {
     private void endTraceSpan(HttpRequest request, int status, string message = null) {
         Tracer tracer = request.tracer;
         if(tracer is null) {
-            warning("no tracer found");
+            version(HUNT_TRACE_DEBUG) warning("no tracer found");
             return;
         }
 
