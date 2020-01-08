@@ -26,7 +26,7 @@ public import hunt.http.server.WebSocketHandler;
 // Common modules
 public import hunt.http.AuthenticationScheme;
 public import hunt.http.Cookie;
-public import hunt.http.HttpConnection;
+public import hunt.http.HttpBody;
 public import hunt.http.HttpConnection;
 public import hunt.http.HttpField;
 public import hunt.http.HttpFields;

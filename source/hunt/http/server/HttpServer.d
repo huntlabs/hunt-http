@@ -307,9 +307,10 @@ class HttpServer : AbstractLifecycle {
         enum DeleteMethod = HttpMethod.DELETE.asString();
 
         private HttpServerOptions _httpOptions;
-        private RouterManager routerManager;
-        private Router currentRouter;
-        private WebSocketMessageHandler[string] webSocketHandlers;
+        private RouterManager _routerManager; // default route manager
+        private RouterManager[] _routerManagerGroup; // route manager group
+        private Router _currentRouter;
+        private WebSocketMessageHandler[string] _webSocketHandlers;
         // private bool _canCopyBuffer = false;       
         
         // SSL/TLS settings
@@ -328,7 +329,7 @@ class HttpServer : AbstractLifecycle {
 
         this(HttpServerOptions options) {
             _httpOptions = options;
-            routerManager = RouterManager.create(_httpOptions.requestOptions());
+            _routerManager = RouterManager.create(_httpOptions.requestOptions());
             
             // set the server options as a global variable
             GlobalSettings.httpServerOptions = _httpOptions;
@@ -379,7 +380,7 @@ class HttpServer : AbstractLifecycle {
          * register a new router
          */
         Router newRouter() {
-            return routerManager.register();
+            return _routerManager.register();
         }
 
         Builder addRoute(string path, RoutingHandler handler) {
@@ -405,24 +406,24 @@ class HttpServer : AbstractLifecycle {
         }
 
         Builder addRoute(string[] paths, string[] methods, RoutingHandler handler) {
-            currentRouter = routerManager.register();
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), paths);
-            currentRouter.paths(paths);
+            _currentRouter = _routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), paths);
+            _currentRouter.paths(paths);
             foreach(string m; methods) {
-                currentRouter.method(m);
+                _currentRouter.method(m);
             }
-            currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            _currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
             return this;
         }
 
         Builder addRoute(string[] paths, string[] methods, RouteHandler handler) {
-            currentRouter = routerManager.register();
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), paths);
-            currentRouter.paths(paths);
+            _currentRouter = _routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), paths);
+            _currentRouter.paths(paths);
             foreach(string m; methods) {
-                currentRouter.method(m);
+                _currentRouter.method(m);
             }
-            currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            _currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
             return this;
         }
         
@@ -436,13 +437,13 @@ class HttpServer : AbstractLifecycle {
         }
 
         Builder addRegexRoute(string regex, string[] methods, RoutingHandler handler) {
-            currentRouter = routerManager.register();
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), regex);
-            currentRouter.pathRegex(regex);
+            _currentRouter = _routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), regex);
+            _currentRouter.pathRegex(regex);
             foreach(string m; methods) {
-                currentRouter.method(m);
+                _currentRouter.method(m);
             }
-            currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            _currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
             return this;
         }
 
@@ -467,9 +468,9 @@ class HttpServer : AbstractLifecycle {
         }
 
         Builder setDefaultRequest(RoutingHandler handler) {
-            currentRouter = routerManager.register(DEFAULT_LAST_ROUTER_ID-1);
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", currentRouter.getId(), "*");
-            currentRouter.path("*").handler( (RoutingContext ctx) { 
+            _currentRouter = _routerManager.register(DEFAULT_LAST_ROUTER_ID-1);
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), "*");
+            _currentRouter.path("*").handler( (RoutingContext ctx) { 
                 ctx.setStatus(HttpStatus.NOT_FOUND_404);
                 handlerWrap(handler, ctx); 
             });
@@ -501,14 +502,14 @@ class HttpServer : AbstractLifecycle {
         }
 
         Builder websocket(string path, WebSocketMessageHandler handler) {
-            auto itemPtr = path in webSocketHandlers;
+            auto itemPtr = path in _webSocketHandlers;
             if(itemPtr !is null)
                 throw new Exception("Handler registered on path: " ~ path);
             
             // WebSocket path should be skipped
-            Router webSocketRouter = routerManager.register().path(path);
+            Router webSocketRouter = _routerManager.register().path(path);
             version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", webSocketRouter.getId(), path);
-            webSocketHandlers[path] = handler;
+            _webSocketHandlers[path] = handler;
             
             version(HUNT_HTTP_DEBUG) {
                 webSocketRouter.handler( (ctx) {  
@@ -521,9 +522,9 @@ class HttpServer : AbstractLifecycle {
 
         Builder enableLocalSessionStore() {
             LocalHttpSessionHandler sessionHandler = new LocalHttpSessionHandler(_httpOptions);
-            currentRouter = routerManager.register();
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: *", currentRouter.getId());
-            currentRouter.path("*").handler(sessionHandler);
+            _currentRouter = _routerManager.register();
+            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: *", _currentRouter.getId());
+            _currentRouter.path("*").handler(sessionHandler);
             return this;
         }
 
@@ -668,7 +669,14 @@ version(WITH_HUNT_TRACE) {
                         cast(HttpServerResponse)response, 
                         ot, cast(HttpServerConnection)connection);
                     // request.setAttachment(context);
-                    routerManager.accept(context);
+                    // by group
+                    if(_routerManagerGroup.length > 0) {
+                        // TODO: Tasks pending completion -@zhangxueping at 2020-01-07T17:56:04+08:00
+                        // 
+                        _routerManager.accept(context);
+                    } else {
+                        _routerManager.accept(context);
+                    }
                     // serverRequest.onHeaderComplete(_httpOptions.requestOptions());
 
                     return false;
@@ -698,7 +706,7 @@ version(WITH_HUNT_TRACE) {
                     // if (!r.getResponse().isAsynchronous()) {
                     //     IOUtils.close(r.getResponse());
                     // }
-                    version(HUNT_HTTP_DEBUG) info("end of a request: ", request.getURI().getPath());
+                    version(HUNT_HTTP_DEBUG) info("end of a request on ", request.getURI().getPath());
                     version(WITH_HUNT_TRACE) endTraceSpan(request, response.getStatus());
                     return true;
                 })
@@ -732,7 +740,7 @@ version(WITH_HUNT_TRACE) {
             .onAcceptUpgrade((HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
                 string path = request.getURI().getPath();
-                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                WebSocketMessageHandler handler = _webSocketHandlers.get(path, null);
                 if (handler is null) {
                     response.setStatus(HttpStatus.BAD_REQUEST_400);
                     try {
@@ -748,13 +756,13 @@ version(WITH_HUNT_TRACE) {
             }) 
             .onOpen((connection) {
                 string path = connection.getPath();
-                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                WebSocketMessageHandler handler = _webSocketHandlers.get(path, null);
                 if(handler !is null)
                     handler.onOpen(connection);
             })
             .onFrame((WebSocketFrame frame, WebSocketConnection connection) {
                 string path = connection.getPath();
-                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                WebSocketMessageHandler handler = _webSocketHandlers.get(path, null);
                 if(handler is null) {
                     return;
                 }
@@ -789,7 +797,7 @@ version(WITH_HUNT_TRACE) {
             })
             .onError((Exception ex, WebSocketConnection connection) {
                 string path = connection.getPath();
-                WebSocketMessageHandler handler = webSocketHandlers.get(path, null);
+                WebSocketMessageHandler handler = _webSocketHandlers.get(path, null);
                 if(handler !is null)
                     handler.onError(connection, ex);
             });

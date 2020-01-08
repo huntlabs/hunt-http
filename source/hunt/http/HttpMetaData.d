@@ -1,5 +1,6 @@
 module hunt.http.HttpMetaData;
 
+import hunt.http.HttpBody;
 import hunt.http.HttpHeader;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
@@ -16,19 +17,28 @@ import hunt.text.StringBuilder;
 import hunt.util.Common;
 
 import std.ascii;
+import std.conv;
 import std.format;
 import std.range;
 
 deprecated("Using HttpMetaData instead.")
 alias MetaData = HttpMetaData;
 
+// from org.apache.hc.core5.http;
+// HttpMessage : MessageHeaders
+// 
 
 /**
  * 
  */
 class HttpMetaData : Iterable!HttpField {
+
+    enum string ConntentTypeHeader = HttpHeader.CONTENT_TYPE.toString();
+    enum string ConntentLengthHeader = HttpHeader.CONTENT_TYPE.toString();
+    
     private HttpVersion _httpVersion;
     private HttpFields _fields;
+	private HttpBody _body;
     private long _contentLength;
     protected string _contentType;
     private Supplier!HttpFields _trailers;
@@ -47,6 +57,7 @@ class HttpMetaData : Iterable!HttpField {
                 }
             }
         }
+        // assert(fields !is null);
         _httpVersion = ver;
         _fields = fields;
         _contentLength = contentLength;
@@ -67,6 +78,10 @@ class HttpMetaData : Iterable!HttpField {
         return false;
     }
 
+	bool haveBody() {
+		return _body !is null;
+	}
+    
     /**
      * @deprecated use {@link #getHttpVersion()} instead
      */
@@ -104,6 +119,47 @@ class HttpMetaData : Iterable!HttpField {
         _trailers = trailers;
     }
 
+	/**
+	 * Returns a non-null value if this response was passed to {@link Callback#onResponse} or returned
+	 * from {@link Call#execute()}. Response bodies must be {@linkplain ResponseBody closed} and may
+	 * be consumed only once.
+	 *
+	 * <p>This always returns null on responses returned from {@link #cacheResponse}, {@link
+	 * #networkResponse}, and {@link #priorResponse()}.
+	 */
+	HttpBody getBody() {		
+		return _body;
+	}	
+
+	HttpMetaData setBody(HttpBody b) {
+        if(b !is null) {
+            HttpFields fields = getFields();
+            if(!fields.contains(HttpHeader.CONTENT_TYPE)) {
+                fields.put(HttpHeader.CONTENT_TYPE, b.contentType);
+            } else {
+                version(HUNT_HTTP_DEBUG) {
+                    string existedType = fields.get(HttpHeader.CONTENT_TYPE);
+                    string newType = b.contentType();
+                    if(existedType != newType) {
+                        warningf("content-type collision, old: %s, new: %s", existedType, newType);
+                    }
+
+                    if(fields.contains(HttpHeader.CONTENT_LENGTH)) {
+                        auto len = fields.get(HttpHeader.CONTENT_LENGTH);
+                        tracef("content-type: %s, content-length: %d", existedType, len);
+                    } else {
+                        tracef("content-type: %s", existedType);
+                    }
+                }
+            }
+
+            fields.put(HttpHeader.CONTENT_LENGTH, b.contentLength.to!string());
+        }
+		_body = b;
+
+        return this;
+	}	
+
     /**
      * @return the content length if available, otherwise {@link Long#MIN_VALUE}
      */
@@ -137,14 +193,15 @@ class HttpMetaData : Iterable!HttpField {
     }
 
     string header(string name) {
-        return header(name, null);
+        // return header(name, null);
+        return getFields().get(name);
     }
 
-    string header(string name, string defaultValue) {
-        HttpFields fs = getFields();
-        string result = fs.get(name);
-        return result.empty ? defaultValue : result;
-    }
+    // string header(string name, string defaultValue) {
+    //     HttpFields fs = getFields();
+    //     string result = fs.get(name);
+    //     return result.empty ? defaultValue : result;
+    // }
 
     HttpFields headers() {
         return getFields();

@@ -2,10 +2,10 @@ module hunt.http.client.HttpClientRequest;
 
 import hunt.http.client.CookieStore;
 import hunt.http.client.InMemoryCookieStore;
-import hunt.http.client.RequestBody;
 
 import hunt.http.AuthenticationScheme;
 import hunt.http.Cookie;
+import hunt.http.HttpBody;
 import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
 import hunt.http.HttpMetaData;
@@ -43,7 +43,7 @@ version(WITH_HUNT_TRACE) {
  */
 class HttpClientRequest : HttpRequest {
 
-	private RequestBody _body;
+	private HttpBody _body;
 	private Cookie[] _cookies;
     private bool _isCookieStoreEnabled = true;
 
@@ -56,7 +56,7 @@ class HttpClientRequest : HttpRequest {
 		super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, fields);
 	}
 
-	this(string method, string uri, RequestBody content) {
+	this(string method, string uri, HttpBody content) {
 		this._body = content;
 		HttpFields fields = new HttpFields();
 		if(content !is null)
@@ -66,7 +66,7 @@ class HttpClientRequest : HttpRequest {
 			content is null ? 0 : content.contentLength());
 	}
 	
-	this(string method, HttpURI uri, HttpFields fields, RequestBody content) {
+	this(string method, HttpURI uri, HttpFields fields, HttpBody content) {
 		this._body = content;
 		if(content !is null)
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
@@ -75,7 +75,7 @@ class HttpClientRequest : HttpRequest {
 			content is null ? 0 : content.contentLength());
 	}
 	
-	this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, RequestBody content) {
+	this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, HttpBody content) {
 		this._body = content;
 		if(content !is null)
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
@@ -88,9 +88,9 @@ class HttpClientRequest : HttpRequest {
 		super(request);
 	}
 
-	RequestBody getBody() {
-		return _body;
-	}
+	// HttpBody getBody() {
+	// 	return _body;
+	// }
 
     bool isCookieStoreEnabled() {
         return _isCookieStoreEnabled;
@@ -177,7 +177,7 @@ version(WITH_HUNT_TRACE) {
         private HttpURI _url;
         private string _method;
         private HttpFields _headers;
-        private RequestBody _requestBody;
+        private HttpBody _requestBody;
 
         // SSL/TLS settings
         private bool _isCertificateAuth = false;
@@ -309,11 +309,11 @@ version(WITH_HUNT_TRACE) {
             return method("HEAD", null);
         }
 
-        Builder post(RequestBody requestBody) {
+        Builder post(HttpBody requestBody) {
             return method("POST", requestBody);
         }
 
-        Builder del(RequestBody requestBody) {
+        Builder del(HttpBody requestBody) {
             return method("DELETE", requestBody);
         }
 
@@ -321,15 +321,15 @@ version(WITH_HUNT_TRACE) {
             return method("DELETE", null);
         }
 
-        Builder put(RequestBody requestBody) {
+        Builder put(HttpBody requestBody) {
             return method("PUT", requestBody);
         }
 
-        Builder patch(RequestBody requestBody) {
+        Builder patch(HttpBody requestBody) {
             return method("PATCH", requestBody);
         }
 
-        Builder method(string method, RequestBody requestBody) {
+        Builder method(string method, HttpBody requestBody) {
             if (method.empty) throw new NullPointerException("method is empty");
 
             if (requestBody !is null && !HttpMethod.permitsRequestBody(method)) {
@@ -417,7 +417,7 @@ version(WITH_HUNT_TRACE) {
 
             string basePath = dirName(thisExePath);
 
-			HttpClientRequest request = new Request(_method, _url, _headers, _requestBody);
+			HttpClientRequest request = new HttpClientRequest(_method, _url, _headers, _requestBody);
 			request._isCookieStoreEnabled = _isCookieStoreEnabled;
             request._isTracingEnabled = _isTracingEnabled;
             version(WITH_HUNT_TRACE) {

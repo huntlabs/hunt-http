@@ -73,6 +73,7 @@ abstract class HttpOutputStream : OutputStream {
 
     void writeWithContentLength(ByteBuffer[] data) {
         if (closed) {
+            version(HUNT_DEBUG) warning("Then output stream has been closed.");
             return;
         }
 

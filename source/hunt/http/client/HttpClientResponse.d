@@ -23,7 +23,6 @@ alias Response = HttpClientResponse;
  */
 class HttpClientResponse : HttpResponse {
 
-	private ResponseBody _body;
 	private Cookie[] _cookies;
 	
 	this(HttpVersion ver, int status, string reason) {
@@ -34,26 +33,6 @@ class HttpClientResponse : HttpResponse {
 		super(ver, status, reason, fields, contentLength);
 	}
 
-
-	/**
-	 * Returns a non-null value if this response was passed to {@link Callback#onResponse} or returned
-	 * from {@link Call#execute()}. Response bodies must be {@linkplain ResponseBody closed} and may
-	 * be consumed only once.
-	 *
-	 * <p>This always returns null on responses returned from {@link #cacheResponse}, {@link
-	 * #networkResponse}, and {@link #priorResponse()}.
-	 */
-	ResponseBody getBody() {		
-		return _body;
-	}	
-
-	void setBody(ResponseBody b) {
-		_body = b;
-	}	
-
-	bool haveBody() {
-		return _body !is null;
-	}
 
 	/** Returns true if this response redirects to another resource. */
 	bool isRedirect() {
@@ -81,37 +60,3 @@ class HttpClientResponse : HttpResponse {
     }
 
 }
-
-/**
-*/
-class ResponseBody {
-	ByteBuffer _content;
-	string _contentType;
-	long _contentLength;
-
-	this(string contentType, long contentLength, ByteBuffer content) {
-
-		if (content is null) throw new NullPointerException("content == null");
-		this._content = content;
-		this._contentLength = contentLength;
-		this._contentType = contentType;
-	}
-
-	string contentType() {
-		return _contentType;
-	}
-
-	long contentLength() {
-		return _contentLength;
-	}
-
-	string asString() {
-		if(_content is null)
-			return "";
-		return BufferUtils.toString(_content);
-	}
-
-	override string toString() {
-		return asString();
-	}
- }

@@ -15,10 +15,13 @@ import hunt.net.util.HttpURI;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
 import hunt.util.Common;
+import hunt.util.MimeType;
 
 import std.ascii;
+import std.conv;
 import std.format;
 import std.range;
+import std.traits;
 
 /**
  * 
@@ -28,7 +31,7 @@ class HttpResponse : HttpMetaData {
     protected string _reason;
 
     this() {
-        this(HttpVersion.Null, 0, null);
+        this(HttpVersion.Null, 0, new HttpFields());
     }
 
     this(HttpVersion ver, int status, HttpFields fields) {
@@ -78,12 +81,31 @@ class HttpResponse : HttpMetaData {
         _reason = reason;
     }
 
-    void setHeader(T = string)(HttpHeader header, T value) {
+    // void setHeader(T = string)(HttpHeader header, T value) {
+    //     getFields().put(header, value);
+    // }
+
+    // void setHeader(T = string)(string header, T value) {
+    //     getFields().put(header, value);
+    // }
+
+    deprecated("Using header instead.")
+    alias setHeader = header;
+    HttpResponse header(T)(string header, T value) {
         getFields().put(header, value);
+        return this;
     }
 
-    void setHeader(T = string)(string header, T value) {
+    HttpResponse header(T)(HttpHeader header, T value) {
         getFields().put(header, value);
+        return this;
+    }    
+
+    HttpResponse headers(T = string)(T[string] value) {
+        foreach (string k, T v; value) {
+            getFields().add(k, v);
+        }
+        return this;
     }
 
     alias code = getStatus;
@@ -97,9 +119,90 @@ class HttpResponse : HttpMetaData {
         return _status >= 200 && _status < 300;
     }
 
+
+	// override bool haveBody() {
+	// 	return _body !is null;
+	// }
+
     override string toString() {
         HttpFields fields = getFields();
         return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), 
             fields is null ? -1 : fields.size(), getContentLength());
     }
 }
+
+
+/**
+ * 
+ */
+// class ResponseBody {
+// 	private ByteBuffer _content;
+// 	private string _contentType;
+// 	private long _contentLength;
+
+//     private this() {
+
+//     }
+
+// 	this(string contentType, long contentLength, ByteBuffer content) {
+
+// 		if (content is null) throw new NullPointerException("content == null");
+// 		this._content = content;
+// 		this._contentLength = contentLength;
+// 		this._contentType = contentType;
+// 	}
+
+// 	string contentType() {
+// 		return _contentType;
+// 	}
+
+// 	long contentLength() {
+// 		return _contentLength;
+// 	}
+
+// 	string asString() {
+// 		if(_content is null)
+// 			return "";
+// 		return BufferUtils.toString(_content);
+// 	}
+
+// 	override string toString() {
+// 		return asString();
+// 	}
+
+//     static Builder builder() {
+//         return new Builder();
+//     }
+
+//     /**
+//      * 
+//      */
+//     static final class Builder {
+
+//         ResponseBody _body;
+//         // private ByteBuffer _content;
+//         // private string _contentType;
+//         // private long _contentLength;
+
+//         this() {
+//             // _body = new ResponseBody();
+//         }
+
+//         Builder content(T)(T value) {
+//             assert(_body is null, "The content can't be overwritten!");
+
+//             static if(isSomeString!T) {
+//                 _body = new ResponseBody(MimeType.TEXT_PLAIN_VALUE, 
+//                         cast(long)value.length, BufferUtils.wrap(cast(byte[])value));
+//             } else {
+
+//             }
+
+//             return this;
+//         }
+
+//         ResponseBody build() {
+//             return _body;
+//         }
+//     }
+// }

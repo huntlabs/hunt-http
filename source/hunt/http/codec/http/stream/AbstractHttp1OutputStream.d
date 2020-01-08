@@ -3,6 +3,7 @@ module hunt.http.codec.http.stream.AbstractHttp1OutputStream;
 import hunt.http.HttpOutputStream;
 import hunt.http.codec.http.encode.HttpGenerator;
 
+import hunt.http.HttpBody;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
@@ -120,11 +121,20 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
     }
 
     override void close() {
-        if (closed)
+        if (closed) {
+            version(HUNT_HTTP_DEBUG) warning("The outstream has been closed.");
             return;
+        }
 
         try {
-            version(HUNT_HTTP_DEBUG) trace("http1 output stream is closing");
+            version(HUNT_HTTP_DEBUG) trace("The output stream for http1 is closing...");
+
+            if(metaData.haveBody()) {
+                version(HUNT_HTTP_DEBUG) tracef("writting body...");
+                HttpBody httpBody = metaData.getBody();
+                httpBody.writeTo(this);
+            }
+
             HttpGenerator generator = getHttpGenerator();
             Connection tcpSession = getSession();
             HttpGenerator.Result generatorResult;

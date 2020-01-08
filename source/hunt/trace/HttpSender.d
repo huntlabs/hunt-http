@@ -94,7 +94,7 @@ class HttpSender {
 
         assert(!_endpoint.empty());
 
-        RequestBody b = RequestBody.create(MimeType.APPLICATION_JSON_VALUE, content);
+        HttpBody b = HttpBody.create(MimeType.APPLICATION_JSON_VALUE, content);
         Request request = new RequestBuilder()
             .enableTracing(false)
             .url(_endpoint)

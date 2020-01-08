@@ -21,14 +21,13 @@ public import hunt.http.client.Http2ClientSession;
 
 public import hunt.http.client.MultipartBody;
 public import hunt.http.client.FormBody;
-public import hunt.http.client.RequestBody;
 
 
 
 // Common modules
 public import hunt.http.AuthenticationScheme;
 public import hunt.http.Cookie;
-public import hunt.http.HttpConnection;
+public import hunt.http.HttpBody;
 public import hunt.http.HttpConnection;
 public import hunt.http.HttpField;
 public import hunt.http.HttpFields;

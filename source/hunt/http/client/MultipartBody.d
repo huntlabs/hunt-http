@@ -1,11 +1,10 @@
 module hunt.http.client.MultipartBody;
 
-import hunt.http.client.RequestBody;
-import hunt.http.HttpOutputStream;
-
+import hunt.http.HttpBody;
 import hunt.http.HttpHeader;
 import hunt.http.HttpField;
 import hunt.http.HttpFields;
+import hunt.http.HttpOutputStream;
 
 import hunt.collection.ArrayList;
 import hunt.collection.ByteBuffer;
@@ -26,7 +25,7 @@ alias MediaType = string;
 
 
 /** An <a href="http://www.ietf.org/rfc/rfc2387.txt">RFC 2387</a>-compliant request body. */
-final class MultipartBody : RequestBody {
+final class MultipartBody : HttpBody {
     /**
      * The "mixed" subtype of "multipart" is intended for use when the body parts are independent and
      * need to be bundled in a particular order. Any "multipart" subtypes that an implementation does
@@ -152,7 +151,7 @@ final class MultipartBody : RequestBody {
                 buffer.put(CRLF);
             }
 
-            RequestBody requestBody = part._body;
+            HttpBody requestBody = part._body;
             MediaType contentType = requestBody.contentType();
             long length = requestBody.contentLength();
 
@@ -240,9 +239,9 @@ final class MultipartBody : RequestBody {
     static final class Part {
 
         private HttpFields _headers;
-        private RequestBody _body;
+        private HttpBody _body;
 
-        private this(HttpFields headers, RequestBody requestBody) {
+        private this(HttpFields headers, HttpBody requestBody) {
             this._headers = headers;
             this._body = requestBody;
         }
@@ -251,15 +250,15 @@ final class MultipartBody : RequestBody {
             return _headers;
         }
 
-        RequestBody requestBody() {
+        HttpBody requestBody() {
             return _body;
         }
 
-        static Part create(RequestBody requestBody) {
+        static Part create(HttpBody requestBody) {
             return create(cast(HttpFields)null, requestBody);
         }
 
-        static Part create(HttpFields headers, RequestBody requestBody) {
+        static Part create(HttpFields headers, HttpBody requestBody) {
             if (requestBody is null) {
                 throw new NullPointerException("body is null");
             }
@@ -273,14 +272,14 @@ final class MultipartBody : RequestBody {
         }
 
         static Part createFormData(string name, string value) {
-            return createFormData(name, cast(string)null, RequestBody.create(cast(string)null, value));
+            return createFormData(name, cast(string)null, HttpBody.create(cast(string)null, value));
         }
 
         static Part createFormData(string name, string value, string contentType) {
-            return createFormData(name, cast(string)null, RequestBody.create(contentType, value));
+            return createFormData(name, cast(string)null, HttpBody.create(contentType, value));
         }
 
-        static Part createFormData(string name, string filename, RequestBody requestBody) {
+        static Part createFormData(string name, string filename, HttpBody requestBody) {
             if (name is null) {
                 throw new NullPointerException("name is null");
             }
@@ -332,12 +331,12 @@ final class MultipartBody : RequestBody {
         }
 
         /** Add a part to the body. */
-        Builder addPart(RequestBody requestBody) {
+        Builder addPart(HttpBody requestBody) {
             return addPart(Part.create(requestBody));
         }
 
         /** Add a part to the body. */
-        Builder addPart(HttpFields headers, RequestBody requestBody) {
+        Builder addPart(HttpFields headers, HttpBody requestBody) {
             return addPart(Part.create(headers, requestBody));
         }
 
@@ -351,7 +350,7 @@ final class MultipartBody : RequestBody {
         }
 
         /** Add a form data part to the body. */
-        Builder addFormDataPart(string name, string filename, RequestBody requestBody) {
+        Builder addFormDataPart(string name, string filename, HttpBody requestBody) {
             return addPart(Part.createFormData(name, filename, requestBody));
         }
 

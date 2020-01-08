@@ -8,17 +8,17 @@ import hunt.http.client.HttpClientConnection;
 import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.client.Http1ClientConnection;
-import hunt.http.client.RequestBody;
 
 import hunt.http.Cookie;
-import hunt.http.HttpOptions;
+import hunt.http.HttpBody;
 import hunt.http.HttpConnection;
-import hunt.http.HttpOutputStream;
 import hunt.http.HttpConnection;
 import hunt.http.HttpFields;
 import hunt.http.HttpField;
 import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
+import hunt.http.HttpOptions;
+import hunt.http.HttpOutputStream;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
@@ -137,7 +137,9 @@ class RealCall : Call {
                     tracef("content: %s", cast(string)item.getRemaining());
                 }
 
-                clientResponse.setBody(new ResponseBody(response.getContentType(), 
+                // clientResponse.setBody(new ResponseBody(response.getContentType(), 
+                //     response.getContentLength(), BufferUtils.clone(item)));
+                clientResponse.setBody(HttpBody.create(response.getContentType(), 
                     response.getContentLength(), BufferUtils.clone(item)));
                 return false;
             }
@@ -208,8 +210,11 @@ class RealCall : Call {
             override bool content(ByteBuffer item, HttpRequest request, HttpResponse response, 
                     HttpOutputStream output, HttpConnection connection) {
                 HttpClientResponse hcr = cast(HttpClientResponse)response;
-                hcr.setBody(new ResponseBody(response.getContentType(), 
-                    response.getContentLength(), BufferUtils.clone(item)));
+                // hcr.setBody(new ResponseBody(response.getContentType(), 
+                //     response.getContentLength(), BufferUtils.clone(item)));
+
+                hcr.setBody(HttpBody.create(response.getContentType(), 
+                    response.getContentLength(), BufferUtils.clone(item)));                
                 return false;
             }
 
@@ -290,11 +295,11 @@ class RealCall : Call {
         if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
 
             Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
-            RequestBody rb = originalRequest.getBody();
-            if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
+            // HttpBody rb = originalRequest.getBody();
+            if(HttpMethod.permitsRequestBody(originalRequest.getMethod())) { // && rb !is null
                 // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
                 HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);
-                rb.writeTo(output);
+                // rb.writeTo(output);
                 output.close(); // End a request, and keep the connection for waiting for the respons.
             } else {
                 http1ClientConnection.send(originalRequest, httpHandler);

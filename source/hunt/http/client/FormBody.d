@@ -1,6 +1,6 @@
 module hunt.http.client.FormBody;
 
-import hunt.http.client.RequestBody;
+import hunt.http.HttpBody;
 import hunt.http.HttpOutputStream;
 
 import hunt.collection.ByteBuffer;
@@ -19,7 +19,7 @@ import std.container;
 /** 
  * 
  */
-final class FormBody : RequestBody {
+final class FormBody : HttpBody {
 	enum CONTENT_TYPE = MimeType.APPLICATION_X_WWW_FORM_VALUE;
 	private ByteBuffer _buffer;
 
