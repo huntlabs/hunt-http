@@ -81,16 +81,6 @@ class HttpResponse : HttpMetaData {
         _reason = reason;
     }
 
-    // void setHeader(T = string)(HttpHeader header, T value) {
-    //     getFields().put(header, value);
-    // }
-
-    // void setHeader(T = string)(string header, T value) {
-    //     getFields().put(header, value);
-    // }
-
-    deprecated("Using header instead.")
-    alias setHeader = header;
     HttpResponse header(T)(string header, T value) {
         getFields().put(header, value);
         return this;
@@ -107,9 +97,6 @@ class HttpResponse : HttpMetaData {
         }
         return this;
     }
-
-    alias code = getStatus;
-    alias message = getReason;
     
     /**
     * Returns true if the code is in [200..300), which means the request was successfully received,
@@ -119,90 +106,21 @@ class HttpResponse : HttpMetaData {
         return _status >= 200 && _status < 300;
     }
 
-
-	// override bool haveBody() {
-	// 	return _body !is null;
-	// }
-
     override string toString() {
         HttpFields fields = getFields();
         return format("%s{s=%d,h=%d,cl=%d}", getHttpVersion(), getStatus(), 
             fields is null ? -1 : fields.size(), getContentLength());
     }
+
+// dmftoff helper api
+    alias code = getStatus;
+    alias message = getReason;
+    
+    alias withHeader = header;
+    alias withHeaders = headers;
+
+    deprecated("Using header instead.")
+    alias setHeader = header;
+// dmfton
+
 }
-
-
-/**
- * 
- */
-// class ResponseBody {
-// 	private ByteBuffer _content;
-// 	private string _contentType;
-// 	private long _contentLength;
-
-//     private this() {
-
-//     }
-
-// 	this(string contentType, long contentLength, ByteBuffer content) {
-
-// 		if (content is null) throw new NullPointerException("content == null");
-// 		this._content = content;
-// 		this._contentLength = contentLength;
-// 		this._contentType = contentType;
-// 	}
-
-// 	string contentType() {
-// 		return _contentType;
-// 	}
-
-// 	long contentLength() {
-// 		return _contentLength;
-// 	}
-
-// 	string asString() {
-// 		if(_content is null)
-// 			return "";
-// 		return BufferUtils.toString(_content);
-// 	}
-
-// 	override string toString() {
-// 		return asString();
-// 	}
-
-//     static Builder builder() {
-//         return new Builder();
-//     }
-
-//     /**
-//      * 
-//      */
-//     static final class Builder {
-
-//         ResponseBody _body;
-//         // private ByteBuffer _content;
-//         // private string _contentType;
-//         // private long _contentLength;
-
-//         this() {
-//             // _body = new ResponseBody();
-//         }
-
-//         Builder content(T)(T value) {
-//             assert(_body is null, "The content can't be overwritten!");
-
-//             static if(isSomeString!T) {
-//                 _body = new ResponseBody(MimeType.TEXT_PLAIN_VALUE, 
-//                         cast(long)value.length, BufferUtils.wrap(cast(byte[])value));
-//             } else {
-
-//             }
-
-//             return this;
-//         }
-
-//         ResponseBody build() {
-//             return _body;
-//         }
-//     }
-// }

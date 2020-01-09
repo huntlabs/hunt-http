@@ -34,7 +34,9 @@ import hunt.util.MimeTypeUtils;
 
 import std.algorithm;
 import std.array;
+import std.conv;
 import std.container.array;
+import std.json;
 import std.string : icmp;
 import std.range;
 
@@ -280,8 +282,17 @@ class HttpServerRequest : HttpRequest {
 
     Cookie[] getCookies() {        
         if (_cookies is null) {
-            _cookies = getFields().getValuesList(HttpHeader.COOKIE)
-					.map!(parseSetCookie).array;
+
+            Array!(Cookie) list;
+            foreach (string v; getFields().getValuesList(HttpHeader.COOKIE)) {
+                if (v.empty)
+                    continue;
+                foreach (Cookie c; parseCookie(v))
+                    list.insertBack(c);
+            }
+            _cookies = list.array();
+            // _cookies = getFields().getValuesList(HttpHeader.COOKIE)
+			// 		.map!(parseSetCookie).array;
         }
 		
 		return _cookies;
@@ -337,6 +348,19 @@ class HttpServerRequest : HttpRequest {
      */
     string query(string key, string defaults = null) {
         return queries().get(key, defaults);
+    }
+
+    /// get a query
+    T get(T = string)(string key, T v = T.init) {
+        auto tmp = queries();
+        if (tmp is null) {
+            return v;
+        }
+        auto _v = tmp.get(key, "");
+        if (_v.length) {
+            return to!T(_v);
+        }
+        return v;
     }
 
     /**
@@ -410,6 +434,38 @@ class HttpServerRequest : HttpRequest {
     void putQueryParameter(string key, string value) {
         version(HUNT_DEBUG) infof("query parameter: key=%s, values=%s", key, value);
         _queryParams[key] = value;
+    }
+
+    T bindForm(T)() if(is(T == class) || is(T == struct)) {
+
+        if(getMethod() != "POST")
+            return T.init;
+        import hunt.serialization.JsonSerializer;
+        // import hunt.util.Serialize;
+
+        JSONValue jv;
+        string[][string] forms = xFormData();
+        if(forms is null) {
+            static if(is(T == class)) {
+                return new T();
+            } else {
+                return T.init;
+            }
+        }
+
+        foreach(string k, string[] values; forms) {
+            if(values.length > 1) {
+                jv[k] = JSONValue(values);
+            } else if(values.length == 1) {
+                jv[k] = JSONValue(values[0]);
+            } else {
+                warningf("null value for %s in form data: ", k);
+            }
+        }
+        return JsonSerializer.toObject!T(jv);
+        // T obj = toObject!T(jv);
+
+        // return (obj is null) ? (new T()) : obj;
     }
 
     @property string[][string] xFormData() {

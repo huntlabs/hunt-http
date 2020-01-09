@@ -233,5 +233,8 @@ class HttpMetaData : Iterable!HttpField {
         return sb.toString();
     }
 
+    
+    alias withBody = setBody;
+
 }
 

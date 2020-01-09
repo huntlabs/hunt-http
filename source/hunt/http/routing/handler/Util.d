@@ -33,7 +33,7 @@ struct RoutingHandlerUtils {
         HttpServerRequest request = context.getRequest();
         HttpServerResponse response = context.getResponse();
         DirEntry fileInfo = DirEntry(requestFile);
-        response.setHeader(HttpHeader.ACCEPT_RANGES, "bytes");
+        response.header(HttpHeader.ACCEPT_RANGES, "bytes");
 
         ulong rangeStart = 0;
         ulong rangeEnd = 0;
@@ -89,15 +89,15 @@ struct RoutingHandlerUtils {
                 rangeEnd--; // End is inclusive, so one less than length
             // potential integer overflow with rangeEnd - rangeStart == size_t.max is intended. This only happens with empty files, the + 1 will then put it back to 0
 
-            response.setHeader(HttpHeader.CONTENT_LENGTH, to!string(rangeEnd - rangeStart + 1));
-            response.setHeader(HttpHeader.CONTENT_RANGE, "bytes %s-%s/%s".format(rangeStart < rangeEnd ? 
+            response.header(HttpHeader.CONTENT_LENGTH, to!string(rangeEnd - rangeStart + 1));
+            response.header(HttpHeader.CONTENT_RANGE, "bytes %s-%s/%s".format(rangeStart < rangeEnd ? 
                 rangeStart : rangeEnd, rangeEnd, fileSize));
             response.setStatus(HttpStatus.PARTIAL_CONTENT_206);
         }
         else
         {
             rangeEnd = fileSize - 1;
-            response.setHeader(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
+            response.header(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
         }
 
         // write out the file contents

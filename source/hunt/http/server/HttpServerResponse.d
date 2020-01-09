@@ -29,9 +29,16 @@ class HttpServerResponse : HttpResponse {
 	}
 
 	
+    /**
+     * Add a cookie to the response.
+     *
+     * @param  Cookie cookie
+     * @return this
+     */
     HttpServerResponse addCookie(Cookie cookie) {
         getFields().add(HttpHeader.SET_COOKIE, generateSetCookie(cookie));
         return this;
     }
 
+	alias withCookie = addCookie;
 }

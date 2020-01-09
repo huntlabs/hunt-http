@@ -14,13 +14,13 @@ import hunt.http.client.HttpClientResponse;
 import hunt.http.client.HttpClientRequest;
 import hunt.http.client.InMemoryCookieStore;
 import hunt.http.client.RealCall;
-import hunt.http.client.RequestBody;
 
 import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.codec.websocket.frame.DataFrame;
 
+import hunt.http.HttpBody;
 import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 import hunt.http.HttpOutputStream;

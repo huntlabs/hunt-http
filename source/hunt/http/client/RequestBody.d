@@ -1,3 +1,5 @@
+
+deprecated("Using hunt.http.HttpBody instead.")
 module hunt.http.client.RequestBody;
 
 import hunt.http.HttpBody;

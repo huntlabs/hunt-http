@@ -231,9 +231,10 @@ class HttpFields : Iterable!HttpField {
 	 */
 	string[] getValuesList(HttpHeader header) {
 		Array!(string) list;
-		foreach (HttpField f; this)
+		foreach (HttpField f; this) {
 			if (f.getHeader() == header)
 				list.insertBack(f.getValue());
+		}
 		return list.array();
 	}
 

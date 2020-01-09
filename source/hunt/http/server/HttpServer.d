@@ -307,8 +307,9 @@ class HttpServer : AbstractLifecycle {
         enum DeleteMethod = HttpMethod.DELETE.asString();
 
         private HttpServerOptions _httpOptions;
-        private RouterManager _routerManager; // default route manager
-        private RouterManager[] _routerManagerGroup; // route manager group
+        private RouterManager _routerManager;               // default route manager
+        private RouterManager[string] _hostManagerGroup; // route manager group for host
+        private RouterManager[string] _pathManagerGroup; // route manager group for path
         private Router _currentRouter;
         private WebSocketMessageHandler[string] _webSocketHandlers;
         // private bool _canCopyBuffer = false;       
@@ -341,7 +342,6 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-
         // Certificate Authority (CA) certificate
         Builder setCaCert(string caFile, string caPassword) {
             _tlsCaFile = caFile;
@@ -363,50 +363,48 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        /**
-         * set default route handler
-         */
-        // Builder enableBufferCopy(bool flag) {
-        //     _canCopyBuffer = flag;
-        //     return this;
-        // }
-
         Builder setHandler(RoutingHandler handler) {
-            addRoute("*", handler);
+            addRoute(["*"], null, handler);
             return this;
         }
 
         /**
          * register a new router
          */
-        Router newRouter() {
-            return _routerManager.register();
-        }
+        // Router newRouter() {
+        //     return _routerManager.register();
+        // }
 
-        Builder addRoute(string path, RoutingHandler handler) {
-            return addRoute([path], cast(string[])null, handler);
-        }
+        // Builder addRoute(string path, RoutingHandler handler) {
+        //     return addRoute([path], cast(string[])null, handler);
+        // }
 
-        Builder addRoute(string path, HttpMethod method, RoutingHandler handler) {
-            return addRoute([path], [method], handler);
-        }
+        // Builder addRoute(string path, HttpMethod method, RoutingHandler handler) {
+        //     return addRoute([path], [method], handler);
+        // }
         
-        Builder addRoute(string path, HttpMethod[] methods, RoutingHandler handler) {
-            string[] ms = map!((m) => m.asString())(methods).array;
-            return addRoute([path], ms, handler);
-        }
+        // Builder addRoute(string path, HttpMethod[] methods, RoutingHandler handler) {
+        //     string[] ms = map!((m) => m.asString())(methods).array;
+        //     return addRoute([path], ms, handler);
+        // }
 
-        Builder addRoute(string path, string[] methods, RoutingHandler handler) {
-            return addRoute([path], methods, handler);
-        }
+        // Builder addRoute(string path, string[] methods, RoutingHandler handler) {
+        //     return addRoute([path], methods, handler);
+        // }
 
-        Builder addRoute(string[] paths, HttpMethod[] methods, RoutingHandler handler) {
-            string[] ms = map!((m) => m.asString())(methods).array;
-            return addRoute(paths, ms, handler);
-        }
+        // Builder addRoute(string[] paths, HttpMethod[] methods, RoutingHandler handler) {
+        //     string[] ms = map!((m) => m.asString())(methods).array;
+        //     return addRoute(paths, ms, handler);
+        // }
 
-        Builder addRoute(string[] paths, string[] methods, RoutingHandler handler) {
-            _currentRouter = _routerManager.register();
+        Builder addRoute(string[] paths, string[] methods, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            if(groupName.empty) {
+                _currentRouter = _routerManager.register();
+            } else {
+                _currentRouter = getGroupRouterManager(groupName, groupType).register();
+            }
+
             version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), paths);
             _currentRouter.paths(paths);
             foreach(string m; methods) {
@@ -416,8 +414,13 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        Builder addRoute(string[] paths, string[] methods, RouteHandler handler) {
-            _currentRouter = _routerManager.register();
+        Builder addRoute(string[] paths, string[] methods, RouteHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            if(groupName.empty) {
+                _currentRouter = _routerManager.register();
+            } else {
+                _currentRouter = getGroupRouterManager(groupName, groupType).register();
+            }
             version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), paths);
             _currentRouter.paths(paths);
             foreach(string m; methods) {
@@ -427,17 +430,22 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
         
-        Builder addRegexRoute(string regex, RoutingHandler handler) {
-            return addRegexRoute(regex, cast(string[])null, handler);
-        }
+        // Builder addRegexRoute(string regex, RoutingHandler handler) {
+        //     return addRegexRoute(regex, cast(string[])null, handler);
+        // }
 
-        Builder addRegexRoute(string regex, HttpMethod[] methods, RoutingHandler handler) {
-            string[] ms = map!((m) => m.asString())(methods).array;
-            return addRegexRoute(regex, ms, handler);
-        }
+        // Builder addRegexRoute(string regex, HttpMethod[] methods, RoutingHandler handler) {
+        //     string[] ms = map!((m) => m.asString())(methods).array;
+        //     return addRegexRoute(regex, ms, handler);
+        // }
 
-        Builder addRegexRoute(string regex, string[] methods, RoutingHandler handler) {
-            _currentRouter = _routerManager.register();
+        Builder addRegexRoute(string regex, string[] methods, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            if(groupName.empty) {
+                _currentRouter = _routerManager.register();
+            } else {
+                _currentRouter = getGroupRouterManager(groupName, groupType).register();
+            }
             version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), regex);
             _currentRouter.pathRegex(regex);
             foreach(string m; methods) {
@@ -447,24 +455,52 @@ class HttpServer : AbstractLifecycle {
             return this;
         }
 
-        Builder onGet(string path, RoutingHandler handler) {
-            return addRoute([path], [GetMethod], handler);
+        private RouterManager getGroupRouterManager(string groupName, RouteGroupType groupType) {
+            RouterManager manager;
+            if(groupType == RouteGroupType.Host) {
+                auto itemPtr = groupName in _hostManagerGroup;
+                if(itemPtr is null) {
+                    manager = RouterManager.create(_httpOptions.requestOptions());
+                    _hostManagerGroup[groupName] = manager;
+                } else {
+                    manager = *itemPtr;
+                }
+            } else {
+                auto itemPtr = groupName in _pathManagerGroup;
+                if(itemPtr is null) {
+                    manager = RouterManager.create(_httpOptions.requestOptions());
+                    _pathManagerGroup[groupName] = manager;
+                } else {
+                    manager = *itemPtr;
+                }
+            }
+            
+            return manager;
         }
 
-        Builder onPost(string path, RoutingHandler handler) {
-            return addRoute([path], [PostMethod], handler);
+        Builder onGet(string path, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return addRoute([path], [GetMethod], handler, groupName, groupType);
         }
 
-        Builder onPut(string path, RoutingHandler handler) {
-            return addRoute([path], [PutMethod], handler);
+        Builder onPost(string path, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return addRoute([path], [PostMethod], handler, groupName, groupType);
         }
 
-        Builder onDelete(string path, RoutingHandler handler) {
-            return addRoute([path], [DeleteMethod], handler);
+        Builder onPut(string path, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return addRoute([path], [PutMethod], handler, groupName, groupType);
         }
 
-        Builder onRequest(HttpMethod method, string path, RoutingHandler handler) {
-            return addRoute([path], [method], handler);
+        Builder onDelete(string path, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return addRoute([path], [DeleteMethod], handler, groupName, groupType);
+        }
+
+        Builder onRequest(string method, string path, RoutingHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return addRoute([path], [method], handler, groupName, groupType);
         }
 
         Builder setDefaultRequest(RoutingHandler handler) {
@@ -580,74 +616,74 @@ class HttpServer : AbstractLifecycle {
 
     
 version(WITH_HUNT_TRACE) {
-    private string _localServiceName;
-    private bool _isB3HeaderRequired = true;
-    // private TracingOptions _tracingOptions;
+        private string _localServiceName;
+        private bool _isB3HeaderRequired = true;
+        // private TracingOptions _tracingOptions;
 
-    Builder localServiceName(string name) {
-        _localServiceName = name;
-        return this;
-    }
+        Builder localServiceName(string name) {
+            _localServiceName = name;
+            return this;
+        }
 
-    Builder isB3HeaderRequired(bool flag) {
-        _isB3HeaderRequired = flag;
-        return this;
-    }
+        Builder isB3HeaderRequired(bool flag) {
+            _isB3HeaderRequired = flag;
+            return this;
+        }
 
-    private void initializeTracer(HttpRequest request, HttpConnection connection) {
-        Tracer tracer;
-        string reqPath = request.getURI().getPath();
-        string b3 = request.header("b3");
-        if(b3.empty()) {
-            if(_isB3HeaderRequired) return;
+        private void initializeTracer(HttpRequest request, HttpConnection connection) {
+            Tracer tracer;
+            string reqPath = request.getURI().getPath();
+            string b3 = request.header("b3");
+            if(b3.empty()) {
+                if(_isB3HeaderRequired) return;
 
-            tracer = new Tracer(reqPath);
-        } else {
-            version(HUNT_HTTP_DEBUG) {
-                warningf("initializing tracer for %s, with %s", reqPath, b3);
+                tracer = new Tracer(reqPath);
+            } else {
+                version(HUNT_HTTP_DEBUG) {
+                    warningf("initializing tracer for %s, with %s", reqPath, b3);
+                }
+
+                tracer = new Tracer(reqPath, b3);
             }
 
-            tracer = new Tracer(reqPath, b3);
+            Span span = tracer.root;
+            span.initializeLocalEndpoint(_localServiceName);
+            import std.socket;
+
+            // 
+            Address remote = connection.getRemoteAddress;
+            EndPoint remoteEndpoint = new EndPoint();
+            remoteEndpoint.ipv4 = remote.toAddrString();
+            remoteEndpoint.port = remote.toPortString().to!int;
+            span.remoteEndpoint = remoteEndpoint;
+            //
+
+            span.start();
+            request.tracer = tracer;
         }
 
-        Span span = tracer.root;
-        span.initializeLocalEndpoint(_localServiceName);
-        import std.socket;
+        private void endTraceSpan(HttpRequest request, int status, string message = null) {
+            Tracer tracer = request.tracer;
+            if(tracer is null) {
+                version(HUNT_TRACE_DEBUG) warning("no tracer found");
+                return;
+            }
 
-        // 
-        Address remote = connection.getRemoteAddress;
-        EndPoint remoteEndpoint = new EndPoint();
-        remoteEndpoint.ipv4 = remote.toAddrString();
-        remoteEndpoint.port = remote.toPortString().to!int;
-        span.remoteEndpoint = remoteEndpoint;
-        //
+            HttpURI uri = request.getURI();
+            string[string] tags;
+            tags[HTTP_HOST] = uri.getHost();
+            tags[HTTP_URL] = uri.getPathQuery();
+            tags[HTTP_PATH] = uri.getPath();
+            tags[HTTP_REQUEST_SIZE] = request.getContentLength().to!string();
+            tags[HTTP_METHOD] = request.getMethod();
 
-        span.start();
-        request.tracer = tracer;
-    }
-
-    private void endTraceSpan(HttpRequest request, int status, string message = null) {
-        Tracer tracer = request.tracer;
-        if(tracer is null) {
-            version(HUNT_TRACE_DEBUG) warning("no tracer found");
-            return;
-        }
-
-        HttpURI uri = request.getURI();
-        string[string] tags;
-        tags[HTTP_HOST] = uri.getHost();
-        tags[HTTP_URL] = uri.getPathQuery();
-        tags[HTTP_PATH] = uri.getPath();
-        tags[HTTP_REQUEST_SIZE] = request.getContentLength().to!string();
-        tags[HTTP_METHOD] = request.getMethod();
-
-        Span span = tracer.root;
-        if(span !is null) {
-            tags[HTTP_STATUS_CODE] = to!string(status);
-            traceSpanAfter(span, tags, message);
-            httpSender().sendSpans(span);
-        }
-    }    
+            Span span = tracer.root;
+            if(span !is null) {
+                tags[HTTP_STATUS_CODE] = to!string(status);
+                traceSpanAfter(span, tags, message);
+                httpSender().sendSpans(span);
+            }
+        }    
 }  
         private ServerHttpHandler buildServerHttpHandler() {
             ServerHttpHandlerAdapter adapter = new ServerHttpHandlerAdapter(_httpOptions);
@@ -665,18 +701,12 @@ version(WITH_HUNT_TRACE) {
                     version(WITH_HUNT_TRACE) initializeTracer(serverRequest, connection);
 
                     HttpServerContext context = new HttpServerContext(
-                        serverRequest, 
-                        cast(HttpServerResponse)response, 
+                        serverRequest, cast(HttpServerResponse)response, 
                         ot, cast(HttpServerConnection)connection);
+
+                    dispatchRoute(context);
+                    
                     // request.setAttachment(context);
-                    // by group
-                    if(_routerManagerGroup.length > 0) {
-                        // TODO: Tasks pending completion -@zhangxueping at 2020-01-07T17:56:04+08:00
-                        // 
-                        _routerManager.accept(context);
-                    } else {
-                        _routerManager.accept(context);
-                    }
                     // serverRequest.onHeaderComplete(_httpOptions.requestOptions());
 
                     return false;
@@ -803,6 +833,19 @@ version(WITH_HUNT_TRACE) {
             });
 
             return adapter;
+        }
+
+        private void dispatchRoute(HttpServerContext context) {
+            bool isAccepted = false;
+            if(_hostManagerGroup.length > 0) {
+
+            } else if(_pathManagerGroup.length > 0) {
+                
+            }
+
+            if(!isAccepted) {
+                _routerManager.accept(context);
+            }
         }
 
         /* ---------------------------- Options operation --------------------------- */
