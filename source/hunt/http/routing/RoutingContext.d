@@ -140,7 +140,7 @@ abstract class RoutingContext : Closeable {
      *
      * @return If return false, it represents current handler is the last.
      */
-    bool next();
+    void next();
 
     /**
      * If return false, it represents current handler is the last.

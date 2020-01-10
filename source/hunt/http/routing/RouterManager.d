@@ -8,6 +8,7 @@ import hunt.http.routing.handler;
 import hunt.http.routing.impl.RouterManagerImpl;
 
 import hunt.http.server.HttpRequestOptions;
+import hunt.http.server.HttpServerContext;
 
 import hunt.collection;
 import hunt.Exceptions;
@@ -26,7 +27,7 @@ enum DEFAULT_LAST_ROUTER_ID = int.max / 2;
 /**
  * 
  */
-interface RouterManager : RequestAcceptor {
+interface RouterManager {
 
     Router register();
 
@@ -34,6 +35,8 @@ interface RouterManager : RequestAcceptor {
 
     NavigableSet!(RouterMatchResult) findRouter(string method, string path,
             string contentType, string accept);
+
+    void accept(HttpServerContext context);
 
     static RouterManager create() {
         return create(new HttpRequestOptions());

@@ -193,8 +193,11 @@ class HttpMetaData : Iterable!HttpField {
     }
 
     string header(string name) {
-        // return header(name, null);
         return getFields().get(name);
+    }
+
+    string header(HttpHeader h) {
+        return getFields().get(h);
     }
 
     // string header(string name, string defaultValue) {

@@ -5,6 +5,6 @@ import hunt.http.server.HttpServerContext;
 /**
  * 
  */
-interface RequestAcceptor {
-    void accept(HttpServerContext context);
-}
+// interface RequestAcceptor {
+//     bool accept(HttpServerContext context);
+// }

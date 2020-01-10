@@ -37,6 +37,7 @@ class RoutingContextImpl : RoutingContext {
     private Variant[string] _attributes;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private bool asynchronousRead = false;
+    // private bool _isHandled = false;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
     private HttpServerContext _context;
 
@@ -118,16 +119,16 @@ class RoutingContextImpl : RoutingContext {
         asynchronousRead = true;
     }
 
-    override bool next() {
+    override void next() {
         current = routers.pollFirst();
         if (current is null)
-            return false;
+            return;
 
         Router r = current.getRouter();
         version (HUNT_HTTP_DEBUG)
             infof("current router: %d", r.getId());
         r.handle(this);
-        return true;
+        return;
     }
 
     override bool hasNext() {

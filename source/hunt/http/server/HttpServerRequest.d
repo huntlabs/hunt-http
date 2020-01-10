@@ -68,7 +68,10 @@ class HttpServerRequest : HttpRequest {
         // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
     }
 
-
+    @property string host() {
+        return header(HttpHeader.HOST);
+    }
+    
     string getParameter(string name) {
         decodeUrl();
         return _urlEncodedMap.getString(name);
@@ -332,6 +335,10 @@ class HttpServerRequest : HttpRequest {
 
     @property string path() {
         return getURI().getPath();
+    }
+
+    @property void path(string value) {
+        return getURI().setPath(value);
     }
 
 

@@ -27,7 +27,6 @@ class HttpServerContext {
     private HttpServerConnection _connection;
     private BufferedOutputStream _bufferedOutputStream; 
     private int _bufferSize = 8 * 1024;
-    private bool _isEnded = false;
 
     // private int _status = HttpStatus.OK_200;
 
@@ -124,7 +123,4 @@ class HttpServerContext {
             _httpOutputStream.close();
         }        
     }
-
-
-   
 }

@@ -22,8 +22,6 @@ public import hunt.http.client.Http2ClientSession;
 public import hunt.http.client.MultipartBody;
 public import hunt.http.client.FormBody;
 
-
-
 // Common modules
 public import hunt.http.AuthenticationScheme;
 public import hunt.http.Cookie;

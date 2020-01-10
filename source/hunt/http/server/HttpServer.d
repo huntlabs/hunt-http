@@ -20,15 +20,16 @@ import hunt.http.codec.CommonDecoder;
 import hunt.http.codec.CommonEncoder;
 import hunt.http.codec.websocket.decode.WebSocketDecoder;
 import hunt.http.codec.websocket.frame;
-import hunt.http.HttpOutputStream;
-import hunt.http.WebSocketConnection;
 
 import hunt.http.routing;
 import hunt.http.HttpConnection;
+import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
+import hunt.http.HttpOutputStream;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
+import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
 import hunt.collection.BufferUtils;
@@ -47,6 +48,7 @@ import std.array;
 import std.algorithm;
 import std.file;
 import std.path;
+import std.string;
 
 
 version(WITH_HUNT_TRACE) {
@@ -124,24 +126,6 @@ class HttpServer : AbstractLifecycle {
         if (options.isSecureConnectionEnabled()) {
             version(WITH_HUNT_SECURITY) {
                 import hunt.net.secure.SecureUtils;
-                import std.file;
-                import std.path;
-            
-                // string sslCertificate = options.sslCertificate();
-                // string sslPrivateKey = options.sslPrivateKey();
-                // if(sslCertificate.empty() || sslPrivateKey.empty()) {
-                //     warningf("No certificate files found. Using the defaults.");
-                // } else {
-	            //     string currentRootPath = dirName(thisExePath);
-                //     sslCertificate = buildPath(currentRootPath, sslCertificate);
-                //     sslPrivateKey = buildPath(currentRootPath, sslPrivateKey);
-                //     if(!sslCertificate.exists() || !sslPrivateKey.exists()) {
-                //         warningf("No certificate files found. Using the defaults.");
-                //     } else {
-                //         SecureUtils.setServerCertificate(sslCertificate, sslPrivateKey, 
-                //             options.keystorePassword(), options.keyPassword());
-                //     }
-                // }
                 KeyCertOptions certOptions = options.getKeyCertOptions();
                 if(certOptions is null) {
                     warningf("No certificate files found. Using the defaults.");
@@ -405,7 +389,10 @@ class HttpServer : AbstractLifecycle {
                 _currentRouter = getGroupRouterManager(groupName, groupType).register();
             }
 
-            version(HUNT_HTTP_DEBUG) tracef("routeid: %d, paths: %s", _currentRouter.getId(), paths);
+            version(HUNT_HTTP_DEBUG) { 
+                tracef("routeid: %d, paths: %s, group: %s", _currentRouter.getId(), paths, groupName);
+            }
+
             _currentRouter.paths(paths);
             foreach(string m; methods) {
                 _currentRouter.method(m);
@@ -836,14 +823,49 @@ version(WITH_HUNT_TRACE) {
         }
 
         private void dispatchRoute(HttpServerContext context) {
-            bool isAccepted = false;
+            bool isHandled = false;
             if(_hostManagerGroup.length > 0) {
-
-            } else if(_pathManagerGroup.length > 0) {
-                
+                HttpServerRequest request = context.httpRequest();
+                string host = request.host();
+                if(!host.empty()) {
+                    host = split(host, ":")[0];
+                    auto itemPtr = host in _hostManagerGroup;
+                    if(itemPtr !is null) {
+                        isHandled = true;
+                        itemPtr.accept(context);
+                        version(HUNT_HTTP_DEBUG) {
+                            tracef("host group, host: %s, path: %s", host, request.path());
+                        }
+                    }
+                }
             }
+            
+            if(_pathManagerGroup.length > 0) {
+                HttpServerRequest request = context.httpRequest();
+                string path = request.path();
+                if(path.length > 1 && path[$-1] != '/') {
+                    path ~= "/";
+                }
+                string groupPath = split(path, "/")[1];
 
-            if(!isAccepted) {
+                // warningf("full path: %s, group path: %s", path, groupPath);
+                auto itemPtr = groupPath in _pathManagerGroup;
+                if(itemPtr !is null) {
+                    isHandled = true;
+                    path = path[groupPath.length + 1 .. $]; // skip the group path
+                    // version(HUNT_HTTP_DEBUG_MORE) {
+                    //     tracef("full path: %s, group path: %s, new path: %s", request.path(), groupPath, path);
+                    // }
+
+                    request.path = path; // Reset the rquest path
+                    itemPtr.accept(context);
+                    version(HUNT_HTTP_DEBUG_MORE) {
+                        tracef("path group, full path: %s, group path: %s", request.path(), groupPath);
+                    }
+                }
+            } 
+
+            if(!isHandled) {
                 _routerManager.accept(context);
             }
         }
