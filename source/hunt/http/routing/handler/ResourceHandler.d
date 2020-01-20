@@ -36,7 +36,7 @@ abstract class AbstractResourceHandler : RouteHandler {
     /**
      * If directory listing is enabled.
      */
-    private bool _directoryListingEnabled = false; 
+    private bool _isListingEnabled = false; 
     private string _basePath;
     // private string requestPath;
     private size_t _bufferSize = 1024;
@@ -87,31 +87,27 @@ abstract class AbstractResourceHandler : RouteHandler {
         return this;
     }
 
-    bool directoryListingEnabled() {
-        return _directoryListingEnabled;
+    bool isListingEnabled() {
+        return _isListingEnabled;
     }
 
-    AbstractResourceHandler directoryListingEnabled(bool flag) {
-        this._directoryListingEnabled = flag;
+    AbstractResourceHandler isListingEnabled(bool flag) {
+        _isListingEnabled = flag;
         return this;
     }    
 
     void handle(RoutingContext context) {
         string requestPath = context.getURI().getPath();
         version(HUNT_HTTP_DEBUG) infof("requestPath: %s", requestPath);
+        bool isDirectory = true;
 
         if(requestPath.length <= 1) {
             requestPath = _basePath;
         } else {
-            string p = requestPath[1..$];
-            ptrdiff_t index = indexOf(p, "/");
-            if(index > 0) {
-                p = p[index+1 .. $];
-                requestPath = buildNormalizedPath(_basePath, p);
-            } else {
-                requestPath = _basePath;
-            }
-            
+            string p = requestPath[1..$]; // skip the leading '/'
+            isDirectory = p[$-1] == '/';
+            requestPath = buildNormalizedPath(_basePath, p); // no tailing '/'
+            if(isDirectory) requestPath ~= "/";
         }
 
         version(HUNT_HTTP_DEBUG) tracef("requesting %s, base: %s", requestPath, _basePath);
@@ -161,7 +157,6 @@ class DefaultResourceHandler : AbstractResourceHandler {
     }
 
     override void render(RoutingContext context, int status, Exception t) {
-        string requestFile = context.getAttribute(CurrentRequestFile).get!string();
         context.setStatus(status);
 
         HttpStatusCode code = HttpStatus.getCode(status); 
@@ -177,16 +172,25 @@ class DefaultResourceHandler : AbstractResourceHandler {
             content = "The resource " ~ requestPath ~ " is not found";
         } else if(status == HttpStatus.INTERNAL_SERVER_ERROR_500) {
             content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
-        } else if(requestFile.isDir()) {
-            if(directoryListingEnabled()) {
-                content = renderFileList(basePath(), requestFile, format(`Index of %s`, requestPath));
-            } else {
-                content = format(`Index of %s`, requestPath);
-            }
-
         } else {
-            handleRequestFile(context, requestFile);
-            return;
+            string requestFile = context.getAttribute(CurrentRequestFile).get!string();
+            if(requestFile.isDir()) {
+                version(HUNT_HTTP_DEBUG) {
+                    tracef("Try to list a directory: %s", requestFile);
+                }
+                if(isListingEnabled()) {
+                    content = renderFileList(basePath(), requestFile, format(`Index of %s`, requestPath));
+                } else {
+                    content = format(`Index of %s`, requestPath);
+                }
+
+            } else {
+                version(HUNT_HTTP_DEBUG) {
+                    tracef("Rendering a file: %s", requestFile);
+                }
+                handleRequestFile(context, requestFile);
+                return;
+            }
         }
 
         renderDefaults(context, title, content);

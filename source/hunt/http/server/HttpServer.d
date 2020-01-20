@@ -201,6 +201,7 @@ class HttpServer : AbstractLifecycle {
         // Hello, World!`;
     }
 
+
     HttpServerOptions getHttpOptions() {
         return _httpOptions;
     }
@@ -314,7 +315,7 @@ class HttpServer : AbstractLifecycle {
 
         this(HttpServerOptions options) {
             _httpOptions = options;
-            _routerManager = RouterManager.create(_httpOptions.requestOptions());
+            _routerManager = RouterManager.create();
             
             // set the server options as a global variable
             GlobalSettings.httpServerOptions = _httpOptions;
@@ -447,7 +448,7 @@ class HttpServer : AbstractLifecycle {
             if(groupType == RouteGroupType.Host) {
                 auto itemPtr = groupName in _hostManagerGroup;
                 if(itemPtr is null) {
-                    manager = RouterManager.create(_httpOptions.requestOptions());
+                    manager = RouterManager.create();
                     _hostManagerGroup[groupName] = manager;
                 } else {
                     manager = *itemPtr;
@@ -455,7 +456,7 @@ class HttpServer : AbstractLifecycle {
             } else {
                 auto itemPtr = groupName in _pathManagerGroup;
                 if(itemPtr is null) {
-                    manager = RouterManager.create(_httpOptions.requestOptions());
+                    manager = RouterManager.create();
                     _pathManagerGroup[groupName] = manager;
                 } else {
                     manager = *itemPtr;
@@ -502,12 +503,14 @@ class HttpServer : AbstractLifecycle {
 
         alias addNotFoundRoute = setDefaultRequest;
 
-        Builder resource(string path, string localPath, bool isListing = true) {
-            return resource(path, new DefaultResourceHandler(localPath).directoryListingEnabled(isListing));
+        Builder resource(string path, string localPath, bool canList = true) {
+            return resource(path, new DefaultResourceHandler(localPath).isListingEnabled(canList));
         }
 
         Builder resource(string path, AbstractResourceHandler handler) {
-            // assert(path.length > 0);
+            path = path.strip();
+            assert(path.length > 0, "The path can't be empty");
+
             if(path[0] != '/')
                 path = "/" ~ path;
             
@@ -521,7 +524,13 @@ class HttpServer : AbstractLifecycle {
 
             path ~= "*";
 
-            return addRoute([path, staticPath], cast(string[])null, handler);
+            warningf("path: %s, staticPath: %s", path, staticPath);
+
+            if(path == staticPath || staticPath.empty()) {
+                return addRoute([path], cast(string[])null, handler);
+            } else {
+                return addRoute([path, staticPath], cast(string[])null, handler);
+            }
         }
 
         Builder websocket(string path, WebSocketMessageHandler handler) {
@@ -555,8 +564,8 @@ class HttpServer : AbstractLifecycle {
             try {
                 if(handler !is null) handler.handle(ctx);
             } catch (Exception ex) {
-                version(HUNT_DEBUG) errorf("route handler exception: %s", ex.msg);
-                // version(HUNT_HTTP_DEBUG) error(e);
+                errorf("route handler exception: %s", ex.msg);
+                version(HUNT_HTTP_DEBUG) error(ex);
                 if(!ctx.isCommitted()) {
                     HttpServerResponse res = ctx.getResponse();
                     if(res !is null) {
@@ -573,7 +582,7 @@ class HttpServer : AbstractLifecycle {
                 if(handler !is null) handler(ctx);
             } catch (Exception ex) {
                 version(HUNT_DEBUG) errorf("route handler exception: %s", ex.msg);
-                // version(HUNT_HTTP_DEBUG) error(e);
+                version(HUNT_HTTP_DEBUG) error(ex);
                 if(!ctx.isCommitted()) {
                     HttpServerResponse res = ctx.getResponse();
                     if(res !is null) {
@@ -691,10 +700,10 @@ version(WITH_HUNT_TRACE) {
                         serverRequest, cast(HttpServerResponse)response, 
                         ot, cast(HttpServerConnection)connection);
 
+                    serverRequest.onHeaderComplete();
                     dispatchRoute(context);
                     
                     // request.setAttachment(context);
-                    // serverRequest.onHeaderComplete(_httpOptions.requestOptions());
 
                     return false;
                 })

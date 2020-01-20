@@ -1,5 +1,6 @@
 module hunt.http.server.HttpServerHandler;
 
+import hunt.http.server.HttpServerOptions;
 import hunt.http.server.Http1ServerConnection;
 import hunt.http.server.Http1ServerRequestHandler;
 import hunt.http.server.Http2ServerConnection;
@@ -31,10 +32,11 @@ class HttpServerHandler : HttpConnectionHandler {
     private ServerSessionListener listener;
     private ServerHttpHandler serverHttpHandler;
     private WebSocketHandler webSocketHandler;
+    private HttpServerOptions _options;
 
-    this(HttpOptions options, ServerSessionListener listener,
+    this(HttpServerOptions options, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
-        super(options);
+        _options = options;
         this.listener = listener;
         this.serverHttpHandler = serverHttpHandler;
         this.webSocketHandler = webSocketHandler;
@@ -44,7 +46,7 @@ class HttpServerHandler : HttpConnectionHandler {
         version(HUNT_HTTP_DEBUG_MORE) tracef("New http connection: %s", typeid(cast(Object) connection));
 
         version(WITH_HUNT_SECURITY) {
-            if (config.isSecureConnectionEnabled()) {
+            if (_options.isSecureConnectionEnabled()) {
                 buildSecureSession(connection);
             } else {
                 buildNomalSession(connection);
@@ -62,11 +64,11 @@ class HttpServerHandler : HttpConnectionHandler {
 
         version (HUNT_HTTP_DEBUG)
             infof("Building a new http connection...");
-        string protocol = config.getProtocol();
+        string protocol = _options.getProtocol();
         
         if (!protocol.empty) {
-            Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection,
-                    new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
+            Http1ServerConnection httpConnection = new Http1ServerConnection(_options, connection,
+                    new Http1ServerRequestHandler(serverHttpHandler, _options), listener, webSocketHandler);
             connection.setAttribute(HttpConnection.NAME, httpConnection);
             serverHttpHandler.acceptConnection(httpConnection);
             connection.setState(ConnectionState.Opened);
@@ -81,14 +83,14 @@ class HttpServerHandler : HttpConnectionHandler {
             // }
 
             if (icmp(HTTP_1_1, protocol) == 0) {
-                Http1ServerConnection httpConnection = new Http1ServerConnection(config, connection, 
-                        new Http1ServerRequestHandler(serverHttpHandler),
+                Http1ServerConnection httpConnection = new Http1ServerConnection(_options, connection, 
+                        new Http1ServerRequestHandler(serverHttpHandler, _options),
                         listener, webSocketHandler);
                 connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
                 connection.setState(ConnectionState.Opened);
             } else if (icmp(HTTP_2, protocol) == 0) {
-                Http2ServerConnection httpConnection = new Http2ServerConnection(config,
+                Http2ServerConnection httpConnection = new Http2ServerConnection(_options,
                         connection, listener);
                 connection.setAttribute(HttpConnection.NAME, httpConnection);
                 serverHttpHandler.acceptConnection(httpConnection);
@@ -123,7 +125,7 @@ version(WITH_HUNT_SECURITY) {
             HttpConnection httpConnection;
             string protocol = sslSession.getApplicationProtocol();
             if (protocol.empty)
-                protocol = config.getProtocol();
+                protocol = _options.getProtocol();
             if (protocol.empty)
                 protocol = HTTP_1_1;
 
@@ -134,12 +136,12 @@ version(WITH_HUNT_SECURITY) {
 
             switch (protocol) {
             case HTTP_1_1:
-                httpConnection = new Http1ServerConnection(config, connection, 
+                httpConnection = new Http1ServerConnection(_options, connection, 
                     new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
                 break;
 
             case HTTP_2:
-                httpConnection = new Http2ServerConnection(config, connection,listener);
+                httpConnection = new Http2ServerConnection(_options, connection,listener);
                 break;
 
             default:

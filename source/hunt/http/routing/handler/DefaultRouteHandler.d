@@ -1,4 +1,4 @@
-module hunt.http.routing.handler.DefaultHttpRouteHandler;
+module hunt.http.routing.handler.DefaultRouteHandler;
 
 import hunt.http.routing.RoutingContext;
 import hunt.http.routing.impl.RoutingContextImpl;
@@ -22,21 +22,21 @@ import std.array;
 /**
  * 
  */
-class DefaultHttpRouteHandler : RouteHandler {
+class DefaultRouteHandler : RouteHandler {
 
-    private HttpRequestOptions _options;
+    // private HttpRequestOptions _options;
 
     this() {
-        this(new HttpRequestOptions());
+        // this(new HttpRequestOptions());
     }
 
-    this(HttpRequestOptions options) {
-        this._options = options;
-    }
+    // this(HttpRequestOptions options) {
+    //     this._options = options;
+    // }
 
-    HttpRequestOptions getConfiguration() {
-        return _options;
-    }
+    // HttpRequestOptions getConfiguration() {
+    //     return _options;
+    // }
 
     // void setConfiguration(HttpRequestOptions options) {
     //     this._options = options;
@@ -51,7 +51,7 @@ class DefaultHttpRouteHandler : RouteHandler {
             return;
         }
 
-        request.onHeaderComplete(_options);
+        request.onHeaderComplete();
         request.onMessageComplete((HttpServerRequest req) { context.next(); });
         context.enableAsynchronousRead();
 

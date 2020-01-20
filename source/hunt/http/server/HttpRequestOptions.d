@@ -1,6 +1,6 @@
 module hunt.http.server.HttpRequestOptions;
 
-import hunt.http.MultipartOptions;
+// import hunt.http.MultipartOptions;
 
 import std.file;
 import std.path;
@@ -16,6 +16,7 @@ class HttpRequestOptions {
     private string tempFilePath = "./temp";
     private string tempFileAbsolutePath = "/temp";
     private string charset = "UTF-8";
+    private string _defaultLanguage = "en_US";
     // private MultipartOptions _multipartOptions;
 
     this() {
@@ -67,6 +68,14 @@ class HttpRequestOptions {
 
     void setCharset(string charset) {
         this.charset = charset;
+    }
+
+    string defaultLanguage() {
+        return _defaultLanguage;
+    }
+
+    void defaultLanguage(string langId) {
+        _defaultLanguage = langId;
     }
 
     // MultipartOptions getMultipartOptions() {

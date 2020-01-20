@@ -348,6 +348,10 @@ abstract class RoutingContext : Closeable {
 
     string getSessionIdParameterName();
 
+    string groupName();
+    
+    void groupName(string name);
+
     // Template API
     // void renderTemplate(string resourceName, Object scope);
 

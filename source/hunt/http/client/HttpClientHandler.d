@@ -2,6 +2,7 @@ module hunt.http.client.HttpClientHandler;
 
 import hunt.http.client.HttpClientContext;
 import hunt.http.client.HttpClientConnection;
+import hunt.http.client.HttpClientOptions;
 import hunt.http.client.Http1ClientConnection;
 import hunt.http.client.Http2ClientConnection;
 import hunt.http.HttpVersion;
@@ -35,9 +36,10 @@ class HttpClientHandler : HttpConnectionHandler {
 
     // private Map!(int, HttpClientContext) _httpClientContext;
     private HttpClientContext _httpClientContext;
+    private HttpClientOptions _options;
 
-    this(HttpOptions config, HttpClientContext httpClientContext) {
-        super(config);
+    this(HttpClientOptions options, HttpClientContext httpClientContext) {
+        // super(_options);
         this._httpClientContext = httpClientContext;
     }
 
@@ -56,7 +58,7 @@ class HttpClientHandler : HttpConnectionHandler {
             return;
         }
 
-        if (config.isSecureConnectionEnabled()) {
+        if (_options.isSecureConnectionEnabled()) {
             version(HUNT_DEBUG) {
                 infof("initilizing a secure connection %d: %s", connection.getId(), connection.getState());
             }
@@ -96,8 +98,8 @@ class HttpClientHandler : HttpConnectionHandler {
                 };
 
                 SecureSession secureSession;
-                if(config.isCertificateAuth()) {
-                    secureSession = SecureUtils.createClientSession(connection, handshakeListener, config.getKeyCertOptions());
+                if(_options.isCertificateAuth()) {
+                    secureSession = SecureUtils.createClientSession(connection, handshakeListener, _options.getKeyCertOptions());
                 } else {
                     secureSession = SecureUtils.createClientSession(connection, handshakeListener);
                 }
@@ -113,19 +115,19 @@ class HttpClientHandler : HttpConnectionHandler {
                 info("initilizing a connection");
             }
 
-            if (config.getProtocol().empty) {
+            if (_options.getProtocol().empty) {
                 initializeHttp1ClientConnection(connection, context);
             } else {
-                HttpVersion httpVersion = HttpVersion.fromString(config.getProtocol());
+                HttpVersion httpVersion = HttpVersion.fromString(_options.getProtocol());
                 if (httpVersion == HttpVersion.Null) {
-                    throw new IllegalArgumentException("the protocol " ~ config.getProtocol() ~ " is not support.");
+                    throw new IllegalArgumentException("the protocol " ~ _options.getProtocol() ~ " is not support.");
                 }
                 if(httpVersion == HttpVersion.HTTP_1_1) {
                         initializeHttp1ClientConnection(connection, context);
                 } else if(httpVersion == HttpVersion.HTTP_2) {
                         initializeHttp2ClientConnection(connection, context);
                 } else {
-                        throw new IllegalArgumentException("the protocol " ~ config.getProtocol() ~ " is not support.");
+                        throw new IllegalArgumentException("the protocol " ~ _options.getProtocol() ~ " is not support.");
                 }
             }
 
@@ -137,7 +139,7 @@ class HttpClientHandler : HttpConnectionHandler {
         assert(promise !is null);
         
         try {
-            Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
+            Http1ClientConnection http1ClientConnection = new Http1ClientConnection(_options, connection);
             connection.setAttribute(HttpConnection.NAME, http1ClientConnection);
             promise.succeeded(http1ClientConnection);
 
@@ -151,12 +153,12 @@ class HttpClientHandler : HttpConnectionHandler {
 
     private void initializeHttp2ClientConnection(Connection connection, HttpClientContext context) {
         try {
-            Http2ClientConnection conn = new Http2ClientConnection(config, connection, context.getListener());
+            Http2ClientConnection conn = new Http2ClientConnection(_options, connection, context.getListener());
             // connection.attachObject(conn);
             connection.setAttribute(HttpConnection.NAME, conn);
             context.getListener().setConnection(conn);            
-            // connection.initialize(config, cast(Promise!(Http2ClientConnection))context.getPromise(), context.getListener());
-            conn.initialize(config, context.getPromise(), context.getListener());
+            // connection.initialize(_options, cast(Promise!(Http2ClientConnection))context.getPromise(), context.getListener());
+            conn.initialize(_options, context.getPromise(), context.getListener());
         } finally {
             // _httpClientContext.remove(connection.getId());
         }

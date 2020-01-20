@@ -1,7 +1,7 @@
 module hunt.http.server.Http1ServerRequestHandler;
 
 import hunt.http.server.Http1ServerConnection;
-// import hunt.http.server.HttpServerHandler;
+import hunt.http.server.HttpServerOptions;
 import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
@@ -35,9 +35,11 @@ class Http1ServerRequestHandler : HttpRequestParsingHandler {
     package Http1ServerResponseOutputStream outputStream;
     package ServerHttpHandler serverHttpHandler;
     package HttpFields trailer;
+    private HttpServerOptions _options;
 
-    this(ServerHttpHandler serverHttpHandler) {
+    this(ServerHttpHandler serverHttpHandler, HttpServerOptions options) {
         this.serverHttpHandler = serverHttpHandler;
+        _options = options;
     }
 
     override bool startRequest(string method, string uri, HttpVersion ver) {
@@ -45,7 +47,7 @@ class Http1ServerRequestHandler : HttpRequestParsingHandler {
             tracef("server received the request line, %s, %s, %s", method, uri, ver);
         }
 
-        request = new HttpServerRequest(method, uri, ver);
+        request = new HttpServerRequest(method, uri, ver, _options);
         response = new HttpServerResponse();
         outputStream = new Http1ServerResponseOutputStream(response, connection);
 

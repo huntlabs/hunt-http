@@ -1,10 +1,8 @@
 module hunt.http.routing.RouterManager;
 
+import hunt.http.routing.handler;
 import hunt.http.routing.Matcher;
 import hunt.http.routing.Router;
-import hunt.http.routing.RequestAcceptor;
-
-import hunt.http.routing.handler;
 import hunt.http.routing.impl.RouterManagerImpl;
 
 import hunt.http.server.HttpRequestOptions;
@@ -16,7 +14,7 @@ import hunt.util.Common;
 
 /**
  * 
-*/
+ */
 enum RouteGroupType {
     Host,
     Path
@@ -38,14 +36,14 @@ interface RouterManager {
 
     void accept(HttpServerContext context);
 
-    static RouterManager create() {
-        return create(new HttpRequestOptions());
-    }
+    // static RouterManager create() {
+    //     return create(new HttpRequestOptions());
+    // }
 
-    static RouterManager create(HttpRequestOptions configuration) {
+    static RouterManager create() {
         RouterManagerImpl routerManager = new RouterManagerImpl();
 
-        routerManager.register().path("*").handler(new DefaultHttpRouteHandler(configuration));
+        routerManager.register().path("*").handler(new DefaultRouteHandler());
 
         routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*")
             .handler(DefaultErrorResponseHandler.Default());

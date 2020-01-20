@@ -3,6 +3,7 @@ module hunt.http.server.HttpServerRequest;
 import hunt.http.server.GlobalSettings;
 import hunt.http.server.Http1ServerConnection;
 import hunt.http.server.HttpRequestOptions;
+import hunt.http.server.HttpServerOptions;
 import hunt.http.server.HttpServerResponse;
 import hunt.http.server.ServerHttpHandler;
 
@@ -48,7 +49,7 @@ class HttpServerRequest : HttpRequest {
     
     private string _stringBody; 
     private string _mimeType;
-    private HttpRequestOptions _options;
+    private HttpServerOptions _options;
 
     private Cookie[] _cookies;
     private PipedStream _pipedStream;
@@ -59,8 +60,9 @@ class HttpServerRequest : HttpRequest {
     // private Action1!HttpServerRequest _contentCompleteHandler;
     private Action1!HttpServerRequest _messageCompleteHandler;  
 
-    this(string method, string uri, HttpVersion ver) {
+    this(string method, string uri, HttpVersion ver, HttpServerOptions options) {
         enum string connect = HttpMethod.CONNECT.asString();
+        _options = options;
         super(method, 
             new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
             ver, new HttpFields());        
@@ -107,8 +109,7 @@ class HttpServerRequest : HttpRequest {
         }
 
         if ("application/x-www-form-urlencoded".equalsIgnoreCase(getMimeType())) {
-            // HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
-            string bodyString = getStringBody(_options.getCharset());
+            string bodyString = getStringBody(_options.requestOptions.getCharset());
             _urlEncodedMap.decode(bodyString);
         }
     }
@@ -170,8 +171,9 @@ class HttpServerRequest : HttpRequest {
         return getStringBody("UTF-8");
     }
 
-    package(hunt.http) void onHeaderComplete(HttpRequestOptions options) {
-        _options = options;
+    package(hunt.http) void onHeaderComplete() {
+        // _options = options;
+        auto options = _options.requestOptions;
         if (isChunked()) {
             this._pipedStream = new ByteArrayPipedStream(4 * 1024);
         } else {
@@ -195,24 +197,25 @@ class HttpServerRequest : HttpRequest {
         try {
             OutputStream outStream = getOutputStream();
             if (isChunked()) {
+                auto options = _options.requestOptions;
                 long length = AtomicHelper.increment(chunkedEncodingContentLength, buffer.remaining());
                 ByteArrayPipedStream bytesStream = cast(ByteArrayPipedStream)_pipedStream;
 
                 // switch PipedStream from ByteArrayPipedStream to FilePipedStream.
-                if (length > _options.getBodyBufferThreshold() && bytesStream !is null) {
+                if (length > options.getBodyBufferThreshold() && bytesStream !is null) {
                     // FIXME: Needing refactor or cleanup -@zhangxueping at 2019-10-17T23:05:10+08:00
                     // better performance.
                     
                     version(HUNT_HTTP_DEBUG) {
                         warningf("dump to temp file, ContentLength:%d, BufferThreshold: %d, file: %s", 
                             length,
-                            _options.getBodyBufferThreshold(), 
-                            _options.getTempFilePath());
+                            options.getBodyBufferThreshold(), 
+                            options.getTempFilePath());
                     }
 
                     // chunked encoding content dump to temp file
                     _pipedStream.getOutputStream().close();
-                    FilePipedStream filePipedStream = new FilePipedStream(_options.getTempFilePath());
+                    FilePipedStream filePipedStream = new FilePipedStream(options.getTempFilePath());
                     byte[] bufferedBytes = bytesStream.getOutputStream().toByteArray(false);
                     OutputStream fileOutStream = filePipedStream.getOutputStream();
                     fileOutStream.write(bufferedBytes);
@@ -240,15 +243,11 @@ class HttpServerRequest : HttpRequest {
             getOutputStream().close();
 
             if ("multipart/form-data".equalsIgnoreCase(mimeType)) {
-                import hunt.http.server.HttpRequestOptions;
-                import hunt.http.server.GlobalSettings;
-
-                HttpRequestOptions _options = GlobalSettings.httpServerOptions.requestOptions();
                 _multipartFormParser = new MultipartFormParser(
                         _pipedStream.getInputStream(),
                         getContentType(),
-                        GlobalSettings.getMultipartOptions(_options),
-                        _options.getTempFilePath());
+                        GlobalSettings.getMultipartOptions(_options.requestOptions),
+                        _options.requestOptions.getTempFilePath());
             }
         } catch (IOException e) {
             version(HUNT_DEBUG) warning("http server ends receiving data exception: ", e.msg);
@@ -487,6 +486,34 @@ class HttpServerRequest : HttpRequest {
             }
         }
         return _xFormData;
+    }
+
+    /**
+     * Retrieve a cookie from the request.
+     *
+     * @param  string  key
+     * @param  string|array|null  default
+     * @return string|array
+     */
+    string cookie(string key, string defaultValue = null) {
+        // return cookieManager.get(key, defaultValue);
+        foreach (Cookie c; getCookies()) {
+            if (c.getName == key)
+                return c.getValue();
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Retrieve  users' own preferred language.
+     */
+    string locale() {
+        string l;
+        l = cookie("Content-Language");
+        if(l is null)
+            l = _options.requestOptions.defaultLanguage();
+
+        return toLower(l);
     }
     
     private string[][string] _xFormData;

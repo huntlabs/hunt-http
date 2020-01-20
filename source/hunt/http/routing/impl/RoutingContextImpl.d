@@ -40,6 +40,7 @@ class RoutingContextImpl : RoutingContext {
     // private bool _isHandled = false;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
     private HttpServerContext _context;
+    private string _groupName = "default";
 
     this(HttpServerContext context, NavigableSet!(RouterMatchResult) routers) {
         _context = context;
@@ -425,5 +426,13 @@ class RoutingContextImpl : RoutingContext {
 
     override bool isCommitted() {
         return _context.isCommitted();
+    }
+
+    override string groupName() {
+        return _groupName;
+    }
+    
+    override void groupName(string name) {
+        _groupName = name;
     }
 }

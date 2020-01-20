@@ -47,8 +47,8 @@ class RouterImpl : Router {
 
     override
     Router path(string url) {
-        checkPath(url);
         url = url.strip();
+        checkPath(url);
 
         if (url.length == 1) {
             switch (url.charAt(0)) {
@@ -88,18 +88,19 @@ class RouterImpl : Router {
 
     override
     Router paths(string[] urlList) {
-        foreach(string u; urlList)
+        foreach(string u; urlList) {
             this.path(u);
+        }
 
         return this;
     }
 
     private void checkPath(string url) {
-        if (url is null) {
+        if (url.empty()) {
             throw new IllegalArgumentException("the url is empty");
         }
 
-        if (urlList.contains(url.strip())) {
+        if (urlList.contains(url)) {
             throw new IllegalArgumentException("the url " ~ url ~ " exists");
         }
     }

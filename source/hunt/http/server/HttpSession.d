@@ -181,30 +181,3 @@ interface HttpSessionHandler {
 
     string getSessionIdParameterName();
 }
-
-
-
-// /**
-//  * 
-//  */
-// class HttpSessionConfiguration {
-
-//     private string sessionIdParameterName = "hunt-sessionid";
-//     private int defaultMaxInactiveInterval = 10 * 60; //second
-
-//     string getSessionIdParameterName() {
-//         return sessionIdParameterName;
-//     }
-
-//     void setSessionIdParameterName(string sessionIdParameterName) {
-//         this.sessionIdParameterName = sessionIdParameterName;
-//     }
-
-//     int getDefaultMaxInactiveInterval() {
-//         return defaultMaxInactiveInterval;
-//     }
-
-//     void setDefaultMaxInactiveInterval(int defaultMaxInactiveInterval) {
-//         this.defaultMaxInactiveInterval = defaultMaxInactiveInterval;
-//     }
-// }

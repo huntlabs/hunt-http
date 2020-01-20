@@ -249,14 +249,9 @@ abstract class AbstractHttpConnection : HttpConnection {
 // alias AbstractHttpHandler = HttpConnectionHandler;
 
 /**
-*/
+ * 
+ */
 abstract class HttpConnectionHandler : NetConnectionHandlerAdapter {
-
-    protected HttpOptions config;
-
-    this(HttpOptions config) {
-        this.config = config;
-    }
 
     override
     void messageReceived(Connection connection, Object message) {
