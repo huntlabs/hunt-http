@@ -503,11 +503,14 @@ class HttpServer : AbstractLifecycle {
 
         alias addNotFoundRoute = setDefaultRequest;
 
-        Builder resource(string path, string localPath, bool canList = true) {
-            return resource(path, new DefaultResourceHandler(localPath).isListingEnabled(canList));
+        Builder resource(string path, string localPath, bool canList = true, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+            return resource(path, new DefaultResourceHandler(localPath).isListingEnabled(canList), 
+                groupName, groupType);
         }
 
-        Builder resource(string path, AbstractResourceHandler handler) {
+        Builder resource(string path, AbstractResourceHandler handler, 
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
             path = path.strip();
             assert(path.length > 0, "The path can't be empty");
 
@@ -523,13 +526,12 @@ class HttpServer : AbstractLifecycle {
             }
 
             path ~= "*";
-
-            warningf("path: %s, staticPath: %s", path, staticPath);
+            version(HUNT_HTTP_DEBUG) warningf("path: %s, staticPath: %s", path, staticPath);
 
             if(path == staticPath || staticPath.empty()) {
-                return addRoute([path], cast(string[])null, handler);
+                return addRoute([path], cast(string[])null, handler, groupName, groupType);
             } else {
-                return addRoute([path, staticPath], cast(string[])null, handler);
+                return addRoute([path, staticPath], cast(string[])null, handler, groupName, groupType);
             }
         }
 
