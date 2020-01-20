@@ -24,23 +24,8 @@ import std.array;
  */
 class DefaultRouteHandler : RouteHandler {
 
-    // private HttpRequestOptions _options;
-
     this() {
-        // this(new HttpRequestOptions());
     }
-
-    // this(HttpRequestOptions options) {
-    //     this._options = options;
-    // }
-
-    // HttpRequestOptions getConfiguration() {
-    //     return _options;
-    // }
-
-    // void setConfiguration(HttpRequestOptions options) {
-    //     this._options = options;
-    // }
 
     override void handle(RoutingContext context) {
         HttpServerRequest request = context.getRequest();

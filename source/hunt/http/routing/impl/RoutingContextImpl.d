@@ -37,7 +37,6 @@ class RoutingContextImpl : RoutingContext {
     private Variant[string] _attributes;
     // private TemplateHandlerSPI templateHandlerSPI = TemplateHandlerSPILoader.getInstance().getTemplateHandlerSPI();
     private bool asynchronousRead = false;
-    // private bool _isHandled = false;
     // private  ConcurrentLinkedDeque<Promise<?>> handlerPromiseQueue;
     private HttpServerContext _context;
     private string _groupName = "default";
