@@ -321,7 +321,12 @@ class HttpServer : AbstractLifecycle {
             GlobalSettings.httpServerOptions = _httpOptions;
         }
 
-        Builder setListener(int port, string host) {
+        Builder setListener(ushort port) {
+            _httpOptions.setPort(port);
+            return this;
+        }
+
+        Builder setListener(ushort port, string host) {
             _httpOptions.setPort(port);
             _httpOptions.setHost(host);
             return this;

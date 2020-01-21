@@ -58,7 +58,7 @@ class HttpServerOptions : HttpOptions {
      * @param port  the port
      * @return a reference to this, so the API can be used fluently
      */
-    HttpServerOptions setPort(int port) {
+    HttpServerOptions setPort(ushort port) {
         _netServerOptions.setPort(port);
         return this;
     }
