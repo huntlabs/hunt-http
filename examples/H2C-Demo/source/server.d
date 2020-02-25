@@ -3,33 +3,33 @@ module server;
 import std.stdio;
 
 import hunt.http.codec.http.frame;
-import hunt.http.HttpVersion;
 import hunt.http.codec.http.stream;
-
-import hunt.http.server.HttpServer;
-import hunt.http.server.ServerHttpHandler;
-import hunt.http.server.ServerSessionListener;
-// import hunt.http.server.WebSocketHandler;
+// import hunt.http.HttpVersion;
+import hunt.http.server;
 
 import hunt.util.Common;
 import hunt.collection;
 import hunt.logging;
 import hunt.util.Common;
 
+import core.time;
+
 
 void main(string[] args)
 {
-	HttpOptions http2Configuration = new HttpOptions();
-	http2Configuration.setSecureConnectionEnabled(true);
-	http2Configuration.setFlowControlStrategy("simple");
-	http2Configuration.getTcpConfiguration().setTimeout(60 * 1000);
-	http2Configuration.setProtocol(HttpVersion.HTTP_2.asString());
+	HttpServerOptions serverOptions = new HttpServerOptions();
+	serverOptions.setSecureConnectionEnabled(false);
+	serverOptions.setFlowControlStrategy("simple");
+	serverOptions.getTcpConfiguration().setIdleTimeout(60.seconds);
+	serverOptions.setProtocol(HttpVersion.HTTP_2.toString());
+	serverOptions.setHost("0.0.0.0");
+	serverOptions.setPort(8080);
 
 	Map!(int, int) settings = new HashMap!(int, int)();
-	settings.put(SettingsFrame.HEADER_TABLE_SIZE, http2Configuration.getMaxDynamicTableSize());
-	settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, http2Configuration.getInitialStreamSendWindow());
+	settings.put(SettingsFrame.HEADER_TABLE_SIZE, serverOptions.getMaxDynamicTableSize());
+	settings.put(SettingsFrame.INITIAL_WINDOW_SIZE, serverOptions.getInitialStreamSendWindow());
 
-	HttpServer server = new HttpServer("0.0.0.0", 8080, http2Configuration, new class ServerSessionListener {
+	HttpServer server = new HttpServer(serverOptions, new class ServerSessionListener {
 
 		override
 		Map!(int, int) onPreface(Session session) {
@@ -145,7 +145,7 @@ void main(string[] args)
 		bool onIdleTimeout(Session session) {
 			return false;
 		}
-	}, new ServerHttpHandlerAdapter(), null);
+	}, new ServerHttpHandlerAdapter(serverOptions), null);
 
 	server.start();
 }

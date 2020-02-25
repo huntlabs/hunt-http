@@ -71,7 +71,6 @@ void testHttpClientWithCookie() {
     Request request = rb.build();
     response = client.newCall(request).execute();
 
-
     if (response !is null) {
         tracef("status code: %d", response.getStatus());
         warning("response: ", response.getBody().asString());

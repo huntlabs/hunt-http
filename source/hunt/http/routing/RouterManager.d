@@ -16,6 +16,7 @@ import hunt.util.Common;
  * 
  */
 enum RouteGroupType {
+    Default,
     Host,
     Path
 }

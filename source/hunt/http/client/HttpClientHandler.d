@@ -40,7 +40,8 @@ class HttpClientHandler : HttpConnectionHandler {
 
     this(HttpClientOptions options, HttpClientContext httpClientContext) {
         // super(_options);
-        this._httpClientContext = httpClientContext;
+        _options = options;
+        _httpClientContext = httpClientContext;
     }
 
     override

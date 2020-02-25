@@ -106,7 +106,7 @@ class HttpServer : AbstractLifecycle {
                 serverHttpHandler, webSocketHandler);
     }
 
-    private this(HttpServerOptions options, ServerSessionListener listener,
+    this(HttpServerOptions options, ServerSessionListener listener,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         if (options is null)
             throw new IllegalArgumentException("the http configuration is null");
