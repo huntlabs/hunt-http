@@ -44,39 +44,39 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
         }
 
 
-string responseString = `HTTP/1.1 000 
-Server: Hunt-HTTP/1.0
-Date: Tue, 11 Dec 2018 08:17:36 GMT
-Content-Type: text/plain
-Content-Length: 13
-Connection: keep-alive
+// string responseString = `HTTP/1.1 000 
+// Server: Hunt-HTTP/1.0
+// Date: Tue, 11 Dec 2018 08:17:36 GMT
+// Content-Type: text/plain
+// Content-Length: 13
+// Connection: keep-alive
 
-Hello, World!`;
+// Hello, World!`;
 
-    data = BufferUtils.wrap(cast(byte[])responseString);
+//     data = BufferUtils.wrap(cast(byte[])responseString);
 
-        tcpSession.encode(data);
+        // tcpSession.encode(data);
 
-        // HttpGenerator generator = getHttpGenerator();
-        // HttpGenerator.Result generatorResult;
-        // ByteBuffer header = getHeaderByteBuffer();
+        HttpGenerator generator = getHttpGenerator();
+        HttpGenerator.Result generatorResult;
+        ByteBuffer header = getHeaderByteBuffer();
 
-        // generatorResult = generate(metaData, header, null, data, false);
-        // if (generatorResult == HttpGenerator.Result.FLUSH && 
-        //     generator.getState() == HttpGenerator.State.COMMITTED) {
-        //     if (data !is null) {
-        //         // ByteBuffer[] headerAndData = [header, data];
-        //         // tcpSession.encode(headerAndData);
-        //         tcpSession.encode(header);
-        //         tcpSession.encode(data);
-        //     } else {
-        //         tcpSession.encode(header);
-        //     }
-        //     committed = true;
-        // } else {
-        //     generateHttpMessageExceptionally(generatorResult, generator.getState(), 
-        //         HttpGenerator.Result.FLUSH, HttpGenerator.State.COMMITTED);
-        // }
+        generatorResult = generate(metaData, header, null, data, false);
+        if (generatorResult == HttpGenerator.Result.FLUSH && 
+            generator.getState() == HttpGenerator.State.COMMITTED) {
+            if (data !is null) {
+                // ByteBuffer[] headerAndData = [header, data];
+                // tcpSession.encode(headerAndData);
+                tcpSession.encode(header);
+                tcpSession.encode(data);
+            } else {
+                tcpSession.encode(header);
+            }
+            committed = true;
+        } else {
+            generateHttpMessageExceptionally(generatorResult, generator.getState(), 
+                HttpGenerator.Result.FLUSH, HttpGenerator.State.COMMITTED);
+        }
     }
 
     override void write(ByteBuffer data){
