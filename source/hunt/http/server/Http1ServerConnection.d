@@ -299,9 +299,10 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
     }
 
     override protected void generateHttpMessageSuccessfully() {
-        version (HUNT_HTTP_DEBUG)
+        version (HUNT_HTTP_DEBUG) {
             tracef("server session %s generates the HTTP message completely",
                     connection.getId());
+        }
 
         HttpResponse response = connection.getResponse();
         HttpRequest request = connection.getRequest();

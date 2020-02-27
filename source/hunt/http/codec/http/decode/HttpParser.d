@@ -793,7 +793,11 @@ class HttpParser {
 
                         setState(State.HEADER);
 
-                        handle = _requestHandler.startRequest(_methodString, _uri.toString(), _version) || handle;
+                        if(_requestHandler is null) {
+                            warning("_requestHandler is null");
+                        } else {
+                            handle = _requestHandler.startRequest(_methodString, _uri.toString(), _version) || handle;
+                        }
                         continue;
                     } else if (b >= HttpTokens.SPACE)
                         _string.append(cast(char) b);

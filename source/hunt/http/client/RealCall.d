@@ -16,6 +16,7 @@ import hunt.http.codec.http.stream.HttpOutputStream;
 import hunt.http.HttpConnection;
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
+import hunt.http.codec.http.model.HttpHeader;
 import hunt.http.codec.http.model.HttpMethod;
 import hunt.http.codec.http.model.HttpStatus;
 import hunt.http.HttpVersion;
@@ -42,7 +43,8 @@ import std.parallelism;
 
 
 /**
-*/
+ * 
+ */
 class RealCall : Call {
     private HttpClient client;
 
@@ -238,9 +240,9 @@ class RealCall : Call {
         version (HUNT_HTTP_DEBUG) info(connection.getHttpVersion());
 
         if (connection.getHttpVersion() == HttpVersion.HTTP_1_1) {
-
             Http1ClientConnection http1ClientConnection = cast(Http1ClientConnection) connection;
             RequestBody rb = originalRequest.getBody();
+
             if(HttpMethod.permitsRequestBody(originalRequest.getMethod()) && rb !is null) {
                 // http1ClientConnection.send(originalRequest, rb.content(), httpHandler);
                 HttpOutputStream output = http1ClientConnection.getHttpOutputStream(originalRequest, httpHandler);

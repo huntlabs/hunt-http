@@ -40,10 +40,9 @@ import std.socket;
 alias HttpProtocol = hunt.http.codec.http.model.Protocol.Protocol;
 alias SessionListener = StreamSession.Listener;
 
-// import hunt.http.codec.websocket.model.WebSocketConstants.SPEC_VERSION;
-
 /**
-*/
+ * 
+ */
 class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
     private Promise!(WebSocketConnection) webSocketConnectionPromise;
@@ -328,7 +327,11 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
 
         if (wrap.writing is null) {
             wrap.writing = handler;
-            request.getFields().put(HttpHeader.HOST, getTcpConnection().getRemoteAddress().toAddrString());
+            HttpFields headerFields = request.getFields();
+            
+            if(!headerFields.contains(HttpHeader.HOST)) {
+                headerFields.put(HttpHeader.HOST, request.getURI.getHost());
+            }
             handler.connection = this;
             handler.request = request;
             handler.onReady();

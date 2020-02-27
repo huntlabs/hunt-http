@@ -29,7 +29,8 @@ import hunt.logging;
 import std.array;
 
 /**
-*/
+ * 
+ */
 class Http2ClientHandler : HttpConnectionHandler {
 
     // private Map!(int, HttpClientContext) http2ClientContext;
@@ -126,7 +127,6 @@ class Http2ClientHandler : HttpConnectionHandler {
             Http1ClientConnection http1ClientConnection = new Http1ClientConnection(config, connection);
             connection.setAttribute(HttpConnection.NAME, http1ClientConnection);
             promise.succeeded(http1ClientConnection);
-
         } catch (Exception t) {
             warning(t);
             promise.failed(t);

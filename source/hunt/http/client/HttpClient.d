@@ -116,9 +116,7 @@ class HttpClient : AbstractLifecycle {
         }).setHandler(new Http2ClientHandler(httpConfiguration, clientContext));
 
         client.setOnClosed(_onClosed);
-
         client.connect(host, port);
-
         _isConnected = client.isConnected();
     }
 

@@ -27,7 +27,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
 
     protected void commit(ByteBuffer data) {
         if (committed || closed) {
-            debug warning("connection closed already, or data committed already.");
+            debug warning("connection closed, or data committed already.");
             return;
         }
 
@@ -43,26 +43,40 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             infof("committing data: %s", data.toString());
         }
 
-        HttpGenerator generator = getHttpGenerator();
-        HttpGenerator.Result generatorResult;
-        ByteBuffer header = getHeaderByteBuffer();
 
-        generatorResult = generate(metaData, header, null, data, false);
-        if (generatorResult == HttpGenerator.Result.FLUSH && 
-            generator.getState() == HttpGenerator.State.COMMITTED) {
-            if (data !is null) {
-                // ByteBuffer[] headerAndData = [header, data];
-                // tcpSession.encode(headerAndData);
-                tcpSession.encode(header);
-                tcpSession.encode(data);
-            } else {
-                tcpSession.encode(header);
-            }
-            committed = true;
-        } else {
-            generateHttpMessageExceptionally(generatorResult, generator.getState(), 
-                HttpGenerator.Result.FLUSH, HttpGenerator.State.COMMITTED);
-        }
+string responseString = `HTTP/1.1 000 
+Server: Hunt-HTTP/1.0
+Date: Tue, 11 Dec 2018 08:17:36 GMT
+Content-Type: text/plain
+Content-Length: 13
+Connection: keep-alive
+
+Hello, World!`;
+
+    data = BufferUtils.wrap(cast(byte[])responseString);
+
+        tcpSession.encode(data);
+
+        // HttpGenerator generator = getHttpGenerator();
+        // HttpGenerator.Result generatorResult;
+        // ByteBuffer header = getHeaderByteBuffer();
+
+        // generatorResult = generate(metaData, header, null, data, false);
+        // if (generatorResult == HttpGenerator.Result.FLUSH && 
+        //     generator.getState() == HttpGenerator.State.COMMITTED) {
+        //     if (data !is null) {
+        //         // ByteBuffer[] headerAndData = [header, data];
+        //         // tcpSession.encode(headerAndData);
+        //         tcpSession.encode(header);
+        //         tcpSession.encode(data);
+        //     } else {
+        //         tcpSession.encode(header);
+        //     }
+        //     committed = true;
+        // } else {
+        //     generateHttpMessageExceptionally(generatorResult, generator.getState(), 
+        //         HttpGenerator.Result.FLUSH, HttpGenerator.State.COMMITTED);
+        // }
     }
 
     override void write(ByteBuffer data){

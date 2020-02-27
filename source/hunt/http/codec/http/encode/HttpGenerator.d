@@ -243,7 +243,14 @@ class HttpGenerator {
                 } catch (Exception e) {
                     throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, cast(string)e.message(), e);
                 } finally {
+                    // tracef("Header: %s, pos: %d", header.toString(), pos);
                     BufferUtils.flipToFlush(header, pos);
+
+                    version(HUNT_HTTP_DEBUG) {
+                        tracef("Header: %s, pos: %d", header.toString(), pos);
+                        string headerData = cast(string) header.getRemaining();
+                        trace(headerData);
+                    }
                 }
             }
 
@@ -417,6 +424,12 @@ class HttpGenerator {
                     throw new BadMessageException(HttpStatus.INTERNAL_SERVER_ERROR_500, cast(string)e.message(), e);
                 } finally {
                     BufferUtils.flipToFlush(header, pos);
+
+                    version(HUNT_HTTP_DEBUG) {
+                        tracef("Header: %s, pos: %d", header.toString(), pos);
+                        string headerData = cast(string) header.getRemaining();
+                        warning(headerData);
+                    }
                 }
 
                 version(HUNT_METRIC) {
@@ -562,7 +575,7 @@ class HttpGenerator {
         HttpResponse response = cast(HttpResponse) metaData;
 
         version(HUNT_HTTP_DEBUG) {
-            tracef("Header fields:\n%s", metaData.getFields().toString());
+            // tracef("Header fields:\n%s", metaData.getFields().toString());
             tracef("generateHeaders %s, last=%s, content=%s", metaData.toString(), 
                 last, BufferUtils.toDetailString(content));
         }
@@ -737,6 +750,12 @@ class HttpGenerator {
 
         // end the header.
         header.put(HttpTokens.CRLF);
+
+        // version(HUNT_HTTP_DEBUG) {
+        //     header.flip();
+        //     string headerData = cast(string) header.getRemaining();
+        //     warning(headerData);
+        // }
     }
 
     /* ------------------------------------------------------------------------------- */
