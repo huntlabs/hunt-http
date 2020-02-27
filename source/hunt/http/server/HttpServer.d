@@ -88,7 +88,7 @@ class HttpServer : AbstractLifecycle {
                 serverHttpHandler, webSocketHandler);
     }
 
-    this(string host, int port, HttpServerOptions httpOptions,
+    this(string host, ushort port, HttpServerOptions httpOptions,
             ServerHttpHandler serverHttpHandler) {
         httpOptions.setHost(host);
         httpOptions.setPort(port);
@@ -96,7 +96,7 @@ class HttpServer : AbstractLifecycle {
                 serverHttpHandler, new WebSocketHandlerAdapter());
     }
 
-    this(string host, int port, HttpServerOptions httpOptions,
+    this(string host, ushort port, HttpServerOptions httpOptions,
             ServerHttpHandler serverHttpHandler, WebSocketHandler webSocketHandler) {
         if (host is null)
             throw new IllegalArgumentException("the http server host is empty");
