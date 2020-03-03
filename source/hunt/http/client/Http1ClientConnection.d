@@ -20,6 +20,7 @@ import hunt.http.codec.websocket.stream.WebSocketConnectionImpl;
 
 import hunt.http.HttpConnection;
 import hunt.http.HttpField;
+import hunt.http.HttpFields;
 import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
 import hunt.http.HttpOptions;

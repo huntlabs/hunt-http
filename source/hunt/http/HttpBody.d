@@ -77,25 +77,25 @@ abstract class HttpBody {
                 contentType = contentType ~ "; charset=utf-8";
             }
         }
-        byte[] bytes = cast(byte[])content; // content.getBytes(charset);
+        ubyte[] bytes = cast(ubyte[])content; // content.getBytes(charset);
         return create(contentType, bytes);
     }
 
 
     static HttpBody create(string contentType, long conetntLength, ByteBuffer buffer) {
-        byte[] content = buffer.getRemaining();
+        ubyte[] content = cast(ubyte[])buffer.getRemaining();
         assert(cast(long)content.length == conetntLength);
         return create(contentType, content);
     }
 
 	
     /** Returns a new request body that transmits {@code content}. */
-    static HttpBody create(string contentType, byte[] content) {
+    static HttpBody create(string contentType, const(ubyte)[] content) {
         return create(contentType, content, 0, cast(int)content.length);
     }
 
     /** Returns a new request body that transmits {@code content}. */
-    static HttpBody create(string type, byte[] content,
+    static HttpBody create(string type, const(ubyte)[] content,
             int offset, int byteCount) {
 
         if (content.empty()) throw new NullPointerException("content is null");
@@ -117,7 +117,7 @@ abstract class HttpBody {
             }
 
             override void writeTo(HttpOutputStream sink) {
-                sink.write(content, offset, byteCount);
+                sink.write(cast(byte[])content, offset, byteCount);
             }
         };
     }

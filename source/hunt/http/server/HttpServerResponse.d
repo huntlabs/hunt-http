@@ -4,6 +4,7 @@ import hunt.http.Cookie;
 
 import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
+import hunt.http.HttpBody;
 import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
 
@@ -26,6 +27,11 @@ class HttpServerResponse : HttpResponse {
 
 	this(int status, string reason, HttpFields fields, long contentLength) {
 		super(HttpVersion.HTTP_1_1, status, reason, fields, contentLength);
+	}
+
+	this(HttpBody content) {
+		super(HttpVersion.HTTP_1_1, 200, new HttpFields());
+		withBody(content);
 	}
 
 	

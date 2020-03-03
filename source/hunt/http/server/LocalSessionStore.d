@@ -80,7 +80,7 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
         if (session is null) {
             throw new SessionNotFoundException(key);
         } else {
-            if (session.isInvalid()) {
+            if (!session.isValid()) {
                 map.remove(session.getId());
                 throw new SessionInvalidException("the session is expired");
             } else {
@@ -101,7 +101,7 @@ class LocalSessionStore : AbstractLifecycle, SessionStore {
         scope(exit) mapMutex.unlock();
         string[] ids;
         foreach(string id, HttpSession session; map) {
-            if (session.isInvalid()) {
+            if (!session.isValid()) {
                 ids ~= id; 
             }
         }

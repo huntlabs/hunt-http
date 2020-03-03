@@ -56,9 +56,9 @@ class HttpServerRequest : HttpRequest {
     private MultipartFormParser _multipartFormParser;
     private UrlEncoded _urlEncodedMap;
 
+    private Action1!HttpServerRequest _messageCompleteHandler;
     // private Action1!ByteBuffer _contentHandler;
-    // private Action1!HttpServerRequest _contentCompleteHandler;
-    private Action1!HttpServerRequest _messageCompleteHandler;  
+    private Action1!HttpServerRequest _contentCompleteHandler;  
 
     this(string method, string uri, HttpVersion ver, HttpServerOptions options) {
         enum string connect = HttpMethod.CONNECT.asString();
@@ -249,6 +249,10 @@ class HttpServerRequest : HttpRequest {
                         GlobalSettings.getMultipartOptions(_options.requestOptions),
                         _options.requestOptions.getTempFilePath());
             }
+
+            if(_contentCompleteHandler !is null) {
+                _contentCompleteHandler(this);
+            }
         } catch (IOException e) {
             version(HUNT_DEBUG) warning("http server ends receiving data exception: ", e.msg);
             version(HUNT_HTTP_DEBUG) warning(e);
@@ -265,10 +269,10 @@ class HttpServerRequest : HttpRequest {
     //     return this;
     // }
 
-    // HttpRequest onContentComplete(Action1!HttpRequest handler) {
-    //     _contentCompleteHandler = handler;
-    //     return this;
-    // }
+    HttpRequest onContentComplete(Action1!HttpServerRequest handler) {
+        _contentCompleteHandler = handler;
+        return this;
+    }
 
     HttpServerRequest onMessageComplete(Action1!HttpServerRequest handler) {
         _messageCompleteHandler = handler;
@@ -300,10 +304,15 @@ class HttpServerRequest : HttpRequest {
 		return _cookies;
     }
 
+    bool isMultipartForm() {
+        return _multipartFormParser !is null;
+    }
 
     Part[] getParts() {
-        if (_multipartFormParser is null) 
-            return null;
+        if (_multipartFormParser is null) {
+            throw new RuntimeException("The reqest is not a multipart form.");
+            // return null;
+        }
 
         // try {
             return _multipartFormParser.getParts();
@@ -315,8 +324,10 @@ class HttpServerRequest : HttpRequest {
     }
 
     Part getPart(string name) {
-        if (_multipartFormParser is null) 
-            return null;
+        if (_multipartFormParser is null) {
+            throw new RuntimeException("The reqest is not a multipart form.");
+            // return null;
+        }
 
         // try {
             return _multipartFormParser.getPart(name);

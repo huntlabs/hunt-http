@@ -80,7 +80,7 @@ class Http1ServerConnection : AbstractHttp1Connection, HttpServerConnection {
             WebSocketHandler webSocketHandler) {
         
         version (HUNT_DEBUG) 
-            trace("initializing Http1ServerConnection ...");
+            trace("Initializing Http1ServerConnection ...");
         super(config, tcpSession, requestHandler, null);
         requestHandler.connection = this;
         this.serverSessionListener = serverSessionListener;

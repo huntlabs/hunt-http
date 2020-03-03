@@ -39,7 +39,7 @@ class Http2Generator {
 
 	this(int maxDynamicTableSize, int maxHeaderBlockFragment) {
 
-        version (HUNT_DEBUG) trace("initializing Http2Generator");
+        version (HUNT_DEBUG) trace("Initializing Http2Generator");
 
 		headerGenerator = new HeaderGenerator();
 		hpackEncoder = new HpackEncoder(maxDynamicTableSize);
