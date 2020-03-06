@@ -14,7 +14,11 @@ class HttpServerOptions : HttpOptions {
         super(options);
     }
 
-    override NetServerOptions getTcpConfiguration() {
-        return cast(NetServerOptions)super.getTcpConfiguration;
+    override NetServerOptions tcpOptions() {
+        return cast(NetServerOptions)super.tcpOptions;
+    }
+
+    override void tcpOptions(TcpSslOptions value) {
+        super.tcpOptions = value;
     }
 }

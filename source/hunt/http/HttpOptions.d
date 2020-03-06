@@ -19,7 +19,8 @@ deprecated("Using HttpOptions instead.")
 alias HttpConfiguration = HttpOptions;
 
 /**
-*/
+ * 
+ */
 class HttpOptions {
 
     // TCP settings
@@ -64,7 +65,7 @@ class HttpOptions {
      *
      * @return The TCP configuration.
      */
-    TcpSslOptions getTcpConfiguration() {
+    TcpSslOptions tcpOptions() {
         return tcpSslOptions;
     }
 
@@ -73,6 +74,16 @@ class HttpOptions {
      *
      * @param tcpSslOptions The TCP configuration.
      */
+    void tcpOptions(TcpSslOptions tcpSslOptions) {
+        this.tcpSslOptions = tcpSslOptions;
+    }
+
+    deprecated("Using tcpOptions instead.")
+    TcpSslOptions getTcpConfiguration() {
+        return tcpSslOptions;
+    }
+
+    deprecated("Using tcpOptions instead.")
     void setTcpConfiguration(TcpSslOptions tcpSslOptions) {
         this.tcpSslOptions = tcpSslOptions;
     }

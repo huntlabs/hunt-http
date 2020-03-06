@@ -36,7 +36,8 @@ import core.atomic;
 import core.time;
 
 /**
-*/
+ * 
+ */
 class HttpClient : AbstractLifecycle {
 
     alias void delegate() Callback;
@@ -60,10 +61,10 @@ class HttpClient : AbstractLifecycle {
             throw new IllegalArgumentException("http configuration is null");
         }
 
-        clientOptions = c.getTcpConfiguration();
+        clientOptions = c.tcpOptions();
         if(clientOptions is null) {
             clientOptions = new NetClientOptions();
-            c.setTcpConfiguration(clientOptions);
+            c.tcpOptions = clientOptions;
         }
         this.httpConfiguration = c;
          // = new ConcurrentHashMap!()();

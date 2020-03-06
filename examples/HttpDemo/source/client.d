@@ -1,15 +1,7 @@
 
 module HttpClientTest;
 
-import hunt.http.client.HttpClient;
-import hunt.http.client.HttpClientConnection;
-import hunt.http.client.RequestBuilder;
-import hunt.http.client.Call;
-
-import hunt.http.client.HttpClientResponse;
-import hunt.http.client.HttpClientRequest;
-import hunt.http.client.FormBody;
-import hunt.http.client.RequestBody;
+import hunt.http.client;
 
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
@@ -18,14 +10,16 @@ import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 import hunt.util.MimeType;
 
+import core.time;
 import std.stdio;
 
 void main(string[] args) {
-    version(WITH_HUNT_TRACE) {
-        testOpenTracing();
-    } else {
-        testSimpleHttpClient();
-    }
+    // version(WITH_HUNT_TRACE) {
+    //     testOpenTracing();
+    // } else {
+    //     testSimpleHttpClient();
+    // }
+    testSimpleHttpClient();
 }
 
 
@@ -33,10 +27,10 @@ void main(string[] args) {
 void testSimpleHttpClient() {
     HttpClientTest test = new HttpClientTest();
     try {
-    test.testGet();
+    // test.testGet();
     // test.testGetHttps();
     // test.testAsynchronousGet();
-    // test.testPost();
+    test.testPost();
     // test.testFormPost();
         
     } catch(Exception ex) {
@@ -48,13 +42,21 @@ class HttpClientTest {
     HttpClient client;
 
     this() {
-        client = new HttpClient();
+        
+        NetClientOptions clientOptions = new NetClientOptions();
+        clientOptions.setIdleTimeout(60.seconds);
+        clientOptions.setConnectTimeout(5.seconds);
+
+        HttpClientOptions config = new HttpClientOptions(clientOptions);
+
+        client = new HttpClient(config);
     }
 
     // 
     void testGet() {
         // string str = runGet("http://10.1.222.120/test.html");
-        string str = runGet("http://10.1.222.120:8080/index.html");
+        // string str = runGet("http://10.1.222.120:80/index.html");
+        string str = runGet("http://api-uas.ptdev.cn/register/username");
         // string str = runGet("http://127.0.0.1:8080/json");
         // string str = runGet("http://www.putao.com/");
         trace(str);
@@ -133,6 +135,8 @@ class HttpClientTest {
 
         trace(response);
     }
+
+
 
     string post(string url, string contentType,  string content) {
         RequestBody b = new RequestBody(contentType, content);

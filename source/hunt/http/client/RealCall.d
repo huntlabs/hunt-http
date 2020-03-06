@@ -134,7 +134,7 @@ class RealCall : Call {
         doRequestTask(httpHandler);
 
         HttpOptions options = client.getHttpConfiguration();
-        TcpSslOptions tcpOptions = options.getTcpConfiguration(); 
+        TcpSslOptions tcpOptions = options.tcpOptions(); 
         Duration idleTimeout = tcpOptions.getIdleTimeout();     
 
         if(hcr is null) {
@@ -221,7 +221,7 @@ class RealCall : Call {
         HttpConnection connection;
         try {
             client.connect(uri.getHost(), port, promise);
-            NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().getTcpConfiguration();
+            NetClientOptions tcpConfig = cast(NetClientOptions)client.getHttpConfiguration().tcpOptions();
             connection = promise.get(tcpConfig.getConnectTimeout());
         } catch(Exception ex) {
             string msg = "Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string();

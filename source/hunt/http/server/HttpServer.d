@@ -59,10 +59,10 @@ class HttpServer : AbstractLifecycle {
 
         this.host = host;
         this.port = port;
-        _serverOptions = config.getTcpConfiguration();
+        _serverOptions = config.tcpOptions();
         if(_serverOptions is null ) {
             _serverOptions = new NetServerOptions();
-            config.setTcpConfiguration(_serverOptions);
+            config.tcpOptions = _serverOptions;
         }
         this._httpOptions = config;
         

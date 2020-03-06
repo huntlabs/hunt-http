@@ -4,6 +4,9 @@ import hunt.http.HttpOptions;
 import hunt.net.TcpSslOptions;
 import hunt.net.NetClientOptions;
 
+/**
+ * 
+ */
 class HttpClientOptions : HttpOptions {
 
     this() {
@@ -14,7 +17,11 @@ class HttpClientOptions : HttpOptions {
         super(options);
     }
 
-    override NetClientOptions getTcpConfiguration() {
-        return cast(NetClientOptions)super.getTcpConfiguration;
+    override NetClientOptions tcpOptions() {
+        return cast(NetClientOptions)super.tcpOptions;
+    }
+
+    override void tcpOptions(TcpSslOptions value) {
+        super.tcpOptions = value;
     }
 }
