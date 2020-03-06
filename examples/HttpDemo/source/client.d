@@ -3,6 +3,7 @@ module HttpClientTest;
 
 import hunt.http.client;
 
+
 import hunt.http.codec.http.model.HttpFields;
 import hunt.http.codec.http.model.HttpField;
 
@@ -118,7 +119,7 @@ class HttpClientTest {
         info("A request has been sent.");
     }
 
-	// 
+	
     void testPost() {
         import hunt.net.util.UrlEncoded;
         UrlEncoded encoder = new UrlEncoded;
@@ -135,8 +136,6 @@ class HttpClientTest {
 
         trace(response);
     }
-
-
 
     string post(string url, string contentType,  string content) {
         RequestBody b = new RequestBody(contentType, content);
