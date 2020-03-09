@@ -39,9 +39,9 @@ class RouterManagerImpl : RouterManager {
     private Matcher regexPathMatcher;
     private Matcher parameterPathMatcher;
     private Matcher httpMethodMatcher;
-    private Matcher contentTypePreciseMatcher;
-    private Matcher contentTypePatternMatcher;
-    private Matcher acceptHeaderMatcher;
+    // private Matcher contentTypePreciseMatcher;
+    // private Matcher contentTypePatternMatcher;
+    // private Matcher acceptHeaderMatcher;
 
     this() {
         matcherMap = new HashMap!(Matcher.MatchType, List!(Matcher))();
@@ -55,13 +55,13 @@ class RouterManagerImpl : RouterManager {
         httpMethodMatcher = new HttpMethodMatcher();
         matcherMap.put(Matcher.MatchType.METHOD, Collections.singletonList!(Matcher)(httpMethodMatcher));
 
-        contentTypePreciseMatcher = new ContentTypePreciseMatcher();
-        contentTypePatternMatcher = new ContentTypePatternMatcher();
-        al = new ArrayList!Matcher([contentTypePreciseMatcher, contentTypePatternMatcher]);
-        matcherMap.put(Matcher.MatchType.CONTENT_TYPE, al);
+        // contentTypePreciseMatcher = new ContentTypePreciseMatcher();
+        // contentTypePatternMatcher = new ContentTypePatternMatcher();
+        // al = new ArrayList!Matcher([contentTypePreciseMatcher, contentTypePatternMatcher]);
+        // matcherMap.put(Matcher.MatchType.CONTENT_TYPE, al);
 
-        acceptHeaderMatcher = new AcceptHeaderMatcher();
-        matcherMap.put(Matcher.MatchType.ACCEPT, Collections.singletonList!(Matcher)(acceptHeaderMatcher));
+        // acceptHeaderMatcher = new AcceptHeaderMatcher();
+        // matcherMap.put(Matcher.MatchType.ACCEPT, Collections.singletonList!(Matcher)(acceptHeaderMatcher));
     }
 
     Matcher getHttpMethodMatcher() {
@@ -84,17 +84,17 @@ class RouterManagerImpl : RouterManager {
         return parameterPathMatcher;
     }
 
-    Matcher getContentTypePreciseMatcher() {
-        return contentTypePreciseMatcher;
-    }
+    // Matcher getContentTypePreciseMatcher() {
+    //     return contentTypePreciseMatcher;
+    // }
 
-    Matcher getAcceptHeaderMatcher() {
-        return acceptHeaderMatcher;
-    }
+    // Matcher getContentTypePatternMatcher() {
+    //     return contentTypePatternMatcher;
+    // }
 
-    Matcher getContentTypePatternMatcher() {
-        return contentTypePatternMatcher;
-    }
+    // Matcher getAcceptHeaderMatcher() {
+    //     return acceptHeaderMatcher;
+    // }
 
     override NavigableSet!RouterMatchResult findRouter(string method, 
             string path, string contentType, string accept) {
@@ -104,8 +104,8 @@ class RouterManagerImpl : RouterManager {
 
         findRouter(method, Matcher.MatchType.METHOD, routerMatchTypes, routerParameters);
         findRouter(path, Matcher.MatchType.PATH, routerMatchTypes, routerParameters);
-        findRouter(contentType, Matcher.MatchType.CONTENT_TYPE, routerMatchTypes, routerParameters);
-        findRouter(accept, Matcher.MatchType.ACCEPT, routerMatchTypes, routerParameters);
+        // findRouter(contentType, Matcher.MatchType.CONTENT_TYPE, routerMatchTypes, routerParameters);
+        // findRouter(accept, Matcher.MatchType.ACCEPT, routerMatchTypes, routerParameters);
 
         NavigableSet!(RouterMatchResult) ret = new TreeSet!(RouterMatchResult)();
         foreach(Router key, Set!(Matcher.MatchType) value; routerMatchTypes) {
@@ -122,9 +122,11 @@ class RouterManagerImpl : RouterManager {
                             Map!(Router, Map!(string, string)) routerParameters) {
 
         List!(Matcher) matchers = matcherMap.get(matchType);
+        
         foreach(Matcher m; matchers) {
             MatchResult mr = m.match(value);
             if(mr is null) continue;
+
             Set!(Router) routers = mr.getRouters();
             foreach(Router router; routers) {
                 routerMatchTypes.computeIfAbsent(router, k => new HashSet!(Matcher.MatchType)())
