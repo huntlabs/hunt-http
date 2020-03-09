@@ -23,7 +23,9 @@ import hunt.io.Common;
 import hunt.logging.ConsoleLogger;
 import hunt.util.Common;
 
+import std.algorithm;
 import std.container;
+import std.string;
 import std.variant;
 
 /**
@@ -87,6 +89,9 @@ class RoutingContextImpl : RoutingContext {
     }
 
     override string getRouterParameter(string name) {
+        if(current is null) {
+            throw new Exception("Call next() first.");
+        }
         return current.getParameters().get(name);
     }
 
@@ -121,12 +126,23 @@ class RoutingContextImpl : RoutingContext {
 
     override void next() {
         current = routers.pollFirst();
-        if (current is null)
+        if (current is null) {
+            version(HUNT_HTTP_DEBUG) warning("No router found.");
             return;
+        }
 
         Router r = current.getRouter();
-        version (HUNT_HTTP_DEBUG)
+        version (HUNT_HTTP_DEBUG) {
             infof("current router: %d", r.getId());
+        }
+
+        Map!(string, string) routeParameters = current.getParameters();
+        foreach(string key, string value; routeParameters) {
+            // if(key.startsWith("param")) continue;
+            version(HUNT_HTTP_DEBUG) tracef("Adding route parameters, name=%s, value=%s", key, value);
+            request.putQueryParameter(key, value);
+        }
+
         r.handle(this);
         return;
     }

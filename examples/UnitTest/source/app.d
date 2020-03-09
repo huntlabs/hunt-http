@@ -30,6 +30,8 @@ import test.codec.websocket.encode.GeneratorTest;
 import test.codec.websocket.frame.WebSocketFrameTest;
 import test.codec.websocket.utils.QuoteUtilTest;
 
+import test.http.router.TestMatcher;
+
 import hunt.collection.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging;
@@ -73,7 +75,7 @@ void main() {
 	// // test.codec.http2.decode.*
 	// // **********************
 
-	testUnits!HttpParserTest(); 
+	// testUnits!HttpParserTest(); 
 	// testUnits!Http2DecoderTest();
 
 	// // **********************
@@ -96,6 +98,8 @@ void main() {
 	// testUnits!RFC6455ExamplesParserTest(); 
 	// testUnits!QuoteUtilTest(); 
 	// testUnits!WebSocketFrameTest(); 
+	
+	testUnits!TestMatcher(); 
 }
 
 void testHpackDecoder() {

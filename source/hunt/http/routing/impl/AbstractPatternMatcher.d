@@ -84,12 +84,15 @@ abstract class AbstractPatternMatcher : Matcher {
             int i=0;
             foreach(string item; strings) {
                 // tracef("%d => %s", i, item);
-                param.put("param" ~ i.to!string(), item);
+                // FIXME: Needing refactor or cleanup -@zhangxueping at 2020-03-09T19:24:20+08:00
+                // check this
+                // param.put("param" ~ i.to!string(), item);
                 i++;
             }
 
-            foreach(router; routerSet)
+            foreach(router; routerSet) {
                 parameters.put(router, param);
+            }
 
         }
         if (routers.isEmpty()) {

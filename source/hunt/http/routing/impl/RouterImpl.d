@@ -107,7 +107,8 @@ class RouterImpl : Router {
 
     private bool isParameterPath(string[] paths) {
         foreach (string p ; paths) {
-            if (p.charAt(0) == ':') {
+            version(HUNT_HTTP_DEBUG_MORE) trace("path: ", p);
+            if (p[0] == ':' || p[0] == '{') {
                 return true;
             }
         }
@@ -158,26 +159,26 @@ class RouterImpl : Router {
 
     override
     Router consumes(string contentType) {
-        if (!contentType.canFind("*")) {
-            routerManager.getContentTypePreciseMatcher().add(contentType, this);
-        } else {
-            routerManager.getContentTypePatternMatcher().add(contentType, this);
-        }
-        matchTypes.add(MatchType.CONTENT_TYPE);
+        // if (!contentType.canFind("*")) {
+        //     routerManager.getContentTypePreciseMatcher().add(contentType, this);
+        // } else {
+        //     routerManager.getContentTypePatternMatcher().add(contentType, this);
+        // }
+        // matchTypes.add(MatchType.CONTENT_TYPE);
         return this;
     }
 
     override
     Router produces(string accept) {
-        routerManager.getAcceptHeaderMatcher().add(accept, this);
-        matchTypes.add(MatchType.ACCEPT);
+        // routerManager.getAcceptHeaderMatcher().add(accept, this);
+        // matchTypes.add(MatchType.ACCEPT);
         return this;
     }
 
     Router handler(RouteHandler handler) {
         if(handler !is null)  {
             this._routingHandler = (RoutingContext ctx) {
-                version(HUNT_HTTP_DEBUG) trace("current route handler: ", typeid(cast(Object)handler));
+                version(HUNT_HTTP_DEBUG) trace("Current route handler: ", typeid(cast(Object)handler));
                 handler.handle(ctx); 
             };
         }

@@ -588,8 +588,8 @@ class HttpServer : AbstractLifecycle {
             try {
                 if(handler !is null) handler(ctx);
             } catch (Exception ex) {
-                version(HUNT_DEBUG) errorf("route handler exception: %s", ex.msg);
-                version(HUNT_HTTP_DEBUG) error(ex);
+                errorf("route handler exception: %s", ex.msg);
+                version(HUNT_DEBUG) error(ex);
                 if(!ctx.isCommitted()) {
                     HttpServerResponse res = ctx.getResponse();
                     if(res !is null) {

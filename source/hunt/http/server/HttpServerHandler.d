@@ -137,7 +137,8 @@ version(WITH_HUNT_SECURITY) {
             switch (protocol) {
             case HTTP_1_1:
                 httpConnection = new Http1ServerConnection(_options, connection, 
-                    new Http1ServerRequestHandler(serverHttpHandler), listener, webSocketHandler);
+                    new Http1ServerRequestHandler(serverHttpHandler, _options), 
+                    listener, webSocketHandler);
                 break;
 
             case HTTP_2:

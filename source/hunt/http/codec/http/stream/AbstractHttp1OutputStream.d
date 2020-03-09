@@ -182,7 +182,7 @@ abstract class AbstractHttp1OutputStream : HttpOutputStream {
             }
         } finally {
             closed = true;
-            version(HUNT_DEBUG) tracef("http1 output stream closed");
+            version(HUNT_DEBUG) infof("http1 output stream closed");
         }
     }
 
