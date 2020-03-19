@@ -137,10 +137,12 @@ class RoutingContextImpl : RoutingContext {
         }
 
         Map!(string, string) routeParameters = current.getParameters();
-        foreach(string key, string value; routeParameters) {
-            // if(key.startsWith("param")) continue;
-            version(HUNT_HTTP_DEBUG) tracef("Adding route parameters, name=%s, value=%s", key, value);
-            request.putQueryParameter(key, value);
+        if(routeParameters !is null) {
+            foreach(string key, string value; routeParameters) {
+                // if(key.startsWith("param")) continue;
+                version(HUNT_HTTP_DEBUG) tracef("Adding route parameters, name=%s, value=%s", key, value);
+                request.putQueryParameter(key, value);
+            }
         }
 
         r.handle(this);

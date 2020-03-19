@@ -97,8 +97,9 @@ abstract class AbstractResourceHandler : RouteHandler {
     }    
 
     void handle(RoutingContext context) {
-        string requestPath = context.getURI().getPath();
-        version(HUNT_HTTP_DEBUG) infof("requestPath: %s", requestPath);
+        // string requestPath = context.getURI().getPath();
+        string requestPath = context.getRequest().originalPath();
+        version(HUNT_DEBUG) infof("requestPath: %s", requestPath);
         bool isDirectory = true;
 
         if(requestPath.length <= 1) {

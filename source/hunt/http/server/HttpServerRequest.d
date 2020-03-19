@@ -63,9 +63,12 @@ class HttpServerRequest : HttpRequest {
     this(string method, string uri, HttpVersion ver, HttpServerOptions options) {
         enum string connect = HttpMethod.CONNECT.asString();
         _options = options;
+
         super(method, 
             new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
-            ver, new HttpFields());        
+            ver, new HttpFields());   
+        // _originalPath = uri;  
+        _originalPath = getURI().getPath();
 
         // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
     }
@@ -343,14 +346,18 @@ class HttpServerRequest : HttpRequest {
 
     import std.string;
 
+    @property string originalPath() {
+        return _originalPath;
+    }
+    private string _originalPath;
+
     @property string path() {
         return getURI().getPath();
     }
 
     @property void path(string value) {
-        return getURI().setPath(value);
+        getURI().setPath(value);
     }
-
 
     @property string decodedPath() {
         return getURI().getDecodedPath();
@@ -449,7 +456,7 @@ class HttpServerRequest : HttpRequest {
     }
 
     void putQueryParameter(string key, string value) {
-        version(HUNT_DEBUG) infof("query parameter: key=%s, values=%s", key, value);
+        version(HUNT_HTTP_DEBUG) infof("query parameter: key=%s, values=%s", key, value);
         _queryParams[key] = value;
     }
 
@@ -486,7 +493,7 @@ class HttpServerRequest : HttpRequest {
     }
 
     @property string[][string] xFormData() {
-        if (_xFormData is null && _isXFormUrlencoded) {
+        if (_xFormData is null && !_isXFormUrlencoded) {
             UrlEncoded map = new UrlEncoded();
             map.decode(getStringBody());
             foreach (string key; map.byKey()) {
@@ -495,6 +502,7 @@ class HttpServerRequest : HttpRequest {
                     _xFormData[key] ~= v.strip();
                 }
             }
+            _isXFormUrlencoded = true;
         }
         return _xFormData;
     }

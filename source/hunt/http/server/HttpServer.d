@@ -858,10 +858,11 @@ version(WITH_HUNT_TRACE) {
             
             if(_pathManagerGroup.length > 0) {
                 HttpServerRequest request = context.httpRequest();
-                string path = request.path();
-                if(path.length > 1 && path[$-1] != '/') {
-                    path ~= "/";
-                }
+                string path = request.originalPath();
+                // if(path.length > 1 && path[$-1] != '/') {
+                //     path ~= "/";
+                // }
+
                 string groupPath = split(path, "/")[1];
 
                 // warningf("full path: %s, group path: %s", path, groupPath);
@@ -869,14 +870,15 @@ version(WITH_HUNT_TRACE) {
                 if(itemPtr !is null) {
                     isHandled = true;
                     path = path[groupPath.length + 1 .. $]; // skip the group path
-                    // version(HUNT_HTTP_DEBUG_MORE) {
-                    //     tracef("full path: %s, group path: %s, new path: %s", request.path(), groupPath, path);
-                    // }
+                    version(HUNT_HTTP_DEBUG) {
+                        tracef("full path: %s, group path: %s, new path: %s", request.path(), groupPath, path);
+                    }
 
                     request.path = path; // Reset the rquest path
                     itemPtr.accept(context);
                     version(HUNT_HTTP_DEBUG_MORE) {
-                        tracef("path group, full path: %s, group path: %s", request.path(), groupPath);
+                        tracef("path group, original path: %s, revised path: %s, group path: %s", 
+                            request.originalPath(), request.path(), groupPath);
                     }
                 }
             } 

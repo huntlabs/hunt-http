@@ -557,7 +557,7 @@ class HttpFields : Iterable!HttpField {
 	 */
 	void add(HttpHeader header, string value) {
 		if (value.empty)
-			throw new IllegalArgumentException("null value");
+			throw new IllegalArgumentException("The value is null for header: " ~ header.toString());
 
 		HttpField field = new HttpField(header, value);
 		add(field);
@@ -782,6 +782,10 @@ class HttpFields : Iterable!HttpField {
 	}
 
 	void add(HttpField field) {
+		version(HUNT_HTTP_DEBUG) {
+			infof("header: %s", field.toString());
+		}
+
 		if (field !is null) {
 			if (_size == _fields.length)
 				_fields = _fields.dup ~ new HttpField[_size];

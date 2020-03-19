@@ -62,6 +62,14 @@ abstract class HttpBody {
             return create(MimeType.TEXT_PLAIN_VALUE, content.to!string);
         }
     }
+    
+    static HttpBody create(T)(string contentType, T content) {
+        static if(isSomeString!T) {
+            return create(contentType, content);
+        } else {
+            return create(contentType, content.to!string);
+        }
+    }
 	
     /**
      * Returns a new request body that transmits {@code content}. If {@code contentType} is non-null
@@ -81,14 +89,12 @@ abstract class HttpBody {
         return create(contentType, bytes);
     }
 
-
     static HttpBody create(string contentType, long conetntLength, ByteBuffer buffer) {
         ubyte[] content = cast(ubyte[])buffer.getRemaining();
         assert(cast(long)content.length == conetntLength);
         return create(contentType, content);
     }
 
-	
     /** Returns a new request body that transmits {@code content}. */
     static HttpBody create(string contentType, const(ubyte)[] content) {
         return create(contentType, content, 0, cast(int)content.length);
@@ -98,10 +104,12 @@ abstract class HttpBody {
     static HttpBody create(string type, const(ubyte)[] content,
             int offset, int byteCount) {
 
-        if (content.empty()) throw new NullPointerException("content is null");
+        if (content.empty()) 
+            throw new NullPointerException("content is null");
+
         // Util.checkOffsetAndCount(content.length, offset, byteCount);
 		assert(offset + byteCount <= content.length);
-
+// dfmt off
         return new class HttpBody {
 
             override string contentType() {
@@ -120,6 +128,7 @@ abstract class HttpBody {
                 sink.write(cast(byte[])content, offset, byteCount);
             }
         };
+// dfmt on        
     }
 
     /** Returns a new request body that transmits the content of {@code file}. */
@@ -140,6 +149,7 @@ abstract class HttpBody {
 			debug warning("uploading a big file: %d MB", total/1024/1024);
 		}
 
+// dfmt off
         return new class HttpBody {
             override string contentType() {
                 return type;
@@ -184,10 +194,6 @@ abstract class HttpBody {
 				}
 			}
         };
+// dfmt on    
     }		
 }
-
-
-// class StringHttpBody {
-
-// }

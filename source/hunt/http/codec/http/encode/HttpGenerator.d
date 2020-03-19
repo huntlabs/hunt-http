@@ -861,8 +861,10 @@ class HttpGenerator {
     }
 
     static void putTo(HttpField field, ByteBuffer bufferInFillMode) {
-        if (typeid(field) == typeid(PreEncodedHttpField)) {
-            (cast(PreEncodedHttpField) field).putTo(bufferInFillMode, HttpVersion.HTTP_1_0);
+        // version(HUNT_HTTP_DEBUG) tracef(field.toString());
+        PreEncodedHttpField pfield = cast(PreEncodedHttpField) field;
+        if (pfield !is null) {
+            pfield.putTo(bufferInFillMode, HttpVersion.HTTP_1_0);
         } else {
             HttpHeader header = field.getHeader();
             if (header != HttpHeader.Null) {

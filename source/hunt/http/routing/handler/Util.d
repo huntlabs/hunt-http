@@ -138,7 +138,7 @@ struct RoutingHandlerUtils {
                 context.write(cast(byte[])data);
                 remaining -= data.length;
             }
-            version(HUNT_HTTP_DEBUG) {
+            version(HUNT_HTTP_DEBUG_MORE) {
                 tracef("read: %s, remaining: %d, eof: %s", 
                     data.length, remaining, f.eof());
             }
