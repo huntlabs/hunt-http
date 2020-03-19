@@ -1,7 +1,7 @@
 {
 	"name": "unittest",
 	"description": "All the unittests for hunt-http.",
-    "copyright": "Copyright (C) 2018-2019, HuntLabs",
+    "copyright": "Copyright (C) 2018-2020, HuntLabs",
     "homepage": "https://www.huntlabs.net/",
 	"license": "Apache-2.0",
 	"dependencies": {
