@@ -50,16 +50,16 @@ abstract class HttpBody {
 
     static HttpBody create(T)(T content) {
         static if(isSomeString!T) {
-            return create(MimeType.TEXT_PLAIN_VALUE, content);
+            return create(MimeType.TEXT_HTML_VALUE, content);
         } else static if(isBasicType!T) {
-            return create(MimeType.TEXT_PLAIN_VALUE, content.to!string);
+            return create(MimeType.TEXT_HTML_VALUE, content.to!string);
         } else  {
             // using defaults
 
             // TODO: Tasks pending completion -@zhangxueping at 2020-01-08T10:21:19+08:00
             // return struct and class as json string
             version(HUNT_HTTP_DEBUG) warningf("Using default conversion for %s", T.stringof);
-            return create(MimeType.TEXT_PLAIN_VALUE, content.to!string);
+            return create(MimeType.TEXT_HTML_VALUE, content.to!string);
         }
     }
     
