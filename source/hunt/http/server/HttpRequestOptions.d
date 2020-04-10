@@ -14,7 +14,7 @@ class HttpRequestOptions {
     private string tempFilePath = "./temp";
     private string tempFileAbsolutePath = "/temp";
     private string charset = "UTF-8";
-    private string _defaultLanguage = "en_US";
+    private string _defaultLanguage = "en-US";
 
     this() {
         tempFilePath = tempDir();
