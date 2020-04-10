@@ -729,9 +729,16 @@ class HttpParser {
                         setState(State.SPACE2);
                     } else if (b < HttpTokens.SPACE && b >= 0) {
                         // HTTP/0.9
-                        if (complianceViolation(HttpComplianceSection.NO_HTTP_0_9, "No request version"))
+                        if (complianceViolation(HttpComplianceSection.NO_HTTP_0_9, "No request version")) {
                             throw new BadMessageException("HTTP/0.9 not supported");
-                        handle = _requestHandler.startRequest(_methodString, _uri.toString(), HttpVersion.HTTP_0_9);
+                        }
+
+                        if(_requestHandler !is null) {
+                            handle = _requestHandler.startRequest(_methodString, _uri.toString(), HttpVersion.HTTP_0_9);
+                        } else {
+                            warning("no requestHandler defined");
+                        }
+
                         setState(State.END);
                         BufferUtils.clear(buffer);
                         handle = handleHeaderContentMessage() || handle;
@@ -786,8 +793,13 @@ class HttpParser {
                             // HTTP/0.9
                             if (complianceViolation(HttpComplianceSection.NO_HTTP_0_9, "No request version"))
                                 throw new BadMessageException("HTTP/0.9 not supported");
-
-                            handle = _requestHandler.startRequest(_methodString, _uri.toString(), HttpVersion.HTTP_0_9);
+                            
+                            if(_requestHandler is null) {
+                                warning("no requestHandler defined");
+                            } else {
+                                handle = _requestHandler.startRequest(_methodString, _uri.toString(), HttpVersion.HTTP_0_9);
+                            }
+                            
                             setState(State.END);
                             BufferUtils.clear(buffer);
                             handle = handleHeaderContentMessage() || handle;
@@ -814,8 +826,12 @@ class HttpParser {
                         }
 
                         setState(State.HEADER);
-
-                        handle = _requestHandler.startRequest(_methodString, _uri.toString(), _version) || handle;
+                        
+                        if(_requestHandler is null) {
+                            warning("no requestHandler defined");
+                        } else {
+                            handle = _requestHandler.startRequest(_methodString, _uri.toString(), _version) || handle;
+                        }
                         continue;
                     } else if (b >= HttpTokens.SPACE)
                         _string.append(cast(char) b);

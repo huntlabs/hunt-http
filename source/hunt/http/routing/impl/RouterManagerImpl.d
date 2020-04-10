@@ -122,8 +122,13 @@ class RouterManagerImpl : RouterManager {
                             Map!(Router, Map!(string, string)) routerParameters) {
 
         List!(Matcher) matchers = matcherMap.get(matchType);
+
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2020-03-31T17:33:01+08:00
+        // https://forum.dlang.org/post/exknjzbuooofyulgeaen@forum.dlang.org
+        for(int i=0; i<matchers.size(); i++) {
+            Matcher m = matchers.get(i);
         
-        foreach(Matcher m; matchers) {
+        // foreach(Matcher m; matchers) {
             MatchResult mr = m.match(value);
             if(mr is null) continue;
 

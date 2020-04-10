@@ -86,6 +86,7 @@ class Http1ServerRequestHandler : HttpRequestParsingHandler {
     }
 
     override bool contentComplete() {
+        assert(request !is null, "Execute startRequest first");
         return serverHttpHandler.contentComplete(request, response, outputStream, connection);
     }
 
