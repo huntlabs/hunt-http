@@ -171,9 +171,9 @@ class HttpServer : AbstractLifecycle {
             }
             version (HUNT_DEBUG) {
                 if (options.isSecureConnectionEnabled())
-                    tracef("Listing at: https://%s:%d", host, port);
+                    infof("Opend a http connection connection: %s", conn.getRemoteAddress());
                 else
-                    tracef("Listing at: http://%s:%d", host, port);
+                    infof("Opend a http connection: %s", conn.getRemoteAddress());
             }
 
             if(_openSucceededHandler !is null) 
