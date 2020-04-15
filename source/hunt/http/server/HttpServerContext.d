@@ -73,6 +73,10 @@ class HttpServerContext {
     //     _messageCompleteHandler = handler;
     //     return this;
     // }
+
+    HttpServerConnection connection() {
+        return _connection;
+    }
     
     int getConnectionId() {
         return _connection.getId();

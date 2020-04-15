@@ -7,6 +7,7 @@ import hunt.http.routing.Router;
 import hunt.http.routing.RouterManager;
 import hunt.http.routing.RoutingContext;
 
+import hunt.http.HttpConnection;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpOutputStream;
 
@@ -186,6 +187,10 @@ class RoutingContextImpl : RoutingContext {
     //     }
     //     return (ConcurrentLinkedDeque) handlerPromiseQueue;
     // }
+
+    override HttpConnection httpConnection() {
+        return _context.connection();
+    }
 
     override int getConnectionId() {
         return _context.getConnectionId();

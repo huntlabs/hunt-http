@@ -5,26 +5,26 @@ import hunt.http.server.HttpServerRequest;
 import hunt.http.server.HttpServerResponse;
 
 import hunt.http.codec.http.model;
-import hunt.http.HttpOutputStream;
 import hunt.http.routing.handler;
 
 import hunt.http.Cookie;
+import hunt.http.HttpConnection;
 import hunt.http.HttpHeader;
 import hunt.http.HttpFields;
+import hunt.http.HttpOutputStream;
 import hunt.http.HttpStatus;
 import hunt.http.HttpVersion;
 
+import hunt.collection.ByteBuffer;
+import hunt.collection.List;
+import hunt.collection.Map;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.io.Common;
 import hunt.logging.ConsoleLogger;
-import hunt.util.Common;
 import hunt.net.util.HttpURI;
-
-import hunt.collection.ByteBuffer;
-import hunt.collection.List;
-import hunt.collection.Map;
+import hunt.util.Common;
 
 import std.conv;
 import std.variant;
@@ -83,6 +83,8 @@ abstract class RoutingContext : Closeable {
     OutputStream outputStream(); 
 
     int getConnectionId();
+
+    HttpConnection httpConnection();
 
     string getRouterParameter(string name);
 

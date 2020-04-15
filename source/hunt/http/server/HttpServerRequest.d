@@ -64,12 +64,10 @@ class HttpServerRequest : HttpRequest {
         enum string connect = HttpMethod.CONNECT.asString();
         _options = options;
 
-        super(method, 
-            new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
+        super(method, new HttpURI(icmp(method, connect) == 0 ? "http://" ~ uri : uri), 
             ver, new HttpFields());   
         // _originalPath = uri;  
         _originalPath = getURI().getPath();
-
         // super(method, new HttpURI(HttpMethod.fromString(method) == HttpMethod.CONNECT ? "http://" ~ uri : uri), ver, new HttpFields());
     }
 
