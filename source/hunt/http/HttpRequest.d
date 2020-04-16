@@ -69,8 +69,20 @@ class HttpRequest : HttpMetaData {
     override bool isRequest() {
         return true;
     }
-
+    
+    /**
+     * Checks whether the request is secure or not.
+     *
+     * This method can read the client protocol from the "X-Forwarded-Proto" header
+     * when trusted proxies were set via "setTrustedProxies()".
+     *
+     * The "X-Forwarded-Proto" header must contain the protocol: "https" or "http".
+     *
+     * @return bool
+     */
     bool isHttps() {
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2020-04-16T11:28:15+08:00
+        // 
         string scheme = _uri.getScheme();
         return scheme == HttpScheme.HTTPS || scheme == HttpScheme.WSS;
     }
