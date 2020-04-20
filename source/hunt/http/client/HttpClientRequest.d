@@ -43,7 +43,6 @@ version(WITH_HUNT_TRACE) {
  */
 class HttpClientRequest : HttpRequest {
 
-	private HttpBody _body;
 	private Cookie[] _cookies;
     private bool _isCookieStoreEnabled = true;
 
@@ -57,40 +56,36 @@ class HttpClientRequest : HttpRequest {
 	}
 
 	this(string method, string uri, HttpBody content) {
-		this._body = content;
 		HttpFields fields = new HttpFields();
 		if(content !is null)
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 
 		super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, fields,  
 			content is null ? 0 : content.contentLength());
+        this.setBody(content);
 	}
 	
 	this(string method, HttpURI uri, HttpFields fields, HttpBody content) {
-		this._body = content;
 		if(content !is null)
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 
 		super(method, uri, HttpVersion.HTTP_1_1, fields, 
 			content is null ? 0 : content.contentLength());
+        this.setBody(content);
 	}
 	
 	this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, HttpBody content) {
-		this._body = content;
 		if(content !is null)
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 			
 		super(method, uri, ver, fields,  
 			content is null ? 0 : content.contentLength());
+        this.setBody(content);
 	}
 
 	this(HttpRequest request) {
 		super(request);
 	}
-
-	// HttpBody getBody() {
-	// 	return _body;
-	// }
 
     bool isCookieStoreEnabled() {
         return _isCookieStoreEnabled;
