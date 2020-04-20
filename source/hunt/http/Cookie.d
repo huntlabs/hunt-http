@@ -598,8 +598,18 @@ void parseCookies(string cookieStr, CookieParsingHandler callback) {
 
 Cookie parseSetCookie(string cookieStr) {
 	Cookie cookie = new Cookie();
+	import hunt.logging.ConsoleLogger;
+
+	// warning(cookieStr);
+
 	parseCookies(cookieStr, (name, value) {
-		if ("Comment".equalsIgnoreCase(name)) {
+		
+	// warningf("name: %s, value: %s", name, value);
+		if("expires".equalsIgnoreCase(name)) {
+			// cookie.setMaxAge(3600*);
+		} else if("HttpOnly".equalsIgnoreCase(name)) {
+			cookie.setHttpOnly(true);
+		} else if ("Comment".equalsIgnoreCase(name)) {
 			cookie.setComment(value);
 		} else if ("Domain".equalsIgnoreCase(name)) {
 			cookie.setDomain(value);

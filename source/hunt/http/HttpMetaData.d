@@ -146,7 +146,7 @@ class HttpMetaData : Iterable!HttpField {
 
                     if(fields.contains(HttpHeader.CONTENT_LENGTH)) {
                         auto len = fields.get(HttpHeader.CONTENT_LENGTH);
-                        tracef("content-type: %s, content-length: %d", existedType, len);
+                        tracef("content-type: %s, content-length: %s", existedType, len);
                     } else {
                         tracef("content-type: %s", existedType);
                     }
