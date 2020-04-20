@@ -330,8 +330,8 @@ HttpServer buildServerWithSessionStore() {
             HttpSession session = ctx.getSession();
             ctx.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
             if (session !is null) {
-                ctx.write("session value is " ~ session.getAttributeAs!string(name));
-                ctx.end("<br>session age is " ~ session.getAttribute("age").toString());
+                ctx.write("session value is " ~ session.getAttribute!string(name));
+                ctx.end("<br>session age is " ~ session.getAttribute("age"));
             } else {
                 ctx.end("session is invalid");
             }

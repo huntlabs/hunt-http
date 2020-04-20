@@ -17,13 +17,13 @@ import std.stdio;
 // string str = runGet("http://www.putao.com/");
 
 void main(string[] args) {
-    // testSimpleHttpClient();
+    testSimpleHttpClient();
     // testHttpClientWithCookie();
     // testHttpClientWithMultipart();
     // testWebSocketClient();
     // testHttpClientWithTLS();
     // testHttpClientWithMutualTLS();
-    version(WITH_HUNT_TRACE) testOpenTracing();
+    // version(WITH_HUNT_TRACE) testOpenTracing();
 }
 
 void testSimpleHttpClient() {
@@ -91,9 +91,9 @@ void testHttpClientWithMultipart() {
         // .enableChunk()
         .addFormDataPart("title", "Putao Logo", MimeType.TEXT_PLAIN_VALUE)
         .addFormDataPart("image", "favicon.ico",
-            RequestBody.create("image/ico", "dub.json"))
-            // RequestBody.createFromFile("image/ico", "dub.json"))
-            // RequestBody.createFromFile("image/ico", "resources/favicon.ico"))
+            HttpBody.create("image/ico", "dub.json"))
+            // HttpBody.createFromFile("image/ico", "dub.json"))
+            // HttpBody.createFromFile("image/ico", "resources/favicon.ico"))
         .build();
     
     Response response = postForm(client, url, requestBody);
@@ -103,7 +103,7 @@ void testHttpClientWithMultipart() {
     }
 }
 
-Response postForm(HttpClient client, string url, RequestBody content) {
+Response postForm(HttpClient client, string url, HttpBody content) {
     Request request = new RequestBuilder()
         .url(url)
         // .header("Authorization", "Basic cHV0YW86MjAxOQ==")
@@ -196,8 +196,8 @@ class HttpClientTest {
     // 
     void testGet() {
         // string str = runGet("http://10.1.222.120/test.html");
-        string str = runGet("http://10.1.222.120:8080/index.html");
-        // string str = runGet("http://127.0.0.1:8080/json");
+        // string str = runGet("http://10.1.222.120:8080/index.html");
+        string str = runGet("http://127.0.0.1:8080/json");
         // string str = runGet("http://www.putao.com/");
         trace(str);
         
@@ -244,7 +244,7 @@ class HttpClientTest {
             }
 
             void onResponse(Call call, Response response) {
-                ResponseBody responseBody = response.getBody();
+                HttpBody responseBody = response.getBody();
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " ~ response.toString());
 
                 HttpFields responseHeaders = response.headers();
@@ -276,7 +276,7 @@ class HttpClientTest {
     }
 
     string post(string url, string contentType,  string content) {
-        RequestBody b = RequestBody.create(contentType, content);
+        HttpBody b = HttpBody.create(contentType, content);
 
         Request request = new RequestBuilder()
             .url(url)
@@ -284,7 +284,7 @@ class HttpClientTest {
             .build();
 
         Response response = client.newCall(request).execute();
-        ResponseBody res = response.getBody();
+        HttpBody res = response.getBody();
         if(res is null)
             return "";
         else
@@ -304,7 +304,7 @@ class HttpClientTest {
         trace(response);
     }
 
-    string postForm(string url, RequestBody content) {
+    string postForm(string url, HttpBody content) {
         Request request = new RequestBuilder()
             .url(url)
 			.header("Authorization", "Basic cHV0YW86MjAxOQ==")

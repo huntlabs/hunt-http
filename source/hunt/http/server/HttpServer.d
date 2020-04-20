@@ -365,18 +365,18 @@ class HttpServer : AbstractLifecycle {
         //     return _routerManager.register();
         // }
 
-        // Builder addRoute(string path, RoutingHandler handler) {
-        //     return addRoute([path], cast(string[])null, handler);
-        // }
+        Builder addRoute(string path, RoutingHandler handler) {
+            return addRoute([path], cast(string[])null, handler);
+        }
 
-        // Builder addRoute(string path, HttpMethod method, RoutingHandler handler) {
-        //     return addRoute([path], [method], handler);
-        // }
+        Builder addRoute(string path, HttpMethod method, RoutingHandler handler) {
+            return addRoute([path], [method.toString()], handler);
+        }
         
-        // Builder addRoute(string path, HttpMethod[] methods, RoutingHandler handler) {
-        //     string[] ms = map!((m) => m.asString())(methods).array;
-        //     return addRoute([path], ms, handler);
-        // }
+        Builder addRoute(string path, HttpMethod[] methods, RoutingHandler handler) {
+            string[] ms = map!((m) => m.asString())(methods).array;
+            return addRoute([path], ms, handler);
+        }
 
         // Builder addRoute(string path, string[] methods, RoutingHandler handler) {
         //     return addRoute([path], methods, handler);

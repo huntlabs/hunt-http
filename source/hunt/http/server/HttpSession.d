@@ -83,6 +83,15 @@ class HttpSession {
         this.attributes = attributes;
     }
 
+    void setAttribute(T)(string name, T value) {
+        this.attributes[name] = value;
+    }
+
+    T getAttribute(T=string)(string name) {
+        JSONValue jv = attributes[name];
+        return jv.get!T();
+    }
+
     bool isNewSession() {
         return newSession;
     }
