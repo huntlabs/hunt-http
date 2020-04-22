@@ -89,9 +89,11 @@ abstract class HttpBody {
         return create(contentType, bytes);
     }
 
-    static HttpBody create(string contentType, long conetntLength, ByteBuffer buffer) {
+    static HttpBody create(string contentType, long contentLength, ByteBuffer buffer) {
         ubyte[] content = cast(ubyte[])buffer.getRemaining();
-        assert(cast(long)content.length == conetntLength);
+        if(cast(long)content.length != contentLength) {
+            warningf("Mismatched content length, required: %d, actual: %d", contentLength, content.length);
+        }
         return create(contentType, content);
     }
 
