@@ -106,6 +106,10 @@ class HttpResponse : HttpMetaData {
         return super.headers(name);
     }
 
+    override string[] headers(HttpHeader header) {
+        return super.headers(header);
+    }
+
     
     /**
     * Returns true if the code is in [200..300), which means the request was successfully received,
