@@ -10,6 +10,7 @@ import hunt.logging.ConsoleLogger;
 import hunt.util.MimeType;
 import hunt.util.MimeTypeUtils;
 
+import std.array;
 import std.conv;
 import std.file;
 import std.path;
@@ -35,6 +36,15 @@ abstract class HttpBody {
 		return -1;
 	}
 
+    void append(ubyte[] data) {
+        implementationMissing(false);
+    }
+
+    void append(ByteBuffer buffer) {
+        ubyte[] content = cast(ubyte[])buffer.getRemaining();
+        append(content);
+    }
+
     /** Writes the content of this request to {@code sink}. */
     void writeTo(HttpOutputStream sink);
 
@@ -42,6 +52,11 @@ abstract class HttpBody {
 	string asString() {
         implementationMissing(false);
         return "";
+    }
+
+    const(ubyte)[] getRaw() {
+        implementationMissing(false);
+        return null;
     }
 
 	override string toString() {
@@ -63,12 +78,13 @@ abstract class HttpBody {
         }
     }
     
-    static HttpBody create(T)(string contentType, T content) {
-        static if(isSomeString!T) {
-            return create(contentType, content);
-        } else {
-            return create(contentType, content.to!string);
-        }
+    // static HttpBody create(T)(string contentType, T content) if(!isSomeString!T) {
+    //     return create(contentType, content.to!string);
+    // }
+
+    static HttpBody create(string contentType, long contentLength) {
+        HttpBody impl = new HttpBodyImpl(contentType, contentLength);
+        return impl;
     }
 	
     /**
@@ -89,48 +105,16 @@ abstract class HttpBody {
         return create(contentType, bytes);
     }
 
-    static HttpBody create(string contentType, long contentLength, ByteBuffer buffer) {
+    static HttpBody create(string contentType, ByteBuffer buffer) {
         ubyte[] content = cast(ubyte[])buffer.getRemaining();
-        if(cast(long)content.length != contentLength) {
-            warningf("Mismatched content length, required: %d, actual: %d", contentLength, content.length);
-        }
         return create(contentType, content);
     }
 
     /** Returns a new request body that transmits {@code content}. */
-    static HttpBody create(string contentType, const(ubyte)[] content) {
-        return create(contentType, content, 0, cast(int)content.length);
-    }
-
-    /** Returns a new request body that transmits {@code content}. */
-    static HttpBody create(string type, const(ubyte)[] content,
-            int offset, int byteCount) {
-
-        if (content.empty()) 
-            throw new NullPointerException("content is null");
-
-        // Util.checkOffsetAndCount(content.length, offset, byteCount);
-		assert(offset + byteCount <= content.length);
-// dfmt off
-        return new class HttpBody {
-
-            override string contentType() {
-                return type;
-            }
-
-            override long contentLength() {
-                return byteCount;
-            }
-
-	        override string asString() {
-                return cast(string)content;
-            }
-
-            override void writeTo(HttpOutputStream sink) {
-                sink.write(cast(byte[])content, offset, byteCount);
-            }
-        };
-// dfmt on        
+    static HttpBody create(string type, const(ubyte)[] content) {
+        // return create(contentType, content, 0, cast(int)content.length);
+        HttpBody impl = new HttpBodyImpl(type, content);
+        return impl;
     }
 
     /** Returns a new request body that transmits the content of {@code file}. */
@@ -198,4 +182,60 @@ abstract class HttpBody {
         };
 // dfmt on    
     }		
+}
+
+
+class HttpBodyImpl : HttpBody {
+
+    private Appender!(const(ubyte)[]) _buffer;
+    private string _type;
+    private long _contentLength;
+
+    this(string type, long contentLength) {
+        _type = type;
+        _contentLength = contentLength;
+    }
+
+    this(string type, const(ubyte)[] content) {
+        _type = type;
+        _contentLength = cast(long)content.length;
+        append(content);
+    }
+
+    override string contentType() {
+        return _type;
+    }
+
+    override long contentLength() {
+        return _contentLength;
+    }
+
+    override void append(const(ubyte)[] data) {
+        _buffer.put(data);
+    }
+
+    override string asString() {
+        string str = cast(string)_buffer.data();
+        version(HUNT_DEBUG) {
+            if(_contentLength != -1 && str.length != _contentLength) {
+                warning("Mismatched content length, required: %d, actual: %d", _contentLength, str.length);
+            }
+        }
+        return str;
+    }
+
+    override const(ubyte)[] getRaw() {
+        const(ubyte)[] data = _buffer.data;
+        version(HUNT_DEBUG) {
+            if(_contentLength != -1 && data.length != _contentLength) {
+                warning("Mismatched content length, required: %d, actual: %d", _contentLength, data.length);
+            }
+        }
+        return data;
+    }
+
+    override void writeTo(HttpOutputStream sink) {
+        auto d = cast(byte[])_buffer.data;
+        sink.write(d, 0, cast(int)d.length);
+    }
 }

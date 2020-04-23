@@ -130,8 +130,8 @@ class RealCall : Call {
                 HttpClientResponse clientResponse = cast(HttpClientResponse)response;
                 assert(clientResponse !is null);
                 
-                version (HUNT_HTTP_DEBUG) tracef("ContentType: %s, ContentLength: %d", 
-                    response.getContentType(), response.getContentLength());
+                version (HUNT_HTTP_DEBUG) tracef("ContentType: %s, ContentLength: %d, current content size: %d", 
+                    response.getContentType(), response.getContentLength(), item.remaining());
 
                 version (HUNT_HTTP_DEBUG_MORE) {
                     tracef("content: %s", cast(string)item.getRemaining());
@@ -139,8 +139,14 @@ class RealCall : Call {
 
                 // clientResponse.setBody(new ResponseBody(response.getContentType(), 
                 //     response.getContentLength(), BufferUtils.clone(item)));
-                clientResponse.setBody(HttpBody.create(response.getContentType(), 
-                    response.getContentLength(), BufferUtils.clone(item)));
+
+                HttpBody hb = clientResponse.getBody();
+                if(hb is null) {
+                    hb = HttpBody.create(response.getContentType(), response.getContentLength());
+                    clientResponse.setBody(hb); 
+                } 
+                hb.append(item);
+
                 return false;
             }
 
@@ -213,8 +219,13 @@ class RealCall : Call {
                 // hcr.setBody(new ResponseBody(response.getContentType(), 
                 //     response.getContentLength(), BufferUtils.clone(item)));
 
-                hcr.setBody(HttpBody.create(response.getContentType(), 
-                    response.getContentLength(), BufferUtils.clone(item)));                
+                HttpBody hb = hcr.getBody();
+                if(hb is null) {
+                    hb = HttpBody.create(response.getContentType(), response.getContentLength());
+                    hcr.setBody(hb); 
+                } 
+                hb.append(item);
+
                 return false;
             }
 
