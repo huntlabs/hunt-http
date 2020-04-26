@@ -89,10 +89,6 @@ class RealCall : Call {
                 executed = true;
         }
 
-        responseLocker.lock();
-        scope(exit) {
-            responseLocker.unlock();
-        }
 
         version(WITH_HUNT_TRACE) {
             originalRequest.startSpan();
@@ -130,8 +126,10 @@ class RealCall : Call {
                 HttpClientResponse clientResponse = cast(HttpClientResponse)response;
                 assert(clientResponse !is null);
                 
-                version (HUNT_HTTP_DEBUG) tracef("ContentType: %s, ContentLength: %d, current content size: %d", 
-                    response.getContentType(), response.getContentLength(), item.remaining());
+                version (HUNT_HTTP_DEBUG) {
+                    tracef("ContentType: %s, ContentLength: %d, current content size: %d", 
+                        response.getContentType(), response.getContentLength(), item.remaining());
+                }
 
                 version (HUNT_HTTP_DEBUG_MORE) {
                     tracef("content: %s", cast(string)item.getRemaining());
@@ -158,7 +156,13 @@ class RealCall : Call {
                     hcr = cast(HttpClientResponse)response;
                     assert(hcr !is null);
                 }
+
+                responseLocker.lock();
+                scope(exit) {
+                    responseLocker.unlock();
+                }
                 responseCondition.notifyAll();
+                warning("Notified .........!!!!!!!!!!!!!");
                 return true;
             }
 
@@ -175,14 +179,20 @@ class RealCall : Call {
 
         doRequestTask(httpHandler);
 
+        responseLocker.lock();
+        scope(exit) {
+            responseLocker.unlock();
+        }
+
         if(hcr is null) {        
             TcpSslOptions tcpOptions = options.getTcpConfiguration();     
-            Duration idleTimeout = tcpOptions.getIdleTimeout();     
+            Duration idleTimeout = tcpOptions.getIdleTimeout();    
+
             if(idleTimeout.isNegative()) {
-                version (HUNT_HTTP_DEBUG) infof("waitting for response...");
+                version (HUNT_DEBUG) infof("waitting for response...");
                 responseCondition.wait();
             } else {  
-                version (HUNT_HTTP_DEBUG) infof("waitting for response in %s ...", idleTimeout);
+                version (HUNT_DEBUG) infof("waitting for response in %s ...", idleTimeout);
                 bool r = responseCondition.wait(idleTimeout);
                 if(!r) {
                     string msg = format("No any response in %s", idleTimeout);

@@ -30,10 +30,10 @@ void testSimpleHttpClient() {
 
     HttpClientTest test = new HttpClientTest();
     try {
-    test.testGet();
+    // test.testGet();
     // test.testGetHttps();
     // test.testAsynchronousGet();
-    // test.testPost();
+    test.testPost();
     // test.testFormPost();
         
     } catch(Exception ex) {
@@ -45,6 +45,10 @@ void testSimpleHttpClient() {
 void testHttpClientWithCookie() {
     string url = "http://127.0.0.1:8080/session/foo";
     HttpClient client = new HttpClient();
+    scope(exit) {
+        client.close();
+    }
+
     client.useCookieStore();
     
     // post
@@ -83,6 +87,9 @@ void testHttpClientWithMultipart() {
     // string url = "http://127.0.0.1:8080/upload/file";
     string url = "http://10.1.222.120:8080/upload/file";
     HttpClient client = new HttpClient();
+    scope(exit) {
+        client.close();
+    }
     // client.useCookieStore();
 
     // post
@@ -119,6 +126,9 @@ Response postForm(HttpClient client, string url, HttpBody content) {
 void testWebSocketClient() {
 
     HttpClient client = new HttpClient();
+    scope(exit) {
+        client.close();
+    }
 //
     string url = "http://127.0.0.1:8080/ws1";
     Request request = new RequestBuilder()
@@ -151,6 +161,10 @@ void testHttpClientWithTLS() {
     string url = "https://www.bing.com/";
 
     HttpClient client = new HttpClient();
+    scope(exit) {
+        client.close();
+    }
+    
     Request request = new RequestBuilder().url(url).build();        
     Response response = client.newCall(request).execute();
 
@@ -170,6 +184,10 @@ void testHttpClientWithMutualTLS() {
     // string url = "https://www.bing.com/";
 
     HttpClient client = new HttpClient();
+    scope(exit) {
+        client.close();
+    }
+
     Request request = new RequestBuilder()
         .url(url)
         .caCert("cert/ca.crt", "hunt2019")
@@ -258,7 +276,7 @@ class HttpClientTest {
         info("A request has been sent.");
     }
 
-	// 
+	
     void testPost() {
         UrlEncoded encoder = new UrlEncoded;
         encoder.put("email", "test@putao.com");
