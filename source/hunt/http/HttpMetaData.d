@@ -140,8 +140,11 @@ class HttpMetaData : Iterable!HttpField {
                 version(HUNT_HTTP_DEBUG) {
                     string existedType = fields.get(HttpHeader.CONTENT_TYPE);
                     string newType = b.contentType();
-                    if(existedType != newType) {
-                        warningf("content-type collision, old: %s, new: %s", existedType, newType);
+
+                    version(HUNT_HTTP_DEBUG) {
+                        if(existedType != newType) {
+                            warningf("content-type collision, old: %s, new: %s", existedType, newType);
+                        }
                     }
 
                     if(fields.contains(HttpHeader.CONTENT_LENGTH)) {

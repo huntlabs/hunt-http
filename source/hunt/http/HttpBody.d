@@ -98,7 +98,7 @@ abstract class HttpBody {
 			string charset = new MimeType(contentType).getCharset();
             if (charset.empty()) {
                 // charset = UTF_8;
-                contentType = contentType ~ "; charset=utf-8";
+                contentType = contentType ~ ";charset=utf-8";
             }
         }
         ubyte[] bytes = cast(ubyte[])content; // content.getBytes(charset);
