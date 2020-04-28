@@ -481,6 +481,8 @@ ubyte[] getRandom(ushort len = 64)
     ubyte[] buffer;
     buffer.length = len;
     version(Windows){
+        import core.sys.windows.wincrypt;
+        import core.sys.windows.windef;
         HCRYPTPROV hCryptProv;
         assert(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT) != 0);
         CryptGenRandom(hCryptProv, cast(DWORD)buffer.length, buffer.ptr);
