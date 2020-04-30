@@ -234,8 +234,8 @@ class HttpServer : AbstractLifecycle {
             _server.close();
         }
 
-        version(HUNT_DEBUG) warning("stopping the EventLoop...");
-        NetUtil.stopEventLoop();
+        // version(HUNT_DEBUG) warning("stopping the EventLoop...");
+        // NetUtil.stopEventLoop();
     }
 
     private void checkWorkingDirectory() {
@@ -329,6 +329,16 @@ class HttpServer : AbstractLifecycle {
         Builder setListener(ushort port, string host) {
             _httpOptions.setPort(port);
             _httpOptions.setHost(host);
+            return this;
+        }
+
+        Builder ioThreadSize(uint value) {
+            _httpOptions.getTcpConfiguration().ioThreadSize = value;
+            return this;
+        }
+
+        Builder workerThreadSize(uint value) {
+            _httpOptions.getTcpConfiguration().workerThreadSize = value;
             return this;
         }
 

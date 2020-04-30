@@ -16,6 +16,7 @@
 
 # Executables
 *.exe
+*-test-*
 
 # DUB
 .dub
@@ -32,6 +33,9 @@ __dummy.html
 # crash file
 core
 
+# others
+*.tar.gz
+
 # Examples
 examples/UnitTest/unittest
 examples/H2C-Demo/h2c-client
@@ -41,5 +45,3 @@ examples/HttpDemo/http-server
 examples/WebSocketDemo/websocket-client
 examples/WebSocketDemo/websocket-server
 examples/UnitTest/unittest-*
-*-test-default
-
