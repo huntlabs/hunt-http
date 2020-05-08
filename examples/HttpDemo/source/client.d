@@ -11,8 +11,8 @@ import hunt.util.MimeType;
 import std.stdio;
 
 
-// string str = runGet("http://10.1.222.120/test.html");
-// enum string httpUrl = runGet("http://10.1.222.120:8080/index.html");
+// string str = runGet("http://10.1.222.110/test.html");
+// enum string httpUrl = runGet("http://10.1.222.110:8080/index.html");
 // string str = runGet("http://127.0.0.1:8080/json");
 // string str = runGet("http://www.putao.com/");
 
@@ -85,7 +85,7 @@ void testHttpClientWithCookie() {
 void testHttpClientWithMultipart() {
     // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
     // string url = "http://127.0.0.1:8080/upload/file";
-    string url = "http://10.1.222.120:8080/upload/file";
+    string url = "http://10.1.222.110:8080/upload/file";
     HttpClient client = new HttpClient();
     scope(exit) {
         client.close();
@@ -156,9 +156,9 @@ void testWebSocketClient() {
 }
 
 void testHttpClientWithTLS() {
-    // string url = "https://10.1.222.120:440/";
+    string url = "https://10.1.222.110:443/";
     // string url = "https://publicobject.com/helloworld.txt";
-    string url = "https://www.bing.com/";
+    // string url = "https://www.bing.com/";
 
     HttpClient client = new HttpClient();
     scope(exit) {
@@ -179,7 +179,7 @@ void testHttpClientWithTLS() {
 void testHttpClientWithMutualTLS() {
     // https://www.naschenweng.info/2018/02/01/java-mutual-ssl-authentication-2-way-ssl-authentication/
     // mutual TLS
-    string url = "https://10.1.222.120:440/";
+    string url = "https://10.1.222.110:443/";
     // string url = "https://publicobject.com/helloworld.txt";
     // string url = "https://www.bing.com/";
 
@@ -213,15 +213,15 @@ class HttpClientTest {
 
     // 
     void testGet() {
-        // string str = runGet("http://10.1.222.120/test.html");
-        // string str = runGet("http://10.1.222.120:8080/index.html");
+        // string str = runGet("http://10.1.222.110/test.html");
+        // string str = runGet("http://10.1.222.110:8080/index.html");
         string str = runGet("http://127.0.0.1:8080/json");
         // string str = runGet("http://www.putao.com/");
         trace(str);
         
         trace("===============================");
 
-        // str = runGet("http://10.1.222.120/index.html");
+        // str = runGet("http://10.1.222.110/index.html");
         // str = runGet("http://www.putao.com/");
         // trace(str);
     }
@@ -229,7 +229,7 @@ class HttpClientTest {
     //
     void testGetHttps() {
 		
-        string url = "https://10.1.222.120:440/";
+        string url = "https://10.1.222.110:440/";
         // string url = "https://publicobject.com/helloworld.txt";
         string str = runGet(url);
 
@@ -252,7 +252,7 @@ class HttpClientTest {
     //
     void testAsynchronousGet() {
         
-        // string url = "https://10.1.222.120:6677/index";
+        // string url = "https://10.1.222.110:6677/index";
         string url = "https://publicobject.com/helloworld.txt";
         Request request = new RequestBuilder().url(url).build();
 
@@ -283,7 +283,7 @@ class HttpClientTest {
         encoder.put("password", "test");
         // string content = "email=test%40putao.com&password=test";
         string content = encoder.encode();
-        string response = post("http://10.1.222.120:8080/testpost", "application/x-www-form-urlencoded", content);
+        string response = post("http://10.1.222.110:8080/testpost", "application/x-www-form-urlencoded", content);
 
         // string content = `{"type":"news", "offset": "0", "count": "20"}`;
         // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
@@ -292,6 +292,7 @@ class HttpClientTest {
 
         trace(response);
     }
+
 
     string post(string url, string contentType,  string content) {
         HttpBody b = HttpBody.create(contentType, content);
@@ -318,7 +319,7 @@ class HttpClientTest {
         .build();
 
         string response = postForm("http://10.1.11.164:8080/testpost", form);
-		// string response = postForm("http://10.1.222.120:8080/testpost", form);
+		// string response = postForm("http://10.1.222.110:8080/testpost", form);
         trace(response);
     }
 
@@ -342,10 +343,10 @@ version(WITH_HUNT_TRACE) {
     void testOpenTracing() {
         import hunt.trace.HttpSender;
         // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
-        string endpoint = "http://10.1.222.120:9411/api/v2/spans";
+        string endpoint = "http://10.1.222.110:9411/api/v2/spans";
         httpSender().endpoint(endpoint);
 
-        // string url = "http://10.1.222.120:801/index.html";
+        // string url = "http://10.1.222.110:801/index.html";
         string url = "http://127.0.0.1:8080/plaintext";
         HttpClient client = new HttpClient();
 
