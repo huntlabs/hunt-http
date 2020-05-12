@@ -90,13 +90,28 @@ class CommonDecoder : DecoderChain {
         if(connState == ConnectionState.Secured) {
             DecoderChain next = getNext();
             SecureSession secureSession = cast(SecureSession) session.getAttribute(SecureSession.NAME);     
-            assert(secureSession !is null)  ;
+            assert(secureSession !is null, "secureSession is null");
 
+            // version(HUNT_HTTP_DEBUG) tracef("Raw buffer: %s", buf.toString());
             ByteBuffer plaintext = secureSession.read(buf); // httpConnection.decrypt(buf);
+
             if (plaintext !is null && plaintext.hasRemaining() && next !is null) {
+                version(HUNT_HTTP_DEBUG) {
+                    infof("decrypted buffer: %s", plaintext.toString());
+                }
+                version(HUNT_HTTP_DEBUG_MORE) {
+                    // int r = plaintext.remaining();
+                    // if(r < 64) {
+                    //     tracef("%(%02X %)", plaintext.getRemaining());
+                    // }
+                    string msg = cast(string)plaintext.getRemaining();
+                    trace(msg);
+                    // tracef("%(%02X %)", plaintext.getRemaining());
+                }
+       
                 next.decode(plaintext, session);
             } else {
-                warning("The next decoder is null.");
+                version(HUNT_HTTP_DEBUG) warning("No data decrypted!");
             }
         } else if(connState == ConnectionState.Securing) {
             version(HUNT_DEBUG) {
@@ -107,21 +122,21 @@ class CommonDecoder : DecoderChain {
             SecureSession secureSession = waitForSecureSession(MaxTimes, session);
 
             if(secureSession is null) {
-                version(HUNT_DEBUG) warning("Run handshake in another thread.");
+                version(HUNT_DEBUG) warning("Running handshake in another thread.");
                 import std.parallelism;
                 // auto handshakeTask = task(&handleTlsHandshake, buf, session, secureSession, next);
-                auto handshakeTask = task(() {
+                // auto handshakeTask = task(() {
                     // 
                     // FIXME: Needing refactor or cleanup -@zxp at 8/8/2019, 4:29:49 PM
-                    // Maybe buf need copied.
+                    // Maybe the buf needs be copied.
                     SecureSession s = waitForSecureSession(0, session);
                     if(s is null) {
                         warning("No SecureSession created");
                     } else {
                         handleTlsHandshake(buf, session, s);
                     }
-                });
-                taskPool.put(handshakeTask);
+                // });
+                // taskPool.put(handshakeTask);
             } else {
                 handleTlsHandshake(buf, session, secureSession);
             }

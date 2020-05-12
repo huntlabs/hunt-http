@@ -162,7 +162,7 @@ class RealCall : Call {
                     responseLocker.unlock();
                 }
                 responseCondition.notifyAll();
-                warning("Notified .........!!!!!!!!!!!!!");
+                version(HUNT_DEBUG) infof("The total message content received.");
                 return true;
             }
 

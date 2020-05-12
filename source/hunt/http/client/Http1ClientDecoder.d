@@ -50,6 +50,7 @@ class Http1ClientDecoder : DecoderChain {
                 Http1ClientConnection http1Connection = cast(Http1ClientConnection) abstractConnection;
                 HttpParser parser = http1Connection.getParser();
                 while (buf.hasRemaining()) {
+                    version(HUNT_HTTP_DEBUG) tracef("parsing buffer: %s", buf.toString());
                     parser.parseNext(buf);
                     if (http1Connection.getUpgradeHttp2Complete()) {
                         http2ClientDecoder.decode(buf, session);
