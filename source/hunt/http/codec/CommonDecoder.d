@@ -125,7 +125,7 @@ class CommonDecoder : DecoderChain {
                 version(HUNT_DEBUG) warning("Running handshake in another thread.");
                 import std.parallelism;
                 // auto handshakeTask = task(&handleTlsHandshake, buf, session, secureSession, next);
-                // auto handshakeTask = task(() {
+                auto handshakeTask = task(() {
                     // 
                     // FIXME: Needing refactor or cleanup -@zxp at 8/8/2019, 4:29:49 PM
                     // Maybe the buf needs be copied.
@@ -135,8 +135,8 @@ class CommonDecoder : DecoderChain {
                     } else {
                         handleTlsHandshake(buf, session, s);
                     }
-                // });
-                // taskPool.put(handshakeTask);
+                });
+                taskPool.put(handshakeTask);
             } else {
                 handleTlsHandshake(buf, session, secureSession);
             }
