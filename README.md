@@ -18,11 +18,11 @@ Hunt-Http is a flexible performant http server and client written in D Programmi
 
 **Note:**
 
-[1] Custom certificates<br>
+[1] Mutual TLS supported <br>
 [2] WSS untested<br>
 [3] In-memory only<br>
-[4] In-memory only
-[5] File upload and download
+[4] In-memory only<br>
+[5] File upload and download<br>
 
 ## Simple codes
 
