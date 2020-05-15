@@ -52,6 +52,9 @@ import core.time;
  */
 class HttpClient : AbstractLifecycle {
 
+    enum Duration DEFAULT_IDLE_TIMEOUT = 15.seconds;
+    enum Duration DEFAULT_CONNECT_TIMEOUT = 10.seconds;
+
     alias Callback = void delegate();
 
     private NetClientOptions clientOptions;
@@ -63,8 +66,8 @@ class HttpClient : AbstractLifecycle {
 
     this() {
         clientOptions = new NetClientOptions();
-        clientOptions.setIdleTimeout(15.seconds);
-        clientOptions.setConnectTimeout(10.seconds);
+        clientOptions.setIdleTimeout(DEFAULT_IDLE_TIMEOUT);
+        clientOptions.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
         HttpClientOptions config = new HttpClientOptions(clientOptions);
         this(config);
     }
@@ -77,8 +80,17 @@ class HttpClient : AbstractLifecycle {
         clientOptions = c.getTcpConfiguration();
         if(clientOptions is null) {
             clientOptions = new NetClientOptions();
+            clientOptions.setIdleTimeout(DEFAULT_IDLE_TIMEOUT);
+            clientOptions.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
             c.setTcpConfiguration(clientOptions);
+        } else {
+            if(clientOptions.getIdleTimeout == Duration.zero) 
+                clientOptions.setIdleTimeout(DEFAULT_IDLE_TIMEOUT);
+
+            if(clientOptions.getConnectTimeout == Duration.zero)
+                clientOptions.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
         }
+
         this._httpOptions = c;
          // = new ConcurrentHashMap!()();
 

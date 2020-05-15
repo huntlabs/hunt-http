@@ -236,6 +236,8 @@ class HttpBodyImpl : HttpBody {
 
     override void writeTo(HttpOutputStream sink) {
         auto d = cast(byte[])_buffer.data;
-        sink.write(d, 0, cast(int)d.length);
+        if(d.length > 0) {
+            sink.write(d, 0, cast(int)d.length);
+        }
     }
 }

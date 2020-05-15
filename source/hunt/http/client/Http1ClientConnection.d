@@ -475,7 +475,7 @@ class Http1ClientRequestOutputStream : AbstractHttp1OutputStream {
 
 
     override protected void generateHttpMessageSuccessfully() {
-        tracef("client session %s generates the HTTP message completely", connection.getId());
+        version(HUNT_DEBUG) tracef("client session %s generates the HTTP message completely", connection.getId());
     }
 
     override protected void generateHttpMessageExceptionally(HttpGenerator.Result actualResult,

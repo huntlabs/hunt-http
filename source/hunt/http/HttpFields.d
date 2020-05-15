@@ -87,6 +87,16 @@ class HttpFields : Iterable!HttpField {
 		return result;
 	}
 
+	int opApply(scope int delegate(string name, string value) dg) {
+		int result = 0;
+		foreach (HttpField v; _fields[0 .. _size]) {
+			result = dg(v.getName(), v.getValue());
+			if (result != 0)
+				return result;
+		}
+		return result;
+	}
+
 	/**
 	 * Get Collection of header names.
 	 * 
@@ -127,6 +137,10 @@ class HttpFields : Iterable!HttpField {
 	// 	// Enumeration!string r = new RangeEnumeration!string(inputRangeObject(set[].array));
 	// 	return inputRangeObject(set[].array);
 	// }
+
+	HttpField[] allFields() {
+		return _fields[0 .. _size];
+	}
 
 	/**
 	 * Get a Field by index.
@@ -247,9 +261,10 @@ class HttpFields : Iterable!HttpField {
 	 */
 	string[] getValuesList(string name) {
 		Array!(string) list;
-		foreach (HttpField f; this)
+		foreach (HttpField f; this) {
 			if (f.getName().equalsIgnoreCase(name))
 				list.insertBack(f.getValue());
+		}
 		return list.array();
 	}
 

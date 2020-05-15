@@ -18,6 +18,7 @@ import hunt.util.MimeType;
 
 import std.array;
 import std.conv;
+import std.path;
 import std.string;
 import std.uuid;
 
@@ -286,9 +287,12 @@ final class MultipartBody : HttpBody {
             StringBuilder disposition = new StringBuilder("form-data; name=");
             appendQuotedString(disposition, name);
 
-            if (filename !is null) {
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+            // strip the path information
+            string bn = baseName(filename);
+            if (!bn.empty) {
                 disposition.append("; filename=");
-                appendQuotedString(disposition, filename);
+                appendQuotedString(disposition, bn);
             }
 
             HttpFields headers = new HttpFields();

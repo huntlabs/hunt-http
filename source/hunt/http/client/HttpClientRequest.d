@@ -166,7 +166,8 @@ version(WITH_HUNT_TRACE) {
 }
 
     /**
-    */
+     * 
+     */
     final static class Builder {
 
         private HttpURI _url;
