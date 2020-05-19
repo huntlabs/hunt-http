@@ -218,7 +218,7 @@ class HttpBodyImpl : HttpBody {
         string str = cast(string)_buffer.data();
         version(HUNT_DEBUG) {
             if(_contentLength != -1 && str.length != _contentLength) {
-                warning("Mismatched content length, required: %d, actual: %d", _contentLength, str.length);
+                warningf("Mismatched content length, required: %d, actual: %d", _contentLength, str.length);
             }
         }
         return str;
@@ -228,7 +228,7 @@ class HttpBodyImpl : HttpBody {
         const(ubyte)[] data = _buffer.data;
         version(HUNT_DEBUG) {
             if(_contentLength != -1 && data.length != _contentLength) {
-                warning("Mismatched content length, required: %d, actual: %d", _contentLength, data.length);
+                warningf("Mismatched content length, required: %d, actual: %d", _contentLength, data.length);
             }
         }
         return data;
