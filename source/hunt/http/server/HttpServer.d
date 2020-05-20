@@ -167,15 +167,17 @@ class HttpServer : AbstractLifecycle {
 
         serverHandler.onOpened((Connection conn) {
             version(HUNT_HTTP_DEBUG) {
-                infof("Http connection %d opend: %s", conn.getId, typeid(conn));
+                infof("A new http connection %d opend: %s", conn.getId, typeid(conn));
             }
             version (HUNT_DEBUG) {
                 if (options.isSecureConnectionEnabled())
-                    infof("Opend a http connection connection: %s", conn.getRemoteAddress());
+                    infof("Opend a secured http connection: %s", conn.getRemoteAddress());
                 else
                     infof("Opend a http connection: %s", conn.getRemoteAddress());
             }
 
+            // TODO: Tasks pending completion -@zhangxueping at 2020-05-18T16:27:44+08:00
+            // Pass the connection to _openSucceededHandler();
             if(_openSucceededHandler !is null) 
                 _openSucceededHandler();
         });
