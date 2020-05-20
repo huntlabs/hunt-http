@@ -6,12 +6,12 @@ import hunt.http.HttpField;
 import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
 import hunt.http.HttpMetaData;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
 import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 
 import hunt.Assert.assertThat;

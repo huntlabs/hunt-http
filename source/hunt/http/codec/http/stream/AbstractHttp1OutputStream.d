@@ -8,8 +8,8 @@ import hunt.http.HttpMetaData;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.net.Connection;
 import hunt.Exceptions;
 import hunt.logging;

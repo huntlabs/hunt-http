@@ -8,7 +8,7 @@ import hunt.http.server.HttpServerOptions;
 import hunt.http.server.HttpSession;
 import hunt.http.server.LocalSessionStore;
 
-import hunt.util.Lifecycle;
+import hunt.util.AbstractLifecycle;
 
 /** 
  * 

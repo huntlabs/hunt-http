@@ -16,11 +16,11 @@ import hunt.http.server.ServerSessionListener;
 import hunt.http.server.WebSocketHandler;
 import hunt.util.Common;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import hunt.collection.List;

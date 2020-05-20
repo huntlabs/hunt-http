@@ -14,9 +14,9 @@ import hunt.http.HttpRequest;
 import hunt.http.HttpScheme;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.HeapByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.HeapByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
 import hunt.net.KeyCertOptions;

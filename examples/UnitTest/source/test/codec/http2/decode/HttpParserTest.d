@@ -9,8 +9,8 @@ import hunt.Assert;
 import hunt.Exceptions;
 import hunt.text.Charset;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 

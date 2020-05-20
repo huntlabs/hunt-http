@@ -32,15 +32,15 @@ import hunt.http.HttpStatus;
 import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.event.EventLoop;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging;
 import hunt.net;
 import hunt.util.DateTime;
-import hunt.util.Lifecycle;
+import hunt.util.AbstractLifecycle;
 
 import core.time;
 

@@ -6,13 +6,13 @@ import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.WebSocketCommon;
 import hunt.http.codec.websocket.model.WebSocketBehavior;
 import hunt.http.WebSocketPolicy;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 import test.codec.websocket.IncomingFramesCapture;
 import test.codec.websocket.UnitParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 
 

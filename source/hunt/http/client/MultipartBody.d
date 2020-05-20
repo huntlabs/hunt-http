@@ -7,8 +7,8 @@ import hunt.http.HttpFields;
 import hunt.http.HttpOutputStream;
 
 import hunt.collection.ArrayList;
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.collection.List;
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;

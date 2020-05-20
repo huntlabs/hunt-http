@@ -13,8 +13,8 @@ import hunt.net.codec.Decoder;
 import hunt.http.HttpConnection;
 import hunt.net.Connection;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging;
 import std.conv;

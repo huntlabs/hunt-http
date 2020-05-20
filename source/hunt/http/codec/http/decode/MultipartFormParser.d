@@ -7,7 +7,7 @@ import hunt.http.MultipartOptions;
 import hunt.http.MultipartForm;
 
 import hunt.collection;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;

@@ -17,7 +17,7 @@ import hunt.http.HttpVersion;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpOptions;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
 public class Http2ClientTLSDemo2 {
 

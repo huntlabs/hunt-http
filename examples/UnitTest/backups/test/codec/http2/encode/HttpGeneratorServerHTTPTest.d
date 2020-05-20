@@ -6,14 +6,14 @@ import hunt.http.HttpField;
 import hunt.http.HttpFields;
 import hunt.http.HttpVersion;
 import hunt.http.HttpMetaData;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.Test;
 import hunt.util.runner.RunWith;
 import hunt.util.runners.Parameterized;
 import hunt.util.runners.Parameterized.Parameter;
 import hunt.util.runners.Parameterized.Parameters;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;

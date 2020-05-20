@@ -1,9 +1,9 @@
 module hunt.http.HttpBody;
 
 import hunt.http.HttpOutputStream;
-import hunt.collection.HeapByteBuffer;
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.HeapByteBuffer;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;

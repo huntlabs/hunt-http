@@ -9,8 +9,8 @@ import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
 
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 
 import std.algorithm;

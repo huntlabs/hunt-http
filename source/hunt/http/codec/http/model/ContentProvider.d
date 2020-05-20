@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.ContentProvider;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.util.Common;
 
 /**

@@ -983,7 +983,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
         override
         protected bool generate(Queue!ByteBuffer buffers) {
             List!(ByteBuffer) controlFrame = generator.control(frame);
-            bytes = cast(int) BufferUtils.remaining(controlFrame);
+            bytes = cast(int) BufferUtils.remaining(controlFrame.toArray());
             buffers.addAll(controlFrame);
             version(HUNT_DEBUG) {
                 tracef("Generated %s", frame.toString());

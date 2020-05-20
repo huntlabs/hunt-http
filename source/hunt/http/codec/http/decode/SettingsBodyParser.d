@@ -9,7 +9,7 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.SettingsFrame;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.HashMap;
 import hunt.collection.Map;
 

@@ -6,8 +6,8 @@ import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketPolicy;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.collection.Queue;
 import hunt.logging.ConsoleLogger;
 

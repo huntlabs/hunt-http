@@ -1,9 +1,9 @@
 module hunt.http.codec.http.decode.HeaderBlockFragments;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.codec.http.frame.PriorityFrame;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
 class HeaderBlockFragments {
 	private PriorityFrame priorityFrame;

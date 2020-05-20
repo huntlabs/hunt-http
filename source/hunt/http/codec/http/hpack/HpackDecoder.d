@@ -1,6 +1,6 @@
 module hunt.http.codec.http.hpack.HpackDecoder;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.codec.http.hpack.AuthorityHttpField;
 import hunt.http.codec.http.hpack.HpackContext;

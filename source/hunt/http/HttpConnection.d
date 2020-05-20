@@ -4,7 +4,7 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpOptions;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.Exceptions;
 import hunt.Functions;

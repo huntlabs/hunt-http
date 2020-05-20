@@ -19,7 +19,7 @@ import test.codec.websocket.IncomingFramesCapture;
 import test.codec.websocket.UnitGenerator;
 import test.codec.websocket.UnitParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import java.util.Arrays;
 import hunt.collection.List;

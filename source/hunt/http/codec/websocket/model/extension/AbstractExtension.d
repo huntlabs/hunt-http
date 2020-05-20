@@ -10,12 +10,13 @@ import hunt.http.WebSocketPolicy;
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
 import hunt.util.Common;
-import hunt.util.Lifecycle;
+import hunt.util.AbstractLifecycle;
 
 import std.format;
 
 /**
-*/
+ * 
+ */
 abstract class AbstractExtension : AbstractLifecycle , Extension {
     
     private WebSocketPolicy policy;

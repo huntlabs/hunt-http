@@ -5,11 +5,11 @@ import hunt.http.codec.http.hpack.HpackDecoder;
 import hunt.http.codec.http.hpack.HpackEncoder;
 import hunt.http.codec.http.model;
 import hunt.http.codec.http.model.HttpResponse;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import org.hamcrest.CoreMatchers.is;
 import hunt.Assert.assertEquals;

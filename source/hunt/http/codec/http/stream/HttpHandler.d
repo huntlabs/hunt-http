@@ -9,7 +9,7 @@ import hunt.http.HttpResponse;
 
 import hunt.Functions;
 import hunt.util.Common;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 
 /**

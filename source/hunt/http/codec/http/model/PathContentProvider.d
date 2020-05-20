@@ -5,7 +5,7 @@ import hunt.logging;
 
 // import java.io.Closeable;
 // import hunt.Exceptions;
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import java.nio.channels.SeekableByteChannel;
 // import java.nio.file;
 // import java.util.Iterator;

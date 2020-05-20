@@ -15,7 +15,7 @@ import test.codec.websocket.ByteBufferAssert;
 import test.codec.websocket.IncomingFramesCapture;
 import test.codec.websocket.UnitParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.util.Collections;
 
 

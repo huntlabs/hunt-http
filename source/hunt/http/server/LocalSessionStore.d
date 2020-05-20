@@ -13,7 +13,7 @@ import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.logging.ConsoleLogger;
 import hunt.util.Common;
 import hunt.util.DateTime;
-import hunt.util.Lifecycle;
+import hunt.util.AbstractLifecycle;
 
 import core.sync.mutex;
 import core.time;

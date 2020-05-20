@@ -9,12 +9,12 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpOutputStream;
 import hunt.http.server.HttpServer;
 import hunt.http.server.ServerHttpHandler;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;

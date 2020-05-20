@@ -1,6 +1,6 @@
 module test.codec.http2.hpack.HpackContextTest;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.Assert;
 
 import hunt.http.codec.http.hpack.HpackContext;

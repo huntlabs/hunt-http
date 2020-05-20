@@ -6,7 +6,7 @@ import hunt.http.WebSocketCommon;
 import hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 import hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExtension;
 import hunt.http.WebSocketPolicy;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.TypeUtils;
 import hunt.Assert;
 import hunt.util.Test;
@@ -17,7 +17,7 @@ import test.codec.websocket.model.extension.AbstractExtensionTest;
 import test.codec.websocket.model.extension.ExtensionTool.Tester;
 
 import java.io.IOException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import hunt.collection.ArrayList;
 import hunt.collection.List;

@@ -16,8 +16,8 @@ import hunt.http.HttpStatus;
 import hunt.http.HttpScheme;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 import hunt.http.codec.http.encode.Http1FieldPreEncoder;
 import hunt.http.codec.http.encode.HttpFieldPreEncoder;

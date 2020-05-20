@@ -216,7 +216,7 @@ struct HttpHeader {
     // } 
 }
 
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import java.nio.charset.StandardCharsets;
 // import java.util.EnumSet;
 

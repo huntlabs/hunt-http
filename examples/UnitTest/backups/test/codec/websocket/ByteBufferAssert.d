@@ -1,8 +1,8 @@
 module test.codec.websocket;
 
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 
 

@@ -1,6 +1,6 @@
 module hunt.http.HttpMethod;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.text.Common;
 import hunt.util.ObjectUtils;
 

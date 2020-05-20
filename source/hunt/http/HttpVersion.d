@@ -1,6 +1,6 @@
 module hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.Exceptions;
 import hunt.util.ObjectUtils;
 

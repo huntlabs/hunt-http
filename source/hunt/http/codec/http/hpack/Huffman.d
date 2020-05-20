@@ -4,7 +4,7 @@ import hunt.Exceptions;
 import hunt.text.Common;
 import hunt.text.StringBuilder;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.logging;
 
 /**

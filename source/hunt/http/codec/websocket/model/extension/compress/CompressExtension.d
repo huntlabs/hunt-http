@@ -6,12 +6,12 @@ module hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 // import hunt.http.codec.websocket.model.extension.AbstractExtension;
 // import hunt.util.Common;
 // import hunt.http.utils.concurrent.IteratingCallback;
-// import hunt.collection.BufferUtils;
+// import hunt.io.BufferUtils;
 // import hunt.logging;
 
 
 // import java.io.ByteArrayOutputStream;
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import java.util.ArrayDeque;
 // import java.util.Queue;
 // import hunt.concurrency.atomic.AtomicInteger;

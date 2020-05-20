@@ -49,7 +49,7 @@ import hunt.net.Connection;
 import hunt.net.codec;
 
 import hunt.Boolean;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.io.channel;

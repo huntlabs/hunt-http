@@ -1,6 +1,6 @@
 module hunt.http.codec.http.encode.DisconnectGenerator;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.LinkedList;
 import hunt.collection.List;
 

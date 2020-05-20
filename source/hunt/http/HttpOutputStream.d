@@ -4,7 +4,7 @@ import hunt.http.HttpHeader;
 import hunt.http.HttpMetaData;
 
 import hunt.collection;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
 import std.conv;

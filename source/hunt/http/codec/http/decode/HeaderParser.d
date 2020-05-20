@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.HeaderParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.codec.http.frame.Frame;
 

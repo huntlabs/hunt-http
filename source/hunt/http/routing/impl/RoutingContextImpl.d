@@ -20,8 +20,9 @@ import hunt.collection;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.io.Common;
+import hunt.io.BufferUtils;
 import hunt.logging.ConsoleLogger;
+import hunt.stream.Common;
 import hunt.util.Common;
 
 import std.algorithm;

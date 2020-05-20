@@ -1,9 +1,9 @@
 module hunt.http.codec.websocket.model.extension.compress.ByteAccumulator;
 
 import hunt.http.Exceptions;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.collection;
 import hunt.Exceptions;

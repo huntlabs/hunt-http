@@ -1,6 +1,6 @@
 module hunt.http.codec.http.model.BytesContentProvider;
 
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import java.util.Iterator;
 // import java.util.NoSuchElementException;
 

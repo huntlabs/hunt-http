@@ -9,7 +9,7 @@ import hunt.http.HttpStatus;
 import hunt.http.HttpOutputStream;
 import hunt.http.server.Http2ServerBuilder;
 import hunt.http.server.SimpleHttpServerConfiguration;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 

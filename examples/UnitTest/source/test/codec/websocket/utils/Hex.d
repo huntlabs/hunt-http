@@ -4,8 +4,8 @@ import hunt.Char;
 import hunt.text.CharacterData;
 import hunt.Exceptions;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 import std.math;
 import std.format;

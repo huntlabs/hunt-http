@@ -1,9 +1,8 @@
 module hunt.http.QuotedCSV;
 
-import hunt.collection.StringBuffer;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
 import hunt.util.Common;
+import hunt.util.StringBuilder;
 
 import std.array;
 import std.conv;
@@ -45,7 +44,7 @@ class QuotedCSV : Iterable!string {
         if (value.empty)
             return;
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         int l = cast(int)value.length;
         State state = State.VALUE;
@@ -208,7 +207,7 @@ class QuotedCSV : Iterable!string {
      *
      * @param buffer Containing the trimmed value, which may be mutated
      */
-    protected void parsedValue(ref StringBuffer buffer) {
+    protected void parsedValue(ref StringBuilder buffer) {
     }
 
     /**
@@ -219,7 +218,7 @@ class QuotedCSV : Iterable!string {
      * @param paramName   The index of the start of the parameter just parsed
      * @param paramValue  The index of the start of the parameter value just parsed, or -1
      */
-    protected void parsedParam(ref StringBuffer, int valueLength, int paramName, int paramValue) {
+    protected void parsedParam(ref StringBuilder, int valueLength, int paramName, int paramValue) {
     }
 
     int size() {

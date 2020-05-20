@@ -13,7 +13,7 @@ import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketPolicy;
 
 import hunt.concurrency.Promise;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.Collection;
 
 // alias Response = HttpResponse;

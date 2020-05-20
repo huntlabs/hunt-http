@@ -2,13 +2,13 @@ module test.codec.http2.hpack;
 
 import hunt.Assert.assertEquals;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.Assert;
 import hunt.util.Test;
 
 import hunt.http.codec.http.hpack.NBitInteger;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.TypeUtils;
 
 public class TestNBitInteger {

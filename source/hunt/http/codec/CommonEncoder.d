@@ -2,7 +2,7 @@ module hunt.http.codec.CommonEncoder;
 
 import hunt.http.HttpConnection;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.net.codec.Encoder;

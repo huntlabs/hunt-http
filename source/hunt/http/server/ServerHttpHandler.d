@@ -11,7 +11,7 @@ import hunt.http.HttpConnection;
 import hunt.http.HttpRequest;
 import hunt.http.HttpResponse;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.Functions;
 
 

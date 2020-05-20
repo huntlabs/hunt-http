@@ -7,7 +7,7 @@ import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketPolicy;
 import hunt.http.HttpConnection;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.concurrency.CompletableFuture;
 import hunt.Exceptions;
 import hunt.Functions;

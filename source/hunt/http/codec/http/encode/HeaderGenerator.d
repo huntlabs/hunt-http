@@ -1,7 +1,7 @@
 module hunt.http.codec.http.encode.HeaderGenerator;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 import hunt.http.codec.http.frame.Frame;
 import hunt.http.codec.http.frame.FrameType;

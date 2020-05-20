@@ -3,7 +3,7 @@ module hunt.http.MultipartForm;
 import hunt.http.MultipartOptions;
 
 import hunt.collection;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
 import hunt.text.StringUtils;

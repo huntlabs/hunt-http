@@ -18,8 +18,8 @@ import hunt.http.codec.http.decode.ResetBodyParser;
 import hunt.http.codec.http.decode.SettingsBodyParser;
 import hunt.http.codec.http.decode.WindowUpdateBodyParser;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 import hunt.Exceptions;
 

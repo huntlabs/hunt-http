@@ -3,11 +3,11 @@ module test.codec.http2.encode;
 import hunt.http.Version;
 import hunt.http.codec.http.encode.HttpGenerator;
 import hunt.http.codec.http.model;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.util.function.Supplier;
 
 

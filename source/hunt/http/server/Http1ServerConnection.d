@@ -45,11 +45,11 @@ import hunt.http.WebSocketFrame;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.collection.List;
 
-import hunt.io;
+import hunt.stream;
 import hunt.Assert;
 import hunt.Exceptions;
 import hunt.concurrency.Promise;

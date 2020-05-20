@@ -15,15 +15,16 @@ import hunt.http.HttpOutputStream;
 import hunt.http.HttpStatus;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.List;
 import hunt.collection.Map;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.io.Common;
+import hunt.io.BufferUtils;
 import hunt.logging.ConsoleLogger;
 import hunt.net.util.HttpURI;
+import hunt.stream.Common;
 import hunt.util.Common;
 
 import std.conv;

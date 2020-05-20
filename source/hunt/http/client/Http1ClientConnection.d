@@ -35,7 +35,7 @@ import hunt.net.Connection;
 
 import hunt.collection;
 import hunt.concurrency.Promise;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;

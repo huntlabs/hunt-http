@@ -10,7 +10,7 @@ import hunt.http.HttpMetaData;
 import hunt.http.HttpRequest;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.LinkedList;
 
 import hunt.Functions;

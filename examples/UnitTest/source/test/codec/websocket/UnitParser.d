@@ -3,8 +3,8 @@ module test.codec.websocket.UnitParser;
 import hunt.http.codec.websocket.decode.Parser;
 import hunt.http.WebSocketPolicy;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 import std.algorithm;
 

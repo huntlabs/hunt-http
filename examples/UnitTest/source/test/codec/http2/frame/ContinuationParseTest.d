@@ -1,6 +1,6 @@
 module test.codec.http2.frame.ContinuationParseTest;
 
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import hunt.collection.ArrayList;
 // import hunt.collection.List;
 

@@ -13,7 +13,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.text.Common;
 import hunt.util.Common;
 import hunt.http.utils.exception.CommonRuntimeException;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.TypeUtils;
 import hunt.Assert;
 import hunt.util.Test;
@@ -28,7 +28,7 @@ import test.codec.websocket.model.extension.ExtensionTool.Tester;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import hunt.collection.List;

@@ -7,8 +7,8 @@ import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.Flags;
 import hunt.http.codec.http.frame.FrameType;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 import hunt.logging;
 import hunt.Exceptions;

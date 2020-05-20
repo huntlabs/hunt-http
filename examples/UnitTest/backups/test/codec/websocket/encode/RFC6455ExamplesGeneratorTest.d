@@ -5,7 +5,7 @@ import hunt.util.Test;
 import test.codec.websocket.ByteBufferAssert;
 import test.codec.websocket.UnitGenerator;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.util.Arrays;
 
 public class RFC6455ExamplesGeneratorTest {

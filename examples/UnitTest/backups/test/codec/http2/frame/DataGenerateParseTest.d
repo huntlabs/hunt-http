@@ -1,6 +1,6 @@
 module test.codec.http2.frame;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 import java.util.Random;
@@ -13,7 +13,7 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.encode.DataGenerator;
 import hunt.http.codec.http.encode.HeaderGenerator;
 import hunt.http.codec.http.frame.DataFrame;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.http.utils.lang.Pair;
 
 public class DataGenerateParseTest {

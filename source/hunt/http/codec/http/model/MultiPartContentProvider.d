@@ -4,7 +4,7 @@ module hunt.http.codec.http.model.MultiPartContentProvider;
 // import hunt.http.utils.exception.CommonRuntimeException;
 import hunt.logging;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 // import java.io.ByteArrayOutputStream;
 // import java.io.Closeable;

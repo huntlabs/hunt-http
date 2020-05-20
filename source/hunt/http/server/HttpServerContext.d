@@ -9,8 +9,9 @@ import hunt.http.HttpOutputStream;
 import hunt.http.HttpMetaData;
 import hunt.http.HttpStatus;
 
-import hunt.io.Common;
-import hunt.io.BufferedOutputStream;
+import hunt.io.BufferUtils;
+import hunt.stream.BufferedOutputStream;
+import hunt.stream.Common;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging.ConsoleLogger;

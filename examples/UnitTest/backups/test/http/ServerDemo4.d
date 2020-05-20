@@ -5,10 +5,10 @@ import hunt.http.HttpStatus;
 import hunt.util.MimeType;
 import hunt.http.server.SimpleHttpServer;
 import hunt.http.server.SimpleResponse;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
 import java.io.PrintWriter;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 

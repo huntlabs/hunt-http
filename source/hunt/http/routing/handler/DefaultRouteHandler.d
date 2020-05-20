@@ -10,7 +10,7 @@ import hunt.http.server.HttpRequestOptions;
 import hunt.http.server.HttpServerRequest;
 
 import hunt.collection;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.net.util.UrlEncoded;

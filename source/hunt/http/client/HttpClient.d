@@ -35,14 +35,14 @@ import hunt.concurrency.Future;
 import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.collection.Map;
 import hunt.collection.HashMap;
 
 import hunt.logging.ConsoleLogger;
 import hunt.net;
-import hunt.util.Lifecycle;
+import hunt.util.AbstractLifecycle;
 
 import core.atomic;
 import core.time;

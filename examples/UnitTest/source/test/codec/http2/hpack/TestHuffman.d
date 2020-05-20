@@ -1,7 +1,7 @@
 module test.codec.http2.hpack.TestHuffman;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 
 // import hunt.util.Test;
 

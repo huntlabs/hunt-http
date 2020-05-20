@@ -1,7 +1,7 @@
 module test.http;
 
 import java.io.IOException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
@@ -13,7 +13,7 @@ import hunt.http.HttpHeader;
 import hunt.util.MimeType;
 import hunt.http.HttpOptions;
 import hunt.http.HttpOutputStream;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 
 public class SimpleHttpClientDemo1 {
 

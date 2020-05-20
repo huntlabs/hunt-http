@@ -6,7 +6,7 @@ import hunt.http.codec.websocket.frame.AbstractWebSocketFrame;
 import hunt.http.codec.websocket.model.Extension;
 import hunt.http.WebSocketCommon;
 import hunt.http.codec.websocket.model.extension.identity.IdentityExtension;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 import hunt.util.Test;
 import test.codec.websocket.ByteBufferAssert;
@@ -14,7 +14,7 @@ import test.codec.websocket.IncomingFramesCapture;
 import test.codec.websocket.OutgoingFramesCapture;
 
 import java.io.IOException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 

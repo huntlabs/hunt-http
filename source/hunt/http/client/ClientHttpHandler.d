@@ -8,7 +8,7 @@ import hunt.http.HttpOutputStream;
 
 import hunt.Functions;
 import hunt.util.Common;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 /**
  * 

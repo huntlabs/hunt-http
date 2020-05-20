@@ -8,10 +8,10 @@ import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.WebSocketStatusCode;
 import hunt.http.WebSocketPolicy;
 
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Assert;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 
 class WebSocketFrameTest {

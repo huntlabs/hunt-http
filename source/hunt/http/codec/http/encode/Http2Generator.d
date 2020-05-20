@@ -19,7 +19,7 @@ import hunt.http.codec.http.encode.ResetGenerator;
 import hunt.http.codec.http.encode.SettingsGenerator;
 import hunt.http.codec.http.encode.WindowUpdateGenerator;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.List;
 import hunt.logging;
 

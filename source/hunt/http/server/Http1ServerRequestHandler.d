@@ -16,7 +16,7 @@ import hunt.http.HttpMethod;
 import hunt.http.HttpResponse;
 import hunt.http.HttpVersion;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.text.Common;
 
 import hunt.logging;

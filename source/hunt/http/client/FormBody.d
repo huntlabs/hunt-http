@@ -3,9 +3,9 @@ module hunt.http.client.FormBody;
 import hunt.http.HttpBody;
 import hunt.http.HttpOutputStream;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.HeapByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.HeapByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
 import hunt.net.util.UrlEncoded;

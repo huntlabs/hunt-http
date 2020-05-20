@@ -12,8 +12,8 @@ import hunt.http.codec.http.frame.HeadersFrame;
 import hunt.http.codec.http.frame.PriorityFrame;
 import hunt.http.HttpMetaData;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 import hunt.Exceptions;
 

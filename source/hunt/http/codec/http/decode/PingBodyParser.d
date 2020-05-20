@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.PingBodyParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.codec.http.decode.BodyParser;
 import hunt.http.codec.http.decode.HeaderParser;

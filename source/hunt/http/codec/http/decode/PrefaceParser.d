@@ -5,11 +5,11 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.frame.ErrorCode;
 import hunt.http.codec.http.frame.PrefaceFrame;
 
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.logging;
 
 import hunt.Exceptions;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 /**
 */

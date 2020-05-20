@@ -4,10 +4,10 @@ import hunt.http.codec.websocket.frame.CloseFrame;
 import hunt.http.codec.websocket.model.CloseInfo;
 import hunt.http.WebSocketCommon;
 import hunt.text.Common;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.WebSocketStatusCode;
 

@@ -8,7 +8,7 @@ module hunt.http.codec.websocket.model.extension.compress.PerMessageDeflateExten
 // import hunt.logging;
 
 
-// import hunt.collection.ByteBuffer;
+// import hunt.io.ByteBuffer;
 // import java.util.zip.DataFormatException;
 
 // /**

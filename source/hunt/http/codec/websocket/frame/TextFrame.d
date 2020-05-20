@@ -6,8 +6,8 @@ import hunt.http.WebSocketCommon;
 import hunt.http.WebSocketFrame;
 
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.text.Common;
 
 class TextFrame : DataFrame {

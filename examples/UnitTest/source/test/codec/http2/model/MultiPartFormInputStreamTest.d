@@ -8,7 +8,7 @@ import hunt.http.codec.http.decode.MultipartFormParser;
 
 import hunt.collection;
 import hunt.util.DateTime;
-import hunt.io;
+import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;

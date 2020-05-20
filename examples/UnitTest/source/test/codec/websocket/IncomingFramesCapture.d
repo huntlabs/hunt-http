@@ -6,7 +6,7 @@ import hunt.http.Exceptions;
 import hunt.http.codec.websocket.frame;
 import hunt.http.WebSocketCommon;
 
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.collection.Queue;
 import hunt.concurrency.LinkedBlockingQueue;
 import hunt.logging;

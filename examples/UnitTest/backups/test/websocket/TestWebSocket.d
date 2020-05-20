@@ -4,7 +4,7 @@ import hunt.http.$;
 import hunt.http.client.websocket.SimpleWebSocketClient;
 import hunt.http.server.websocket.SimpleWebSocketServer;
 import hunt.http.utils.RandomUtils;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.runners.Parameterized;
 
 import java.nio.charset.StandardCharsets;

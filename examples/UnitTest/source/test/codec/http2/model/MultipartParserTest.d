@@ -3,8 +3,8 @@ module test.codec.http2.model.MultipartParserTest;
 import hunt.http.codec.http.model.BadMessageException;
 import hunt.http.codec.http.decode.MultipartParser;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 import hunt.logging;

@@ -6,7 +6,7 @@ import hunt.http.HttpConnection;
 import hunt.Functions;
 import hunt.util.Common;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.Collection;
 
 /**

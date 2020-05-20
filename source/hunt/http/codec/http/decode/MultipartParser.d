@@ -2,8 +2,8 @@ module hunt.http.codec.http.decode.MultipartParser;
 
 import hunt.http.codec.http.model.BadMessageException;
 
-import hunt.collection.ByteBuffer;
-import hunt.collection.BufferUtils;
+import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.text.Common;

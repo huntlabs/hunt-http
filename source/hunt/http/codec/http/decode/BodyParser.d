@@ -5,8 +5,8 @@ import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.decode.Parser;
 import hunt.http.codec.http.frame;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 import hunt.logging;
 

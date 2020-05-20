@@ -7,7 +7,7 @@ import hunt.util.TypeUtils;
 import hunt.Assert;
 import hunt.util.Test;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.util.Iterator;
 
 

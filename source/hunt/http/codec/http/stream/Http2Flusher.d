@@ -167,7 +167,7 @@ class Http2Flusher : IteratingCallback {
 
         version(HUNT_DEBUG) {
             tracef("Writing %s buffers (%s bytes) for %s frames %s",
-                    buffers.size(), BufferUtils.remaining(buffers), actives.size(), actives.toString());
+                    buffers.size(), BufferUtils.remaining(buffers.toArray()), actives.size(), actives.toString());
         }
 
         Connection tcpSession =  session.getEndPoint();

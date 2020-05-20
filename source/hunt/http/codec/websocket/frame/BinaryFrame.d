@@ -4,8 +4,8 @@ import hunt.http.codec.websocket.frame.DataFrame;
 import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketCommon;
 
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 class BinaryFrame : DataFrame {
     this() {

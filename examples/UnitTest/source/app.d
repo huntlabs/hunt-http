@@ -32,7 +32,7 @@ import test.codec.websocket.utils.QuoteUtilTest;
 
 import test.http.router.TestMatcher;
 
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.Exceptions;
 import hunt.logging;
 import hunt.http.HttpHeader;
@@ -111,7 +111,7 @@ void testHpackDecoder() {
 	import hunt.Assert;
 	import hunt.util.UnitTest;
 
-	import hunt.collection.ByteBuffer;
+	import hunt.io.ByteBuffer;
 	import hunt.collection.Iterator;
 	import hunt.http.codec.http.model.DateGenerator;
 	import std.datetime;

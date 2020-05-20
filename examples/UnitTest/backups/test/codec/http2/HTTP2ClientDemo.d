@@ -13,12 +13,12 @@ import hunt.http.codec.http.stream.Session.Listener;
 import hunt.http.codec.http.stream.Stream;
 import hunt.util.Common;
 import hunt.http.utils.concurrent.FuturePromise;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import hunt.concurrency.ExecutionException;

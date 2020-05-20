@@ -5,8 +5,8 @@ import hunt.http.codec.websocket.frame.ControlFrame;
 import hunt.http.WebSocketCommon;
 
 import hunt.text.Common;
-import hunt.collection.BufferUtils;
-import hunt.collection.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.ByteBuffer;
 
 class PingFrame : ControlFrame {
     this() {

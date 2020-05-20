@@ -3,11 +3,11 @@ module test.codec.websocket;
 import hunt.http.codec.websocket.encode.Generator;
 import hunt.http.WebSocketFrame;
 import hunt.util.Common;
-import hunt.collection.BufferUtils;
+import hunt.io.BufferUtils;
 import hunt.util.TypeUtils;
 import hunt.Assert;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 import hunt.collection.ArrayList;
 import hunt.collection.List;
 import java.util.Locale;

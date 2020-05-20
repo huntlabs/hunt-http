@@ -1,6 +1,6 @@
 module hunt.http.codec.http.decode.PriorityBodyParser;
 
-import hunt.collection.ByteBuffer;
+import hunt.io.ByteBuffer;
 
 import hunt.http.codec.http.decode.BodyParser;
 import hunt.http.codec.http.decode.HeaderParser;
