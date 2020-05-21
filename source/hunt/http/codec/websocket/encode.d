@@ -10,7 +10,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.collection;
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 /**
  * Generating a frame in WebSocket land.

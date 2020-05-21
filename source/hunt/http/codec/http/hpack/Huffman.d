@@ -2,7 +2,7 @@ module hunt.http.codec.http.hpack.Huffman;
 
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import hunt.io.ByteBuffer;
 import hunt.logging;

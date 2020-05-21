@@ -13,7 +13,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.logging;
 import hunt.collection;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import std.algorithm;
 import std.conv;

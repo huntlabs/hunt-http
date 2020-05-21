@@ -9,7 +9,7 @@ import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
 import hunt.text.Common;
 import hunt.text.QuotedStringTokenizer;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.text.StringTokenizer;
 import hunt.text.StringUtils;
 import hunt.util.Common;

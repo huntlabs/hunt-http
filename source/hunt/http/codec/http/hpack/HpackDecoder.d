@@ -18,7 +18,7 @@ import hunt.http.HttpResponse;
 import hunt.http.HttpStatus;
 
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.util.ConverterUtils;
 import hunt.Exceptions;
 

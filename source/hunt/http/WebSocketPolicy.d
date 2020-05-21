@@ -6,7 +6,7 @@ import hunt.http.WebSocketCommon;
 
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import std.conv;
 import std.format;

@@ -3,7 +3,7 @@ module hunt.http.Cookie;
 import hunt.collection.List;
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.text.StringUtils;
 import hunt.util.DateTime;
 

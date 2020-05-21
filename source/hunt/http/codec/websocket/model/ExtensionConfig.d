@@ -5,7 +5,7 @@ import hunt.text.QuoteUtil;
 import hunt.collection;
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import std.array;
 import std.container.array;

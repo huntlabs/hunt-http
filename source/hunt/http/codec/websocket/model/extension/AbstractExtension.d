@@ -9,6 +9,7 @@ import hunt.http.WebSocketPolicy;
 
 import hunt.logging.ConsoleLogger;
 import hunt.Exceptions;
+import hunt.util.Appendable;
 import hunt.util.Common;
 import hunt.util.AbstractLifecycle;
 

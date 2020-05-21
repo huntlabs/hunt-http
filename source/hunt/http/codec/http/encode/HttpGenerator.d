@@ -20,7 +20,7 @@ import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.text.StringUtils;
 
 import core.time;

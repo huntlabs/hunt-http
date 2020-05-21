@@ -12,7 +12,7 @@ import hunt.io.BufferUtils;
 import hunt.collection.List;
 import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import hunt.util.MimeType;
 

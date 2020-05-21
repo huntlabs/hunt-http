@@ -33,6 +33,7 @@ import hunt.logging;
 import hunt.net.AbstractConnection;
 import hunt.net.Connection;
 import hunt.util.Common;
+import hunt.util.Runnable;
 
 import core.time;
 

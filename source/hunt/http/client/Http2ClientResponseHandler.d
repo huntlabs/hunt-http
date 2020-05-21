@@ -19,6 +19,7 @@ import hunt.concurrency.Promise;
 import hunt.logging;
 import hunt.Exceptions;
 import hunt.util.Common;
+import hunt.util.Runnable;
 
 import std.conv;
 import std.string;

@@ -25,10 +25,11 @@ import hunt.logging.ConsoleLogger;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 
-import hunt.util.Common;
 import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Promise;
 import hunt.Exceptions;
+import hunt.util.Common;
+import hunt.util.Runnable;
 
 import core.time;
 import std.conv;

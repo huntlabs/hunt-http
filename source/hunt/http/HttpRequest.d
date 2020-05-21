@@ -13,7 +13,7 @@ import hunt.Exceptions;
 import hunt.logging.ConsoleLogger;
 import hunt.net.util.HttpURI;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.util.Common;
 
 import std.ascii;

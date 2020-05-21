@@ -8,7 +8,7 @@ import hunt.collection;
 import hunt.logging;
 import hunt.Exceptions;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import std.array;
 import std.conv;

@@ -18,7 +18,7 @@ import hunt.collection;
 import hunt.logging;
 import hunt.Assert;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import test.codec.websocket.utils.Hex;
 import test.codec.websocket.IncomingFramesCapture;

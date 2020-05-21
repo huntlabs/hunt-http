@@ -10,7 +10,7 @@ import hunt.Exceptions;
 import hunt.util.Common;
 import hunt.text.Common;
 import hunt.text.QuotedStringTokenizer;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 
 import std.conv;
 

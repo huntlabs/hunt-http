@@ -9,7 +9,7 @@ import hunt.collection.ArrayList;
 import hunt.collection.List;
 import hunt.logging;
 import hunt.text.Common;
-import hunt.text.StringBuilder;
+import hunt.util.StringBuilder;
 import hunt.Assert;
 
 import std.algorithm;
