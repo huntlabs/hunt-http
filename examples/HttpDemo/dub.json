@@ -8,7 +8,7 @@
 		"hunt-http" :{"path": "../../"}
 	},
 	"versions": [
-		"HUNT_DEBUG", "HUNT_NET_DEBUG", "HUNT_HTTP_DEBUG", "WITH_HUNT_TRACE"
+		"HUNT_DEBUG", "HUNT_NET_DEBUG", "HUNT_HTTP_DEBUG"
 	],
 	"configurations": [
 		{
