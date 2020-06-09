@@ -15,13 +15,14 @@ import std.stdio;
 // string str = runGet("http://www.putao.com/");
 
 void main(string[] args) {
-    testSimpleHttpClient();
+    // testSimpleHttpClient();
     // testHttpClientWithCookie();
     // testHttpClientWithMultipart();
     // testWebSocketClient();
     // testHttpClientWithTLS();
     // testHttpClientWithMutualTLS();
-    // version(WITH_HUNT_TRACE) testOpenTracing();
+    version (WITH_HUNT_TRACE)
+        testOpenTracing();
 }
 
 void testSimpleHttpClient() {
@@ -122,6 +123,7 @@ void testWebSocketClient() {
     .authorization(
             AuthenticationScheme.Basic, "cHV0YW86MjAxOQ==").build();
 
+    // dfmt off
     WebSocketConnection wsConn = client.newWebSocket(request,
             new class AbstractWebSocketMessageHandler {
                 override void onOpen(WebSocketConnection connection) {
@@ -132,112 +134,114 @@ void testWebSocketClient() {
                         warningf("received (from %s): %s", connection.getRemoteAddress(), text);
                     }
                 }
-);
-                // import core.thread;
-                // import core.time;
-                // Thread.sleep(5.seconds);
-                // wsConn.close();
-                // client.close();
-            }
+    );
+    // dfmt on
+    // import core.thread;
+    // import core.time;
+    // Thread.sleep(5.seconds);
+    // wsConn.close();
+    // client.close();
+}
 
-    void testHttpClientWithTLS() {
-        string url = "https://10.1.222.110:443/";
+void testHttpClientWithTLS() {
+    string url = "https://10.1.222.110:443/";
+    // string url = "https://publicobject.com/helloworld.txt";
+    // string url = "https://www.bing.com/";
+
+    HttpClient client = new HttpClient();
+    scope (exit) {
+        client.close();
+    }
+
+    Request request = new RequestBuilder().url(url).build();
+    Response response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        trace(response.getBody().asString());
+    }
+
+    warning("done.");
+}
+
+void testHttpClientWithMutualTLS() {
+    // https://www.naschenweng.info/2018/02/01/java-mutual-ssl-authentication-2-way-ssl-authentication/
+    // mutual TLS
+    string url = "https://10.1.222.110:443/";
+    // string url = "https://publicobject.com/helloworld.txt";
+    // string url = "https://www.bing.com/";
+
+    HttpClient client = new HttpClient();
+    scope (exit) {
+        client.close();
+    }
+
+    Request request = new RequestBuilder().url(url).caCert("cert/ca.crt", "hunt2019")
+        .mutualTls("cert/client.crt", "cert/client.key", "hunt2019", "hunt2019").build();
+
+    Response response = client.newCall(request).execute();
+
+    if (response !is null) {
+        tracef("status code: %d", response.getStatus());
+        trace(response.getBody().asString());
+    }
+
+    warning("done.");
+}
+
+class HttpClientTest {
+    HttpClient client;
+
+    this() {
+        client = new HttpClient();
+    }
+
+    // 
+    void testGet() {
+        // string str = runGet("http://10.1.222.110/test.html");
+        // string str = runGet("http://10.1.222.110:8080/index.html");
+        string str = runGet("http://127.0.0.1:8080/json");
+        // string str = runGet("http://www.putao.com/");
+        trace(str);
+
+        trace("===============================");
+
+        // str = runGet("http://10.1.222.110/index.html");
+        // str = runGet("http://www.putao.com/");
+        // trace(str);
+    }
+
+    //
+    void testGetHttps() {
+
+        string url = "https://10.1.222.110:440/";
         // string url = "https://publicobject.com/helloworld.txt";
-        // string url = "https://www.bing.com/";
+        string str = runGet(url);
 
-        HttpClient client = new HttpClient();
-        scope (exit) {
-            client.close();
-        }
+        trace(str);
+    }
+
+    string runGet(string url) {
 
         Request request = new RequestBuilder().url(url).build();
         Response response = client.newCall(request).execute();
 
         if (response !is null) {
             tracef("status code: %d", response.getStatus());
-            trace(response.getBody().asString());
+            return response.getBody().asString();
         }
 
-        warning("done.");
+        return "";
     }
 
-    void testHttpClientWithMutualTLS() {
-        // https://www.naschenweng.info/2018/02/01/java-mutual-ssl-authentication-2-way-ssl-authentication/
-        // mutual TLS
-        string url = "https://10.1.222.110:443/";
-        // string url = "https://publicobject.com/helloworld.txt";
-        // string url = "https://www.bing.com/";
+    //
+    void testAsynchronousGet() {
 
-        HttpClient client = new HttpClient();
-        scope (exit) {
-            client.close();
-        }
+        // string url = "https://10.1.222.110:6677/index";
+        string url = "https://publicobject.com/helloworld.txt";
+        Request request = new RequestBuilder().url(url).build();
 
-        Request request = new RequestBuilder().url(url).caCert("cert/ca.crt", "hunt2019")
-            .mutualTls("cert/client.crt", "cert/client.key", "hunt2019", "hunt2019").build();
-
-        Response response = client.newCall(request).execute();
-
-        if (response !is null) {
-            tracef("status code: %d", response.getStatus());
-            trace(response.getBody().asString());
-        }
-
-        warning("done.");
-    }
-
-    class HttpClientTest {
-        HttpClient client;
-
-        this() {
-            client = new HttpClient();
-        }
-
-        // 
-        void testGet() {
-            // string str = runGet("http://10.1.222.110/test.html");
-            // string str = runGet("http://10.1.222.110:8080/index.html");
-            string str = runGet("http://127.0.0.1:8080/json");
-            // string str = runGet("http://www.putao.com/");
-            trace(str);
-
-            trace("===============================");
-
-            // str = runGet("http://10.1.222.110/index.html");
-            // str = runGet("http://www.putao.com/");
-            // trace(str);
-        }
-
-        //
-        void testGetHttps() {
-
-            string url = "https://10.1.222.110:440/";
-            // string url = "https://publicobject.com/helloworld.txt";
-            string str = runGet(url);
-
-            trace(str);
-        }
-
-        string runGet(string url) {
-
-            Request request = new RequestBuilder().url(url).build();
-            Response response = client.newCall(request).execute();
-
-            if (response !is null) {
-                tracef("status code: %d", response.getStatus());
-                return response.getBody().asString();
-            }
-
-            return "";
-        }
-
-        //
-        void testAsynchronousGet() {
-
-            // string url = "https://10.1.222.110:6677/index";
-            string url = "https://publicobject.com/helloworld.txt";
-            Request request = new RequestBuilder().url(url).build();
-
+        // dfmt off
             client.newCall(request).enqueue(new class Callback {
                 void onFailure(Call call, IOException e) {
                     warning(e.toString());}
@@ -253,86 +257,87 @@ void testWebSocketClient() {
 
                         trace(responseBody.asString());}
                     }
-);
-                    info("A request has been sent.");
-                }
+            );
+            // dfmt on
 
-                void testPost() {
-                    UrlEncoded encoder = new UrlEncoded;
-                    encoder.put("email", "test@putao.com");
-                    encoder.put("password", "test");
-                    // string content = "email=test%40putao.com&password=test";
-                    string content = encoder.encode();
-                    string response = post("http://10.1.222.110:8080/testpost",
-                        "application/x-www-form-urlencoded", content);
+        info("A request has been sent.");
+    }
 
-                    // string content = `{"type":"news", "offset": "0", "count": "20"}`;
-                    // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
+    void testPost() {
+        UrlEncoded encoder = new UrlEncoded;
+        encoder.put("email", "test@putao.com");
+        encoder.put("password", "test");
+        // string content = "email=test%40putao.com&password=test";
+        string content = encoder.encode();
+        string response = post("http://10.1.222.110:8080/testpost",
+                "application/x-www-form-urlencoded", content);
 
-                    // string response = post(url, MimeType.APPLICATION_JSON_UTF_8.toString(), content);
+        // string content = `{"type":"news", "offset": "0", "count": "20"}`;
+        // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
 
-                    trace(response);
-                }
+        // string response = post(url, MimeType.APPLICATION_JSON_UTF_8.toString(), content);
 
-                string post(string url, string contentType, string content) {
-                    HttpBody b = HttpBody.create(contentType, content);
+        trace(response);
+    }
 
-                    Request request = new RequestBuilder().url(url).post(b).build();
+    string post(string url, string contentType, string content) {
+        HttpBody b = HttpBody.create(contentType, content);
 
-                    Response response = client.newCall(request).execute();
-                    HttpBody res = response.getBody();
-                    if (res is null)
-                        return "";
-                    else
-                        return res.asString();
-                }
+        Request request = new RequestBuilder().url(url).post(b).build();
 
-                // 
-                void testFormPost() {
-                    FormBody form = new FormBody.Builder().add("sim", "ple")
-                        .add("hey", "there").add("help", "me").build();
+        Response response = client.newCall(request).execute();
+        HttpBody res = response.getBody();
+        if (res is null)
+            return "";
+        else
+            return res.asString();
+    }
 
-                    string response = postForm("http://10.1.11.164:8080/testpost", form);
-                    // string response = postForm("http://10.1.222.110:8080/testpost", form);
-                    trace(response);
-                }
+    // 
+    void testFormPost() {
+        FormBody form = new FormBody.Builder().add("sim", "ple").add("hey",
+                "there").add("help", "me").build();
 
-                string postForm(string url, HttpBody content) {
-                    Request request = new RequestBuilder().url(url).header("Authorization",
-                        "Basic cHV0YW86MjAxOQ==").post(content).build();
+        string response = postForm("http://10.1.11.164:8080/testpost", form);
+        // string response = postForm("http://10.1.222.110:8080/testpost", form);
+        trace(response);
+    }
 
-                    Response response = client.newCall(request).execute();
-                    if (response.haveBody())
-                        return response.getBody().asString();
-                    return "";
-                }
+    string postForm(string url, HttpBody content) {
+        Request request = new RequestBuilder().url(url).header("Authorization",
+                "Basic cHV0YW86MjAxOQ==").post(content).build();
 
-            }
+        Response response = client.newCall(request).execute();
+        if (response.haveBody())
+            return response.getBody().asString();
+        return "";
+    }
 
-            version (WITH_HUNT_TRACE) {
-                void testOpenTracing() {
-                    import hunt.trace.HttpSender;
+}
 
-                    // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
-                    string endpoint = "http://10.1.222.110:9411/api/v2/spans";
-                    httpSender().endpoint(endpoint);
+version (WITH_HUNT_TRACE) {
+    void testOpenTracing() {
+        import hunt.trace.HttpSender;
 
-                    // string url = "http://10.1.222.110:801/index.html";
-                    string url = "http://127.0.0.1:8080/plaintext";
-                    HttpClient client = new HttpClient();
+        // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
+        string endpoint = "http://10.1.222.110:9411/api/v2/spans";
+        httpSender().endpoint(endpoint);
 
-                    Request request = new RequestBuilder().url(url)
-                        .localServiceName("HttpClientDemo").build();
-                    Response response = client.newCall(request).execute();
+        // string url = "http://10.1.222.110/index.html";
+        string url = "http://127.0.0.1:8080/plaintext";
+        HttpClient client = new HttpClient();
 
-                    if (response !is null) {
-                        warningf("status code: %d", response.getStatus());
-                        // if(response.haveBody())
-                        //  trace(response.getBody().asString());
-                    } else {
-                        warning("no response");
-                    }
+        Request request = new RequestBuilder().url(url).localServiceName("HttpClientDemo").build();
+        Response response = client.newCall(request).execute();
 
-                    getchar();
-                }
-            }
+        if (response !is null) {
+            warningf("status code: %d", response.getStatus());
+            // if(response.haveBody())
+            //  trace(response.getBody().asString());
+        } else {
+            warning("no response");
+        }
+
+        getchar();
+    }
+}

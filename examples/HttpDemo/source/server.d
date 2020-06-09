@@ -344,7 +344,7 @@ version(WITH_HUNT_TRACE) {
     HttpServer buildOpenTracingServer() {
         
         import hunt.trace.HttpSender;
-        string endpoint = "http://10.1.222.120:9411/api/v2/spans";
+        string endpoint = "http://10.1.222.110:9411/api/v2/spans";
         httpSender().endpoint(endpoint);
 
 
@@ -357,7 +357,7 @@ version(WITH_HUNT_TRACE) {
                 context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_HTML_VALUE);
                 context.write(DateTime.getTimeAsGMT());
                 
-                string url = "http://10.1.222.120:801/index.html";
+                string url = "http://10.1.222.110/index.html";
                 HttpClient client = new HttpClient();
 
                 RequestBuilder requestBuilder = new RequestBuilder()
