@@ -5,6 +5,7 @@ import hunt.http.Exceptions;
 import hunt.collection.HashMap;
 import hunt.collection.Map;
 import hunt.Exceptions;
+import hunt.util.CompilerHelper;
 import hunt.util.DateTime;
 import hunt.util.Lifecycle;
 
@@ -89,7 +90,32 @@ class HttpSession {
 
     T getAttribute(T=string)(string name) {
         JSONValue jv = attributes[name];
-        return jv.get!T();
+        static if(CompilerHelper.isGreaterThan(2092)) {
+            return jv.get!T();
+        } else {
+            static if (is(Unqual!T == string)) {
+                return jv.str;
+            } else static if (is(Unqual!T == bool)) {
+                return jv.boolean;
+            } else static if (isFloatingPoint!T) {
+                switch (type) {
+                case JSONType.float_:
+                    return cast(T) jv.floating;
+                case JSONType.uinteger:
+                    return cast(T) jv.uinteger;
+                case JSONType.integer:
+                    return cast(T) jv.integer;
+                default:
+                    throw new JSONException("JSONValue is not a number type");
+                }
+            } else static if (__traits(isUnsigned, T)) {
+                return cast(T) jv.uinteger;
+            } else static if (isSigned!T) {
+                return cast(T) jv.integer;
+            } else {
+                static assert(false, "Unsupported type: " ~ T.stringof);
+            }                    
+        }
     }
 
     bool isNewSession() {
