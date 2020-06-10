@@ -90,6 +90,8 @@ class HttpSender {
         version(HUNT_HTTP_DEBUG) { 
             tracef("endpoint: %s", _endpoint);
             trace(content);
+        } else version(HUNT_DEBUG) {
+            tracef("Span(s) sent to the endpoint: %s", _endpoint);
         }
 
         assert(!_endpoint.empty());

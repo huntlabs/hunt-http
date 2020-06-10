@@ -646,23 +646,28 @@ version(WITH_HUNT_TRACE) {
         }
 
         private void initializeTracer(HttpRequest request, HttpConnection connection) {
+            if(!isTraceEnabled) return;
+
             Tracer tracer;
             string reqPath = request.getURI().getPath();
             string b3 = request.header("b3");
             if(b3.empty()) {
-                if(_isB3HeaderRequired) return;
-
-                tracer = new Tracer(reqPath);
+                // if(_isB3HeaderRequired) return;
+                version(HUNT_HTTP_DEBUG) {
+                    warningf("No B3 headers found for %s, use the defaults now.", reqPath);
+                }
+                tracer = new Tracer(reqPath, KindOfServer);
             } else {
                 version(HUNT_HTTP_DEBUG) {
                     warningf("initializing tracer for %s, with %s", reqPath, b3);
                 }
 
-                tracer = new Tracer(reqPath, b3);
+                tracer = new Tracer(reqPath, KindOfServer, b3);
             }
 
             Span span = tracer.root;
-            span.initializeLocalEndpoint(_localServiceName);
+            span.localEndpoint = _localEndpoint;
+
             import std.socket;
 
             // 
@@ -676,6 +681,8 @@ version(WITH_HUNT_TRACE) {
             span.start();
             request.tracer = tracer;
         }
+
+        private EndPoint _localEndpoint;
 
         private void endTraceSpan(HttpRequest request, int status, string message = null) {
             Tracer tracer = request.tracer;
@@ -713,7 +720,9 @@ version(WITH_HUNT_TRACE) {
                 .headerComplete((request, response, ot, connection) {
                     version(HUNT_HTTP_DEBUG) info("headerComplete!");
                     HttpServerRequest serverRequest = cast(HttpServerRequest)request;
-                    version(WITH_HUNT_TRACE) initializeTracer(serverRequest, connection);
+                    version(WITH_HUNT_TRACE) {
+                        initializeTracer(serverRequest, connection);
+                    }
 
                     HttpServerContext context = new HttpServerContext(
                         serverRequest, cast(HttpServerResponse)response, 
@@ -923,6 +932,9 @@ version(WITH_HUNT_TRACE) {
             }
 
             _httpOptions.setSecureConnectionEnabled(_isCertificateAuth);
+            version(WITH_HUNT_TRACE) {
+                _localEndpoint = Span.buildLocalEndPoint(_localServiceName);
+            }
 
             return new HttpServer(_httpOptions, buildServerHttpHandler(), buildWebSocketHandler());
         }

@@ -17,7 +17,6 @@ import std.string;
  * 
  */
 class Span {
-    __gshared EndPoint defaultLocalEndpoint;
 
     /// 16bytes
     string traceId;
@@ -75,29 +74,26 @@ class Span {
 
     }
 
-    void initializeLocalEndpoint(string name) {
-        if(defaultLocalEndpoint is null) {
-            defaultLocalEndpoint = new EndPoint();
-            defaultLocalEndpoint.serviceName = name;
+    static EndPoint buildLocalEndPoint(string name) {
+        EndPoint endpoint = new EndPoint();
+        endpoint.serviceName = name;
 
-            try {
-                auto addresses = getAddress("localhost");
-                foreach (address; addresses) {
-                    // writefln("  IP: %s", address.toAddrString());
-                    string ip = address.toAddrString();
-                    if(ip.startsWith("::")) {
-                        // localEndpoint.ipv6 = ip; // todo
-                    } else {
-                        defaultLocalEndpoint.ipv4 = ip;
-                    }
+        try {
+            auto addresses = getAddress("localhost");
+            foreach (address; addresses) {
+                // writefln("  IP: %s", address.toAddrString());
+                string ip = address.toAddrString();
+                if(ip.startsWith("::")) {
+                    // localEndpoint.ipv6 = ip; // todo
+                } else {
+                    endpoint.ipv4 = ip;
                 }
-            } catch(Exception ex) {
-                warning(ex.msg);
             }
-        } 
-        
-        //
-        localEndpoint = defaultLocalEndpoint;
+        } catch(Exception ex) {
+            warning(ex.msg);
+        }
+
+        return endpoint;
     }
 
     override string toString() {

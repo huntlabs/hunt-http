@@ -421,33 +421,13 @@ version(WITH_HUNT_TRACE) {
                     string spanName = _url.getPath();
                     Span span;
                     if(_tracer is null) {
-                        _tracer = new Tracer(spanName);
+                        _tracer = new Tracer(spanName, KindOfClient);
                         span = _tracer.root; 
                     } else {
                         span = _tracer.addSpan(spanName);
                     }
 
-                    span.initializeLocalEndpoint(_localServiceName);
-
-                    // EndPoint remoteEndpoint = new EndPoint();
-                    // remoteEndpoint.port = _url.getPort();
-                    
-                    // try {
-                    //     auto addresses = getAddress(_url.getHost());
-                    //     foreach (address; addresses) {
-                    //         // writefln("  IP: %s", address.toAddrString());
-                    //         string ip = address.toAddrString();
-                    //         if(ip.startsWith("::")) {
-                    //             remoteEndpoint.ipv6 = ip;
-                    //         } else {
-                    //             remoteEndpoint.ipv4 = ip;
-                    //         }
-                    //     }
-                    // } catch(Exception ex) {
-                    //     warning(ex.msg);
-                    // }
-
-                    // span.remoteEndpoint = remoteEndpoint;
+                    span.localEndpoint = Span.buildLocalEndPoint(_localServiceName);
 
                     request.tracer = _tracer;
                     request._span = span;

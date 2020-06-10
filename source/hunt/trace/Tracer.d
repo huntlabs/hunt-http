@@ -17,6 +17,8 @@ import std.string;
 //     g_tracer = tracer;
 // }
 
+__gshared isTraceEnabled = true;
+
 
 // https://github.com/openzipkin/b3-propagation
 
@@ -26,7 +28,7 @@ class Tracer {
     Span root;
     Span[] children;
 
-    this(string spanName, string b3Header = null) {
+    this(string spanName, string spanKind = KindOfClient, string b3Header = null) {
         root = new Span();
         root.id = ID;
 
@@ -37,13 +39,13 @@ class Tracer {
                 root.traceId = args[0];
                 root.parentId = args[1];
                 root.samplingState = args[2];
-                root.kind = KindOfServer;
             }
         } else {
             root.traceId = LID;
-            root.kind = KindOfClient;
         }
+
         root.name = spanName;
+        root.kind = spanKind;
         root.localEndpoint = localEndpoint;
     }
 
