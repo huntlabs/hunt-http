@@ -362,6 +362,10 @@ class HttpServerRequest : HttpRequest {
         return getURI().getDecodedPath();
     }
 
+    string opDispatch(string key)() {
+        return query(key);
+    }
+
     /**
      * Retrieve a query string item from the request.
      *
