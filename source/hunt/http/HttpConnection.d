@@ -262,25 +262,26 @@ abstract class HttpConnectionHandler : NetConnectionHandlerAdapter {
     void exceptionCaught(Connection connection, Throwable t) {
         try {
             version(HUNT_DEBUG) warningf("HTTP handler exception: %s", t.toString());
-            Object attachment = connection.getAttribute(HttpConnection.NAME); 
-            if (attachment is null) {
-                version(HUNT_DEBUG) warningf("attachment is null");
+            if(connection is null) {
+                version(HUNT_DEBUG) warning("Connection is null.");
             } else {
-                AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
-                if (httpConnection !is null ) {
-                    try {
+                Object attachment = connection.getAttribute(HttpConnection.NAME); 
+                if (attachment is null) {
+                    version(HUNT_DEBUG) warningf("attachment is null");
+                } else {
+                    AbstractHttpConnection httpConnection = cast(AbstractHttpConnection) attachment;
+                    if (httpConnection !is null ) {
                         Exception ex = cast(Exception)t;
                         if(ex is null && t !is null) {
                             warningf("Can't handle a exception. Exception: %s", t.msg);
                         }
                         httpConnection.notifyException(ex);
-                    } catch (Exception e) {
-                        errorf("The http connection exception listener error: %s", e.message);
-                    }
-                } 
+                    } 
+                }
             }
         } finally {
-            connection.close();
+            if(connection !is null)
+                connection.close();
         }
     }
 

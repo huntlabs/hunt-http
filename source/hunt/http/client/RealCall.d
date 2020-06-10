@@ -197,7 +197,8 @@ class RealCall : Call {
                 if(!r) {
                     string msg = format("No any response in %s", idleTimeout);
                     warningf(msg);
-                    client.close();
+                    if(!client.isStopped())
+                        client.close();
 
                     version(WITH_HUNT_TRACE) {
                         originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
@@ -298,12 +299,13 @@ class RealCall : Call {
             client.connect(uri.getHost(), port, promise);
             connection = promise.get(tcpConfig.getConnectTimeout());
         } catch(Exception ex) {
-            string msg = "Failed to connect " ~ uri.getHost() ~ ":" ~ port.to!string();
+            string msg = "Failed to open " ~ uri.toString();
             version(HUNT_DEBUG) {
-                warning(msg, " Reason: ", ex.msg);
+                warning(msg, ". The reason: ", ex.msg);
             }
             version(HUNT_HTTP_DEBUG) warning(ex);
-            client.close();
+            if(!client.isStopped())
+                client.close();
 
             version(WITH_HUNT_TRACE) {
                 originalRequest.endTraceSpan(HttpStatus.INTERNAL_SERVER_ERROR_500, msg);
