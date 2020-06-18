@@ -37,15 +37,20 @@ abstract class AbstractResourceHandler : RouteHandler {
      * If directory listing is enabled.
      */
     private bool _isListingEnabled = false; 
+    private string _virtualPath;
     private string _basePath;
     // private string requestPath;
     private size_t _bufferSize = 1024;
     private bool _cachable = true;
     private Duration _cacheTime = -1.seconds;
+    private int _slashNumberInVirtualPath = 0;
     
-    this(string path) {
+    this(string virtualPath, string actualPath) {
+        assert(virtualPath[$-1] == '/');
 		string rootPath = dirName(thisExePath);
-        _basePath = buildNormalizedPath(rootPath, path);
+        _basePath = buildNormalizedPath(rootPath, actualPath);
+        _virtualPath = virtualPath;
+        _slashNumberInVirtualPath = cast(int)count(virtualPath, "/");
     }
 
     protected string basePath() {
@@ -99,45 +104,46 @@ abstract class AbstractResourceHandler : RouteHandler {
     void handle(RoutingContext context) {
         // string requestPath = context.getURI().getPath();
         string requestPath = context.getRequest().originalPath();
-        version(HUNT_DEBUG) infof("requestPath: %s", requestPath);
+        version(HUNT_DEBUG) infof("requestPath: %s, virtualPath: %s", requestPath, _virtualPath);
         bool isDirectory = true;
 
         if(requestPath.length <= 1) {
             requestPath = _basePath;
         } else {
-            string p = requestPath[1..$]; // skip the leading '/'
-            isDirectory = p[$-1] == '/';
+            // mapping virtual path which contains multiparts like /a/b/c to the actual base
+            isDirectory = requestPath[$-1] == '/';
+
+            string[] parts = split(requestPath, "/");
+            parts = parts[_slashNumberInVirtualPath .. $];
+
+            string p = buildPath(parts);
+            warning("stripped path: ", p);
             requestPath = buildNormalizedPath(_basePath, p); // no tailing '/'
             if(isDirectory) requestPath ~= "/";
         }
 
-        version(HUNT_HTTP_DEBUG) tracef("requesting %s, base: %s", requestPath, _basePath);
-        if(!requestPath.startsWith(_basePath)) {
-            render(context, HttpStatus.NOT_FOUND_404, null);
-            context.succeed(true);
-            return;
-        }
+        version(HUNT_HTTP_DEBUG) tracef("actual path: %s, base: %s", requestPath, _basePath);
+
         
-        if(!requestPath.exists()) {
+        if(requestPath.exists()) {
+
+            try {
+                context.setAttribute(CurrentRequestFile, requestPath);
+                render(context, HttpStatus.OK_200, null);
+                context.succeed(true);
+            } catch(Exception ex) {
+                version(HUNT_DEBUG) errorf("http handler exception", ex.msg);
+                if (!context.isCommitted()) {
+                    render(context, HttpStatus.INTERNAL_SERVER_ERROR_500, ex);
+                    context.fail(ex);
+                }            
+            }
+        } else {
             version(HUNT_DEBUG) {
                 warningf("Failed to get resource %s from base %s, as the path did not exist",
                     requestPath, _basePath);
             }
-            render(context, HttpStatus.NOT_FOUND_404, null);
-            context.succeed(true);
-            return;
-        }
-
-        try {
-            context.setAttribute(CurrentRequestFile, requestPath);
-            render(context, HttpStatus.OK_200, null);
-            context.succeed(true);
-        } catch(Exception ex) {
-            version(HUNT_DEBUG) errorf("http handler exception", ex.msg);
-            if (!context.isCommitted()) {
-                render(context, HttpStatus.INTERNAL_SERVER_ERROR_500, ex);
-                context.fail(ex);
-            }            
+            context.next();
         }
     }
 
@@ -152,8 +158,8 @@ abstract class AbstractResourceHandler : RouteHandler {
 class DefaultResourceHandler : AbstractResourceHandler {
     private MimeTypeUtils _mimetypes;
 
-    this(string path) {
-        super(path);
+    this(string virtualPath, string actualPath) {
+        super(virtualPath, actualPath);
         _mimetypes = new MimeTypeUtils();
     }
 
@@ -165,6 +171,10 @@ class DefaultResourceHandler : AbstractResourceHandler {
             code = HttpStatusCode.INTERNAL_SERVER_ERROR;
         
         string requestPath = context.getURI().getPath();
+
+        version(HUNY_HTTP_DEBUG) {
+            tracef("path: %s, status: %d", requestPath, status);
+        }
 
         // string title = status.to!string() ~ " " ~ code.getMessage();
         string title = format("Directory Listing - %s", requestPath);

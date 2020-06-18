@@ -167,7 +167,7 @@ class HttpServer : AbstractLifecycle {
 
         serverHandler.onOpened((Connection conn) {
             version(HUNT_HTTP_DEBUG) {
-                infof("A new http connection %d opend: %s", conn.getId, typeid(conn));
+                infof("A new http connection %d opened: %s", conn.getId, typeid(conn));
             }
             version (HUNT_DEBUG) {
                 if (options.isSecureConnectionEnabled())
@@ -522,8 +522,21 @@ class HttpServer : AbstractLifecycle {
 
         Builder resource(string path, string localPath, bool canList = true, 
                 string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
-            return resource(path, new DefaultResourceHandler(localPath).isListingEnabled(canList), 
+            return resource(path, new DefaultResourceHandler(amendingPath(path), localPath).isListingEnabled(canList), 
                 groupName, groupType);
+        }
+
+        private static string amendingPath(string path) {
+            if(path.empty)  return "";
+            
+            string r;
+            if(path[$-1] != '/') {
+                r = path ~ "/";
+            } else {
+                r = path;
+            }
+
+            return r;
         }
 
         Builder resource(string path, AbstractResourceHandler handler, 
@@ -543,7 +556,7 @@ class HttpServer : AbstractLifecycle {
             }
 
             path ~= "*";
-            version(HUNT_HTTP_DEBUG) warningf("path: %s, staticPath: %s", path, staticPath);
+            version(HUNT_HTTP_DEBUG) tracef("path: %s, staticPath: %s", path, staticPath);
 
             if(path == staticPath || staticPath.empty()) {
                 return addRoute([path], cast(string[])null, handler, groupName, groupType);

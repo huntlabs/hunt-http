@@ -11,12 +11,27 @@ import hunt.Exceptions;
 
 import std.conv;
 import std.concurrency : initOnce;
+import std.range;
 
 
 /**
  * 
  */
 abstract class ErrorResponseHandler : RouteHandler {
+
+    private __gshared ErrorResponseHandler inst;
+
+    static ErrorResponseHandler Default() {
+        // return initOnce!inst(new DefaultErrorResponseHandler());
+        if(inst is null) {
+            inst = new DefaultErrorResponseHandler();
+        }
+        return inst;
+    }
+
+    static void Default(ErrorResponseHandler handler) {
+        inst = handler;
+    }
 
     void handle(RoutingContext context) {
         if (context.hasNext()) {
@@ -43,18 +58,8 @@ abstract class ErrorResponseHandler : RouteHandler {
  * 
  */
 class DefaultErrorResponseHandler : ErrorResponseHandler {
-    private __gshared DefaultErrorResponseHandler inst;
-
-    static DefaultErrorResponseHandler Default() {
-        return initOnce!inst(new DefaultErrorResponseHandler());
-    }
-
-    static void Default(DefaultErrorResponseHandler handler) {
-        inst = handler;
-    }
 
     override void render(RoutingContext context, int status, Exception t) {
-
         HttpStatusCode code = HttpStatus.getCode(status); 
         if(code == HttpStatusCode.Null)
             code = HttpStatusCode.INTERNAL_SERVER_ERROR;
@@ -62,11 +67,11 @@ class DefaultErrorResponseHandler : ErrorResponseHandler {
         string title = status.to!string() ~ " " ~ code.getMessage();
         string content;
         if(status == HttpStatus.NOT_FOUND_404) {
-            content = "The resource " ~ context.getURI().getPath() ~ " is not found";
+            // content = title;
         } else if(status == HttpStatus.INTERNAL_SERVER_ERROR_500) {
             content = "The server internal error. <br/>" ~ (t !is null ? t.msg : "");
         } else {
-            content = title ~ "<br/>" ~ (t !is null ? t.msg : "");
+            content = (t !is null ? t.msg : "");
         }
 
         context.setStatus(status);
@@ -79,10 +84,14 @@ class DefaultErrorResponseHandler : ErrorResponseHandler {
            .write("</title>")
            .write("</head>")
            .write("<body>")
-           .write("<h1> " ~ title ~ " </h1>")
-           .write("<p>" ~ content ~ "</p>")
-           .write("<hr/>")
-           .write("<footer><em>powered by Hunt HTTP " ~ Version ~"</em></footer>")
+           .write("<center><h1> " ~ title ~ " </h1></center>");
+
+        if(!content.empty()) {
+           context.write("<center><p>" ~ content ~ "</p></center>");
+        }
+
+        context.write("<hr/>")
+           .write("<center><footer><em>powered by Hunt HTTP " ~ Version ~"</em></footer></center>")
            .write("</body>")
            .end("</html>");
     }

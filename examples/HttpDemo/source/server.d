@@ -20,8 +20,8 @@ void main(string[] args) {
     version(WITH_HUNT_TRACE) {
         HttpServer server = buildOpenTracingServer();
     } else {
-        HttpServer server = buildSimpleServer();
-    // HttpServer server = buildServerDefaultRoute();
+        // HttpServer server = buildSimpleServer();
+    HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithTLS();
     // HttpServer server = buildServerWithUpload();
@@ -80,7 +80,7 @@ HttpServer buildServerDefaultRoute() {
         .resource("/files", "/home")
         .setDefaultRequest((RoutingContext ctx) {
             string content = "The resource " ~ ctx.getURI().getPath() ~ " is not found";
-            string title = "404 - not found";
+            string title = "404 - Not Found";
 
             ctx.responseHeader(HttpHeader.CONTENT_TYPE, "text/html");
 

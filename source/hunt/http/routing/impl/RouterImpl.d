@@ -181,6 +181,8 @@ class RouterImpl : Router {
                 version(HUNT_HTTP_DEBUG) trace("Current route handler: ", typeid(cast(Object)handler));
                 handler.handle(ctx); 
             };
+        } else {
+            version(HUNT_HTTP_DEBUG) warning("The handler is null");
         }
         return this;
     }

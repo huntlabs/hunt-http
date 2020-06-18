@@ -46,8 +46,15 @@ interface RouterManager {
 
         routerManager.register().path("*").handler(new DefaultRouteHandler());
 
-        routerManager.register(DEFAULT_LAST_ROUTER_ID).path("*")
-            .handler(DefaultErrorResponseHandler.Default());
+        Router currentRouter = routerManager.register(DEFAULT_LAST_ROUTER_ID);
+        currentRouter.path("*")
+            .handler(ErrorResponseHandler.Default());
+        
+        version(HUNT_HTTP_DEUB) {
+            import hunt.logging.ConsoleLogger;
+            tracef("routeid: %d, paths: *", currentRouter.getId());
+        }
+        
         return routerManager;
     }
 }
