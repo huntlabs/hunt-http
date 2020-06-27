@@ -7,6 +7,7 @@ module hunt.http.AuthenticationScheme;
  *  https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication
  */
 enum AuthenticationScheme : string {
+    None = "None",
     Basic = "Basic",
     Bearer = "Bearer",
     Digest = "Digest",

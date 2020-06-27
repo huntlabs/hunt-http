@@ -117,7 +117,7 @@ abstract class AbstractResourceHandler : RouteHandler {
             parts = parts[_slashNumberInVirtualPath .. $];
 
             string p = buildPath(parts);
-            warning("stripped path: ", p);
+            version(HUNT_HTTP_DEBUG) tracef("stripped path: %s", p);
             requestPath = buildNormalizedPath(_basePath, p); // no tailing '/'
             if(isDirectory) requestPath ~= "/";
         }
