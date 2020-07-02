@@ -463,6 +463,30 @@ class HttpServerRequest : HttpRequest {
         _queryParams[key] = value;
     }
 
+    /**
+     * Replace the input for the current request.
+     *
+     * @param  array input
+     * @return Request
+     */
+    void replace(string[string] input) {
+        if (isContained(this.getMethod(), ["GET", "HEAD"]))
+            _queryParams = input;
+        else {
+            foreach(string k, string v; input) {
+                _xFormData[k] ~= v;
+            }
+        }
+    }
+
+    private static bool isContained(string source, string[] keys) {
+        foreach (string k; keys) {
+            if (canFind(source, k))
+                return true;
+        }
+        return false;
+    }
+    
     T bindForm(T)() if(is(T == class) || is(T == struct)) {
 
         if(getMethod() != "POST")
