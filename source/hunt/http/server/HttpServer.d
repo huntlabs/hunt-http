@@ -556,7 +556,9 @@ class HttpServer : AbstractLifecycle {
             }
 
             path ~= "*";
-            version(HUNT_HTTP_DEBUG) tracef("path: %s, staticPath: %s", path, staticPath);
+            version(HUNT_HTTP_DEBUG) {
+                tracef("path: %s, staticPath: %s, canList: %s", path, staticPath, handler.isListingEnabled());
+            }
 
             if(path == staticPath || staticPath.empty()) {
                 return addRoute([path], cast(string[])null, handler, groupName, groupType);
