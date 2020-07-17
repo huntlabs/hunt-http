@@ -798,7 +798,7 @@ class HttpFields : Iterable!HttpField {
 
 	void add(HttpField field) {
 		version(HUNT_HTTP_DEBUG) {
-			infof("header: %s", field.toString());
+			// infof("header: %s", field.toString());
 		}
 
 		if (field !is null) {

@@ -309,11 +309,14 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
     override
     void onPing(PingFrame frame) {
-        version(HUNT_DEBUG) {
-            tracef("Received %s", frame.toString());
-        }
+        // version(HUNT_HTTP_DEBUG) {
+        //     tracef("Received %s", frame.toString());
+        // }
         if (frame.isReply()) {
-            info("The session %s received ping reply", endPoint.getId());
+            // version(HUNT_HTTP_DEBUG)
+             {
+                infof("The session %s received ping reply", endPoint.getId());
+            }
             notifyPing(this, frame);
         } else {
             PingFrame reply = new PingFrame(frame.getPayload(), true);
@@ -542,7 +545,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
 
         int length = cast(int)frames.length;
         if (length == 0) {
-            tracef("ength == 0") ;
+            // version(HUNT_HTTP_DEBUG) tracef("length == 0") ;
             onFrame(new ControlEntry(frame, stream, callback), true);
         } else {
             callback = new CountingCallback(callback, 1 + length);
