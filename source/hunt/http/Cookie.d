@@ -612,7 +612,7 @@ Cookie parseSetCookie(string cookieStr) {
             int r = sscanf(value.ptr, "%3s, %2d-%3s-%4d %2d:%2d:%2d GMT", week.ptr,
                     &t.tm_mday, month.ptr, &t.tm_year, &t.tm_hour, &t.tm_min, &t.tm_sec);
             if(r == 7) {
-                t.tm_mon = monthByName(cast(string) month);
+                t.tm_mon = monthByName(cast(string) month) + 1;
                 t.tm_wday = weekDayByName(cast(string) week);
                 
                 SysTime dt = SysTime(std.datetime.DateTime(t.tm_year, t.tm_mon, 
