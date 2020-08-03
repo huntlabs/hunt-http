@@ -10,10 +10,12 @@ import hunt.http.routing.impl.ParameterPathMatcher;
 import hunt.http.routing.impl.RegexPathMatcher;
 import hunt.http.routing.impl.RouterImpl;
 import hunt.http.routing.impl.RoutingContextImpl;
+import hunt.http.routing.handler.ErrorResponseHandler;
 
 import hunt.http.HttpHeader;
 import hunt.http.HttpMethod;
 import hunt.http.HttpRequest;
+import hunt.http.HttpStatus;
 
 import hunt.http.server.HttpServerContext;
 import hunt.http.routing.Matcher;
@@ -22,9 +24,7 @@ import hunt.http.routing.RouterManager;
 import hunt.http.routing.RoutingContext;
 
 import hunt.collection;
-
 import hunt.Exceptions;
-
 import hunt.logging;
 
 /**
@@ -43,13 +43,17 @@ class RouterManagerImpl : RouterManager {
     // private Matcher contentTypePatternMatcher;
     // private Matcher acceptHeaderMatcher;
 
+    private Router _code405Router;
+
     this() {
+        _code405Router = handleStatus405();
         matcherMap = new HashMap!(Matcher.MatchType, List!(Matcher))();
         precisePathMather = new PrecisePathMatcher();
         patternPathMatcher = new PatternPathMatcher();
         parameterPathMatcher = new ParameterPathMatcher();
         regexPathMatcher = new RegexPathMatcher();
-        ArrayList!Matcher al = new ArrayList!Matcher([precisePathMather, patternPathMatcher, parameterPathMatcher, regexPathMatcher]);
+        ArrayList!Matcher al = new ArrayList!Matcher([precisePathMather, patternPathMatcher, 
+            parameterPathMatcher, regexPathMatcher]);
         matcherMap.put(Matcher.MatchType.PATH, al);
 
         httpMethodMatcher = new HttpMethodMatcher();
@@ -99,6 +103,8 @@ class RouterManagerImpl : RouterManager {
     override NavigableSet!RouterMatchResult findRouter(string method, 
             string path, string contentType, string accept) {
 
+        // warningf("method: %s, path: %s, accept: %s", method, path, accept);
+
         Map!(Router, Set!(Matcher.MatchType)) routerMatchTypes = new HashMap!(Router, Set!(Matcher.MatchType))();
         Map!(Router, Map!(string, string)) routerParameters = new HashMap!(Router, Map!(string, string))();
 
@@ -109,10 +115,16 @@ class RouterManagerImpl : RouterManager {
 
         NavigableSet!(RouterMatchResult) ret = new TreeSet!(RouterMatchResult)();
         foreach(Router key, Set!(Matcher.MatchType) value; routerMatchTypes) {
+            // tracef("checking route id: %d", key.getId());
             if(!key.isEnable()) continue;
-            if(key.getMatchTypes() != value) continue;
-            RouterMatchResult e = new RouterMatchResult(key, routerParameters.get(key), value);
-            ret.add(e);
+            Set!(Matcher.MatchType) matchTypes = key.getMatchTypes();
+            
+            if(matchTypes == value) {
+                ret.add(new RouterMatchResult(key, routerParameters.get(key), value));
+            } else if(matchTypes.contains(Matcher.MatchType.METHOD)) {
+                // 405 Method Not Allowed
+                ret.add(new RouterMatchResult(_code405Router, null, value));
+            } 
         }
         return ret;
     }
@@ -122,15 +134,17 @@ class RouterManagerImpl : RouterManager {
                             Map!(Router, Map!(string, string)) routerParameters) {
 
         List!(Matcher) matchers = matcherMap.get(matchType);
+        int matchersSize = matchers.size();
 
         // FIXME: Needing refactor or cleanup -@zhangxueping at 2020-03-31T17:33:01+08:00
         // https://forum.dlang.org/post/exknjzbuooofyulgeaen@forum.dlang.org
-        for(int i=0; i<matchers.size(); i++) {
+        for(int i=0; i<matchersSize; i++) {
             Matcher m = matchers.get(i);
         
         // foreach(Matcher m; matchers) {
             MatchResult mr = m.match(value);
             if(mr is null) continue;
+
 
             Set!(Router) routers = mr.getRouters();
             foreach(Router router; routers) {
@@ -147,6 +161,20 @@ class RouterManagerImpl : RouterManager {
         }
     }
 
+    // 405 Method Not Allowed
+    private Router handleStatus405() {
+        import hunt.http.routing.handler.Error405ResponseHandler;
+        Router r = new RouterImpl(idGenerator + 10, this);
+        // FIXME: Needing refactor or cleanup -@zhangxueping at 2020-08-03T16:35:05+08:00
+        // 
+        // r.handler(new Error405ResponseHandler());
+        
+        r.handler((context) {
+            renderErrorPage(context, HttpStatus.METHOD_NOT_ALLOWED_405, null);
+        });
+        return r;
+    }
+
     override Router register() {
         return new RouterImpl(idGenerator++, this);
     }
@@ -156,6 +184,8 @@ class RouterManagerImpl : RouterManager {
     }
 
     override void accept(HttpServerContext context) {
+        // TODO: Tasks pending completion -@zhangxueping at 2020-07-31T15:26:19+08:00
+        // Refactor this
         HttpRequest request = context.httpRequest();
         NavigableSet!(RouterMatchResult) routers = findRouter(
                 request.getMethod(),
