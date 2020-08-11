@@ -117,14 +117,19 @@ class RouterManagerImpl : RouterManager {
         foreach(Router key, Set!(Matcher.MatchType) value; routerMatchTypes) {
             // tracef("checking route id: %d", key.getId());
             if(!key.isEnable()) continue;
+
+            // infof("route: %s", (cast(Object)key).toString());
+            // tracef("target MatchTypes: %s", value);
+
             Set!(Matcher.MatchType) matchTypes = key.getMatchTypes();
-            
             if(matchTypes == value) {
                 ret.add(new RouterMatchResult(key, routerParameters.get(key), value));
-            } else if(matchTypes.contains(Matcher.MatchType.METHOD)) {
-                // 405 Method Not Allowed
-                ret.add(new RouterMatchResult(_code405Router, null, value));
-            } 
+                // TODO: Tasks pending completion -@zhangxueping at 2020-08-03T16:50:45+08:00
+                // 
+            // } else if(matchTypes.contains(Matcher.MatchType.METHOD) && matchTypes.contains(Matcher.MatchType.PATH)) {
+            //     // 405 Method Not Allowed
+            //     ret.add(new RouterMatchResult(_code405Router, null, value));
+            }
         }
         return ret;
     }
@@ -140,6 +145,8 @@ class RouterManagerImpl : RouterManager {
         // https://forum.dlang.org/post/exknjzbuooofyulgeaen@forum.dlang.org
         for(int i=0; i<matchersSize; i++) {
             Matcher m = matchers.get(i);
+
+            // tracef("%d => %s", i, value);
         
         // foreach(Matcher m; matchers) {
             MatchResult mr = m.match(value);
@@ -148,6 +155,9 @@ class RouterManagerImpl : RouterManager {
 
             Set!(Router) routers = mr.getRouters();
             foreach(Router router; routers) {
+
+            // warningf("found router %d for %s", router.getId(), value);
+
                 routerMatchTypes.computeIfAbsent(router, k => new HashSet!(Matcher.MatchType)())
                                 .add(mr.getMatchType());
                 Map!(Router, Map!(string, string)) parameters = mr.getParameters();
