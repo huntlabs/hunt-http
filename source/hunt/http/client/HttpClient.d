@@ -61,7 +61,6 @@ class HttpClient : AbstractLifecycle {
     private NetClient[int] _netClients;
     private HttpClientOptions _httpOptions;
     private Callback _onClosed = null;
-    // private bool _isConnected = false;
     private CookieStore _cookieStore;
 
     this() {
@@ -92,7 +91,6 @@ class HttpClient : AbstractLifecycle {
         }
 
         this._httpOptions = c;
-         // = new ConcurrentHashMap!()();
 
         start();
     }

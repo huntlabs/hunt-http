@@ -16,6 +16,7 @@ struct HttpMethod {
     enum HttpMethod POST = HttpMethod("POST");
     enum HttpMethod HEAD = HttpMethod("HEAD");
     enum HttpMethod PUT = HttpMethod("PUT");
+    enum HttpMethod PATCH = HttpMethod("PATCH");
     enum HttpMethod OPTIONS = HttpMethod("OPTIONS");
     enum HttpMethod DELETE = HttpMethod("DELETE");
     enum HttpMethod TRACE = HttpMethod("TRACE");
@@ -23,6 +24,13 @@ struct HttpMethod {
     enum HttpMethod MOVE = HttpMethod("MOVE");
     enum HttpMethod PROXY = HttpMethod("PROXY");
     enum HttpMethod PRI = HttpMethod("PRI");
+    enum HttpMethod COPY = HttpMethod("COPY");
+    enum HttpMethod LINK = HttpMethod("LINK");
+    enum HttpMethod UNLINK = HttpMethod("UNLINK");
+    enum HttpMethod PURGE = HttpMethod("PURGE");
+    enum HttpMethod LOCK = HttpMethod("LOCK");
+    enum HttpMethod UNLOCK = HttpMethod("UNLOCK");
+    enum HttpMethod VIEW = HttpMethod("VIEW");
 
     /* ------------------------------------------------------------ */
 
@@ -46,16 +54,26 @@ struct HttpMethod {
             case 'P':
                 if (bytes[position + 1] == 'O' && bytes[position + 2] == 'S' && bytes[position + 3] == 'T' && length >= 5 && bytes[position + 4] == ' ')
                     return POST;
-                if (bytes[position + 1] == 'R' && bytes[position + 2] == 'O' && bytes[position + 3] == 'X' && length >= 6 && bytes[position + 4] == 'Y' && bytes[position + 5] == ' ')
-                    return PROXY;
                 if (bytes[position + 1] == 'U' && bytes[position + 2] == 'T' && bytes[position + 3] == ' ')
                     return PUT;
+                if (bytes[position + 1] == 'R' && bytes[position + 2] == 'O' && bytes[position + 3] == 'X' && length >= 6 && bytes[position + 4] == 'Y' && bytes[position + 5] == ' ')
+                    return PROXY;
+                if (bytes[position + 1] == 'A' && bytes[position + 2] == 'T' && bytes[position + 3] == 'C' && length >= 6 && bytes[position + 4] == 'H' && bytes[position + 5] == ' ')
+                    return PATCH;
+                if (bytes[position + 1] == 'U' && bytes[position + 2] == 'R' && bytes[position + 3] == 'G' && length >= 6 && bytes[position + 4] == 'E' && bytes[position + 5] == ' ')
+                    return PURGE;
                 if (bytes[position + 1] == 'R' && bytes[position + 2] == 'I' && bytes[position + 3] == ' ')
                     return PRI;
                 break;
             case 'H':
                 if (bytes[position + 1] == 'E' && bytes[position + 2] == 'A' && bytes[position + 3] == 'D' && length >= 5 && bytes[position + 4] == ' ')
                     return HEAD;
+                break;
+            case 'L':
+                if (bytes[position + 1] == 'I' && bytes[position + 2] == 'N' && bytes[position + 3] == 'K' && length >= 5 && bytes[position + 4] == ' ')
+                    return LINK;
+                if (bytes[position + 1] == 'O' && bytes[position + 2] == 'C' && bytes[position + 3] == 'K' && length >= 5 && bytes[position + 4] == ' ')
+                    return LOCK;
                 break;
             case 'O':
                 if (bytes[position + 1] == 'P' && bytes[position + 2] == 'T' && bytes[position + 3] == 'I' && length >= 8 &&
@@ -72,14 +90,32 @@ struct HttpMethod {
                         bytes[position + 4] == 'E' && bytes[position + 5] == ' ')
                     return TRACE;
                 break;
+
             case 'C':
                 if (bytes[position + 1] == 'O' && bytes[position + 2] == 'N' && bytes[position + 3] == 'N' && length >= 8 &&
                         bytes[position + 4] == 'E' && bytes[position + 5] == 'C' && bytes[position + 6] == 'T' && bytes[position + 7] == ' ')
                     return CONNECT;
+                if (bytes[position + 1] == 'O' && bytes[position + 2] == 'P' && bytes[position + 3] == 'Y' && length >= 5 && bytes[position + 4] == ' ')
+                    return COPY;
                 break;
+
             case 'M':
                 if (bytes[position + 1] == 'O' && bytes[position + 2] == 'V' && bytes[position + 3] == 'E' && length >= 5 && bytes[position + 4] == ' ')
                     return MOVE;
+                break;
+
+            case 'U':
+                if (bytes[position + 1] == 'N' && bytes[position + 2] == 'L' && bytes[position + 3] == 'I' && length >= 8 &&
+                        bytes[position + 4] == 'N' && bytes[position + 5] == 'K' && bytes[position + 6] == ' ')
+                    return UNLINK;
+                if (bytes[position + 1] == 'N' && bytes[position + 2] == 'L' && bytes[position + 3] == 'O' && length >= 8 &&
+                        bytes[position + 4] == 'C' && bytes[position + 5] == 'K' && bytes[position + 6] == ' ')
+                    return UNLOCK;
+                break;                
+
+            case 'V':
+                if (bytes[position + 1] == 'I' && bytes[position + 2] == 'E' && bytes[position + 3] == 'W' && length >= 5 && bytes[position + 4] == ' ')
+                    return VIEW;
                 break;
 
             default:
