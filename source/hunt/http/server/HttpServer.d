@@ -400,7 +400,8 @@ class HttpServer : AbstractLifecycle {
         // }
 
         Builder addRoute(string[] paths, string[] methods, RoutingHandler handler, 
-                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host, 
+                string attributeName = null, Object attributeObj = null) {
             if(groupName.empty) {
                 _currentRouter = _routerManager.register();
             } else {
@@ -415,12 +416,18 @@ class HttpServer : AbstractLifecycle {
             foreach(string m; methods) {
                 _currentRouter.method(m);
             }
-            _currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            _currentRouter.handler( (RoutingContext ctx) { 
+                if(!attributeName.empty() && attributeObj !is null) {
+                    ctx.setAttribute(attributeName, attributeObj);
+                }
+                handlerWrap(handler, ctx); 
+            });
             return this;
         }
 
         Builder addRoute(string[] paths, string[] methods, RouteHandler handler, 
-                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host, 
+                string attributeName = null, Object attributeObj = null) {
             if(groupName.empty) {
                 _currentRouter = _routerManager.register();
             } else {
@@ -431,7 +438,12 @@ class HttpServer : AbstractLifecycle {
             foreach(string m; methods) {
                 _currentRouter.method(m);
             }
-            _currentRouter.handler( (RoutingContext ctx) { handlerWrap(handler, ctx); });
+            _currentRouter.handler( (RoutingContext ctx) { 
+                if(!attributeName.empty() && attributeObj !is null) {
+                    ctx.setAttribute(attributeName, attributeObj);
+                }
+                handlerWrap(handler, ctx); 
+            });
             return this;
         }
         
