@@ -29,6 +29,7 @@ import std.conv;
 import std.file;
 import std.path;
 import std.string;
+import std.range;
 
 version(WITH_HUNT_TRACE) {
     import hunt.trace.Constrants;
@@ -57,7 +58,7 @@ class HttpClientRequest : HttpRequest {
 
 	this(string method, string uri, HttpBody content) {
 		HttpFields fields = new HttpFields();
-		if(content !is null)
+		if(content !is null && !content.contentType().empty())
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 
 		super(method, new HttpURI(uri), HttpVersion.HTTP_1_1, fields,  
@@ -66,7 +67,7 @@ class HttpClientRequest : HttpRequest {
 	}
 	
 	this(string method, HttpURI uri, HttpFields fields, HttpBody content) {
-		if(content !is null)
+		if(content !is null && !content.contentType().empty())
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 
 		super(method, uri, HttpVersion.HTTP_1_1, fields, 
@@ -75,7 +76,7 @@ class HttpClientRequest : HttpRequest {
 	}
 	
 	this(string method, HttpURI uri, HttpVersion ver, HttpFields fields, HttpBody content) {
-		if(content !is null)
+		if(content !is null && !content.contentType().empty())
 			fields.add(HttpHeader.CONTENT_TYPE, content.contentType());
 			
 		super(method, uri, ver, fields,  
