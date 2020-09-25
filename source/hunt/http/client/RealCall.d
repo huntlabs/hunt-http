@@ -138,8 +138,10 @@ class RealCall : Call {
                 // clientResponse.setBody(new ResponseBody(response.getContentType(), 
                 //     response.getContentLength(), BufferUtils.clone(item)));
 
-                HttpBody hb = clientResponse.getBody();
-                if(hb is null) {
+                HttpBody hb;
+                if(clientResponse.haveBody()) {
+                    hb = clientResponse.getBody();
+                } else {
                     hb = HttpBody.create(response.getContentType(), response.getContentLength());
                     clientResponse.setBody(hb); 
                 } 
