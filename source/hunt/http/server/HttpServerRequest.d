@@ -363,6 +363,9 @@ class HttpServerRequest : HttpRequest {
     }
 
     string opDispatch(string key)() {
+        version(HUNT_HTTP_DEBUG) {
+            tracef("Get the query parameter: %s", key);
+        }
         return query(key);
     }
 

@@ -53,7 +53,7 @@ class HttpMetaData : Iterable!HttpField {
                 tracef("version: %s", ver.toString());
                 tracef("contentLength: %d", contentLength);
                 if(fields !is null) {
-                    tracef(fields.toString());
+                    trace(fields.toString());
                 }
             }
         }
