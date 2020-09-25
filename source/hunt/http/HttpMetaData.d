@@ -127,7 +127,10 @@ class HttpMetaData : Iterable!HttpField {
 	 * <p>This always returns null on responses returned from {@link #cacheResponse}, {@link
 	 * #networkResponse}, and {@link #priorResponse()}.
 	 */
-	HttpBody getBody() {		
+	HttpBody getBody() {
+        if(_body is null) {
+            throw new Exception("The body is NOT set yet.");
+        }
 		return _body;
 	}	
 
