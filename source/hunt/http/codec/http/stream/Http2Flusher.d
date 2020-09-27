@@ -61,7 +61,7 @@ class Http2Flusher : IteratingCallback {
             e = terminated;
             if (e is null) {
                 frames.offerFirst(entry);
-                version(HUNT_DEBUG) {
+                version(HUNT_HTTP_DEBUG) {
                     tracef("Prepended %s, frames=%s", entry.toString(), frames.size());
                 }
             }
@@ -165,7 +165,7 @@ class Http2Flusher : IteratingCallback {
             return Action.IDLE;
         }
 
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Writing %s buffers (%s bytes) for %s frames %s",
                     buffers.size(), BufferUtils.remaining(buffers.toArray()), actives.size(), actives.toString());
         }
@@ -180,7 +180,7 @@ class Http2Flusher : IteratingCallback {
 
     override
     void succeeded() {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Written %s frames for %s", actives.size(), actives.toString());
         }
         complete();

@@ -86,7 +86,7 @@ class SettingsBodyParser :BodyParser {
 			case State.SETTING_VALUE: {
 				if (buffer.remaining() >= 4) {
 					settingValue = buffer.get!int();
-					version(HUNT_DEBUG)
+					version(HUNT_HTTP_DEBUG)
 						tracef(format("setting %d=%d", settingId, settingValue));
 					settings.put(settingId, settingValue);
 					state = State.SETTING_ID;

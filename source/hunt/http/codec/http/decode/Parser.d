@@ -123,7 +123,7 @@ class Parser {
     protected bool parseHeader(ByteBuffer buffer) {
         if (headerParser.parse(buffer)) {
             int frameType = getFrameType();
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG) {
                 tracef("Parsed %s frame header", cast(FrameType)(frameType));
             }
 
@@ -158,21 +158,21 @@ class Parser {
         }
 
         FrameType frameType = cast(FrameType)(type);
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Parsing %s frame", frameType);
         }
         BodyParser bodyParser = bodyParsers[frameType];
         if (headerParser.getLength() == 0) {
             bodyParser.emptyBody(buffer);
             reset();
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG) {
                 tracef("Parsed %s frame, empty body", frameType);
             }
             return true;
         } else {
             if (bodyParser.parse(buffer)) {
                 reset();
-                version(HUNT_DEBUG) {
+                version(HUNT_HTTP_DEBUG) {
                     tracef("Parsed %s frame", frameType);
                 }
                 return true;

@@ -226,7 +226,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     void onSettings(SettingsFrame frame, bool reply) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("Received %s", frame.toString());
         }
         if (frame.isReply())
@@ -565,7 +565,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
     }
 
     private void onFrame(Http2Flusher.Entry entry, bool flush) {
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("%s %s", flush ? "Sending" : "Queueing", entry.frame.toString());
         }
         // Ping frames are prepended to process them as soon as possible.
@@ -988,7 +988,7 @@ abstract class Http2Session : SessionSPI, Parser.Listener {
             List!(ByteBuffer) controlFrame = generator.control(frame);
             bytes = cast(int) BufferUtils.remaining(controlFrame.toArray());
             buffers.addAll(controlFrame);
-            version(HUNT_DEBUG) {
+            version(HUNT_HTTP_DEBUG) {
                 tracef("Generated %s", frame.toString());
             }
             beforeSend();

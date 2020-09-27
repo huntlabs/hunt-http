@@ -22,7 +22,7 @@ class Http2ServerDecoder : DecoderChain {
             return;
         }
 
-        version(HUNT_DEBUG) {
+        version(HUNT_HTTP_DEBUG) {
             tracef("buffer: %s", buffer.toString());
             tracef("the server session %s received the %s bytes", session.getId(), buffer.remaining());
         }
