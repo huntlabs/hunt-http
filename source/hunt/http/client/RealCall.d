@@ -275,8 +275,13 @@ class RealCall : Call {
         int port = uri.getPort();
         version(HUNT_HTTP_DEBUG) infof("new request: scheme=%s, host=%s, port=%d", 
             scheme, uri.getHost(), port);
-        if(port <= 0)
-            port = SchemePortMap[scheme];
+        if(port <= 0) {
+            auto itemPtr = scheme in SchemePortMap;
+            if(itemPtr is null) {
+                throw new Exception("Invalid http scheme: " ~ scheme);
+            }
+            port = *itemPtr;
+        }
 
         // set cookie from cookie store
         if(originalRequest.isCookieStoreEnabled()) {
