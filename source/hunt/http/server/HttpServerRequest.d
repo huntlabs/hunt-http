@@ -250,6 +250,8 @@ class HttpServerRequest : HttpRequest {
                         getContentType(),
                         GlobalSettings.getMultipartOptions(_options.requestOptions),
                         _options.requestOptions.getTempFilePath());
+            } else if("application/x-www-form-urlencoded".equalsIgnoreCase(mimeType)) {
+                _isXFormUrlencoded = true;
             }
 
             if(_contentCompleteHandler !is null) {
@@ -308,6 +310,10 @@ class HttpServerRequest : HttpRequest {
 
     bool isMultipartForm() {
         return _multipartFormParser !is null;
+    }
+
+    bool isXFormUrlencoded() {
+        return _isXFormUrlencoded;
     }
 
     Part[] getParts() {
@@ -523,7 +529,7 @@ class HttpServerRequest : HttpRequest {
     }
 
     @property string[][string] xFormData() {
-        if (_xFormData is null && !_isXFormUrlencoded) {
+        if (_xFormData is null && _isXFormUrlencoded) {
             UrlEncoded map = new UrlEncoded();
             map.decode(getStringBody());
             foreach (string key; map.byKey()) {
@@ -532,7 +538,6 @@ class HttpServerRequest : HttpRequest {
                     _xFormData[key] ~= v.strip();
                 }
             }
-            _isXFormUrlencoded = true;
         }
         return _xFormData;
     }
