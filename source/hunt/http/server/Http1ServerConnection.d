@@ -339,7 +339,17 @@ class Http1ServerResponseOutputStream : AbstractHttp1OutputStream {
             requestConnectionValue = request.getFields().get(HttpHeader.CONNECTION);
             ver = request.getHttpVersion();
         }
-        string responseConnectionValue = response.getFields().get(HttpHeader.CONNECTION);
+
+        assert(response !is null, "The response can't be null");
+
+        HttpFields responseFields = response.getFields();
+
+        string responseConnectionValue = "";
+        if(responseFields !is null) {
+            responseFields.get(HttpHeader.CONNECTION);
+        } else {
+            warning("The HttpFields is null");
+        }
 
         if (ver == HttpVersion.HTTP_1_1) { // the persistent connection is default in HTTP 1.1
             if ("close".equalsIgnoreCase(requestConnectionValue)
