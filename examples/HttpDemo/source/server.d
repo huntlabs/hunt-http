@@ -20,8 +20,8 @@ void main(string[] args) {
     version(WITH_HUNT_TRACE) {
         HttpServer server = buildOpenTracingServer();
     } else {
-        // HttpServer server = buildSimpleServer();
-    HttpServer server = buildServerDefaultRoute();
+        HttpServer server = buildSimpleServer();
+    // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithTLS();
     // HttpServer server = buildServerWithUpload();
@@ -213,9 +213,9 @@ HttpServer buildServerWithUpload() {
 
                     string fileName = part.getSubmittedFileName();
 
-                    warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s",
+                    warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content: %s",
                         part.getName(), fileName, 
-                        part.getFile(), part.getContentType());
+                        part.getFile(), part.getContentType(), cast(string)part.getBytes());
                     
                     part.flush(); // Save the content to a temp file 
 

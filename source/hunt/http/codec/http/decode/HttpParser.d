@@ -764,7 +764,7 @@ class HttpParser {
                                     buffer.arrayOffset() + buffer.position() - 1, 
                                     buffer.arrayOffset() + buffer.limit());
                             } else {
-                                string key = buffer.getString(0, buffer.remaining());
+                                string key = cast(string)buffer.peek(0, buffer.remaining()).idup;
                                 ver = HttpVersion.fromString(key);
                             }
 
@@ -1100,7 +1100,7 @@ class HttpParser {
                                     if (!_compliances.contains(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE)) {
                                         // Have to get the fields exactly from the buffer to match case
                                          // BufferUtils.toString(buffer, buffer.position() - 1, n.length, StandardCharsets.US_ASCII);
-                                        string en = buffer.getString(buffer.position() - 1, cast(int)n.length);
+                                        string en = cast(string)buffer.peek(buffer.position() - 1, cast(int)n.length).idup;
                                         if (!n.equals(en)) {
                                             handleViolation(HttpComplianceSection.FIELD_NAME_CASE_INSENSITIVE, en);
                                             n = en;
@@ -1110,7 +1110,7 @@ class HttpParser {
 
                                     if (v != null && !_compliances.contains(HttpComplianceSection.CASE_INSENSITIVE_FIELD_VALUE_CACHE)) {
                                         // BufferUtils.toString(buffer, buffer.position() + n.length + 1, v.length, StandardCharsets.ISO_8859_1);
-                                        string ev = buffer.getString(buffer.position() + n.length + 1, v.length);
+                                        string ev = cast(string)buffer.peek(buffer.position() + n.length + 1, v.length).idup;
                                         if (!v.equals(ev)) {
                                             handleViolation(HttpComplianceSection.CASE_INSENSITIVE_FIELD_VALUE_CACHE, ev ~ "!=" ~ v);
                                             v = ev;

@@ -73,6 +73,7 @@ class HttpClientHandler : HttpConnectionHandler {
                     // connection.setAttribute(SecureSession.NAME, cast(Object)sslSession);
 
                     string protocol = "http/1.1";
+                    protocol = "h2";
                     string p = sslSession.getApplicationProtocol();
                     if(p.empty)
                         warningf("The selected application protocol is empty. Now using the default: %s", protocol);

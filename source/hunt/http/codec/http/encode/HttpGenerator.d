@@ -572,7 +572,7 @@ class HttpGenerator {
             tracef("generateHeaders %s, last=%s, content=%s", metaData.toString(), 
                 last, BufferUtils.toDetailString(content));
             if(content !is null)
-                tracef("content: %s", cast(string)content.getRemaining());
+                tracef("content: %s", cast(string)content.peekRemaining());
         }
 
         // default field values

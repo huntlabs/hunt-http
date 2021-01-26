@@ -187,7 +187,7 @@ class Parser {
     void parse(ByteBuffer buffer) {
         
         version(HUNT_HTTP_DEBUG) {
-            byte[] bufdata = buffer.getRemaining();
+            byte[] bufdata = buffer.peekRemaining();
             tracef("remaining: %d,  date: %(%02X %)", buffer.remaining(), bufdata);
         }
 

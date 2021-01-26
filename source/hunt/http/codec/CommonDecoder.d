@@ -1,6 +1,8 @@
 module hunt.http.codec.CommonDecoder;
 
 import hunt.io.ByteBuffer;
+import hunt.io.BufferUtils;
+import hunt.io.channel;
 import hunt.Exceptions;
 import hunt.logging;
 
@@ -22,7 +24,9 @@ class CommonDecoder : DecoderChain {
         super(next);
     }
 
-    override void decode(ByteBuffer buf, Connection session) {
+    override DataHandleStatus decode(ByteBuffer buf, Connection session) {
+        DataHandleStatus resultStatus = DataHandleStatus.Done;
+
         version(HUNT_METRIC) {
             import core.time;
             MonoTime startTime = MonoTime.currTime;
@@ -31,7 +35,7 @@ class CommonDecoder : DecoderChain {
 
         version(WITH_HUNT_SECURITY) {
             try {
-                decodeSecureSession(buf, session);
+                resultStatus = decodeSecureSession(buf, session);
             } catch(SSLHandshakeException ex) {
                 warning(ex.msg);
                 session.write(ErrorResponseMessage);
@@ -47,7 +51,7 @@ class CommonDecoder : DecoderChain {
                 session.close();
             }
         } else {
-            decodePlaintextSession(buf, session);
+           resultStatus = decodePlaintextSession(buf, session);
         }
 
         version(HUNT_METRIC) {
@@ -55,9 +59,12 @@ class CommonDecoder : DecoderChain {
             warningf("decoding done for session %d in: %d microseconds",
                 session.getId, timeElapsed.total!(TimeUnit.Microsecond)());
         }
+
+        return resultStatus;
     }
 
-    private void decodePlaintextSession(ByteBuffer buf, Connection session) {
+    private DataHandleStatus decodePlaintextSession(ByteBuffer buf, Connection session) {
+        DataHandleStatus resultStatus = DataHandleStatus.Done;
 
         ConnectionState connState;
         do {
@@ -74,14 +81,18 @@ class CommonDecoder : DecoderChain {
             
         DecoderChain next = getNext();
         if (next !is null) {
-            next.decode(buf, session);
+            resultStatus = next.decode(buf, session);
         } else {
             warning("The next decoder is null.");
+            BufferUtils.clear(buf);
         }
+
+        return resultStatus;
     }
 
-    private void decodeSecureSession(ByteBuffer buf, Connection session) {
+    private DataHandleStatus decodeSecureSession(ByteBuffer buf, Connection session) {
         ConnectionState connState = session.getState();
+        DataHandleStatus resultStatus = DataHandleStatus.Done;
             
         version(HUNT_HTTP_DEBUG) {
             infof("ConnectionState: %s", connState);
@@ -102,14 +113,14 @@ class CommonDecoder : DecoderChain {
                 version(HUNT_HTTP_DEBUG_MORE) {
                     // int r = plaintext.remaining();
                     // if(r < 64) {
-                    //     tracef("%(%02X %)", plaintext.getRemaining());
+                    //     tracef("%(%02X %)", plaintext.peekRemaining());
                     // }
-                    string msg = cast(string)plaintext.getRemaining();
+                    string msg = cast(string)plaintext.peekRemaining();
                     trace(msg);
-                    // tracef("%(%02X %)", plaintext.getRemaining());
+                    // tracef("%(%02X %)", plaintext.peekRemaining());
                 }
        
-                next.decode(plaintext, session);
+                resultStatus = next.decode(plaintext, session);
             } else {
                 version(HUNT_HTTP_DEBUG) warning("No data decrypted!");
             }
@@ -142,8 +153,10 @@ class CommonDecoder : DecoderChain {
             }
 
         } else {
-            decodePlaintextSession(buf, session);
+           resultStatus = decodePlaintextSession(buf, session);
         }
+
+        return resultStatus;
     }
 
     private SecureSession waitForSecureSession(int maxTimes, Connection session) {

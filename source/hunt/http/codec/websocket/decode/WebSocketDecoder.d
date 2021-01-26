@@ -7,6 +7,7 @@ import hunt.net.codec.Decoder;
 import hunt.net.Connection;
 
 import hunt.io.ByteBuffer;
+import hunt.io.channel;
 
 /**
  * 
@@ -18,14 +19,17 @@ class WebSocketDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Connection session) {
+    DataHandleStatus decode(ByteBuffer buffer, Connection session) {
+
         if (!buffer.hasRemaining()) {
-            return;
+            return DataHandleStatus.Done;
         }
 
         WebSocketConnectionImpl webSocketConnection = cast(WebSocketConnectionImpl) session.getAttribute(HttpConnection.NAME); // session.getAttachment();
         while (buffer.hasRemaining()) {
             webSocketConnection.getParser().parse(buffer);
         }
+        
+        return DataHandleStatus.Done;
     }
 }

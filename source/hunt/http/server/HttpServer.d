@@ -37,7 +37,7 @@ import hunt.io.ByteBuffer;
 import hunt.event.EventLoop;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 import hunt.net;
 import hunt.util.DateTime;
 import hunt.util.AbstractLifecycle;
@@ -222,6 +222,10 @@ class HttpServer : AbstractLifecycle {
 
     bool isTLS() {
         return _httpOptions.isSecureConnectionEnabled();
+    }
+
+    NetServer netServer() {
+        return _server;
     }
 
     override protected void initialize() {

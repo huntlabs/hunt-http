@@ -320,7 +320,7 @@ class HpackEncoder {
         version(HUNT_HTTP_DEBUG) 
         {
             int e = buffer.position();
-            tracef("encode %s:'%s' to '%s'", encoding, field, 
+            tracef("encode %s: '%s' to '%s'", encoding, field, 
                 ConverterUtils.toHexString(buffer.array(), buffer.arrayOffset() + p, e - p));
         }
     }

@@ -132,7 +132,7 @@ class RealCall : Call {
                 }
 
                 version (HUNT_HTTP_DEBUG_MORE) {
-                    tracef("content: %s", cast(string)item.getRemaining());
+                    tracef("content: %s", cast(string)item.peekRemaining());
                 }
 
                 // clientResponse.setBody(new ResponseBody(response.getContentType(), 

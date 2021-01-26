@@ -8,14 +8,18 @@ import hunt.util.DateTime;
 import hunt.util.MimeType;
 
 import std.stdio;
+import core.runtime;
 
-// string str = runGet("http://10.1.222.110/test.html");
-// enum string httpUrl = runGet("http://10.1.222.110:8080/index.html");
+// string str = runGet("http://10.1.223.222/test.html");
+// enum string httpUrl = runGet("http://10.1.223.222:8080/index.html");
 // string str = runGet("http://127.0.0.1:8080/json");
 // string str = runGet("http://www.putao.com/");
 
 void main(string[] args) {
-    // testSimpleHttpClient();
+    // trace_setlogfilename("./hunt-profile.log");
+    // profilegc_setlogfilename("./hunt-gc.log");
+
+    testSimpleHttpClient();
     // testHttpClientWithCookie();
     // testHttpClientWithMultipart();
     // testWebSocketClient();
@@ -28,11 +32,14 @@ void main(string[] args) {
 void testSimpleHttpClient() {
 
     HttpClientTest test = new HttpClientTest();
+    scope(exit) {
+        test.close();
+    }
     try {
-        // test.testGet();
+        test.testGet();
         // test.testGetHttps();
         // test.testAsynchronousGet();
-        test.testPost();
+        // test.testPost();
         // test.testFormPost();
 
     } catch (Exception ex) {
@@ -79,7 +86,7 @@ void testHttpClientWithCookie() {
 void testHttpClientWithMultipart() {
     // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
     // string url = "http://127.0.0.1:8080/upload/file";
-    string url = "http://10.1.222.110:8080/upload/file";
+    string url = "http://10.1.223.222:8080/upload/file";
     HttpClient client = new HttpClient();
     scope (exit) {
         client.close();
@@ -144,7 +151,7 @@ void testWebSocketClient() {
 }
 
 void testHttpClientWithTLS() {
-    string url = "https://10.1.222.110:443/";
+    string url = "https://10.1.223.222:443/";
     // string url = "https://publicobject.com/helloworld.txt";
     // string url = "https://www.bing.com/";
 
@@ -167,7 +174,7 @@ void testHttpClientWithTLS() {
 void testHttpClientWithMutualTLS() {
     // https://www.naschenweng.info/2018/02/01/java-mutual-ssl-authentication-2-way-ssl-authentication/
     // mutual TLS
-    string url = "https://10.1.222.110:443/";
+    string url = "https://10.1.223.222:443/";
     // string url = "https://publicobject.com/helloworld.txt";
     // string url = "https://www.bing.com/";
 
@@ -196,17 +203,22 @@ class HttpClientTest {
         client = new HttpClient();
     }
 
+    void close() {
+        import hunt.net.NetUtil;
+        NetUtil.eventLoop.stop();
+    }
+
     // 
     void testGet() {
-        // string str = runGet("http://10.1.222.110/test.html");
-        // string str = runGet("http://10.1.222.110:8080/index.html");
-        string str = runGet("http://127.0.0.1:8080/json");
+        string str = runGet("http://10.1.223.222/test.html");
+        // string str = runGet("http://10.1.223.222:8080/index.html");
+        // string str = runGet("http://127.0.0.1:8080/json");
         // string str = runGet("http://www.putao.com/");
-        trace(str);
+        warning(str);
 
         trace("===============================");
 
-        // str = runGet("http://10.1.222.110/index.html");
+        // str = runGet("http://10.1.223.222/index.html");
         // str = runGet("http://www.putao.com/");
         // trace(str);
     }
@@ -214,7 +226,7 @@ class HttpClientTest {
     //
     void testGetHttps() {
 
-        string url = "https://10.1.222.110:440/";
+        string url = "https://10.1.223.222:440/";
         // string url = "https://publicobject.com/helloworld.txt";
         string str = runGet(url);
 
@@ -237,7 +249,7 @@ class HttpClientTest {
     //
     void testAsynchronousGet() {
 
-        // string url = "https://10.1.222.110:6677/index";
+        // string url = "https://10.1.223.222:6677/index";
         string url = "https://publicobject.com/helloworld.txt";
         Request request = new RequestBuilder().url(url).build();
 
@@ -263,22 +275,62 @@ class HttpClientTest {
         info("A request has been sent.");
     }
 
+    // void testPost() {
+    //     UrlEncoded encoder = new UrlEncoded;
+    //     encoder.put("email", "test@putao.com");
+    //     encoder.put("password", "test");
+    //     // string content = "email=test%40putao.com&password=test";
+    //     string content = encoder.encode();
+    //     string response = post("http://10.1.223.222:8080/testpost",
+    //             "application/x-www-form-urlencoded", content);
+
+    //     // string content = `{"type":"news", "offset": "0", "count": "20"}`;
+    //     // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
+
+    //     // string response = post(url, MimeType.APPLICATION_JSON_UTF_8.toString(), content);
+
+    //     trace(response);
+    // }
+
     void testPost() {
+
+        import core.time;
+    
+        string[string] postData = [
+        "__VIEWSTATE" : "/wEPDwUKLTEwMDYyNTk0N2RkUSZixNmxd0w9kosXl7Hd+TgdQy0=",
+        "__VIEWSTATEGENERATOR" : "C2EE9ABB1",
+        "login_id" : "18001930082",
+        "password" : "putao@521",
+        "verify_code" : "",
+        "mobile" : "",
+        "verification_code" : "",
+        "deviceId" : "B32V7RRDLESDBIKHC24V3EWK7IEU2N76ETEGUWRAH6JV2NSAG7YS5NEUKUMCAAJA7SQYAMOAKX45DMR7XSRRXMQBIU",
+        "__CALLBACKID" : "ACall",
+        "__CALLBACKPARAM" : `{"Method":"Login","CallControl":"{page}"}`
+        ];
+
         UrlEncoded encoder = new UrlEncoded;
-        encoder.put("email", "test@putao.com");
-        encoder.put("password", "test");
-        // string content = "email=test%40putao.com&password=test";
+        foreach (string name, string value; postData) {
+            encoder.put(name, value);
+        }
         string content = encoder.encode();
-        string response = post("http://10.1.222.110:8080/testpost",
-                "application/x-www-form-urlencoded", content);
 
-        // string content = `{"type":"news", "offset": "0", "count": "20"}`;
-        // string url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=24_1IgJevIE2nBKEylZUX-eV1AEsPoFOu8Q_5_slFPPbw-Zh4wozxl6vS0DfBgbXDWD8nFu0j6_WVUAS5HvxjBLZBNAg4wzr7dplhfI7O0E9nHQtOdDbcTwZ2UzlPjEUhgEiLSiZ-0qiyPu0DOCXBIfAIAPTA";
-
-        // string response = post(url, MimeType.APPLICATION_JSON_UTF_8.toString(), content);
-
-        trace(response);
-    }
+        HttpBody b = HttpBody.create("application/x-www-form-urlencoded", content);
+        auto builder = new RequestBuilder()
+            .url("https://www.erp321.com/login.aspx")
+            .post(b);
+        auto request = builder.build();
+        auto options = new HttpClientOptions();
+        auto clientOptions = options.getTcpConfiguration();
+        clientOptions.setConnectTimeout(30.seconds);
+        clientOptions.setIdleTimeout(120.seconds);
+        HttpClient client = new HttpClient(options);
+        Response response = client.newCall(request).execute();
+        HttpBody res = response.getBody();
+        // logError(res);
+        logErrorf("jushuitan response http status code: %d", response.getStatus());
+        logError( res.asString());
+    }    
 
     string post(string url, string contentType, string content) {
         HttpBody b = HttpBody.create(contentType, content);
@@ -299,7 +351,7 @@ class HttpClientTest {
                 "there").add("help", "me").build();
 
         string response = postForm("http://10.1.11.164:8080/testpost", form);
-        // string response = postForm("http://10.1.222.110:8080/testpost", form);
+        // string response = postForm("http://10.1.223.222:8080/testpost", form);
         trace(response);
     }
 
@@ -320,10 +372,10 @@ version (WITH_HUNT_TRACE) {
         import hunt.trace.HttpSender;
 
         // string endpoint = "http://10.1.11.34:9411/api/v2/spans";
-        string endpoint = "http://10.1.222.110:9411/api/v2/spans";
+        string endpoint = "http://10.1.223.222:9411/api/v2/spans";
         httpSender().endpoint(endpoint);
 
-        // string url = "http://10.1.222.110/index.html";
+        // string url = "http://10.1.223.222/index.html";
         string url = "http://127.0.0.1:8080/plaintext";
         HttpClient client = new HttpClient();
 

@@ -138,7 +138,7 @@ struct HttpMethod {
 
         int l = buffer.remaining();
         if (l >= 4) {
-            string key = buffer.getString(0, l);
+            string key = cast(string)buffer.peek(0, l);
             HttpMethod m = CACHE[key];
             if (m != HttpMethod.Null) {
                 int ml = cast(int)m.asString().length;

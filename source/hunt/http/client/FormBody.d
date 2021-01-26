@@ -90,7 +90,7 @@ final class FormBody : HttpBody {
 
 		buffer.flip();
 
-		version(HUNT_HTTP_DEBUG) trace(cast(string)buffer.getRemaining());
+		version(HUNT_HTTP_DEBUG) trace(cast(string)buffer.peekRemaining());
 
 		return buffer;
 	}

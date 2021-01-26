@@ -213,11 +213,14 @@ class HpackContext {
         if (entry is null)
         {
             auto entryPtr = field in __staticFieldMap;
-            if(entryPtr is null)
+            if(entryPtr is null) {
                 // warningf("The field does not exist: %s, %s", field.toString(), field.toHash());
-                warning("The field does not exist: ", field.toString());
-            else
+                version(HUNT_HTTP_DEBUG) {
+                    warning("The field does not exist: ", field.toString());
+                }
+            } else {
                 entry = *entryPtr;
+            }
         }
 
         return entry;

@@ -57,7 +57,7 @@ import hunt.concurrency.FuturePromise;
 import hunt.text.Common;
 import hunt.util.ConverterUtils;
 
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 
 import std.algorithm;
 import std.array;

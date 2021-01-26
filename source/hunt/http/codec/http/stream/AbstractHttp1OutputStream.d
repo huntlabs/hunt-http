@@ -12,7 +12,7 @@ import hunt.io.ByteBuffer;
 import hunt.io.BufferUtils;
 import hunt.net.Connection;
 import hunt.Exceptions;
-import hunt.logging;
+import hunt.logging.ConsoleLogger;
 
 import std.format;
 

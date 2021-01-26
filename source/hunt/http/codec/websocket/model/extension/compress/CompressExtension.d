@@ -286,7 +286,7 @@ module hunt.http.codec.websocket.model.extension.compress.CompressExtension;
 
 //     private static string toDetail(Inflater inflater) {
 //         return string.format("Inflater[finished=%b,read=%d,written=%d,remaining=%d,in=%d,out=%d]", inflater.finished(), inflater.getBytesRead(),
-//                 inflater.getBytesWritten(), inflater.getRemaining(), inflater.getTotalIn(), inflater.getTotalOut());
+//                 inflater.getBytesWritten(), inflater.peekRemaining(), inflater.getTotalIn(), inflater.getTotalOut());
 //     }
 
 //     private static string toDetail(Deflater deflater) {

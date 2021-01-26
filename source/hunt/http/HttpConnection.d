@@ -243,20 +243,18 @@ abstract class AbstractHttpConnection : HttpConnection {
     // }
 
 }
-
-
-// deprecated("Using HttpConnectionHandler instead.")
-// alias AbstractHttpHandler = HttpConnectionHandler;
+ 
 
 /**
  * 
  */
 abstract class HttpConnectionHandler : NetConnectionHandlerAdapter {
 
-    override
-    void messageReceived(Connection connection, Object message) {
-        implementationMissing(false);
-    }
+    // override
+    // DataHandleStatus messageReceived(Connection connection, Object message) {
+    //     implementationMissing(false);
+    //     return DataHandleStatus.Done;
+    // }
 
     override
     void exceptionCaught(Connection connection, Throwable t) {

@@ -6,6 +6,10 @@ import hunt.http.MultipartOptions;
 import hunt.http.codec.http.decode.MultipartParser;
 import hunt.http.codec.http.decode.MultipartFormParser;
 
+
+import hunt.util.StringBuilder;
+
+
 import hunt.collection;
 import hunt.util.DateTime;
 import hunt.stream;
@@ -971,7 +975,8 @@ class MultipartFormInputStreamTest {
         string name = filename;
         if (length > 10)
             name = filename[0 .. 10];
-        StringBuffer filler = new StringBuffer();
+
+        StringBuilder filler = new StringBuilder();
         size_t i = name.length;
         while (i < 51) {
             filler.append("0");

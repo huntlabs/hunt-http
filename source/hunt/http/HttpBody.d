@@ -41,7 +41,7 @@ abstract class HttpBody {
     }
 
     void append(ByteBuffer buffer) {
-        ubyte[] content = cast(ubyte[])buffer.getRemaining();
+        ubyte[] content = cast(ubyte[])buffer.peekRemaining();
         append(content);
     }
 
@@ -106,7 +106,7 @@ abstract class HttpBody {
     }
 
     static HttpBody create(string contentType, ByteBuffer buffer) {
-        ubyte[] content = cast(ubyte[])buffer.getRemaining();
+        ubyte[] content = cast(ubyte[])buffer.peekRemaining();
         return create(contentType, content);
     }
 

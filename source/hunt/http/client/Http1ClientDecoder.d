@@ -15,6 +15,7 @@ import hunt.net.Connection;
 import hunt.Exceptions;
 
 import hunt.io.ByteBuffer;
+import hunt.io.channel;
 
 import hunt.logging;
 import std.conv;
@@ -34,13 +35,13 @@ class Http1ClientDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Connection session) {
+    DataHandleStatus decode(ByteBuffer buffer, Connection session) {
         ByteBuffer buf = buffer; // toHeapBuffer(buffer);
         Object attachment = session.getAttribute(HttpConnection.NAME); // session.getAttachment();
+        DataHandleStatus resultStatus = DataHandleStatus.Done;
 
         AbstractHttpConnection abstractConnection = cast(AbstractHttpConnection) attachment;
-        if(abstractConnection is null)
-        {
+        if(abstractConnection is null) {
             throw new IllegalStateException("Client connection is null! The actual type is: " 
                 ~ typeid(attachment).name);
         }
@@ -53,10 +54,10 @@ class Http1ClientDecoder : DecoderChain {
                     version(HUNT_HTTP_DEBUG) tracef("parsing buffer: %s", buf.toString());
                     parser.parseNext(buf);
                     if (http1Connection.getUpgradeHttp2Complete()) {
-                        http2ClientDecoder.decode(buf, session);
+                        resultStatus = http2ClientDecoder.decode(buf, session);
                         break;
                     } else if (http1Connection.getUpgradeWebSocketComplete()) {
-                        webSocketDecoder.decode(buf, session);
+                        resultStatus = webSocketDecoder.decode(buf, session);
                         break;
                     }
                 }
@@ -64,12 +65,12 @@ class Http1ClientDecoder : DecoderChain {
             break;
 
             case HttpConnectionType.HTTP2: {
-                http2ClientDecoder.decode(buf, session);
+                resultStatus = http2ClientDecoder.decode(buf, session);
             }
             break;
 
             case HttpConnectionType.WEB_SOCKET: {
-                webSocketDecoder.decode(buf, session);
+                resultStatus = webSocketDecoder.decode(buf, session);
             }
             break;
 
@@ -78,6 +79,8 @@ class Http1ClientDecoder : DecoderChain {
                 error(msg);
                 throw new IllegalStateException(msg);
         }
+
+        return resultStatus;
     }
 
 }

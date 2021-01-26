@@ -6,7 +6,8 @@ import hunt.trace.Annotation;
 import hunt.trace.Helpers;
 
 import hunt.logging.ConsoleLogger;
-import hunt.util.Serialize;
+import hunt.serialization.JsonSerializer;
+import hunt.serialization.Common;
 
 import std.json;
 import std.range;
@@ -21,14 +22,14 @@ class Span {
     /// 16bytes
     string traceId;
     string name;
-    @IGNORE string parentId;
+    @Ignore string parentId;
     /// 8bytes
     string id;
     string kind;
     long timestamp;
     long duration;
-    @IGNORE bool debug_;
-    @IGNORE bool shared_;
+    @Ignore bool debug_;
+    @Ignore bool shared_;
 
     EndPoint localEndpoint;
     EndPoint remoteEndpoint;

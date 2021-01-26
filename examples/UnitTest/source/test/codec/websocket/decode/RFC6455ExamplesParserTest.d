@@ -120,7 +120,7 @@ class RFC6455ExamplesParserTest {
         }
         buf.flip();
 
-        // byte[] bufdata = buf.getRemaining();
+        // byte[] bufdata = buf.peekRemaining();
         // tracef("%(%02X %)", bufdata);
 
         WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.CLIENT);
@@ -142,7 +142,7 @@ class RFC6455ExamplesParserTest {
         for (int i = 0; i < dataSize; i++) {
             Assert.assertThat("BinaryFrame.payload[" ~ i.to!string() ~ "]", data.get(i), (cast(byte) 0x44));
         }
-        // bufdata = data.getRemaining();
+        // bufdata = data.peekRemaining();
         // tracef("%(%02X %)", bufdata);
     }
 
@@ -171,7 +171,7 @@ class RFC6455ExamplesParserTest {
         ByteBuffer buffer = bin.getPayload();
         Assert.assertThat("BinaryFrame.payload.length", buffer.remaining(), (dataSize));
 
-        byte[] data = buffer.getRemaining();
+        byte[] data = buffer.peekRemaining();
         assert(data[0] == 0x12);
         assert(data[1] == 0x13);
     }

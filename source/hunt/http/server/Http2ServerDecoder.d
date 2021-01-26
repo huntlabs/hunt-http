@@ -3,13 +3,15 @@ module hunt.http.server.Http2ServerDecoder;
 import hunt.http.server.Http2ServerConnection;
 import hunt.http.HttpConnection;
 
+import hunt.collection;
+import hunt.io.ByteBuffer;
+import hunt.io.channel;
 import hunt.net.codec.Decoder;
 import hunt.net.Connection;
 import hunt.logging;
 
 
-import hunt.io.ByteBuffer;
-import hunt.collection;
+
 class Http2ServerDecoder : DecoderChain {    
 
     this() {
@@ -17,9 +19,11 @@ class Http2ServerDecoder : DecoderChain {
     }
 
     override
-    void decode(ByteBuffer buffer, Connection session) {
+    DataHandleStatus decode(ByteBuffer buffer, Connection session) {
+        DataHandleStatus resultStatus = DataHandleStatus.Done;
+
         if (!buffer.hasRemaining()) {
-            return;
+            return resultStatus;
         }
 
         version(HUNT_HTTP_DEBUG) {
@@ -27,11 +31,15 @@ class Http2ServerDecoder : DecoderChain {
             tracef("the server session %s received the %s bytes", session.getId(), buffer.remaining());
         }
 
-         //Http2ServerConnection connection = cast(Http2ServerConnection) session.getAttachment();
         Http2ServerConnection connection = cast(Http2ServerConnection) session.getAttribute(HttpConnection.NAME);
         connection.getParser().parse(BufferUtils.toHeapBuffer(buffer));
         //connection.getParser().parse(buffer);
+        BufferUtils.clear(buffer);
+
+        return resultStatus;
     }
+
+    
 
     //  public void decode(ByteBuffer buffer, Session session) {
     //    if (!buffer.hasRemaining()) {
