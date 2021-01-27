@@ -13,18 +13,21 @@ import std.json;
 import std.range;
 import std.stdio;
 
-
-
+/**
+	"versions": [
+		"HUNT_DEBUG", "HUNT_HTTP_DEBUG", "HUNT_NET_DEBUG"
+	],
+ */    
 void main(string[] args) {
 
     version(WITH_HUNT_TRACE) {
         HttpServer server = buildOpenTracingServer();
     } else {
-        HttpServer server = buildSimpleServer();
+        // HttpServer server = buildSimpleServer();
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithTLS();
-    // HttpServer server = buildServerWithUpload();
+    HttpServer server = buildServerWithUpload();
     // HttpServer server = buildServerWithWebSocket();
     // HttpServer server = buildServerWithSessionStore();
     }
@@ -163,6 +166,7 @@ HttpServer buildServerWithUpload() {
     HttpServer server = HttpServer.builder()
         // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
+        .workerThreadSize(8)
         .addRoute("/plain*", (RoutingContext context) {
             context.responseHeader(HttpHeader.CONTENT_TYPE, MimeType.TEXT_PLAIN_VALUE);
             context.end("Hello World! " ~ DateTime.getTimeAsGMT());
@@ -213,9 +217,9 @@ HttpServer buildServerWithUpload() {
 
                     string fileName = part.getSubmittedFileName();
 
-                    warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content: %s",
+                    warningf("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content-length: %s",
                         part.getName(), fileName, 
-                        part.getFile(), part.getContentType(), cast(string)part.getBytes());
+                        part.getFile(), part.getContentType(), part.getSize());
                     
                     part.flush(); // Save the content to a temp file 
 

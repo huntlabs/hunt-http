@@ -58,7 +58,7 @@ class Http1ServerDecoder : DecoderChain {
                 Http1ServerConnection http1Connection = cast(Http1ServerConnection) attachment;
                 if (http1Connection.getTunnelConnectionPromise() is null) {
                     HttpParser parser = http1Connection.getParser();
-                    version (HUNT_HTTP_DEBUG) trace("runing http1 parser for a buffer...");
+                    version (HUNT_HTTP_DEBUG) trace("Runing http1 parser for a buffer...");
                     while (buf.hasRemaining()) {
                         parser.parseNext(buf);
                         if (http1Connection.getUpgradeHttp2Complete()) {
@@ -69,7 +69,15 @@ class Http1ServerDecoder : DecoderChain {
                             break;
                         }
                     }
-                    version (HUNT_HTTP_DEBUG) trace("http1 parsing done for a buffer...");
+
+                    HttpParserState parserState = parser.getState();
+                    version (HUNT_HTTP_DEBUG) {
+                        infof("HTTP1 parsing done with a buffer. Parser state: %s", parserState);
+                    }
+
+                    if(parserState == HttpParserState.CONTENT) {
+                        resultStatus = DataHandleStatus.Pending;
+                    } 
                 } else {
                     Http1ServerTunnelConnection tunnelConnection = http1Connection.createHttpTunnel();
                     if (tunnelConnection.content != null) {

@@ -29,6 +29,7 @@ import std.container.array;
 import std.conv;
 import std.string;
 
+alias HttpParserState = HttpParser.State;
 
 private bool contains(T)(T[] items, T item) {
     return items.canFind(item);
@@ -1292,6 +1293,7 @@ class HttpParser {
      * @return True if an {@link HttpRequestParsingHandler} method was called and it returned true;
      */
     bool parseNext(ByteBuffer buffer) {
+
         version(HUNT_HTTP_DEBUG_MORE) {
             tracef("parseNext s=%s %s", _state, BufferUtils.toDetailString(buffer));
             // tracef("buffer: %s", BufferUtils.toHexString(buffer));
@@ -1617,8 +1619,8 @@ class HttpParser {
 
     /* ------------------------------------------------------------------------------- */
     protected void setState(State state) {
-        // version(HUNT_HTTP_DEBUG)
-        //     tracef("%s --> %s", _state, state);
+        version(HUNT_HTTP_DEBUG)
+            tracef("%s --> %s", _state, state);
         _state = state;
     
         version(HUNT_METRIC) {
