@@ -7,6 +7,8 @@ import hunt.http.HttpOptions;
 import hunt.net.TcpSslOptions;
 import hunt.net.NetServerOptions;
 
+import hunt.system.Memory;
+
 /**
  * 
  */
@@ -22,7 +24,9 @@ class HttpServerOptions : HttpOptions {
     private ClientAuth clientAuth;
 
     this() {
-        this(new NetServerOptions(), new HttpRequestOptions());
+        NetServerOptions netOptions = new NetServerOptions();
+        netOptions.workerThreadSize = totalCPUs();
+        this(netOptions, new HttpRequestOptions());
     }
 
     this(NetServerOptions options) {
