@@ -75,7 +75,7 @@ class Http1ServerDecoder : DecoderChain {
                         infof("HTTP1 parsing done with a buffer. Parser state: %s", parserState);
                     }
 
-                    if(parserState == HttpParserState.CONTENT) {
+                    if(!parser.isIdle()) {
                         resultStatus = DataHandleStatus.Pending;
                     } 
                 } else {
