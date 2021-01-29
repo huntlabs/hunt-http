@@ -13,7 +13,6 @@ import hunt.collection;
 import hunt.stream;
 import hunt.Exceptions;
 import hunt.logging;
-import hunt.net.util.UrlEncoded;
 import hunt.text;
 import hunt.util.MimeTypeUtils;
 

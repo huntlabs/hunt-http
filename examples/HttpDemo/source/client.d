@@ -276,7 +276,7 @@ class HttpClientTest {
     }
 
     // void testPost() {
-    //     UrlEncoded encoder = new UrlEncoded;
+    //     UrlEncoded encoder = new UrlEncoded(UrlEncodeStyle.HtmlForm);
     //     encoder.put("email", "test@putao.com");
     //     encoder.put("password", "test");
     //     // string content = "email=test%40putao.com&password=test";
@@ -309,7 +309,7 @@ class HttpClientTest {
         "__CALLBACKPARAM" : `{"Method":"Login","CallControl":"{page}"}`
         ];
 
-        UrlEncoded encoder = new UrlEncoded;
+        UrlEncoded encoder = new UrlEncoded(UrlEncodeStyle.HtmlForm);
         foreach (string name, string value; postData) {
             encoder.put(name, value);
         }

@@ -27,8 +27,8 @@ void main(string[] args) {
     // HttpServer server = buildServerDefaultRoute();
     // HttpServer server = buildServerWithForm();
     // HttpServer server = buildServerWithTLS();
-    HttpServer server = buildServerWithUpload();
-    // HttpServer server = buildServerWithWebSocket();
+    // HttpServer server = buildServerWithUpload();
+    HttpServer server = buildServerWithWebSocket();
     // HttpServer server = buildServerWithSessionStore();
     }
     
@@ -249,9 +249,12 @@ HttpServer buildServerWithUpload() {
 
 
 HttpServer buildServerWithWebSocket() {
+    // ws://10.1.223.62:8080/ws1
+
     HttpServer server = HttpServer.builder()
         // .setTLS("cert/server.crt", "cert/server.key", "hunt2018", "hunt2018")
         .setListener(8080, "0.0.0.0")
+        .workerThreadSize(8)
         .websocket("/", new class AbstractWebSocketMessageHandler {
 
             override void onOpen(WebSocketConnection connection) {
