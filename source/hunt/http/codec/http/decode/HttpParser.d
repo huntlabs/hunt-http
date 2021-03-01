@@ -1324,7 +1324,7 @@ class HttpParser {
             // Request/response line
             if (_state >= State.START && _state < State.HEADER) {
                 if (parseLine(buffer)) {
-                    tracef("after parseLine =>%s", buffer.toString());
+                    version(HUNT_HTTP_DEBUG) tracef("after parseLine =>%s", buffer.toString());
                     // return true;
                 }
             }
