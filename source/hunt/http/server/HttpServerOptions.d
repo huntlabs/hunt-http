@@ -25,7 +25,7 @@ class HttpServerOptions : HttpOptions {
 
     this() {
         NetServerOptions netOptions = new NetServerOptions();
-        netOptions.workerThreadSize = totalCPUs();
+        // netOptions.workerThreadSize = totalCPUs();
         this(netOptions, new HttpRequestOptions());
     }
 
