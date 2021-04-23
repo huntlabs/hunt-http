@@ -379,10 +379,19 @@ class HttpServerRequest : HttpRequest {
 
     /// get a query
     T get(T = string)(string key, T v = T.init) {
+        version(HUNT_HTTP_DEBUG) {
+            tracef("key: %s, value: %s", key, v);
+        }
+
         auto tmp = queries();
         if (tmp is null) {
             return v;
         }
+        
+        static if(is(T == string)) {
+            if(v is null) v = "";
+        }
+
         auto _v = tmp.get(key, "");
         if (_v.length) {
             return to!T(_v);
@@ -491,7 +500,6 @@ class HttpServerRequest : HttpRequest {
         if(getMethod() != "POST")
             return T.init;
         import hunt.serialization.JsonSerializer;
-        // import hunt.util.Serialize;
 
         JSONValue jv;
         string[][string] forms = xFormData();

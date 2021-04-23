@@ -183,6 +183,20 @@ class HttpSession {
         attributes = json;
     }
 
+    void remove(string[] keys) {
+        if(attributes.isNull)
+            return;
+
+        JSONValue json;
+        foreach (string _key, ref value; attributes) {
+            if (!keys.canFind(_key)) {
+                json[_key] = value;
+            }
+        }
+
+        attributes = json;
+    }    
+
     alias forget = remove;
 
     string[] keys() {
@@ -444,6 +458,22 @@ class HttpSession {
 
     // 	return migrate(true);
     // }
+
+    /**
+     * Save the session data to storage.
+     */
+    void save() {
+        string[] olds = this.get!(string[])("_flash.old");
+
+        remove(olds);
+
+        // attributes
+        string[] news = this.get!(string[])("_flash.new");
+        this.put("_flash.old", news);
+        this.put!(string[])("_flash.new", []);
+
+        news = this.get!(string[])("_flash.new");
+    }
 
     override bool opEquals(Object o) {
         if (this is o)
