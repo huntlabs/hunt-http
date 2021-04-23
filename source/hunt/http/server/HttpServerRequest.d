@@ -110,11 +110,20 @@ class HttpServerRequest : HttpRequest {
             _urlEncodedMap.decode(queryString);
         }
 
-        // if ("application/x-www-form-urlencoded".equalsIgnoreCase(getMimeType())) {
-        //     string bodyString = getStringBody(_options.requestOptions.getCharset());
-        //     _urlEncodedMap.decode(bodyString);
-        // }
+        if ("application/x-www-form-urlencoded".equalsIgnoreCase(getMimeType())) {
+            string bodyString = getStringBody(_options.requestOptions.getCharset());
+            _urlEncodedMap.decode(bodyString);
+        }
     }
+
+    // void setPipedStream(PipedStream stream) {
+    //     this._pipedStream = stream;
+    // }
+
+    // void closeOutputStream() {
+    //     if(this._pipedStream !is null)
+    //         this._pipedStream.getOutputStream().close();
+    // }
 
     private OutputStream getOutputStream() {
         return this._pipedStream.getOutputStream();
@@ -450,7 +459,8 @@ class HttpServerRequest : HttpRequest {
     // get queries
     @property ref string[string] queries() {
         if (!_isQueryParamsSet) {
-            MultiMap!string map = getURI().decodeQuery();
+            MultiMap!string map = new MultiMap!string();
+            getURI().decodeQueryTo(map);
             foreach (string key, List!(string) values; map) {
                 version(HUNT_DEBUG) {
                     infof("query parameter: key=%s, values=%s", key, values[0]);
@@ -500,6 +510,7 @@ class HttpServerRequest : HttpRequest {
         if(getMethod() != "POST")
             return T.init;
         import hunt.serialization.JsonSerializer;
+        // import hunt.util.Serialize;
 
         JSONValue jv;
         string[][string] forms = xFormData();
@@ -528,7 +539,7 @@ class HttpServerRequest : HttpRequest {
 
     @property string[][string] xFormData() {
         if (_xFormData is null && _isXFormUrlencoded) {
-            UrlEncoded map = new UrlEncoded(UrlEncodeStyle.HtmlForm);
+            UrlEncoded map = new UrlEncoded();
             map.decode(getStringBody());
             foreach (string key; map.byKey()) {
                 foreach(string v; map.getValues(key)) {
