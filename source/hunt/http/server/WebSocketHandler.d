@@ -24,8 +24,8 @@ interface WebSocketHandler {
      bool acceptUpgrade(HttpRequest request, HttpResponse response,
             HttpOutputStream output, HttpConnection connection);
     
-    deprecated("Using onOpen instead.")
-    alias onConnect = onOpen;
+    // deprecated("Using onOpen instead.")
+    // alias onConnect = onOpen;
 
     void onOpen(WebSocketConnection connection);
 
