@@ -309,7 +309,7 @@ class HttpServerRequest : HttpRequest {
 
     Part[] getParts() {
         if (_multipartFormParser is null) {
-            throw new RuntimeException("The reqest is not a multipart form.");
+            throw new RuntimeException("The request is not a multipart form.");
             // return null;
         }
 
