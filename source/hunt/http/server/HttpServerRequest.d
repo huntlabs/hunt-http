@@ -39,7 +39,7 @@ import std.array;
 import std.conv;
 import std.container.array;
 import std.json;
-import std.string : icmp;
+import std.string : icmp, strip;
 import std.range;
 
 
@@ -48,6 +48,13 @@ import std.range;
  */
 class HttpServerRequest : HttpRequest {
     
+    private string[][string] _formData;  // data buffer for form-data and x-www-form-urlencoded
+    private string[string] _queryParams;
+    
+    private bool _isMultipart = false;
+    private bool _isXFormUrlencoded = false;
+    private bool _isQueryParamsSet = false;
+
     private string _stringBody; 
     private string _mimeType;
     private HttpServerOptions _options;
@@ -58,7 +65,6 @@ class HttpServerRequest : HttpRequest {
     private UrlEncoded _urlEncodedMap;
 
     private Action1!HttpServerRequest _messageCompleteHandler;
-    // private Action1!ByteBuffer _contentHandler;
     private Action1!HttpServerRequest _contentCompleteHandler;  
 
     this(string method, string uri, HttpVersion ver, HttpServerOptions options) {
@@ -145,7 +151,7 @@ class HttpServerRequest : HttpRequest {
                     buffer = new byte[size];
                     int number = inputStream.read(buffer);
                     if(number == -1) {
-                        version(HUNT_DEBUG) warning("no data read");
+                        version(HUNT_DEBUG) warning("no data for read");
                     }
                 } else {
                     buffer = arrayStream.getRawBuffer();
@@ -153,7 +159,7 @@ class HttpServerRequest : HttpRequest {
                 _stringBody = cast(string)buffer;
                 return _stringBody;
             } catch (IOException e) {
-                version(HUNT_DEBUG) warning("get string body exception: ", e.msg);
+                version(HUNT_DEBUG) warning("Get an exception for string body: ", e.msg);
                 version(HUNT_HTTP_DEBUG) warning(e);
                 return null;
             }
@@ -310,7 +316,6 @@ class HttpServerRequest : HttpRequest {
     Part[] getParts() {
         if (_multipartFormParser is null) {
             throw new RuntimeException("The request is not a multipart form.");
-            // return null;
         }
 
         // try {
@@ -408,9 +413,9 @@ class HttpServerRequest : HttpRequest {
      * @return string|array
      */
     T post(T = string)(string key, T v = T.init) {
-        string[][string] form = xFormData();
-        if (form is null)
-            return v;
+
+        string[][string] form = formData();
+        
         if(key in form) {
             string[] _v = form[key];
             if (_v.length > 0) {
@@ -420,13 +425,13 @@ class HttpServerRequest : HttpRequest {
                     v = to!T(_v[0]);
                 }
             } 
-        } 
-
+        }                 
+            
         return v;
     }
 
     T[] posts(T = string)(string key, T[] v = null) {
-        string[][string] form = xFormData();
+        string[][string] form = formData();
         if (form is null)
             return v;
             
@@ -482,7 +487,7 @@ class HttpServerRequest : HttpRequest {
             _queryParams = input;
         else {
             foreach(string k, string v; input) {
-                _xFormData[k] ~= v;
+                _formData[k] ~= v;
             }
         }
     }
@@ -492,17 +497,17 @@ class HttpServerRequest : HttpRequest {
             if (canFind(source, k))
                 return true;
         }
+
         return false;
     }
     
     T bindForm(T)() if(is(T == class) || is(T == struct)) {
-
         if(getMethod() != "POST")
             return T.init;
         import hunt.serialization.JsonSerializer;
 
         JSONValue jv;
-        string[][string] forms = xFormData();
+        string[][string] forms = formData();
         if(forms is null) {
             static if(is(T == class)) {
                 return new T();
@@ -520,24 +525,52 @@ class HttpServerRequest : HttpRequest {
                 warningf("null value for %s in form data: ", k);
             }
         }
-        return JsonSerializer.toObject!T(jv);
-        // T obj = toObject!T(jv);
 
-        // return (obj is null) ? (new T()) : obj;
+        return JsonSerializer.toObject!T(jv);
     }
 
-    @property string[][string] xFormData() {
-        if (_xFormData is null && _isXFormUrlencoded) {
+    deprecated("Using formData instead.")
+    alias xFormData = formData;
+
+    @property string[][string] formData() {
+        if (_formData !is null) 
+            return _formData;
+
+        if(_isXFormUrlencoded) {
             UrlEncoded map = new UrlEncoded(UrlEncodeStyle.HtmlForm);
             map.decode(getStringBody());
             foreach (string key; map.byKey()) {
                 foreach(string v; map.getValues(key)) {
                     key = key.strip();
-                    _xFormData[key] ~= v.strip();
+                    _formData[key] ~= v.strip();
                 }
             }
+        } else if (isMultipartForm()) {
+            foreach (Part part; getParts()) {
+                MultipartForm multipart = cast(MultipartForm) part;
+
+                string contentType = multipart.getContentType();
+                string submittedFileName = multipart.getSubmittedFileName();
+                string key = multipart.getName();
+                if (submittedFileName.empty) {
+                    string content = cast(string)multipart.getBytes();
+                    content = content.strip();
+                    version (HUNT_HTTP_DEBUG) {
+                        if(content.length > 128) {
+                            content = content[0..128] ~ "...";
+                        } 
+
+                        tracef("File: key=%s, fileName=%s, actualFile=%s, ContentType=%s, content=%s",
+                                key, submittedFileName, multipart.getFile(), multipart.getContentType(),
+                                content); 
+                    } 
+
+                    _formData[key] ~= content;
+                } 
+            }            
         }
-        return _xFormData;
+
+        return _formData;
     }
 
     /**
@@ -553,6 +586,7 @@ class HttpServerRequest : HttpRequest {
             if (c.getName == key)
                 return c.getValue();
         }
+
         return defaultValue;
     }
 
@@ -568,12 +602,6 @@ class HttpServerRequest : HttpRequest {
         return toLower(l);
     }
     
-    private string[][string] _xFormData;
-    private string[string] _queryParams;
-    
-    private bool _isMultipart = false;
-    private bool _isXFormUrlencoded = false;
-    private bool _isQueryParamsSet = false;
 
 // dfmton
 

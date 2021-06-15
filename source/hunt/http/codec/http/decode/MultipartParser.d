@@ -278,12 +278,12 @@ class MultipartParser {
             if (_state == State.EPILOGUE) {
                 _state = State.END;
 
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("messageComplete %s", this);
 
                 return _handler.messageComplete();
             } else {
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("earlyEOF %s", this);
 
                 _handler.earlyEOF();
@@ -339,7 +339,7 @@ class MultipartParser {
             if (b == '\n') {
                 setState(State.BODY_PART);
 
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("startPart %s", this);
 
                 _handler.startPart();
@@ -415,7 +415,7 @@ class MultipartParser {
                             setState(State.FIRST_OCTETS);
                             _partialBoundary = 2; // CRLF is option for empty parts
 
-                            version(HUNT_DEBUG)
+                            version(HUNT_HTTP_DEBUG)
                                 tracef("headerComplete %s", this);
 
                             if (_handler.headerComplete())
@@ -450,7 +450,7 @@ class MultipartParser {
                             break;
 
                         case LINE_FEED: {
-                            version(HUNT_DEBUG)
+                            version(HUNT_HTTP_DEBUG)
                                 tracef("Line Feed in Name %s", this);
 
                             handleField();
@@ -543,7 +543,7 @@ class MultipartParser {
 
     /* ------------------------------------------------------------------------------- */
     private void handleField() {
-        version(HUNT_DEBUG)
+        version(HUNT_HTTP_DEBUG)
             tracef("parsedField:  fieldName=%s fieldValue=%s %s", _fieldName, _fieldValue, this);
 
         if (_fieldName != null && _fieldValue != null)
@@ -565,7 +565,7 @@ class MultipartParser {
                     setState(State.DELIMITER);
                     _partialBoundary = 0;
 
-                    version(HUNT_DEBUG)
+                    version(HUNT_HTTP_DEBUG)
                         tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(BufferUtils.EMPTY_BUFFER), true, this);
 
                     return _handler.content(BufferUtils.EMPTY_BUFFER, true);
@@ -584,7 +584,7 @@ class MultipartParser {
                 content.limit(_partialBoundary);
                 _partialBoundary = 0;
 
-                version(HUNT_DEBUG)
+                version(HUNT_HTTP_DEBUG)
                     tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
 
                 if (_handler.content(content, false))
@@ -601,7 +601,7 @@ class MultipartParser {
             buffer.position(delimiter - buffer.arrayOffset() + _delimiterSearch.getLength());
             setState(State.DELIMITER);
 
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
                 tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), true, this);
 
             return _handler.content(content, true);
@@ -613,7 +613,7 @@ class MultipartParser {
             ByteBuffer content = buffer.slice();
             content.limit(content.limit() - _partialBoundary);
 
-            version(HUNT_DEBUG)
+            version(HUNT_HTTP_DEBUG)
                 tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
 
             BufferUtils.clear(buffer);
@@ -623,7 +623,7 @@ class MultipartParser {
         // There is normal content with no delimiter
         ByteBuffer content = buffer.slice();
 
-        // version(HUNT_DEBUG) {
+        // version(HUNT_HTTP_DEBUG) {
         //     tracef("Content=%s, Last=%s %s", BufferUtils.toDetailString(content), false, this);
         // }
 
@@ -633,14 +633,14 @@ class MultipartParser {
 
     /* ------------------------------------------------------------------------------- */
     private void setState(State state) {
-        // version(HUNT_DEBUG)
+        // version(HUNT_HTTP_DEBUG)
         //     tracef("%s --> %s", _state, state);
         _state = state;
     }
 
     /* ------------------------------------------------------------------------------- */
     private void setState(FieldState state) {
-        // version(HUNT_DEBUG)
+        // version(HUNT_HTTP_DEBUG)
         //     tracef("%s:%s --> %s", _state, _fieldState, state);
         _fieldState = state;
     }
