@@ -502,8 +502,14 @@ class HttpServerRequest : HttpRequest {
     }
     
     T bindForm(T)() if(is(T == class) || is(T == struct)) {
-        if(getMethod() != "POST")
+        if(getMethod() != HttpMethod.POST.asString() && 
+            getMethod() != HttpMethod.PUT.asString()) {
+            version(HUNT_DEBUG) {
+                warningf("The required method is POST or PUT. Here is yours: %s", getMethod());
+            }
             return T.init;
+        }
+
         import hunt.serialization.JsonSerializer;
 
         JSONValue jv;
