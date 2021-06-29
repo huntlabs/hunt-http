@@ -398,9 +398,22 @@ class HttpServerRequest : HttpRequest {
         }
 
         auto _v = tmp.get(key, "");
-        if (_v.length) {
-            return to!T(_v);
+        version(HUNT_HTTP_DEBUG) {
+            tracef("key: %s, value: %s, target: %s, default: %s", key, _v, T.stringof, v);
         }
+
+        if (_v.length) {
+            try {
+                return to!T(_v);
+            } catch(Exception ex) {
+                string msg = format("Failed converting from <%s> to %s", _v, T.stringof);
+                // warning(msg);
+                // warning(ex);
+                throw new Exception(msg);
+                // return v;
+            }
+        }
+        
         return v;
     }
 
