@@ -943,6 +943,11 @@ version(WITH_HUNT_TRACE) {
             return this;
         }
 
+        Builder maxFileSize(int size) {
+            _httpOptions.requestOptions.setMaxFileSize(size);
+            return this;
+        }
+
         HttpServer build() { 
 
             string basePath = dirName(thisExePath);
