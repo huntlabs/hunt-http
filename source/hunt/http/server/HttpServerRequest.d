@@ -544,8 +544,9 @@ class HttpServerRequest : HttpRequest {
                 warningf("null value for %s in form data: ", k);
             }
         }
-
-        return JsonSerializer.toObject!T(jv);
+        
+        import hunt.serialization.Common;
+        return JsonSerializer.toObject!(T, SerializationOptions.Default.canThrow(false))(jv);
     }
 
     deprecated("Using formData instead.")
