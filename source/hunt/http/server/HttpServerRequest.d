@@ -542,10 +542,9 @@ class HttpServerRequest : HttpRequest {
                 warningf("null value for %s in form data: ", k);
             }
         }
-        return JsonSerializer.toObject!T(jv);
-        // T obj = toObject!T(jv);
-
-        // return (obj is null) ? (new T()) : obj;
+        
+        import hunt.serialization.Common;
+        return JsonSerializer.toObject!(T, SerializationOptions.Default.canThrow(false))(jv);
     }
 
     @property string[][string] xFormData() {
