@@ -25,7 +25,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.http.Util;
 
 import hunt.collection;
-import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.FuturePromise;
 import hunt.concurrency.Delayed;
 import hunt.Exceptions;
 import hunt.Functions;
@@ -279,46 +279,46 @@ class WebSocketConnectionImpl : AbstractHttpConnection, WebSocketConnection, Inc
         return mask;
     }
 
-    override CompletableFuture!(bool) sendText(string text) {
+    override FuturePromise!(bool) sendText(string text) {
         TextFrame textFrame = new TextFrame();
         textFrame.setPayload(text);
-        CompletableFuture!(bool) future = new CompletableFuture!bool();
+        FuturePromise!(bool) future = new FuturePromise!bool();
         //dfmt off        
         outgoingFrame(textFrame, 
             new class NoopCallback {
             override void succeeded() {
-                future.complete(true);
+                future.succeeded(true);
             }
 
             override void failed(Exception x) {
-                future.completeExceptionally(x);
+                future.failed(x);
             }
         });
 //dfmt on        
         return future;
     }
 
-    override CompletableFuture!(bool) sendData(byte[] data) {
+    override FuturePromise!(bool) sendData(byte[] data) {
         return _sendData(data);
     }
 
-    override CompletableFuture!(bool) sendData(ByteBuffer data) {
+    override FuturePromise!(bool) sendData(ByteBuffer data) {
         return _sendData(data);
     }
 
-    private CompletableFuture!(bool) _sendData(T)(T data) {
+    private FuturePromise!(bool) _sendData(T)(T data) {
         BinaryFrame binaryFrame = new BinaryFrame();
         binaryFrame.setPayload(data);
-        CompletableFuture!(bool) future = new CompletableFuture!bool();
+        FuturePromise!(bool) future = new FuturePromise!bool();
         //dfmt off        
         outgoingFrame(binaryFrame, 
             new class NoopCallback {
             override void succeeded() {
-                future.complete(true);
+                future.succeeded(true);
             }
 
             override void failed(Exception x) {
-                future.completeExceptionally(x);
+                future.failed(x);
             }
         });
 //dfmt on          

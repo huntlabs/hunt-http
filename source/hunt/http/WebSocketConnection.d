@@ -8,7 +8,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.http.HttpConnection;
 
 import hunt.io.ByteBuffer;
-import hunt.concurrency.CompletableFuture;
+import hunt.concurrency.FuturePromise;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.logging.ConsoleLogger;
@@ -160,7 +160,7 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
      * @param text The text message.
      * @return The future result.
      */
-    CompletableFuture!(bool) sendText(string text);
+    FuturePromise!(bool) sendText(string text);
 
     /**
      * Send binary message.
@@ -168,7 +168,7 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
      * @param data The binary message.
      * @return The future result.
      */
-    CompletableFuture!(bool) sendData(byte[] data);
+    FuturePromise!(bool) sendData(byte[] data);
 
     /**
      * Send binary message.
@@ -176,7 +176,7 @@ interface WebSocketConnection : OutgoingFrames, HttpConnection {
      * @param data The binary message.
      * @return The future result.
      */
-    CompletableFuture!(bool) sendData(ByteBuffer data);
+    FuturePromise!(bool) sendData(ByteBuffer data);
 
     /**
      * Get the websocket upgrade request.
