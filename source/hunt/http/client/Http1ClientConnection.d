@@ -108,10 +108,12 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
             new class DefaultPromise!(HttpOutputStream) {
 
             override
-            void failed(Exception x) {
+            bool failed(Throwable x) {
                 errorf("Create client output stream exception", x);
+                return true;
             }
         });
+
         Stream.Listener initStreamListener = new Http2ClientResponseHandler(request, http2ResponseHandler, this);
         ClientHttp2SessionListener listener = new class ClientHttp2SessionListener {
 
@@ -138,6 +140,7 @@ class Http1ClientConnection : AbstractHttp1Connection, HttpClientConnection {
             this() {
                 super(getHttpOptions(), this.outer.getTcpConnection(), http2SessionListener);
             }
+            
             override
             protected Http2Session initHttp2Session(HttpOptions config, FlowControlStrategy flowControl,
                                                     StreamSession.Listener listener) {

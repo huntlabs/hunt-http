@@ -139,17 +139,20 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
     void send(HttpRequest request, ClientHttpHandler handler) {
         Promise!(HttpOutputStream) promise = new class Promise!(HttpOutputStream) {
 
-            void succeeded(HttpOutputStream output) {
+            bool succeeded(HttpOutputStream output) {
                 try {
                     output.close();
+                    return true;
                 } catch (IOException e) {
                     errorf("write data unsuccessfully", e);
+                    return false;
                 }
 
             }
 
-            void failed(Exception x) {
+            bool failed(Throwable x) {
                 errorf("write data unsuccessfully", x);
+                return true;
             }
 
             string id() { return "HttpOutputStream close"; }
@@ -170,16 +173,19 @@ class Http2ClientConnection : AbstractHttp2Connection , HttpClientConnection {
 
         Promise!(HttpOutputStream) promise = new class Promise!(HttpOutputStream) {
 
-            void succeeded(HttpOutputStream output) {
+            bool succeeded(HttpOutputStream output) {
                 try {
                     output.writeWithContentLength(buffers);
+                    return true;
                 } catch (IOException e) {
                     errorf("write data unsuccessfully", e);
+                    return false;
                 }
             }
 
-            void failed(Exception x) {
+            bool failed(Throwable x) {
                 errorf("write data unsuccessfully", x);
+                return true;
             }
 
             string id() { return "writeWithContentLength"; }

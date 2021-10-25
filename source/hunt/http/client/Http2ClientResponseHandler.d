@@ -207,7 +207,7 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
             this.promise = promise;
         }
 
-        void succeeded(Stream stream) {
+        bool succeeded(Stream stream) {
             version(HUNT_DEBUG) {
                 tracef("create a new stream %s", stream.getId());
             }
@@ -221,12 +221,12 @@ class Http2ClientResponseHandler : Stream.Listener.Adapter { //  , Runnable
 
             // Optional.ofNullable(cast(Runnable) stream.getAttribute(RUN_TASK))
             //         .ifPresent(Runnable::run);
-            promise.succeeded(output);
+            return promise.succeeded(output);
         }
 
-        void failed(Exception x) {
-            promise.failed(x);
+        bool failed(Throwable x) {
             errorf("client creates stream unsuccessfully", x);
+            return promise.failed(x);
         }
 
         string id() { return "undefined"; }

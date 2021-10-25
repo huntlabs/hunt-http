@@ -96,8 +96,7 @@ class HttpClient : AbstractLifecycle {
     }
 
     Future!(HttpClientConnection) connect(string host, int port) {
-        FuturePromise!(HttpClientConnection) completable = new FuturePromise!(HttpClientConnection)();
-        completable.id = "httpclient";
+        FuturePromise!(HttpClientConnection) completable = new FuturePromise!(HttpClientConnection)("httpclient");
         connect(host, port, completable);
         return completable;
     }
