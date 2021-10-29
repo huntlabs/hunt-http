@@ -407,10 +407,10 @@ class HttpServerRequest : HttpRequest {
                 return to!T(_v);
             } catch(Exception ex) {
                 string msg = format("Failed converting from <%s> to %s", _v, T.stringof);
-                // warning(msg);
+                warning(msg);
                 // warning(ex);
-                throw new Exception(msg);
-                // return v;
+                //throw new Exception(msg);
+                return v;
             }
         }
         
