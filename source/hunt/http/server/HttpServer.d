@@ -303,7 +303,8 @@ class HttpServer : AbstractLifecycle {
         private RouterManager[string] _pathManagerGroup; // route manager group for path
         private Router _currentRouter;
         private WebSocketMessageHandler[string] _webSocketHandlers;
-        // private bool _canCopyBuffer = false;       
+        // private bool _canCopyBuffer = false;     
+        private Duration _resourceCacheTime = -1.seconds;  
         
         // SSL/TLS settings
         private bool _isCertificateAuth = false;
@@ -345,6 +346,11 @@ class HttpServer : AbstractLifecycle {
 
         Builder workerThreadSize(uint value) {
             _httpOptions.getTcpConfiguration().workerThreadSize = value;
+            return this;
+        }
+
+        Builder resourceCacheTime(Duration value) {
+            _resourceCacheTime = value;
             return this;
         }
 
@@ -536,10 +542,13 @@ class HttpServer : AbstractLifecycle {
 
         alias addNotFoundRoute = setDefaultRequest;
 
-        Builder resource(string path, string localPath, bool canList = true, 
+        Builder resource(string path, string localPath, bool canList = true,
                 string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
-            return resource(path, new DefaultResourceHandler(amendingPath(path), localPath).isListingEnabled(canList), 
-                groupName, groupType);
+            DefaultResourceHandler handler = new DefaultResourceHandler(amendingPath(path), localPath);
+            handler.isListingEnabled = canList;
+            handler.cacheTime = _resourceCacheTime;
+            
+            return resource(path, handler, groupName, groupType);
         }
 
         private static string amendingPath(string path) {
