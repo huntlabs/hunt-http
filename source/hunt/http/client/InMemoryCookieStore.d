@@ -5,7 +5,7 @@ import hunt.http.client.CookieStore;
 import hunt.http.Cookie;
 import hunt.collection;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.util.Comparator;
 import hunt.net.util.HttpURI;
 

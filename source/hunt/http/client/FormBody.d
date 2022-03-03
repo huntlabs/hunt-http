@@ -7,7 +7,7 @@ import hunt.io.ByteBuffer;
 import hunt.io.HeapByteBuffer;
 import hunt.io.BufferUtils;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.util.UrlEncoded;
 import hunt.util.MimeType;
 

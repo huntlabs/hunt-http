@@ -10,7 +10,7 @@ import hunt.http.HttpVersion;
 import hunt.collection;
 import hunt.Functions;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.util.HttpURI;
 import hunt.text.Common;
 import hunt.util.StringBuilder;

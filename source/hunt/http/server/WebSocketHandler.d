@@ -12,7 +12,7 @@ import hunt.http.WebSocketPolicy;
 
 import hunt.http.HttpConnection;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.Functions;
 
 import std.conv;

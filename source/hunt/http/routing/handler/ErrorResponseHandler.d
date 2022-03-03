@@ -7,7 +7,7 @@ import hunt.http.Version;
 import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.Exceptions;
 
 import std.conv;

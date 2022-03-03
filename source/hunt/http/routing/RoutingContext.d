@@ -22,7 +22,7 @@ import hunt.concurrency.Promise;
 import hunt.Exceptions;
 import hunt.Functions;
 import hunt.io.BufferUtils;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.util.HttpURI;
 import hunt.stream.Common;
 import hunt.util.Common;

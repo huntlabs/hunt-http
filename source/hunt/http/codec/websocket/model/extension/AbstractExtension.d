@@ -7,7 +7,7 @@ import hunt.http.WebSocketConnection;
 import hunt.http.WebSocketFrame;
 import hunt.http.WebSocketPolicy;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.Exceptions;
 import hunt.util.Appendable;
 import hunt.util.Common;

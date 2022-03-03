@@ -11,7 +11,7 @@ import hunt.io.ByteBuffer;
 import hunt.concurrency.FuturePromise;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.Connection;
 import hunt.util.Common;
 

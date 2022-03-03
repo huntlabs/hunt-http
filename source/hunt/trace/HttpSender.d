@@ -4,7 +4,7 @@ import hunt.trace.Span;
 import hunt.trace.Constrants;
 
 import hunt.http.client;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 
 import std.array;
 import std.concurrency : initOnce;

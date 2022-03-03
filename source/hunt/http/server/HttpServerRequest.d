@@ -27,7 +27,7 @@ import hunt.io.BufferUtils;
 import hunt.stream.PipedStream;
 import hunt.stream.ByteArrayInputStream;
 import hunt.stream.Common;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.util.HttpURI;
 import hunt.net.util.UrlEncoded;
 import hunt.text.Common;

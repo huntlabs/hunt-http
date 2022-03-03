@@ -4,7 +4,7 @@ import hunt.http.routing.RoutingContext;
 import hunt.http.server.HttpSession;
 
 import hunt.http.Cookie;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 
 import std.algorithm;
 import std.string;

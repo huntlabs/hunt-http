@@ -5,7 +5,7 @@ import hunt.trace.Constrants;
 import hunt.trace.Annotation;
 import hunt.trace.Helpers;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.serialization.JsonSerializer;
 import hunt.serialization.Common;
 
@@ -102,7 +102,7 @@ class Span {
         json["debug"] = (debug_);
         json["shared"] = (shared_);
 
-        // import hunt.logging.ConsoleLogger;
+        // import hunt.logging;
         // warning("parentId: ", parentId);
         // warning("traceId: ", traceId);
         if (parentId.length != 0)

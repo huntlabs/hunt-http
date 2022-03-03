@@ -11,7 +11,7 @@ import hunt.io.ByteBuffer;
 import hunt.io.BufferUtils;
 import hunt.collection.List;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.util.StringBuilder;
 
 import hunt.util.MimeType;

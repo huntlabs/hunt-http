@@ -4,7 +4,7 @@ import hunt.http.HttpHeader;
 import hunt.http.QuotedCSV;
 
 import hunt.collection;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.text.Common;
 import hunt.Exceptions;
 

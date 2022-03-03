@@ -10,7 +10,7 @@ import hunt.util.ConverterUtils;
 
 import hunt.net.util.UrlEncoded;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 
 
 /**

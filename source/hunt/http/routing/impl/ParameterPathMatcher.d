@@ -5,7 +5,7 @@ import hunt.http.routing.Router;
 
 import hunt.collection;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.text;
 
 import std.array;

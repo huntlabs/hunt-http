@@ -37,7 +37,7 @@ import hunt.io.ByteBuffer;
 import hunt.event.EventLoop;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net;
 import hunt.util.DateTime;
 import hunt.util.AbstractLifecycle;
@@ -346,6 +346,11 @@ class HttpServer : AbstractLifecycle {
 
         Builder workerThreadSize(uint value) {
             _httpOptions.getTcpConfiguration().workerThreadSize = value;
+            return this;
+        }
+
+        Builder canUpgrade(bool value) {
+            _httpOptions.canUpgrade = value;
             return this;
         }
 

@@ -51,7 +51,7 @@ interface RouterManager {
             .handler(ErrorResponseHandler.Default());
         
         version(HUNT_HTTP_DEBUG) {
-            import hunt.logging.ConsoleLogger;
+            import hunt.logging;
             tracef("routeid: %d, paths: *", currentRouter.getId());
         }
         

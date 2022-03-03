@@ -10,7 +10,7 @@ import hunt.http.routing.Router;
 import hunt.http.routing.impl.RouterManagerImpl;
 
 import hunt.collection;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.Exceptions;
 import hunt.text;
 import hunt.util.Comparator;

@@ -6,7 +6,7 @@ import hunt.http.QuotedCSV;
 
 import hunt.collection;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.text.Common;
 import hunt.text.QuotedStringTokenizer;
 import hunt.util.StringBuilder;

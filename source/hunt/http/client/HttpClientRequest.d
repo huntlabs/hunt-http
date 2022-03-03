@@ -18,7 +18,7 @@ import hunt.io.ByteBuffer;
 import hunt.io.HeapByteBuffer;
 import hunt.io.BufferUtils;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.KeyCertOptions;
 import hunt.net.PemKeyCertOptions;
 import hunt.net.util.HttpURI;

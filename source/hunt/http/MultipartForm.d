@@ -5,7 +5,7 @@ import hunt.http.MultipartOptions;
 import hunt.collection;
 import hunt.stream;
 import hunt.Exceptions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.text.StringUtils;
 
 import std.array;

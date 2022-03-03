@@ -21,7 +21,7 @@ import hunt.http.Util;
 
 import hunt.collection;
 import hunt.concurrency.Delayed;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.secure.SecureSession;
 import hunt.net.Connection;
 

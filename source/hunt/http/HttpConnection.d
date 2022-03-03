@@ -8,7 +8,7 @@ import hunt.io.ByteBuffer;
 import hunt.concurrency.ScheduledThreadPoolExecutor;
 import hunt.Exceptions;
 import hunt.Functions;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net.AbstractConnection;
 import hunt.net.Connection;
 import hunt.net.Exceptions;

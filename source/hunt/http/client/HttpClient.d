@@ -40,7 +40,7 @@ import hunt.io.ByteBuffer;
 import hunt.collection.Map;
 import hunt.collection.HashMap;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.net;
 import hunt.util.AbstractLifecycle;
 

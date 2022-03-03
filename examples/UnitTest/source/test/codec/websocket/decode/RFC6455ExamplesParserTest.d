@@ -9,7 +9,7 @@ import hunt.http.WebSocketPolicy;
 import hunt.io.BufferUtils;
 import hunt.io.ByteBuffer;
 import hunt.collection.Queue;
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 
 import hunt.Assert;
 

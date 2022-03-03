@@ -9,7 +9,7 @@ import hunt.http.HttpHeader;
 import hunt.http.HttpStatus;
 import hunt.http.Util;
 
-import hunt.logging.ConsoleLogger;
+import hunt.logging;
 import hunt.Exceptions;
 import hunt.util.DateTime : TimeUnit;
 import hunt.util.AcceptMimeType;
