@@ -22,6 +22,7 @@ class HttpServerOptions : HttpOptions {
     private NetServerOptions _netServerOptions;
     private HttpRequestOptions _httpRequestOptions;
     private ClientAuth clientAuth;
+    private bool _canUpgrade = true;
 
     this() {
         NetServerOptions netOptions = new NetServerOptions();
@@ -103,7 +104,16 @@ class HttpServerOptions : HttpOptions {
     HttpServerOptions setClientAuth(ClientAuth clientAuth) {
         this.clientAuth = clientAuth;
         return this;
-    }    
+    } 
+
+    bool canUpgrade() {
+        return _canUpgrade;
+    }
+
+    HttpServerOptions canUpgrade(bool value) {
+        _canUpgrade = value;
+        return this;
+    } 
 
     /* ------------------------------ Session APIs ------------------------------ */
 

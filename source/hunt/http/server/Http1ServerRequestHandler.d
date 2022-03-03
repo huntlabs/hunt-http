@@ -99,6 +99,10 @@ class Http1ServerRequestHandler : HttpRequestParsingHandler {
     }
 
     override bool messageComplete() {
+        if(!_options.canUpgrade()) {
+            return true;
+        }
+        
         try {
             if (connection.getUpgradeHttp2Complete() || connection.getUpgradeWebSocketComplete()) {
                 return true;
