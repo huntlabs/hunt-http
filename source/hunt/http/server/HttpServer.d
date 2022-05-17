@@ -548,12 +548,18 @@ class HttpServer : AbstractLifecycle {
         alias addNotFoundRoute = setDefaultRequest;
 
         Builder resource(string path, string localPath, bool canList = true,
-                string groupName=null, RouteGroupType groupType = RouteGroupType.Host) {
+                string groupName=null, RouteGroupType groupType = RouteGroupType.Host, 
+                string indexFile = "index.html") {
             DefaultResourceHandler handler = new DefaultResourceHandler(amendingPath(path), localPath);
             handler.isListingEnabled = canList;
             handler.cacheTime = _resourceCacheTime;
+            handler.indexFile = indexFile;
             
             return resource(path, handler, groupName, groupType);
+        }
+
+        Builder resource(string path, string localPath, string indexFile) {
+            return resource(path, localPath, true, null, RouteGroupType.Host, indexFile);
         }
 
         private static string amendingPath(string path) {

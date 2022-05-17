@@ -37,6 +37,7 @@ abstract class AbstractResourceHandler : RouteHandler {
      * If directory listing is enabled.
      */
     private bool _isListingEnabled = false; 
+    private string _indexFile; 
     private string _virtualPath;
     private string _basePath;
     // private string requestPath;
@@ -99,7 +100,16 @@ abstract class AbstractResourceHandler : RouteHandler {
     AbstractResourceHandler isListingEnabled(bool flag) {
         _isListingEnabled = flag;
         return this;
-    }    
+    }
+
+    string indexFile() {
+        return _indexFile;
+    }
+
+    AbstractResourceHandler indexFile(string indexFile) {
+        _indexFile = indexFile;
+        return this;
+    }   
 
     void handle(RoutingContext context) {
         // string requestPath = context.getURI().getPath();
@@ -186,13 +196,20 @@ class DefaultResourceHandler : AbstractResourceHandler {
         } else {
             string requestFile = context.getAttribute(CurrentRequestFile).get!string();
             if(requestFile.isDir()) {
-                version(HUNT_HTTP_DEBUG) {
-                    tracef("Try to list a directory: %s", requestFile);
-                }
-                if(isListingEnabled()) {
-                    content = renderFileList(basePath(), requestFile, format(`Index of %s`, requestPath));
+                if (_indexFile && exists(buildPath(requestFile, _indexFile))) {
+                    version(HUNT_HTTP_DEBUG) {
+                        tracef("Serving %s for directory %s", _indexFile, requestFile);
+                    }
+                    handleRequestFile(context, buildPath(requestFile, _indexFile));
                 } else {
-                    content = format(`Index of %s`, requestPath);
+                    version(HUNT_HTTP_DEBUG) {
+                        tracef("Try to list a directory: %s", requestFile);
+                    }
+                    if(isListingEnabled()) {
+                        content = renderFileList(basePath(), requestFile, format(`Index of %s`, requestPath));
+                    } else {
+                        content = format(`Index of %s`, requestPath);
+                    }
                 }
 
             } else {
